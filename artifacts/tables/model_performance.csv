@@ -1,0 +1,5 @@
+model_name,display_name,source,nrmse,ci_lower,ci_upper,n_boot,bootstrap_sample_size,normalization_reference
+null_mean_baseline_demo,Null mean baseline,demo_recomputed,0.1652714187691465,0.16352900936116846,0.1663258782690064,100,1500,fixed Y_ref range
+final_ols_demo,Final OLS,demo_recomputed,0.06759885329577374,0.06595393294757235,0.06877013991276626,100,1500,fixed Y_ref range
+intermediate_penalized_reference,Intermediate penalized model,manuscript_reference,0.0859,,,0,0,Y_train
+final_ols_reference,Final OLS manuscript reference,manuscript_reference,0.0445,,,0,0,Y_train

@@ -1,0 +1,11 @@
+.pixi/
+__pycache__/
+*.pyc
+*.egg-info/
+.DS_Store
+configs/manuscript_paths.yml
+figures/*.png
+figures/*.svg
+figures/*.pdf
+outputs/
+*.log
