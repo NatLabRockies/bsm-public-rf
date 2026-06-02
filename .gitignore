@@ -9,3 +9,6 @@ figures/*.svg
 figures/*.pdf
 outputs/
 *.log
+# HC3 Wald intervals: 450MB, exceeds GitHub limit.
+# Regenerate with: rfm_pipeline final_manuscript_artifacts stage (reuses bootstrap checkpoints).
+artifacts/final_model/hc3_wald_intervals.csv
