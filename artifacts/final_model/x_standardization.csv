@@ -1,507 +1,133 @@
 feature_name,original_position,mean,scale
 OHC.PY sensi multiplier[HEFA],0,1.000119828568772,0.14424821122620224
 WW.PY sensi multiplier[SludgeToHTL],1,0.9991096772098246,0.14446898248270867
-WW.PY sensi multiplier[SludgeToHTL]:WW.progress ratios commercial[SludgeToHTL],2,0.7492158014097698,0.12298500178068199
-sqrt_AHC.PY sensi multiplier[HEFA],3,0.9974496108065288,0.07265443618729452
-inverse_OHC.PY sensi multiplier[HEFA],4,1.0214864259567584,0.15110609721980797
+inverse_OHC.PY sensi multiplier[HEFA],2,1.0214864259567584,0.15110609721980797
+WW.PY sensi multiplier[SludgeToHTL]:WW.progress ratios commercial[SludgeToHTL],3,0.7492158014097698,0.12298500178068199
+sqrt_AHC.PY sensi multiplier[HEFA],4,0.9974496108065288,0.07265443618729452
 WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:WW.progress ratios commercial[SludgeToHTL],5,7.496809868701856,2.2429143016219197
-WW.PY sensi multiplier[ManureToHTL],6,0.9990255302400001,0.14451206010928155
-CHC.PY sensi multiplier[Thermochem],7,1.000294782774386,0.14520105986650805
-sqrt_AHC.PY sensi multiplier[HTL],8,0.9975458327094086,0.07264546562361396
-AHC.PY sensi multiplier[HEFA],9,1.0001843931957894,0.14457462272663205
-OHC.PY sensi multiplier[HEFABrownfield]:OHC.PY sensi multiplier[HEFA],10,0.9997609261021471,0.20546052110852306
-AHC.PY sensi multiplier[HTL],11,1.0003750520315788,0.14450583688388635
-CHC.PY sensi multiplier[Thermochem]:CHC.Mature Industry Rate of Return as PCT[Thermochem],12,10.009295837599328,3.2542952009503314
-WW.PY sensi multiplier[SludgeToHTL]:WW.Mature Industry Rate of Return as PCT[SludgeToHTL],13,9.988334056299633,3.248986820956028
-CHC.PY sensi multiplier[Thermochem]:CHC.initial indices of Commercial Maturity[Thermochem],14,0.4005290162881556,0.18512369489533553
+WW.Mature Industry Rate of Return as PCT[SludgeToHTL],6,9.997312585378946,2.8831060396473154
+sqrt_AHC.PY sensi multiplier[HTL],7,0.9975458327094086,0.07264546562361396
+OHC.PY sensi multiplier[HEFABrownfield]:OHC.PY sensi multiplier[HEFA],8,0.9997609261021471,0.20546052110852306
+WW.PY sensi multiplier[ManureToHTL],9,0.9990255302400001,0.14451206010928155
+CHC.PY sensi multiplier[Thermochem]:CHC.Mature Industry Rate of Return as PCT[Thermochem],10,10.009295837599328,3.2542952009503314
+AHC.PY sensi multiplier[HEFA],11,1.0001843931957894,0.14457462272663205
+AHC.PY sensi multiplier[HTL],12,1.0003750520315788,0.14450583688388635
+CHC.PY sensi multiplier[Thermochem]:CHC.initial indices of Commercial Maturity[Thermochem],13,0.4005290162881556,0.18512369489533553
+CHC.Mature Industry Rate of Return as PCT[Brownfield],14,9.976551751024559,2.890315070021006
 CHC.initial indices of Commercial Maturity[Brownfield]:CHC.PY sensi multiplier[Brownfield],15,0.3491505254527989,0.21073674435897993
-WW.PY sensi multiplier[ManureToHTL]:WW.Mature Industry Rate of Return as PCT[ManureToHTL],16,9.998545190307638,3.2779087374056757
-WW.Mature Industry Rate of Return as PCT[SludgeToHTL],17,9.997312585378946,2.8831060396473154
-CHC.PY sensi multiplier[Thermochem]:CHC.FCI  sensi multiplier[Thermochem],18,1.0009962149119538,0.20549427299095732
-CHC.initial indices of Commercial Maturity[Brownfield]:CHC.Mature Industry Rate of Return as PCT[Brownfield],19,3.480696474439046,2.326032157843919
-OHC.PY sensi multiplier[HEFA]:OHC.progress ratios commercial[HEFA],20,0.7501758846052698,0.12303136649307365
-CHC.PY sensi multiplier[Thermochem]:CHC.progress ratios commercial[Thermochem],21,0.7497943705836461,0.12397026418119361
-CHC.Mature Industry Rate of Return as PCT[Thermochem]:CHC.FCI  sensi multiplier[Thermochem],22,10.012638356033218,3.2548698358747727
+CHC.Mature Industry Rate of Return as PCT[Thermochem],16,10.007617569126316,2.890057109057753
+OHC.PY sensi multiplier[HEFABrownfield],17,0.9995684679182455,0.14440151425953082
+WW.PY sensi multiplier[ManureToHTL]:WW.Mature Industry Rate of Return as PCT[ManureToHTL],18,9.998545190307638,3.2779087374056757
+CHC.PY sensi multiplier[Thermochem]:CHC.FCI  sensi multiplier[Thermochem],19,1.0009962149119538,0.20549427299095732
+CHC.PY sensi multiplier[Thermochem],20,1.000294782774386,0.14520105986650805
+CHC.initial indices of Commercial Maturity[Brownfield]:CHC.Mature Industry Rate of Return as PCT[Brownfield],21,3.480696474439046,2.326032157843919
+OHC.PY sensi multiplier[HEFA]:OHC.progress ratios commercial[HEFA],22,0.7501758846052698,0.12303136649307365
 WW.progress ratios commercial[SludgeToHTL]:WW.FCI  sensi multiplier[SludgeToHTL],23,0.7500257901766564,0.12233372828268332
-CHC.Mature Industry Rate of Return as PCT[Thermochem]:CHC.progress ratios commercial[Thermochem],24,7.499857276717013,2.2454046200565023
-CHC.Mature Industry Rate of Return as PCT[Thermochem]:CHC.initial indices of Commercial Maturity[Thermochem],25,3.998650940339987,2.1314340901762
+CHC.Mature Industry Rate of Return as PCT[Thermochem]:CHC.FCI  sensi multiplier[Thermochem],24,10.012638356033218,3.2548698358747727
+CHC.FCI  sensi multiplier[Thermochem],25,1.0007587511052631,0.1442748836895934
 inverse_WW.PY sensi multiplier[ManureToHTL],26,1.0227364050856835,0.15174062970001376
-CHC.initial indices of Commercial Maturity[Brownfield]:CHC.FCI  sensi multiplier[Brownfield],27,0.34925903089223254,0.2109079914909137
-inverse_WW.PY sensi multiplier[SludgeToHTL],28,1.0226235280379126,0.1515996122017495
-OHC.Retirement Frac[TransEster]:OHC.PY sensi multiplier[HEFA],29,0.07520918031548139,0.045194974331923154
-CHC.initial indices of Commercial Maturity[Brownfield],30,0.3489870540410871,0.2021823033518388
-OHC.PY sensi multiplier[HEFA]:OHC.Mature Industry Rate of Return as PCT[HEFA],31,10.002334878910197,3.242804813810531
-CHC.initial indices of Commercial Maturity[Thermochem]:CHC.FCI  sensi multiplier[Thermochem],32,0.400598610085853,0.18501376420186935
+CHC.Mature Industry Rate of Return as PCT[Thermochem]:CHC.initial indices of Commercial Maturity[Thermochem],27,3.998650940339987,2.1314340901762
+CHC.initial indices of Commercial Maturity[Brownfield]:CHC.FCI  sensi multiplier[Brownfield],28,0.34925903089223254,0.2109079914909137
+inverse_WW.PY sensi multiplier[SludgeToHTL],29,1.0226235280379126,0.1515996122017495
+CHC.initial indices of Commercial Maturity[Thermochem]:CHC.FCI  sensi multiplier[Thermochem],30,0.400598610085853,0.18501376420186935
+CHC.Mature Industry Rate of Return as PCT[Brownfield]:CHC.PY sensi multiplier[Brownfield],31,9.979882868821484,3.2594400137648685
+WW.FCI  sensi multiplier[SludgeToHTL],32,1.0002342996224562,0.14371255749231834
 WW.PY sensi multiplier[ManureToHTL]:WW.ORNOOC sensi multiplier[ManureToHTL],33,0.9993517354216124,0.20615060321851839
-WW.progress ratios commercial[SludgeToHTL]:WW.ORNOOC sensi multiplier[SludgeToHTL],34,0.7502466261027139,0.12329775608801075
-CHC.Mature Industry Rate of Return as PCT[Brownfield]:CHC.PY sensi multiplier[Brownfield],35,9.979882868821484,3.2594400137648685
-WW.PY sensi multiplier[SludgeToHTL]:WW.ORNOOC sensi multiplier[SludgeToHTL],36,0.9996576976804472,0.2060690145003613
-WW.PY sensi multiplier[SludgeToHTL]:WW.FCI  sensi multiplier[SludgeToHTL],37,0.9993530822199814,0.20484709583373317
-OHC.PY sensi multiplier[HEFA]:OHC.ORNOOC sensi multiplier[HEFA],38,1.0006065573954153,0.2054047746568098
-WW.PY sensi multiplier[ManureToHTL]:WW.progress ratios commercial[ManureToHTL],39,0.7489695550420667,0.12297913812351921
-sqrt_OHC.PY sensi multiplier[HEFABrownfield],40,0.9971459503674647,0.07258389342003758
-inverse_WW.progress ratios commercial[SludgeToHTL],41,1.3415105616010377,0.10382769878652609
-CHC.PY sensi multiplier[Thermochem]:WW.progress ratios commercial[SludgeToHTL],42,0.750090128789402,0.12344917962742727
+OHC.PY sensi multiplier[HEFA]:OHC.Mature Industry Rate of Return as PCT[HEFA],34,10.002334878910197,3.242804813810531
+OHC.Retirement Frac[TransEster]:OHC.PY sensi multiplier[HEFA],35,0.07520918031548139,0.045194974331923154
+inverse_WW.progress ratios commercial[SludgeToHTL],36,1.3415105616010377,0.10382769878652609
+OHC.Mature Industry Rate of Return as PCT[HEFA],37,10.002434626438598,2.877706501616227
+WW.PY sensi multiplier[SludgeToHTL]:WW.ORNOOC sensi multiplier[SludgeToHTL],38,0.9996576976804472,0.2060690145003613
+sqrt_OHC.PY sensi multiplier[HEFABrownfield],39,0.9971459503674647,0.07258389342003758
+WW.progress ratios commercial[SludgeToHTL],40,0.7498795361908772,0.05764971969619477
+WW.ORNOOC sensi multiplier[SludgeToHTL],41,1.0004910834582457,0.14488255240714187
+CHC.Mature Industry Rate of Return as PCT[Biochem]:CHC.FCI  sensi multiplier[Biochem],42,9.961191899768085,3.2695575476467647
 WW.PY sensi multiplier[ManureToHTL]:WW.initial indices of Commercial Maturity[ManureToHTL],43,0.09993282390036001,0.06029619302739777
-CHC.Mature Industry Rate of Return as PCT[Biochem]:CHC.FCI  sensi multiplier[Biochem],44,9.961191899768085,3.2695575476467647
-WW.progress ratios commercial[SludgeToHTL]:AHC.initial indices of Commercial Maturity[HTL],45,0.07489968170320037,0.04380839653791303
-CHC.Mature Industry Rate of Return as PCT[Biochem]:CHC.PY sensi multiplier[Biochem],46,9.979172221846293,3.2613115663676204
-CHC.Mature Industry Rate of Return as PCT[Biochem],47,9.967324934021054,2.9015704386300665
-WW.progress ratios commercial[SludgeToHTL],48,0.7498795361908772,0.05764971969619477
-CHC.initial indices of Commercial Maturity[Thermochem]:CHC.progress ratios commercial[Thermochem],49,0.2999565223721089,0.13244779227158304
-OHC.PY sensi multiplier[HEFABrownfield],50,0.9995684679182455,0.14440151425953082
-WW.FCI  sensi multiplier[SludgeToHTL],51,1.0002342996224562,0.14371255749231834
-OHC.PY sensi multiplier[HEFABrownfield]:OHC.progress ratios commercial[HEFA],52,0.7497693667076315,0.12322377361643154
-OHC.Retirement Frac[TransEster]:OHC.PY sensi multiplier[HEFABrownfield],53,0.0751581177644348,0.045185744037776074
-WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:WW.FCI  sensi multiplier[SludgeToHTL],54,9.996319982557644,3.2370567227350895
-CHC.Mature Industry Rate of Return as PCT[Brownfield]:CHC.FCI  sensi multiplier[Brownfield],55,9.966441012830519,3.239583212272196
-CHC.FCI  sensi multiplier[Thermochem]:CHC.progress ratios commercial[Thermochem],56,0.7500627659485158,0.12285212681768058
-AHC.initial indices of Commercial Maturity[HTL],57,0.0998772471975532,0.05768265697305287
-OHC.PY sensi multiplier[HEFA]:OHC.FCI  sensi multiplier[HEFA],58,0.999273789249304,0.20573989215683586
-WW.PY sensi multiplier[SludgeToHTL]:CHC.PY sensi multiplier[Thermochem],59,0.9996122964734011,0.20679072688223804
-CHC.initial indices of Commercial Maturity[Brownfield]:CHC.progress ratios commercial[Brownfield],60,0.2617480675270345,0.15346318324757435
-CHC.Mature Industry Rate of Return as PCT[Brownfield],61,9.976551751024559,2.890315070021006
-CHC.initial indices of Commercial Maturity[Thermochem]_squared,62,0.19048105355851308,0.14147845653555996
-WW.progress ratios commercial[SludgeToHTL]:AHC.Mature Industry Rate of Return as PCT[HTL],63,7.520739584359946,2.2536148548744257
-WW.PY sensi multiplier[ManureToHTL]:WW.FCI  sensi multiplier[ManureToHTL],64,1.0008654817546436,0.20525152521910323
-WW.Mature Industry Rate of Return as PCT[ManureToHTL]:WW.ORNOOC sensi multiplier[ManureToHTL],65,10.00505446051044,3.2643946348682547
-CHC.Mature Industry Rate of Return as PCT[Biochem]:CHC.initial indices of Commercial Maturity[Biochem],66,0.9979287913260906,0.6638242280315388
-WW.Mature Industry Rate of Return as PCT[ManureToHTL]_squared,67,108.44451718532605,58.430659920620315
-WW.Mature Industry Rate of Return as PCT[ManureToHTL]:WW.FCI  sensi multiplier[ManureToHTL],68,10.021515560500054,3.2692994945707547
-CHC.Mature Industry Rate of Return as PCT[Thermochem],69,10.007617569126316,2.890057109057753
-CHC.PY sensi multiplier[Thermochem]:WW.Mature Industry Rate of Return as PCT[SludgeToHTL],70,9.997166940402705,3.245203228698056
-CHC.PY sensi multiplier[Brownfield],71,1.0001274816435088,0.1440874466417765
-WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:WW.ORNOOC sensi multiplier[SludgeToHTL],72,9.999866471872355,3.245470558688417
-OHC.PY sensi multiplier[HEFA]:CHC.PY sensi multiplier[Thermochem],73,1.0004089410819772,0.2057997217583719
-inverse_WW.Mature Industry Rate of Return as PCT[SludgeToHTL],74,0.10986815024059157,0.03550279997433679
-WW.initial indices of Commercial Maturity[SludgeToHTL],75,0.10031855805954455,0.05786587947958289
-WW.PY sensi multiplier[SludgeToHTL]:AHC.initial indices of Commercial Maturity[HTL],76,0.09976598238186207,0.05997617138217105
-WW.progress ratios commercial[SludgeToHTL]:WW.initial indices of Commercial Maturity[SludgeToHTL],77,0.07521519702911109,0.04388106978038885
-inverse_SE.Max Jet Investment Hit Rate,78,7.15970634719178,3.909002132097047
-WW.progress ratios commercial[SludgeToHTL]:CHC.Mature Industry Rate of Return as PCT[Thermochem],79,7.505020559244248,2.252322296347032
-CHC.FCI  sensi multiplier[Thermochem],80,1.0007587511052631,0.1442748836895934
-OHC.Mature Industry Rate of Return as PCT[HEFA],81,10.002434626438598,2.877706501616227
-WW.PY sensi multiplier[SludgeToHTL]:CHC.Mature Industry Rate of Return as PCT[Thermochem],82,9.998529329537226,3.2550703278198507
-WW.Mature Industry Rate of Return as PCT[ManureToHTL]:WW.initial indices of Commercial Maturity[ManureToHTL],83,1.0000574542292007,0.6676830450519803
-WW.Mature Industry Rate of Return as PCT[ManureToHTL]:WW.progress ratios commercial[ManureToHTL],84,7.498721055382947,2.2503424211731673
-OHC.Retirement Frac[TransEster],85,0.07516615773637836,0.043369407664100856
-OHC.PY sensi multiplier[HEFA]:CHC.Mature Industry Rate of Return as PCT[Thermochem],86,10.008724905301797,3.255159000831115
-CHC.PY sensi multiplier[Thermochem]:CHC.Debt Interest Rate as pct[Thermochem],87,8.497759970957329,2.376793680109333
-CHC.initial indices of Commercial Maturity[Brownfield]:CHC.PY sensi multiplier[Thermochem],88,0.3488734859727031,0.21025677545660323
-AHC.PY sensi multiplier[HTL]:WW.progress ratios commercial[SludgeToHTL],89,0.7502251486033638,0.12338073853183606
-SE.Max Jet Investment Hit Rate:SE.PY sensi multiplier[Jet],90,0.1754239336068596,0.07757250145317031
-CHC.initial indices of Commercial Maturity[Biochem]:CHC.PY sensi multiplier[Biochem],91,0.10035035920809952,0.060062455685256796
-CHC.PY sensi multiplier[Biochem]:CHC.FCI  sensi multiplier[Biochem],92,1.0006120400001384,0.20538867454992285
-"OHC.PY sensi multiplier[HEFA]:OHC.Policy Duration[Price,HEFA]",93,27.01187327833227,6.541173589299082
-WW.PY sensi multiplier[SludgeToHTL]:CHC.FCI  sensi multiplier[Thermochem],94,0.9998241058947087,0.205033813814885
-CHC.initial indices of Commercial Maturity[Biochem]:CHC.FCI  sensi multiplier[Biochem],95,0.10026953101704975,0.06022224359779692
-CHC.PY sensi multiplier[Thermochem]:CHC.Mature Industry Rate of Return as PCT[Brownfield],96,9.980668472535383,3.2624449191571725
-WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:CHC.Mature Industry Rate of Return as PCT[Thermochem],97,100.07680363330381,41.751085593712894
-"WW.PY sensi multiplier[ManureToHTL]:WW.Policy Duration[Price,ManureToHTL]",98,26.972572582096237,6.540423880138736
-OHC.ORNOOC sensi multiplier[HEFA],99,1.000559502554386,0.1451678589393609
-inverse_CHC.Mature Industry Rate of Return as PCT[Brownfield],100,0.11017637928603943,0.0357040511583978
-WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:AHC.initial indices of Commercial Maturity[HTL],101,0.998683676325892,0.6658520951356434
-CHC.Mature Industry Rate of Return as PCT[Brownfield]:CHC.progress ratios commercial[Brownfield],102,7.483595168346697,2.252861881145921
-WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:CHC.progress ratios commercial[Thermochem],103,7.492775889519586,2.2412990044679826
-CHC.PY sensi multiplier[Thermochem]:CHC.ORNOOC sensi multiplier[Thermochem],104,1.000627739114357,0.2050890407432706
-CHC.Mature Industry Rate of Return as PCT[Thermochem]:CHC.ORNOOC sensi multiplier[Thermochem],105,10.011274029797866,3.2577421447925707
-CHC.Mature Industry Rate of Return as PCT[Biochem]_squared,106,107.76667735068966,58.32175383853125
-SE.Mature Industry Rate of Return as PCT[Jet]:SE.FCI  sensi multiplier[Jet],107,10.004985755217255,3.2468461222232206
-CHC.FCI  sensi multiplier[Biochem],108,0.9993646965245614,0.14461139270020235
-CHC.PY sensi multiplier[Brownfield]:CHC.FCI  sensi multiplier[Brownfield],109,0.9995228556273107,0.20434371624655384
-SE.Max Jet Investment Hit Rate:WW.PY sensi multiplier[ManureToHTL],110,0.17497531968554253,0.07703493356509619
-WW.PY sensi multiplier[SludgeToHTL]:WW.initial indices of Commercial Maturity[SludgeToHTL],111,0.10023276141566148,0.06013925579932268
-CHC.PY sensi multiplier[Thermochem]:WW.FCI  sensi multiplier[SludgeToHTL],112,1.0005908533861303,0.2059130687505565
-SE.PY sensi multiplier[Jet]:SE.Mature Industry Rate of Return as PCT[Jet],113,10.017195497943774,3.244408448741294
-inverse_CHC.FCI  sensi multiplier[Thermochem],114,1.020848123896962,0.15117483471416482
-WW.progress ratios commercial[SludgeToHTL]:AHC.FCI  sensi multiplier[HTL],115,0.7499876370315213,0.12280300817071753
-WW.PY sensi multiplier[SludgeToHTL]:CHC.initial indices of Commercial Maturity[Thermochem],116,0.4000593817202869,0.18487247530112186
-WW.progress ratios commercial[SludgeToHTL]:CHC.initial indices of Commercial Maturity[Thermochem],117,0.30023585466642044,0.13278098429204344
-inverse_SE.PY sensi multiplier[Jet],118,1.0211659565298155,0.15158839035878469
-AHC.Mature Industry Rate of Return as PCT[HTL]:AHC.FCI  sensi multiplier[HTL],119,10.031469698807676,3.2687611715372027
-AHC.Mature Industry Rate of Return as PCT[HTL],120,10.027466178698244,2.8883136748897704
-OHC.PY sensi multiplier[HEFABrownfield]:CHC.PY sensi multiplier[Thermochem],121,0.9999071844675399,0.20582536252016292
-"WW.Mature Industry Rate of Return as PCT[ManureToHTL]:WW.Policy Duration[Price,ManureToHTL]",122,269.9961421402781,94.85917753095288
-WW.PY sensi multiplier[SludgeToHTL]:CHC.progress ratios commercial[Thermochem],123,0.7488937431469097,0.12345192659281254
-WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:CHC.FCI  sensi multiplier[Thermochem],124,10.00575663216372,3.2531745562178145
-WW.ORNOOC sensi multiplier[SludgeToHTL],125,1.0004910834582457,0.14488255240714187
-WW.ORNOOC sensi multiplier[ManureToHTL]:WW.progress ratios commercial[ManureToHTL],126,0.7497415014423582,0.12239779937718459
-CHC.initial indices of Commercial Maturity[Brownfield]:CHC.FCI  sensi multiplier[Thermochem],127,0.34910685195016994,0.2105483825321139
-CHC.initial indices of Commercial Maturity[Brownfield]:CHC.Mature Industry Rate of Return as PCT[Thermochem],128,3.487042093756685,2.32410374670144
-CHC.Mature Industry Rate of Return as PCT[Thermochem]:CHC.Debt Interest Rate as pct[Thermochem],129,85.01973665858054,32.291250301199774
-OHC.PY sensi multiplier[HEFABrownfield]:OHC.ORNOOC sensi multiplier[HEFA],130,1.0002023887951887,0.20634660012984282
-WW.PY sensi multiplier[SludgeToHTL]:WW.PY sensi multiplier[ManureToHTL],131,0.9980737432504792,0.20493551790054038
-OHC.PY sensi multiplier[HEFA]:WW.Mature Industry Rate of Return as PCT[SludgeToHTL],132,10.002543260028387,3.2659910899387152
-CHC.PY sensi multiplier[Thermochem]:WW.ORNOOC sensi multiplier[SludgeToHTL],133,1.000658316661339,0.20587952134934215
-WW.PY sensi multiplier[ManureToHTL]:CHC.Mature Industry Rate of Return as PCT[Thermochem],134,9.998627690239033,3.257506140398865
-AHC.PY sensi multiplier[HTL]:AHC.Mature Industry Rate of Return as PCT[HTL],135,10.027772973643374,3.247990621375926
-WW.initial indices of Commercial Maturity[ManureToHTL]:WW.FCI  sensi multiplier[ManureToHTL],136,0.10017185153594442,0.060294063549696505
-OHC.PY sensi multiplier[HEFA]:OHC.Debt Interest Rate as pct[HEFA],137,8.510857100494798,2.381847741418486
-OHC.PY sensi multiplier[HEFA]:CHC.FCI  sensi multiplier[Thermochem],138,1.0009758118618166,0.20570548555491727
-SE.ORNOOC sensi multiplier[Jet],139,1.0017456504452633,0.14459639729994844
-WW.initial indices of Commercial Maturity[ManureToHTL]:WW.ORNOOC sensi multiplier[ManureToHTL],140,0.0999910159206123,0.06012865941776185
-WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:WW.initial indices of Commercial Maturity[SludgeToHTL],141,1.0029453554503232,0.6672697025265814
-OHC.PY sensi multiplier[HEFA]:OHC.ORNOOC sensi multiplier[HEFABrownfield],142,0.9998098105258356,0.2054585607691237
-WW.PY sensi multiplier[SludgeToHTL]:WW.Mature Industry Rate of Return as PCT[ManureToHTL],143,9.995506780449677,3.2673332077486945
-OHC.PY sensi multiplier[HEFA]:CHC.initial indices of Commercial Maturity[Thermochem],144,0.4002792525474098,0.18459732502432855
-OHC.PY sensi multiplier[HEFA]:OHC.progress ratios commercial[HEFABrownfield],145,0.7503492738548194,0.12281722710834023
-CHC.PY sensi multiplier[Thermochem]:WW.PY sensi multiplier[ManureToHTL],146,0.9993480567497866,0.20610479539711007
-WW.FCI  sensi multiplier[ManureToHTL]:WW.ORNOOC sensi multiplier[ManureToHTL],147,1.0019298194508528,0.20490091456959167
-OHC.progress ratios commercial[HEFA],148,0.7500648456185964,0.05765174828664809
-CHC.PY sensi multiplier[Biochem],149,1.001205358348421,0.1439224712223377
-OHC.Debt Interest Rate as pct[HEFA],150,8.50891237385965,2.017652762439393
-OHC.PY sensi multiplier[HEFABrownfield]:OHC.Mature Industry Rate of Return as PCT[HEFA],151,10.00015208928189,3.252991014115581
-SE.Max Jet Investment Hit Rate:WW.progress ratios commercial[ManureToHTL],152,0.13145157619635342,0.055454248678021865
-OHC.PY sensi multiplier[HEFABrownfield]:CHC.Mature Industry Rate of Return as PCT[Thermochem],153,10.000757541078764,3.249933129285469
-AHC.Mature Industry Rate of Return as PCT[HEFA]:AHC.FCI  sensi multiplier[HEFA],154,9.961861513772819,3.2272928962608995
-SE.Max Jet Investment Hit Rate:CHC.PY sensi multiplier[Thermochem],155,0.17535710436018265,0.07755710037969697
-OHC.PY sensi multiplier[HEFABrownfield]:OHC.FCI  sensi multiplier[HEFA],156,0.9985762313617141,0.204878534609208
-SE.Mature Industry Rate of Return as PCT[Jet],157,10.012880398533333,2.875425872992772
-CHC.FCI  sensi multiplier[Brownfield],158,0.9995022393922807,0.144494001712729
-WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:CHC.initial indices of Commercial Maturity[Thermochem],159,4.000634348843389,2.138743901380181
-AHC.initial indices of Commercial Maturity[HTL]:WW.initial indices of Commercial Maturity[SludgeToHTL],160,0.010012025330889076,0.008833291942126707
-OHC.PY sensi multiplier[HEFA]:CHC.progress ratios commercial[Thermochem],161,0.7496276869764726,0.12311840837606983
-OHC.progress ratios commercial[HEFA]:OHC.progress ratios commercial[HEFABrownfield],162,0.5627330931610521,0.06112153061725927
-WW.FCI  sensi multiplier[ManureToHTL]:WW.progress ratios commercial[ManureToHTL],163,0.7512169254109786,0.1236815828978372
-"OHC.PY sensi multiplier[HEFABrownfield]:OHC.Policy Duration[Price,HEFA]",164,26.995021220157486,6.5398190608595455
-WW.PY sensi multiplier[SludgeToHTL]:AHC.Mature Industry Rate of Return as PCT[HTL],165,10.018782048561786,3.258972625962866
-SE.Mature Industry Rate of Return as PCT[Jet]:SE.initial indices of Commercial Maturity[Jet],166,3.0082833468332875,1.4838658262579356
-CHC.PY sensi multiplier[Brownfield]:CHC.progress ratios commercial[Brownfield],167,0.7500746275964715,0.12276671675413797
-AHC.PY sensi multiplier[HTL]:AHC.FCI  sensi multiplier[HTL],168,1.00030130896654,0.20406016869446034
-CHC.initial indices of Commercial Maturity[Thermochem]:CHC.ORNOOC sensi multiplier[Thermochem],169,0.4004275593819111,0.18480376112528532
-AHC.PY sensi multiplier[HEFA]:AHC.Mature Industry Rate of Return as PCT[HEFA],170,9.986059333504043,3.273295162013818
-"SE.Max Jet Investment Hit Rate:SE.Policy Duration[Price,Jet]",171,4.74226437723846,2.197522841551585
-CHC.Mature Industry Rate of Return as PCT[Thermochem]:CHC.PY sensi multiplier[Brownfield],172,10.012500371739796,3.270134792759089
-WW.ORNOOC sensi multiplier[SludgeToHTL]:WW.FCI  sensi multiplier[SludgeToHTL],173,1.0005842856826177,0.20459395649510298
-WW.Mature Industry Rate of Return as PCT[ManureToHTL]:WW.ORNOOC sensi multiplier[SludgeToHTL],174,10.004368692446812,3.255486389108029
-WW.progress ratios commercial[SludgeToHTL]:CHC.FCI  sensi multiplier[Thermochem],175,0.7503986860204703,0.1225971618482605
-WW.FCI  sensi multiplier[SludgeToHTL]:AHC.initial indices of Commercial Maturity[HTL],176,0.09986895251499188,0.06001415418322076
-OHC.ORNOOC sensi multiplier[HEFA]:OHC.FCI  sensi multiplier[HEFA],177,0.9995838347884093,0.20577294527328974
-OHC.ORNOOC sensi multiplier[HEFABrownfield],178,0.9996543236536841,0.1444899792994115
-SE.Max Jet Investment Hit Rate:WW.Mature Industry Rate of Return as PCT[ManureToHTL],179,1.7551062788607705,0.9123470338927465
-SE.Max Jet Investment Hit Rate:WW.PY sensi multiplier[SludgeToHTL],180,0.175036507486443,0.07710139580247684
-OHC.Retirement Frac[TransEster]:OHC.progress ratios commercial[HEFA],181,0.05637074927541514,0.03289982073489575
-CHC.Mature Industry Rate of Return as PCT[Thermochem]:WW.ORNOOC sensi multiplier[SludgeToHTL],182,10.012934830975228,3.2605646981334213
-OHC.PY sensi multiplier[HEFA]:WW.progress ratios commercial[SludgeToHTL],183,0.7499816773481968,0.12296901985691851
-inverse_WW.FCI  sensi multiplier[SludgeToHTL],184,1.021204487440078,0.1505129813405529
-CHC.Mature Industry Rate of Return as PCT[Thermochem]:CHC.Mature Industry Rate of Return as PCT[Brownfield],185,99.87675566004562,41.706391647661924
-SE.PY sensi multiplier[Jet]:SE.ORNOOC sensi multiplier[Jet],186,1.0024969468418377,0.20679841865032295
-SE.Mature Industry Rate of Return as PCT[Jet]:SE.progress ratios commercial[Jet],187,7.502103186963512,2.2353598560279933
-CHC.FCI  sensi multiplier[Thermochem]:CHC.Debt Interest Rate as pct[Thermochem],188,8.503694412543902,2.3777898517369507
-"OHC.Policy Duration[Price,HEFA]",189,27.007608131754385,5.198464812190672
-CHC.PY sensi multiplier[Thermochem]:WW.ORNOOC sensi multiplier[ManureToHTL],190,1.0004137924051157,0.20557895849265212
-OHC.FCI  sensi multiplier[HEFA],191,0.9990366821424561,0.1442810325932997
-WW.progress ratios commercial[SludgeToHTL]:OHC.progress ratios commercial[HEFA],192,0.5624712509819795,0.06136183638743922
-OHC.Retirement Frac[TransEster]:CHC.PY sensi multiplier[Thermochem],193,0.07523365865238296,0.04531329697774242
-WW.PY sensi multiplier[ManureToHTL]:WW.Mature Industry Rate of Return as PCT[SludgeToHTL],194,9.98853984126506,3.2488311075788605
-WW.PY sensi multiplier[ManureToHTL]:WW.ORNOOC sensi multiplier[SludgeToHTL],195,0.9993579617765285,0.2048653030462779
-CHC.PY sensi multiplier[Thermochem]:CHC.PY sensi multiplier[Brownfield],196,1.0006241207711095,0.20660587983451328
-AHC.PY sensi multiplier[HTL]:WW.PY sensi multiplier[SludgeToHTL],197,0.9995635118820533,0.20576810212776664
-SE.PY sensi multiplier[Jet]:SE.FCI  sensi multiplier[Jet],198,0.999833975950949,0.20603000787755557
-OHC.PY sensi multiplier[HEFA]:SE.Max Jet Investment Hit Rate,199,0.17523684510024665,0.07723160343366084
-AHC.initial indices of Commercial Maturity[HTL]_squared,200,0.013302753423232035,0.011944150622911778
-CHC.initial indices of Commercial Maturity[Brownfield]:CHC.initial indices of Commercial Maturity[Thermochem],201,0.1394610111004077,0.10669577894194235
-CHC.PY sensi multiplier[Thermochem]:WW.Mature Industry Rate of Return as PCT[ManureToHTL],202,10.008291340194798,3.2730652817887553
-SE.Max Jet Investment Hit Rate:WW.ORNOOC sensi multiplier[ManureToHTL],203,0.1753520734238447,0.07742261471792879
-AHC.PY sensi multiplier[HEFA]:AHC.FCI  sensi multiplier[HEFA],204,0.998924990211578,0.20395707693992043
-WW.initial indices of Commercial Maturity[SludgeToHTL]_squared,205,0.013412273099091827,0.011970084655813238
-OHC.PY sensi multiplier[HEFA]:WW.PY sensi multiplier[SludgeToHTL],206,0.9993180225616191,0.20528501227077722
-AHC.Mature Industry Rate of Return as PCT[HEFA]:OHC.progress ratios commercial[HEFA],207,7.485414465394398,2.2464488707193895
-CHC.ORNOOC sensi multiplier[Thermochem],208,1.0004626546610527,0.1443898507073775
-CHC.Mature Industry Rate of Return as PCT[Thermochem]:WW.FCI  sensi multiplier[SludgeToHTL],209,10.011663312833749,3.2585460583522794
-WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:AHC.Mature Industry Rate of Return as PCT[HTL],210,100.24091676405173,41.7100622646589
-OHC.PY sensi multiplier[HEFABrownfield]:CHC.initial indices of Commercial Maturity[Thermochem],211,0.4003472249917862,0.18552787833019652
-OHC.PY sensi multiplier[HEFABrownfield]:WW.progress ratios commercial[SludgeToHTL],212,0.7495851336602918,0.12325269653094952
-SE.PY sensi multiplier[Jet]:SE.initial indices of Commercial Maturity[Jet],213,0.30055609101927333,0.12445133435761543
-CHC.progress ratios commercial[Thermochem]:CHC.Debt Interest Rate as pct[Thermochem],214,6.3692947615797255,1.5951674780730007
-AHC.ORNOOC sensi multiplier[HTL],215,1.0004211552673685,0.14393737668372192
-SE.FCI  sensi multiplier[Jet],216,0.9991378287645614,0.14450827270445124
-OHC.PY sensi multiplier[HEFA]:SE.ORNOOC sensi multiplier[Jet],217,1.001771818945487,0.20504790801623338
-SE.Max Jet Investment Hit Rate:WW.progress ratios commercial[SludgeToHTL],218,0.13140336445420384,0.05529835386059814
-WW.PY sensi multiplier[ManureToHTL]:SE.ORNOOC sensi multiplier[Jet],219,1.000835108760829,0.20596053530371333
-SE.Max Jet Investment Hit Rate:CHC.Mature Industry Rate of Return as PCT[Thermochem],220,1.7538093652752822,0.9069336371728974
-WW.ORNOOC sensi multiplier[SludgeToHTL]:CHC.progress ratios commercial[Thermochem],221,0.7499224618364354,0.1236429895926575
-CHC.initial indices of Commercial Maturity[Thermochem]:CHC.Mature Industry Rate of Return as PCT[Brownfield],222,3.990868551421092,2.143984919662523
-OHC.progress ratios commercial[HEFA]:OHC.Mature Industry Rate of Return as PCT[HEFA],223,7.50266967945954,2.2399756094468635
-AHC.PY sensi multiplier[HEFA]:OHC.progress ratios commercial[HEFA],224,0.7501492288863582,0.12272924466126751
-AHC.PY sensi multiplier[HTL]:WW.Mature Industry Rate of Return as PCT[SludgeToHTL],225,9.998650385817966,3.2441890270539484
-CHC.Mature Industry Rate of Return as PCT[Thermochem]:CHC.FCI  sensi multiplier[Brownfield],226,9.998764062073812,3.246076531803476
-WW.PY sensi multiplier[SludgeToHTL]:CHC.Mature Industry Rate of Return as PCT[Brownfield],227,9.972091195155755,3.2651204854189837
-AHC.FCI  sensi multiplier[HEFA],228,0.9989457157982455,0.1439421554496214
-SE.FCI  sensi multiplier[Jet]:SE.initial indices of Commercial Maturity[Jet],229,0.29998177710739543,0.12406253503113633
-SE.Max Jet Investment Hit Rate:SE.Mature Industry Rate of Return as PCT[Jet],230,1.754037550962887,0.9053712532846981
-OHC.Mature Industry Rate of Return as PCT[HEFA]:OHC.ORNOOC sensi multiplier[HEFA],231,10.008928147481178,3.253654540487862
-CHC.initial indices of Commercial Maturity[Thermochem]:WW.ORNOOC sensi multiplier[SludgeToHTL],232,0.40063729388650066,0.18514413595342114
-CHC.FCI  sensi multiplier[Brownfield]:CHC.progress ratios commercial[Brownfield],233,0.7497235792640488,0.12377814939184176
-OHC.Mature Industry Rate of Return as PCT[HEFA]:OHC.FCI  sensi multiplier[HEFA],234,9.990224843076955,3.235787845879811
-"WW.Policy Duration[Price,ManureToHTL]_squared",235,756.10618035901,282.01071201212716
-CHC.FCI  sensi multiplier[Thermochem]:WW.FCI  sensi multiplier[SludgeToHTL],236,1.0008875113755284,0.20404943729660943
-WW.FCI  sensi multiplier[SludgeToHTL]:WW.initial indices of Commercial Maturity[SludgeToHTL],237,0.10043224783781234,0.060369749292771314
-inverse_WW.ORNOOC sensi multiplier[SludgeToHTL],238,1.0212906271526019,0.15172206365748722
-WW.PY sensi multiplier[ManureToHTL]:CHC.Mature Industry Rate of Return as PCT[Brownfield],239,9.964880576627412,3.2486308940990747
-SE.Max Jet Investment Hit Rate,240,0.1753006599412281,0.07243194258691267
-OHC.progress ratios commercial[HEFABrownfield],241,0.7502631872150878,0.05764287793469096
-OHC.PY sensi multiplier[HEFABrownfield]:OHC.progress ratios commercial[HEFABrownfield],242,0.7499572696701534,0.12317484792522708
-OHC.progress ratios commercial[HEFA]:OHC.FCI  sensi multiplier[HEFA],243,0.7493206957209585,0.12279155890771784
-CHC.Mature Industry Rate of Return as PCT[Thermochem]:AHC.initial indices of Commercial Maturity[HTL],244,1.0016529144795454,0.6674264549965769
-CHC.initial indices of Commercial Maturity[Biochem],245,0.10028020245648346,0.057773867423878904
-CHC.initial indices of Commercial Maturity[Brownfield]:CHC.Debt Interest Rate as pct[Brownfield],246,2.9613117169351173,1.8972842614398406
-SE.Max Jet Investment Hit Rate:CHC.Mature Industry Rate of Return as PCT[Brownfield],247,1.7485699494294602,0.9053314326177105
-WW.FCI  sensi multiplier[SludgeToHTL]:CHC.progress ratios commercial[Thermochem],248,0.7495681956850987,0.12182016555331059
-SE.PY sensi multiplier[Jet]:CHC.PY sensi multiplier[Thermochem],249,1.0010934128955555,0.2070866417576794
-WW.PY sensi multiplier[SludgeToHTL]:AHC.FCI  sensi multiplier[HTL],250,0.9993013931885564,0.20538233004252285
-SE.Max Jet Investment Hit Rate:CHC.initial indices of Commercial Maturity[Brownfield],251,0.06107910571435962,0.04568305327264825
-"OHC.Retirement Frac[TransEster]:OHC.Policy Duration[Price,HEFA]",252,2.031250673771455,1.2572088905628191
-SE.Max Jet Investment Hit Rate:CHC.FCI  sensi multiplier[Thermochem],253,0.17542056071539283,0.0773759563481043
-SE.Max Jet Investment Hit Rate:CHC.progress ratios commercial[Thermochem],254,0.13141476881833383,0.05545226543464609
-OHC.Retirement Frac[TransEster]:OHC.Mature Industry Rate of Return as PCT[HEFA],255,0.7519690864202725,0.49961908740974714
-CHC.initial indices of Commercial Maturity[Thermochem]:WW.FCI  sensi multiplier[SludgeToHTL],256,0.400383346894679,0.18471793005486772
-SE.ORNOOC sensi multiplier[Jet]:WW.FCI  sensi multiplier[SludgeToHTL],257,1.0021405875360048,0.20589856182851088
-WW.ORNOOC sensi multiplier[SludgeToHTL]:CHC.FCI  sensi multiplier[Thermochem],258,1.001386652666348,0.20633040644490674
-OHC.Retirement Frac[TransEster]:WW.progress ratios commercial[SludgeToHTL],259,0.056342299697109084,0.03287716379354435
-OHC.PY sensi multiplier[HEFA]:WW.ORNOOC sensi multiplier[SludgeToHTL],260,1.000532549160415,0.2051884896151691
-OHC.PY sensi multiplier[HEFABrownfield]:SE.Max Jet Investment Hit Rate,261,0.17514571755710437,0.07713277977894777
-OHC.Retirement Frac[TransEster]:WW.ORNOOC sensi multiplier[SludgeToHTL],262,0.07515988871758637,0.04509706610011194
-CHC.initial indices of Commercial Maturity[Thermochem]:CHC.PY sensi multiplier[Brownfield],263,0.4004624415142425,0.1851333284335217
-OHC.PY sensi multiplier[HEFABrownfield]:CHC.progress ratios commercial[Thermochem],264,0.7491454706839898,0.122778781203792
-SE.Max Jet Investment Hit Rate:CHC.initial indices of Commercial Maturity[Thermochem],265,0.07008737820382172,0.04379087406524158
-WW.ORNOOC sensi multiplier[SludgeToHTL]:SE.FCI  sensi multiplier[Jet],266,0.9997200426391344,0.20597890837811425
-SE.Max Jet Investment Hit Rate:WW.initial indices of Commercial Maturity[ManureToHTL],267,0.01750993916725793,0.013126837186137458
-OHC.Retirement Frac[TransEster]:WW.ORNOOC sensi multiplier[ManureToHTL],268,0.07519244469541012,0.04519515631330912
-CHC.initial indices of Commercial Maturity[Brownfield]:WW.Mature Industry Rate of Return as PCT[SludgeToHTL],269,3.4863155488899515,2.3325496046858136
-AHC.FCI  sensi multiplier[HTL],270,1.0001288406361404,0.14398872495195061
-AHC.FCI  sensi multiplier[HEFA]:AHC.Debt Interest Rate as pct[HEFA],271,8.49334194292113,2.3834341590336057
-OHC.PY sensi multiplier[HEFABrownfield]:CHC.initial indices of Commercial Maturity[Brownfield],272,0.34884483348388273,0.21038300982794017
-SE.PY sensi multiplier[Jet]:WW.PY sensi multiplier[ManureToHTL],273,0.9995590579923809,0.2053397484608176
-SE.Max Jet Investment Hit Rate:OHC.progress ratios commercial[HEFA],274,0.13154493719376778,0.05558600720436882
-SE.Mature Industry Rate of Return as PCT[Jet]:SE.ORNOOC sensi multiplier[Jet],275,10.030970740554665,3.25507262034742
-SE.PY sensi multiplier[Jet]:CHC.progress ratios commercial[Thermochem],276,0.7499477373992606,0.12336451499428376
-AHC.Mature Industry Rate of Return as PCT[HTL]:AHC.initial indices of Commercial Maturity[HTL],277,1.00155974170101,0.6666341020138923
-SE.Mature Industry Rate of Return as PCT[Jet]:WW.ORNOOC sensi multiplier[SludgeToHTL],278,10.01470552981046,3.238810270444456
-SE.PY sensi multiplier[Jet]:CHC.Mature Industry Rate of Return as PCT[Thermochem],279,10.017571362196408,3.271098314915006
-WW.PY sensi multiplier[SludgeToHTL]:CHC.ORNOOC sensi multiplier[Thermochem],280,0.9995155980732476,0.2050310066815358
-"OHC.Policy Duration[Price,TransEster]",281,27.001496270315787,5.190743329306751
-OHC.Retirement Frac[TransEster]:SE.Max Jet Investment Hit Rate,282,0.013168341985212384,0.009853675138391646
-OHC.Retirement Frac[TransEster]:CHC.initial indices of Commercial Maturity[Thermochem],283,0.0300615448675157,0.022934515605537675
-SE.Max Jet Investment Hit Rate:CHC.PY sensi multiplier[Brownfield],284,0.1752303282726203,0.07725128418959189
-"OHC.Retirement Frac[TransEster]:OHC.Policy Duration[Price,TransEster]",285,2.0291524746311955,1.2539356828493382
-SE.Max Jet Investment Hit Rate:WW.ORNOOC sensi multiplier[SludgeToHTL],286,0.1753307454745598,0.07731204487944716
-OHC.PY sensi multiplier[HEFA]:AHC.PY sensi multiplier[HTL],287,1.0003924265620754,0.20472624673929246
-WW.PY sensi multiplier[SludgeToHTL]:SE.Mature Industry Rate of Return as PCT[Jet],288,10.007527113642377,3.2565699717236973
-AHC.PY sensi multiplier[HTL]:WW.ORNOOC sensi multiplier[SludgeToHTL],289,1.0008701916864249,0.20584738627602894
-WW.ORNOOC sensi multiplier[SludgeToHTL]:SE.ORNOOC sensi multiplier[Jet],290,1.00237120055136,0.20668259719799872
-SE.ORNOOC sensi multiplier[Jet]:SE.progress ratios commercial[Jet],291,0.750693381084129,0.12333063607266147
-inverse_WW.ORNOOC sensi multiplier[ManureToHTL],292,1.0214552863559132,0.15104912593783743
-"SE.Policy Duration[Price,Jet]",293,27.036589864982457,5.18376596551767
-WW.ORNOOC sensi multiplier[ManureToHTL],294,1.0001219229266667,0.14411996824086656
-WW.ORNOOC sensi multiplier[SludgeToHTL]:WW.initial indices of Commercial Maturity[SludgeToHTL],295,0.10035834549055449,0.06027552877378128
-AHC.Mature Industry Rate of Return as PCT[HEFA]:AHC.Debt Interest Rate as pct[HEFA],296,84.80372353051756,32.180785129953755
-OHC.Retirement Frac[TransEster]:WW.PY sensi multiplier[SludgeToHTL],297,0.07511711208459372,0.04517558040333409
-OHC.Retirement Frac[TransEster]:CHC.FCI  sensi multiplier[Thermochem],298,0.07520717118714738,0.045136358747912546
-CHC.Mature Industry Rate of Return as PCT[Brownfield]:SE.ORNOOC sensi multiplier[Jet],299,9.992456835607639,3.257513004531961
-OHC.PY sensi multiplier[HEFABrownfield]:WW.Mature Industry Rate of Return as PCT[SludgeToHTL],300,9.991901915263512,3.2470857398712316
-AHC.PY sensi multiplier[HTL]:AHC.ORNOOC sensi multiplier[HTL],301,1.0007726685788558,0.20500239867106496
-OHC.PY sensi multiplier[HEFA]:SE.FCI  sensi multiplier[Jet],302,0.9992540569642019,0.20533487820938337
-SE.Max Jet Investment Hit Rate:SE.ORNOOC sensi multiplier[Jet],303,0.17569524130038652,0.0777774154552765
-OHC.Retirement Frac[TransEster]:CHC.Mature Industry Rate of Return as PCT[Thermochem],304,0.7519154553556756,0.500396223469376
-OHC.PY sensi multiplier[HEFA]:SE.PY sensi multiplier[Jet],305,1.00092212348765,0.206576823126963
-SE.PY sensi multiplier[Jet]:CHC.FCI  sensi multiplier[Thermochem],306,1.0015360782862466,0.20666838734563536
-WW.ORNOOC sensi multiplier[SludgeToHTL]:OHC.progress ratios commercial[HEFA],307,0.7504779650470502,0.12351059269393107
-CHC.PY sensi multiplier[Thermochem]:SE.Mature Industry Rate of Return as PCT[Jet],308,10.018496363052408,3.257351409621362
-OHC.PY sensi multiplier[HEFABrownfield]:SE.ORNOOC sensi multiplier[Jet],309,1.0014042745553693,0.20578950131490217
-"OHC.PY sensi multiplier[HEFABrownfield]:OHC.Policy Duration[Price,HEFABrownfield]",310,27.004847996244433,6.525754439477613
-"SE.Max Jet Investment Hit Rate:OHC.Policy Duration[Price,HEFA]",311,4.736824988026276,2.196058734861242
-SE.Max Jet Investment Hit Rate:SE.initial indices of Commercial Maturity[Jet],312,0.052648577757496304,0.030893587261466918
-WW.progress ratios commercial[SludgeToHTL]:SE.Mature Industry Rate of Return as PCT[Jet],313,7.510693947569261,2.247399295052217
-inverse_OHC.progress ratios commercial[HEFA],314,1.3411830572877632,0.10387332930958063
-SE.ORNOOC sensi multiplier[Jet]:SE.FCI  sensi multiplier[Jet],315,1.0009109887531107,0.20573921550462584
-WW.ORNOOC sensi multiplier[SludgeToHTL]:WW.FCI  sensi multiplier[ManureToHTL],316,1.0023784837810898,0.20597978227010116
-SE.Debt Interest Rate as pct[Jet],317,8.486518319961405,2.0160516233384285
-AHC.FCI  sensi multiplier[HTL]:AHC.Debt Interest Rate as pct[HTL],318,8.495893794094966,2.3822442981544567
-AHC.PY sensi multiplier[HTL]:AHC.initial indices of Commercial Maturity[HTL],319,0.09997074580152877,0.06016531449518687
-OHC.PY sensi multiplier[HEFA]:CHC.initial indices of Commercial Maturity[Brownfield],320,0.3489475377666648,0.21029395168579307
-SE.PY sensi multiplier[Jet]:WW.ORNOOC sensi multiplier[ManureToHTL],321,1.0004965339590697,0.20443223907901847
-AHC.PY sensi multiplier[HTL]:WW.FCI  sensi multiplier[SludgeToHTL],322,1.0006135988197524,0.2050372572425326
-inverse_CHC.progress ratios commercial[Brownfield],323,1.3413787946320495,0.10435493408280037
-"SE.Mature Industry Rate of Return as PCT[Jet]:CHC.Policy Duration[Price,Thermochem]",324,270.4042801935599,94.77955471847379
-CHC.initial indices of Commercial Maturity[Thermochem]:SE.ORNOOC sensi multiplier[Jet],325,0.40122942031407444,0.18578545205822508
-WW.ORNOOC sensi multiplier[SludgeToHTL]:AHC.Mature Industry Rate of Return as PCT[HTL],326,10.032200972521727,3.257934118208454
-OHC.PY sensi multiplier[HEFABrownfield]:CHC.Mature Industry Rate of Return as PCT[Brownfield],327,9.971715455047864,3.251869339611141
-OHC.Retirement Frac[TransEster]:SE.ORNOOC sensi multiplier[Jet],328,0.07524368037197146,0.0451258950926605
-CHC.PY sensi multiplier[Thermochem]:SE.ORNOOC sensi multiplier[Jet],329,1.0019796167357533,0.20573723219257098
-CHC.progress ratios commercial[Brownfield],330,0.7499966519764911,0.057918892408623975
-WW.progress ratios commercial[ManureToHTL],331,0.7496982441382456,0.05762835229822759
-"SE.Mature Industry Rate of Return as PCT[Jet]:SE.Policy Duration[Price,Jet]",332,270.72822702526224,94.60691010110622
-OHC.PY sensi multiplier[HEFABrownfield]:WW.Mature Industry Rate of Return as PCT[ManureToHTL],333,10.003481338272758,3.2736819675513167
-"OHC.Retirement Frac[TransEster]:SE.Policy Duration[Price,Jet]",334,2.0326323418120325,1.2562061250532357
-OHC.Retirement Frac[TransEster]:CHC.Debt Interest Rate as pct[Thermochem],335,0.6381392114922323,0.40677928099725347
-WW.PY sensi multiplier[SludgeToHTL]:CHC.initial indices of Commercial Maturity[Brownfield],336,0.3485572861228749,0.20997678464412045
-inverse_CHC.initial indices of Commercial Maturity[Brownfield],337,15.478265939954161,334.87118494587315
-AHC.Mature Industry Rate of Return as PCT[HTL]:AHC.Debt Interest Rate as pct[HTL],338,85.1695217710078,32.29253448138478
-AHC.PY sensi multiplier[HTL]:SE.Debt Interest Rate as pct[Jet],339,8.490246979352131,2.380416655009762
-SE.Max Jet Investment Hit Rate:WW.FCI  sensi multiplier[ManureToHTL],340,0.17572619151886287,0.07767888960491592
-CHC.initial indices of Commercial Maturity[Brownfield]:SE.Mature Industry Rate of Return as PCT[Jet],341,3.498808345630673,2.342550718949593
-SE.Max Jet Investment Hit Rate:WW.FCI  sensi multiplier[SludgeToHTL],342,0.1753681209229777,0.07743632290223039
-WW.PY sensi multiplier[SludgeToHTL]:SE.PY sensi multiplier[Jet],343,0.9995033905344274,0.20460662026017673
-WW.Mature Industry Rate of Return as PCT[ManureToHTL]:CHC.initial indices of Commercial Maturity[Thermochem],344,4.004747599734223,2.152727307156164
-"WW.Policy Duration[Price,SludgeToHTL]",345,27.03918942414035,5.216205531107342
-WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:WW.initial indices of Commercial Maturity[ManureToHTL],346,0.9977638977341764,0.6640823905711905
-inverse_OHC.progress ratios commercial[HEFABrownfield],347,1.3408206463074084,0.10378882160344274
-AHC.PY sensi multiplier[HEFA]:AHC.Debt Interest Rate as pct[HEFA],348,8.50697867698858,2.4009544961677958
-WW.ORNOOC sensi multiplier[SludgeToHTL]:AHC.FCI  sensi multiplier[HTL],349,1.000647336968774,0.20535979970901586
-WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:CHC.Mature Industry Rate of Return as PCT[Brownfield],350,99.77409459641295,41.69702583585237
-SE.Mature Industry Rate of Return as PCT[Jet]:CHC.FCI  sensi multiplier[Thermochem],351,10.019577382448754,3.242856837773363
-WW.PY sensi multiplier[SludgeToHTL]:CHC.FCI  sensi multiplier[Brownfield],352,0.998712478612819,0.20582473927347122
-WW.progress ratios commercial[SludgeToHTL]:SE.ORNOOC sensi multiplier[Jet],353,0.7513217109349644,0.12396420394197875
-SE.PY sensi multiplier[Jet]:WW.FCI  sensi multiplier[ManureToHTL],354,1.0026180958276028,0.20639318232810827
-CHC.PY sensi multiplier[Thermochem]:SE.FCI  sensi multiplier[Jet],355,0.9992496710769169,0.20493370442750347
-AHC.PY sensi multiplier[HTL]:SE.Mature Industry Rate of Return as PCT[Jet],356,10.013653494291654,3.2409312959846055
-OHC.PY sensi multiplier[HEFABrownfield]:WW.ORNOOC sensi multiplier[SludgeToHTL],357,1.0000196365377387,0.20568542944628926
-OHC.Retirement Frac[TransEster]:OHC.ORNOOC sensi multiplier[HEFABrownfield],358,0.07514758291051482,0.04512683957610591
-WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:OHC.progress ratios commercial[HEFA],359,7.498186626316773,2.2413681185947443
-WW.Mature Industry Rate of Return as PCT[ManureToHTL]:SE.ORNOOC sensi multiplier[Jet],360,10.023944004643607,3.2759377967336376
-OHC.PY sensi multiplier[HEFABrownfield]:SE.PY sensi multiplier[Jet],361,1.0002514047566329,0.20623994890329606
-OHC.PY sensi multiplier[HEFA]:WW.FCI  sensi multiplier[SludgeToHTL],362,1.000256250864178,0.2043244946870115
-AHC.Mature Industry Rate of Return as PCT[HTL]:WW.initial indices of Commercial Maturity[SludgeToHTL],363,1.0064451691197918,0.6699500585258771
-OHC.PY sensi multiplier[HEFABrownfield]:WW.PY sensi multiplier[SludgeToHTL],364,0.9986161249099009,0.20503585459944115
-WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:CHC.progress ratios commercial[Brownfield],365,7.496654092657962,2.238931835862143
-OHC.PY sensi multiplier[HEFA]:SE.initial indices of Commercial Maturity[Jet],366,0.3003884950188261,0.12438084806180891
-OHC.Mature Industry Rate of Return as PCT[HEFABrownfield],367,9.992799852557894,2.88930170326643
-log1p_OHC.Mature Industry Rate of Return as PCT[HEFA],368,2.361568815460825,0.27550756587075054
-WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:WW.Debt Interest Rate as pct[SludgeToHTL],369,84.93564003316695,32.29405237563232
-SE.ORNOOC sensi multiplier[Jet]:WW.initial indices of Commercial Maturity[SludgeToHTL],370,0.10042620861025538,0.0601489690870251
-AHC.PY sensi multiplier[HTL]:CHC.Mature Industry Rate of Return as PCT[Thermochem],371,10.009926458015379,3.2539800405699935
-SE.Mature Industry Rate of Return as PCT[Jet]:CHC.Mature Industry Rate of Return as PCT[Brownfield],372,99.88328829356459,41.50626022008109
-SE.Mature Industry Rate of Return as PCT[Jet]:WW.FCI  sensi multiplier[SludgeToHTL],373,10.0161799291255,3.246213536457354
-SE.ORNOOC sensi multiplier[Jet]:WW.FCI  sensi multiplier[ManureToHTL],374,1.0035521628860373,0.20557492281033962
-AHC.PY sensi multiplier[HTL]:CHC.ORNOOC sensi multiplier[Thermochem],375,1.000857177245384,0.20553896295939655
-"WW.PY sensi multiplier[ManureToHTL]:WW.Policy Duration[Price,SludgeToHTL]",376,27.005757962178595,6.525483236144253
-"CHC.Policy Duration[Price,Thermochem]",377,26.99808421312281,5.184639730591307
-CHC.initial indices of Commercial Maturity[Brownfield]:WW.FCI  sensi multiplier[SludgeToHTL],378,0.34881889070075794,0.20993774533019674
-SE.PY sensi multiplier[Jet]:CHC.initial indices of Commercial Maturity[Thermochem],379,0.4004246329901427,0.18478386739952563
-SE.Max Jet Investment Hit Rate:OHC.FCI  sensi multiplier[HEFA],380,0.17509552968075748,0.0772550258239991
-OHC.PY sensi multiplier[HEFABrownfield]:WW.PY sensi multiplier[ManureToHTL],381,0.9986344737617476,0.20532828631843209
-AHC.PY sensi multiplier[HTL]:CHC.initial indices of Commercial Maturity[Brownfield],382,0.34926660506058343,0.2103725691157387
-WW.PY sensi multiplier[ManureToHTL]:CHC.initial indices of Commercial Maturity[Thermochem],383,0.39996235060052926,0.18451093966358065
-OHC.Retirement Frac[TransEster]:WW.PY sensi multiplier[ManureToHTL],384,0.07511907914753463,0.04513078221770045
-OHC.PY sensi multiplier[HEFABrownfield]:SE.initial indices of Commercial Maturity[Jet],385,0.3002135831241081,0.12421757303997646
-CHC.initial indices of Commercial Maturity[Brownfield]:WW.ORNOOC sensi multiplier[SludgeToHTL],386,0.34906659973633886,0.21042590137642056
-SE.PY sensi multiplier[Jet]:WW.ORNOOC sensi multiplier[SludgeToHTL],387,1.001049465138592,0.2059276469197329
-CHC.initial indices of Commercial Maturity[Thermochem]:AHC.initial indices of Commercial Maturity[HTL],388,0.03994796974457376,0.030529414934796596
-AHC.PY sensi multiplier[HTL]:CHC.FCI  sensi multiplier[Thermochem],389,1.0010656606928043,0.2049879608055888
-OHC.Retirement Frac[TransEster]:SE.Mature Industry Rate of Return as PCT[Jet],390,0.7516479483132854,0.4988033479929047
-CHC.initial indices of Commercial Maturity[Brownfield]:SE.FCI  sensi multiplier[Jet],391,0.3488729986341875,0.21035769916491823
-WW.Mature Industry Rate of Return as PCT[ManureToHTL]:CHC.PY sensi multiplier[Brownfield],392,10.005093937113648,3.2638244125715636
-SE.PY sensi multiplier[Jet]:WW.Mature Industry Rate of Return as PCT[ManureToHTL],393,10.007302499473802,3.261741869512774
-SE.Max Jet Investment Hit Rate:OHC.Mature Industry Rate of Return as PCT[HEFA],394,1.7538399370452014,0.9073553255018061
-OHC.Retirement Frac[TransEster]:SE.PY sensi multiplier[Jet],395,0.0752575858501994,0.045254036462515676
-WW.ORNOOC sensi multiplier[SludgeToHTL]:SE.initial indices of Commercial Maturity[Jet],396,0.30051081680626046,0.1245082334162029
-CHC.Mature Industry Rate of Return as PCT[Biochem]:CHC.PY sensi multiplier[Thermochem],397,9.968809281978194,3.2663542589579517
-CHC.initial indices of Commercial Maturity[Brownfield]:WW.Mature Industry Rate of Return as PCT[ManureToHTL],398,3.488224411760755,2.3316609114596636
-SE.Mature Industry Rate of Return as PCT[Jet]:CHC.progress ratios commercial[Thermochem],399,7.5052470046310695,2.238655474282761
-WW.ORNOOC sensi multiplier[SludgeToHTL]:WW.initial indices of Commercial Maturity[ManureToHTL],400,0.10001504343212146,0.06012266447854029
-WW.PY sensi multiplier[ManureToHTL]:SE.Mature Industry Rate of Return as PCT[Jet],401,10.000775777902234,3.2376337120279657
-CHC.Mature Industry Rate of Return as PCT[Thermochem]:SE.ORNOOC sensi multiplier[Jet],402,10.021513729465635,3.2517231012630843
-WW.Mature Industry Rate of Return as PCT[ManureToHTL]:SE.initial indices of Commercial Maturity[Jet],403,3.0038480686275872,1.4806399140834126
-CHC.PY sensi multiplier[Thermochem]:SE.initial indices of Commercial Maturity[Jet],404,0.30013398064830493,0.12361756980674125
-CHC.progress ratios commercial[Thermochem],405,0.7494941847042105,0.057737342616071455
-SE.PY sensi multiplier[Jet]:WW.progress ratios commercial[SludgeToHTL],406,0.7503309532774093,0.12329775684245864
-WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:OHC.Mature Industry Rate of Return as PCT[HEFA],407,99.99431623625478,41.49014986358829
-OHC.PY sensi multiplier[HEFA]:WW.ORNOOC sensi multiplier[ManureToHTL],408,1.0002348513647885,0.20500769511881856
-SE.progress ratios commercial[Jet]_squared,409,0.5648637130662624,0.08673056748648304
-CHC.Mature Industry Rate of Return as PCT[Thermochem]:SE.initial indices of Commercial Maturity[Jet],410,3.005430242073381,1.4841945383267234
-WW.Mature Industry Rate of Return as PCT[ManureToHTL]:SE.FCI  sensi multiplier[Jet],411,10.001546874955872,3.28435624530024
-"OHC.Policy Duration[Price,HEFABrownfield]",412,27.014716965578945,5.180465851079129
-"OHC.PY sensi multiplier[HEFA]:WW.Policy Duration[Price,SludgeToHTL]",413,27.045400619303848,6.572277867463515
-WW.FCI  sensi multiplier[SludgeToHTL]:CHC.Debt Interest Rate as pct[Thermochem],414,8.500643249618687,2.378218793098253
-"WW.progress ratios commercial[SludgeToHTL]:WW.Policy Duration[Price,SludgeToHTL]",415,20.274895797056814,4.215280968391416
-SE.PY sensi multiplier[Jet]:CHC.PY sensi multiplier[Brownfield],416,1.0006359847328123,0.20513597751888626
-SE.Max Jet Investment Hit Rate:OHC.ORNOOC sensi multiplier[HEFA],417,0.17545962474564994,0.0776455909674255
-OHC.Retirement Frac[TransEster]:CHC.initial indices of Commercial Maturity[Brownfield],418,0.026398259195969706,0.023321370124373964
-WW.Mature Industry Rate of Return as PCT[ManureToHTL]:CHC.Mature Industry Rate of Return as PCT[Brownfield],419,99.8943950835536,41.94075680902612
-OHC.PY sensi multiplier[HEFABrownfield]:WW.initial indices of Commercial Maturity[ManureToHTL],420,0.09989963365026054,0.060082862346789834
-SE.FCI  sensi multiplier[Jet]:SE.progress ratios commercial[Jet],421,0.7486227934720112,0.12255145554152252
-AHC.PY sensi multiplier[HTL]:SE.PY sensi multiplier[Jet],422,1.0007540802721013,0.20490442250619437
-CHC.initial indices of Commercial Maturity[Brownfield]:WW.PY sensi multiplier[ManureToHTL],423,0.3486513167473217,0.2102782242666775
-OHC.Retirement Frac[TransEster]:CHC.Mature Industry Rate of Return as PCT[Biochem],424,0.7486060890302373,0.4996675259901931
-WW.progress ratios commercial[SludgeToHTL]:CHC.progress ratios commercial[Thermochem],425,0.5620354785462763,0.061297997645040105
-OHC.PY sensi multiplier[HEFABrownfield]:SE.FCI  sensi multiplier[Jet],426,0.9988282848485974,0.20579729817317735
-inverse_SE.initial indices of Commercial Maturity[Jet],427,4.019895695962732,1.9569294012053715
-SE.progress ratios commercial[Jet],428,0.7493481347452632,0.05780212816200931
-SE.Mature Industry Rate of Return as PCT[Jet]:AHC.initial indices of Commercial Maturity[HTL],429,1.001393369014983,0.6680145946521071
-WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:SE.ORNOOC sensi multiplier[Jet],430,10.01372483986064,3.2530596448275704
-SE.PY sensi multiplier[Jet]:WW.Mature Industry Rate of Return as PCT[SludgeToHTL],431,10.003436207433685,3.2564646811814573
-WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:SE.initial indices of Commercial Maturity[Jet],432,2.9978698997103552,1.471324995318888
-OHC.PY sensi multiplier[HEFA]:SE.Mature Industry Rate of Return as PCT[Jet],433,10.012554176082116,3.240791176819102
-SE.Mature Industry Rate of Return as PCT[Jet]:CHC.initial indices of Commercial Maturity[Thermochem],434,4.005811779792937,2.136643569745674
-"CHC.Policy Duration[Price,Brownfield]",435,26.985339436280704,5.202213964673644
-SE.initial indices of Commercial Maturity[Jet]:WW.initial indices of Commercial Maturity[SludgeToHTL],436,0.030112671850490953,0.0219127484987282
-OHC.Retirement Frac[TransEster]:SE.initial indices of Commercial Maturity[Jet],437,0.022582337998358463,0.016430963739570238
-OHC.Retirement Frac[TransEster]:WW.Mature Industry Rate of Return as PCT[ManureToHTL],438,0.7501944717888434,0.4985630539212154
-WW.FCI  sensi multiplier[ManureToHTL]:SE.initial indices of Commercial Maturity[Jet],439,0.3010165809060832,0.12481505043356576
-"SE.Mature Industry Rate of Return as PCT[Jet]:OHC.Policy Duration[Price,TransEster]",440,270.34064420248757,94.63111400729518
-WW.initial indices of Commercial Maturity[ManureToHTL]:SE.initial indices of Commercial Maturity[Jet],441,0.03005089801081572,0.021954791738362144
-WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:SE.Mature Industry Rate of Return as PCT[Jet],442,100.17451392766706,41.74775576847853
-"SE.PY sensi multiplier[Jet]:SE.Policy Duration[Price,Jet]",443,27.055753860155896,6.552825815572172
-SE.Mature Industry Rate of Return as PCT[Jet]:WW.ORNOOC sensi multiplier[ManureToHTL],444,10.012467011367992,3.2364400255026795
-OHC.Retirement Frac[TransEster]:SE.FCI  sensi multiplier[Jet],445,0.07508933953301836,0.04508266774418469
-CHC.Mature Industry Rate of Return as PCT[Brownfield]:SE.initial indices of Commercial Maturity[Jet],446,2.995868620532702,1.4783727703354081
-OHC.Retirement Frac[TransEster]:AHC.initial indices of Commercial Maturity[HTL],447,0.007514739597577916,0.0066275501952929436
-OHC.PY sensi multiplier[HEFABrownfield]:SE.Mature Industry Rate of Return as PCT[Jet],448,10.007204422961765,3.2402149452911466
-SE.Max Jet Investment Hit Rate:AHC.initial indices of Commercial Maturity[HTL],449,0.01754105087127314,0.013128691127851406
-inverse_SE.Mature Industry Rate of Return as PCT[Jet],450,0.10960514685458216,0.035276683420768735
-inverse_CHC.Debt Interest Rate as pct[Thermochem],451,0.12506550815128953,0.031923720483750105
-AHC.PY sensi multiplier[HTL]:SE.ORNOOC sensi multiplier[Jet],452,1.0019687716601244,0.20482999285973474
-AHC.PY sensi multiplier[HTL]:SE.initial indices of Commercial Maturity[Jet],453,0.30039219389550814,0.12445695027388416
-"WW.PY sensi multiplier[ManureToHTL]:CHC.Policy Duration[Price,Thermochem]",454,26.968739005638895,6.514718754865354
-CHC.initial indices of Commercial Maturity[Brownfield]:SE.ORNOOC sensi multiplier[Jet],455,0.3498335860215079,0.2111375412711867
-OHC.FCI  sensi multiplier[HEFA]:OHC.Mature Industry Rate of Return as PCT[HEFABrownfield],456,9.985867476997726,3.2611924247772106
-WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:CHC.PY sensi multiplier[Brownfield],457,9.99514860816784,3.237095430046827
-"OHC.Mature Industry Rate of Return as PCT[HEFA]:OHC.Policy Duration[Price,HEFA]",458,270.13281235710696,94.6940408442332
-AHC.PY sensi multiplier[HTL]:OHC.progress ratios commercial[HEFA],459,0.7502900994089007,0.12277349255487675
-CHC.Mature Industry Rate of Return as PCT[Thermochem]:SE.Mature Industry Rate of Return as PCT[Jet],460,100.1774487794557,41.631183026052874
-CHC.Mature Industry Rate of Return as PCT[Biochem]:WW.FCI  sensi multiplier[ManureToHTL],461,9.98352726171261,3.2606720357017
-OHC.PY sensi multiplier[HEFA]:WW.initial indices of Commercial Maturity[SludgeToHTL],462,0.10023651439102471,0.06003088638281891
-WW.Debt Interest Rate as pct[SludgeToHTL],463,8.497569028968421,2.0232948127584307
-AHC.PY sensi multiplier[HTL]:CHC.initial indices of Commercial Maturity[Thermochem],464,0.4006676492679529,0.1853800823321983
-CHC.Debt Interest Rate as pct[Biochem],465,8.488047372361404,2.0151909383359103
-SE.PY sensi multiplier[Jet]:WW.initial indices of Commercial Maturity[ManureToHTL],466,0.09999688544998603,0.06020573723483508
-inverse_OHC.Retirement Frac[TransEster],467,93.7113938884176,3458.7759720929803
-CHC.initial indices of Commercial Maturity[Brownfield]:SE.initial indices of Commercial Maturity[Jet],468,0.10480637057607026,0.07643912717814559
-OHC.PY sensi multiplier[HEFA]:WW.Mature Industry Rate of Return as PCT[ManureToHTL],469,10.002824628919038,3.256399522083024
-"WW.progress ratios commercial[SludgeToHTL]:OHC.Policy Duration[Price,HEFA]",470,20.252206660720944,4.205791277565292
-WW.Mature Industry Rate of Return as PCT[ManureToHTL]:SE.Mature Industry Rate of Return as PCT[Jet],471,100.15048475584038,41.59058411508103
-WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:WW.FCI  sensi multiplier[ManureToHTL],472,10.016840101685046,3.25713656562606
-inverse_AHC.FCI  sensi multiplier[HTL],473,1.0213979688055816,0.15081839026578953
-inverse_AHC.Mature Industry Rate of Return as PCT[HTL],474,0.10955030500567738,0.03549844518681308
-WW.PY sensi multiplier[ManureToHTL]:SE.initial indices of Commercial Maturity[Jet],475,0.3000433347790784,0.12420404766297126
-OHC.Retirement Frac[TransEster]:WW.initial indices of Commercial Maturity[ManureToHTL],476,0.007540410527059986,0.0066716737042810895
-CHC.Debt Interest Rate as pct[Brownfield],477,8.495774095312282,2.025840810206319
-"OHC.Policy Duration[FCI,HEFABrownfield]",478,19.01303188568421,5.195171388684308
-AHC.Debt Interest Rate as pct[HEFA],479,8.502680111473683,2.029460239875645
-AHC.Mature Industry Rate of Return as PCT[HEFA],480,9.980824382782457,2.8909820228865843
-inverse_OHC.ORNOOC sensi multiplier[HEFABrownfield],481,1.0220656694683297,0.15157976793337108
-CHC.initial indices of Commercial Maturity[Thermochem]:SE.initial indices of Commercial Maturity[Jet],482,0.12034483183871934,0.07274507880766566
-OHC.Retirement Frac[TransEster]:WW.FCI  sensi multiplier[ManureToHTL],483,0.07531448021200135,0.04517909378737793
-OHC.PY sensi multiplier[HEFA]:AHC.initial indices of Commercial Maturity[HTL],484,0.09995070851122954,0.060133312630711075
-SE.PY sensi multiplier[Jet]:CHC.Mature Industry Rate of Return as PCT[Brownfield],485,9.979864240131974,3.248806486824356
-CHC.Mature Industry Rate of Return as PCT[Thermochem]:SE.FCI  sensi multiplier[Jet],486,9.999795537406897,3.2599707270096103
-inverse_CHC.initial indices of Commercial Maturity[Biochem],487,60.073919291211865,1446.4420571874618
-AHC.PY sensi multiplier[HTL]:CHC.PY sensi multiplier[Thermochem],488,1.0007322116820723,0.20627724304611764
-CHC.Debt Interest Rate as pct[Biochem]_squared,489,76.10794271340251,34.437255011064345
-SE.Mature Industry Rate of Return as PCT[Jet]:WW.initial indices of Commercial Maturity[SludgeToHTL],490,1.003523339018333,0.6665583294656189
-SE.initial indices of Commercial Maturity[Jet]:WW.FCI  sensi multiplier[SludgeToHTL],491,0.3004057288690794,0.1243083179047078
-OHC.PY sensi multiplier[HEFABrownfield]:CHC.PY sensi multiplier[Brownfield],492,0.9998899850570275,0.20588823915178844
-inverse_AHC.FCI  sensi multiplier[HEFA],493,1.0226269874679268,0.15100025233387088
-WW.progress ratios commercial[ManureToHTL]_squared,494,0.5653684842525772,0.08647059733050085
-"SE.Policy Duration[Price,Jet]_squared",495,757.8486211125315,280.9895845531873
-WW.PY sensi multiplier[SludgeToHTL]:CHC.PY sensi multiplier[Brownfield],496,0.9990532236974717,0.20408015664724974
-SE.Mature Industry Rate of Return as PCT[Jet]:WW.initial indices of Commercial Maturity[ManureToHTL],497,1.0012288587218574,0.6682391317215789
-AHC.Debt Interest Rate as pct[HTL],498,8.49468021525614,2.022321426767628
-WW.FCI  sensi multiplier[ManureToHTL],499,1.001859211531579,0.14425378251697393
-SE.Mature Industry Rate of Return as PCT[Jet]:WW.FCI  sensi multiplier[ManureToHTL],500,10.02951361536252,3.240537616213915
-SE.FCI  sensi multiplier[Jet]:WW.ORNOOC sensi multiplier[ManureToHTL],501,0.9992648959242573,0.20503344604317247
-"WW.Policy Duration[Price,ManureToHTL]",502,27.000311381684213,5.204744532741646
-inverse_SE.FCI  sensi multiplier[Jet],503,1.0226064208971535,0.15164731825085404
-CHC.initial indices of Commercial Maturity[Thermochem]:SE.FCI  sensi multiplier[Jet],504,0.4002038959868731,0.18537061454027823
-CHC.initial indices of Commercial Maturity[Brownfield]:SE.PY sensi multiplier[Jet],505,0.3491100691200371,0.21033419440701434
+CHC.Mature Industry Rate of Return as PCT[Biochem]:CHC.PY sensi multiplier[Biochem],44,9.979172221846293,3.2613115663676204
+CHC.Mature Industry Rate of Return as PCT[Biochem],45,9.967324934021054,2.9015704386300665
+OHC.PY sensi multiplier[HEFA]:OHC.FCI  sensi multiplier[HEFA],46,0.999273789249304,0.20573989215683586
+OHC.Retirement Frac[TransEster]:OHC.PY sensi multiplier[HEFABrownfield],47,0.0751581177644348,0.045185744037776074
+OHC.progress ratios commercial[HEFA],48,0.7500648456185964,0.05765174828664809
+WW.Mature Industry Rate of Return as PCT[ManureToHTL]:WW.ORNOOC sensi multiplier[ManureToHTL],49,10.00505446051044,3.2643946348682547
+WW.PY sensi multiplier[ManureToHTL]:WW.FCI  sensi multiplier[ManureToHTL],50,1.0008654817546436,0.20525152521910323
+WW.Mature Industry Rate of Return as PCT[ManureToHTL]_squared,51,108.44451718532605,58.430659920620315
+WW.Mature Industry Rate of Return as PCT[ManureToHTL]:WW.FCI  sensi multiplier[ManureToHTL],52,10.021515560500054,3.2692994945707547
+OHC.Retirement Frac[TransEster],53,0.07516615773637836,0.043369407664100856
+CHC.initial indices of Commercial Maturity[Thermochem]_squared,54,0.19048105355851308,0.14147845653555996
+CHC.Mature Industry Rate of Return as PCT[Biochem]:CHC.initial indices of Commercial Maturity[Biochem],55,0.9979287913260906,0.6638242280315388
+CHC.PY sensi multiplier[Thermochem]:WW.Mature Industry Rate of Return as PCT[SludgeToHTL],56,9.997166940402705,3.245203228698056
+CHC.initial indices of Commercial Maturity[Thermochem],57,0.40033407730814036,0.17382082759080678
+CHC.initial indices of Commercial Maturity[Brownfield],58,0.3489870540410871,0.2021823033518388
+inverse_WW.Mature Industry Rate of Return as PCT[SludgeToHTL],59,0.10986815024059157,0.03550279997433679
+OHC.FCI  sensi multiplier[HEFA],60,0.9990366821424561,0.1442810325932997
+inverse_SE.Max Jet Investment Hit Rate,61,7.15970634719178,3.909002132097047
+SE.Max Jet Investment Hit Rate,62,0.1753006599412281,0.07243194258691267
+WW.PY sensi multiplier[SludgeToHTL]:AHC.initial indices of Commercial Maturity[HTL],63,0.09976598238186207,0.05997617138217105
+SE.Max Jet Investment Hit Rate:SE.PY sensi multiplier[Jet],64,0.1754239336068596,0.07757250145317031
+WW.Mature Industry Rate of Return as PCT[ManureToHTL]:WW.initial indices of Commercial Maturity[ManureToHTL],65,1.0000574542292007,0.6676830450519803
+CHC.initial indices of Commercial Maturity[Biochem],66,0.10028020245648346,0.057773867423878904
+WW.ORNOOC sensi multiplier[ManureToHTL],67,1.0001219229266667,0.14411996824086656
+WW.initial indices of Commercial Maturity[ManureToHTL],68,0.0999511531328765,0.05778900148215158
+"WW.PY sensi multiplier[ManureToHTL]:WW.Policy Duration[Price,ManureToHTL]",69,26.972572582096237,6.540423880138736
+CHC.initial indices of Commercial Maturity[Biochem]:CHC.FCI  sensi multiplier[Biochem],70,0.10026953101704975,0.06022224359779692
+inverse_CHC.Mature Industry Rate of Return as PCT[Brownfield],71,0.11017637928603943,0.0357040511583978
+inverse_SE.PY sensi multiplier[Jet],72,1.0211659565298155,0.15158839035878469
+AHC.Mature Industry Rate of Return as PCT[HTL],73,10.027466178698244,2.8883136748897704
+CHC.Mature Industry Rate of Return as PCT[Biochem]_squared,74,107.76667735068966,58.32175383853125
+inverse_CHC.FCI  sensi multiplier[Thermochem],75,1.020848123896962,0.15117483471416482
+CHC.FCI  sensi multiplier[Brownfield],76,0.9995022393922807,0.144494001712729
+SE.Mature Industry Rate of Return as PCT[Jet],77,10.012880398533333,2.875425872992772
+WW.Mature Industry Rate of Return as PCT[ManureToHTL],78,10.002889800052632,2.8959821880199925
+WW.FCI  sensi multiplier[ManureToHTL],79,1.001859211531579,0.14425378251697393
+CHC.PY sensi multiplier[Brownfield],80,1.0001274816435088,0.1440874466417765
+SE.ORNOOC sensi multiplier[Jet],81,1.0017456504452633,0.14459639729994844
+AHC.initial indices of Commercial Maturity[HTL]:WW.initial indices of Commercial Maturity[SludgeToHTL],82,0.010012025330889076,0.008833291942126707
+AHC.Mature Industry Rate of Return as PCT[HEFA],83,9.980824382782457,2.8909820228865843
+"WW.Policy Duration[Price,ManureToHTL]",84,27.000311381684213,5.204744532741646
+AHC.FCI  sensi multiplier[HTL],85,1.0001288406361404,0.14398872495195061
+CHC.progress ratios commercial[Thermochem],86,0.7494941847042105,0.057737342616071455
+inverse_WW.FCI  sensi multiplier[SludgeToHTL],87,1.021204487440078,0.1505129813405529
+SE.FCI  sensi multiplier[Jet],88,0.9991378287645614,0.14450827270445124
+SE.PY sensi multiplier[Jet],89,1.0005616195842106,0.1446616850118726
+AHC.FCI  sensi multiplier[HEFA],90,0.9989457157982455,0.1439421554496214
+OHC.ORNOOC sensi multiplier[HEFA],91,1.000559502554386,0.1451678589393609
+CHC.progress ratios commercial[Thermochem]:OHC.progress ratios commercial[HEFA],92,0.5621734353031856,0.061303127955459336
+WW.progress ratios commercial[ManureToHTL],93,0.7496982441382456,0.05762835229822759
+OHC.ORNOOC sensi multiplier[HEFABrownfield],94,0.9996543236536841,0.1444899792994115
+inverse_WW.ORNOOC sensi multiplier[ManureToHTL],95,1.0214552863559132,0.15104912593783743
+OHC.PY sensi multiplier[HEFABrownfield]:WW.PY sensi multiplier[ManureToHTL],96,0.9986344737617476,0.20532828631843209
+CHC.progress ratios commercial[Brownfield],97,0.7499966519764911,0.057918892408623975
+CHC.Debt Interest Rate as pct[Thermochem],98,8.497205274185966,2.015027539275475
+SE.Max Jet Investment Hit Rate:OHC.progress ratios commercial[HEFA],99,0.13154493719376778,0.05558600720436882
+SE.progress ratios commercial[Jet]_squared,100,0.5648637130662624,0.08673056748648304
+CHC.ORNOOC sensi multiplier[Thermochem],101,1.0004626546610527,0.1443898507073775
+WW.PY sensi multiplier[SludgeToHTL]:CHC.FCI  sensi multiplier[Brownfield],102,0.998712478612819,0.20582473927347122
+inverse_WW.ORNOOC sensi multiplier[SludgeToHTL],103,1.0212906271526019,0.15172206365748722
+"OHC.Policy Duration[Price,HEFA]",104,27.007608131754385,5.198464812190672
+CHC.FCI  sensi multiplier[Biochem],105,0.9993646965245614,0.14461139270020235
+log1p_OHC.Mature Industry Rate of Return as PCT[HEFA],106,2.361568815460825,0.27550756587075054
+OHC.PY sensi multiplier[HEFABrownfield]:OHC.ORNOOC sensi multiplier[HEFABrownfield],107,0.9990935283646841,0.2045632274058826
+inverse_AHC.FCI  sensi multiplier[HTL],108,1.0213979688055816,0.15081839026578953
+OHC.ORNOOC sensi multiplier[HEFABrownfield]:SE.progress ratios commercial[Jet],109,0.7490575451062581,0.12285879985322906
+"SE.Policy Duration[Price,Jet]",110,27.036589864982457,5.18376596551767
+CHC.PY sensi multiplier[Biochem],111,1.001205358348421,0.1439224712223377
+OHC.PY sensi multiplier[HEFABrownfield]:CHC.progress ratios commercial[Brownfield],112,0.7496512922803009,0.12292259969446026
+inverse_OHC.progress ratios commercial[HEFABrownfield],113,1.3408206463074084,0.10378882160344274
+"CHC.Policy Duration[Price,Thermochem]",114,26.99808421312281,5.184639730591307
+OHC.progress ratios commercial[HEFABrownfield],115,0.7502631872150878,0.05764287793469096
+CHC.Mature Industry Rate of Return as PCT[Brownfield]:SE.progress ratios commercial[Jet],116,7.475555887321108,2.2452741568068584
+"OHC.Policy Duration[Price,HEFABrownfield]",117,27.014716965578945,5.180465851079129
+"OHC.progress ratios commercial[HEFA]:CHC.Policy Duration[Price,Thermochem]",118,20.250055340233217,4.199169885929258
+"CHC.FCI  sensi multiplier[Thermochem]:CHC.Policy Duration[Price,Thermochem]",119,27.015764618269337,6.5270102879124545
+inverse_OHC.progress ratios commercial[HEFA],120,1.3411830572877632,0.10387332930958063
+CHC.PY sensi multiplier[Brownfield]:CHC.ORNOOC sensi multiplier[Thermochem],121,1.000803339259732,0.20602235291612156
+inverse_OHC.ORNOOC sensi multiplier[HEFABrownfield],122,1.0220656694683297,0.15157976793337108
+sqrt_CHC.progress ratios commercial[Thermochem],123,0.8650893629430951,0.033385308549123985
+"WW.progress ratios commercial[SludgeToHTL]:CHC.Policy Duration[Price,Thermochem]",124,20.24526757116596,4.196696144934319
+SE.progress ratios commercial[Jet],125,0.7493481347452632,0.05780212816200931
+inverse_CHC.progress ratios commercial[Brownfield],126,1.3413787946320495,0.10435493408280037
+CHC.FCI  sensi multiplier[Biochem]:OHC.ORNOOC sensi multiplier[HEFABrownfield],127,0.9990091171303038,0.20523232184195522
+"SE.Policy Duration[Price,Jet]_squared",128,757.8486211125315,280.9895845531873
+CHC.Debt Interest Rate as pct[Biochem],129,8.488047372361404,2.0151909383359103
+inverse_AHC.FCI  sensi multiplier[HEFA],130,1.0226269874679268,0.15100025233387088
+WW.progress ratios commercial[ManureToHTL]_squared,131,0.5653684842525772,0.08647059733050085

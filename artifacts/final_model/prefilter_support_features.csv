@@ -1,507 +1,173 @@
 final_support_position,feature_name,feature_type,origin,full_support_importance,stability_selection_frequency,final_stable_support
-0,OHC.PY sensi multiplier[HEFA],numeric,model_factors,7.482861172399176,1.0,True
-1,WW.PY sensi multiplier[SludgeToHTL],numeric,model_factors,5.949578226198354,1.0,True
-2,WW.PY sensi multiplier[SludgeToHTL]:WW.progress ratios commercial[SludgeToHTL],interaction,dynamic_discovery,3.6382728841360965,1.0,True
-3,sqrt_AHC.PY sensi multiplier[HEFA],transformation,dynamic_discovery,3.6225836276095706,1.0,True
-4,inverse_OHC.PY sensi multiplier[HEFA],transformation,dynamic_discovery,3.606653141829041,1.0,True
-5,WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:WW.progress ratios commercial[SludgeToHTL],interaction,dynamic_discovery,3.451085792483578,1.0,True
-6,WW.PY sensi multiplier[ManureToHTL],numeric,model_factors,3.273331530935265,1.0,True
-7,CHC.PY sensi multiplier[Thermochem],numeric,model_factors,3.2382432342748757,1.0,True
-8,sqrt_AHC.PY sensi multiplier[HTL],transformation,dynamic_discovery,3.1347759891381846,1.0,True
-9,AHC.PY sensi multiplier[HEFA],numeric,model_factors,2.897081676358242,1.0,True
-10,OHC.PY sensi multiplier[HEFABrownfield]:OHC.PY sensi multiplier[HEFA],interaction,dynamic_discovery,2.7336531173174095,1.0,True
-11,AHC.PY sensi multiplier[HTL],numeric,model_factors,2.7248212312013775,1.0,True
-12,CHC.PY sensi multiplier[Thermochem]:CHC.Mature Industry Rate of Return as PCT[Thermochem],interaction,dynamic_discovery,2.708705081078895,1.0,True
-13,WW.PY sensi multiplier[SludgeToHTL]:WW.Mature Industry Rate of Return as PCT[SludgeToHTL],interaction,dynamic_discovery,2.139933842089484,1.0,True
-14,CHC.PY sensi multiplier[Thermochem]:CHC.initial indices of Commercial Maturity[Thermochem],interaction,dynamic_discovery,2.061452555596506,1.0,True
-15,CHC.initial indices of Commercial Maturity[Brownfield]:CHC.PY sensi multiplier[Brownfield],interaction,dynamic_discovery,1.9570724920943763,1.0,True
-16,WW.PY sensi multiplier[ManureToHTL]:WW.Mature Industry Rate of Return as PCT[ManureToHTL],interaction,dynamic_discovery,1.8390275569673635,1.0,True
-17,WW.Mature Industry Rate of Return as PCT[SludgeToHTL],numeric,model_factors,1.768033714620752,1.0,True
-18,CHC.PY sensi multiplier[Thermochem]:CHC.FCI  sensi multiplier[Thermochem],interaction,dynamic_discovery,1.7220122986011173,1.0,True
-19,CHC.initial indices of Commercial Maturity[Brownfield]:CHC.Mature Industry Rate of Return as PCT[Brownfield],interaction,dynamic_discovery,1.6910192207890848,1.0,True
-20,OHC.PY sensi multiplier[HEFA]:OHC.progress ratios commercial[HEFA],interaction,dynamic_discovery,1.535138020422767,1.0,True
-21,CHC.PY sensi multiplier[Thermochem]:CHC.progress ratios commercial[Thermochem],interaction,dynamic_discovery,1.2892799688054624,1.0,True
-22,CHC.Mature Industry Rate of Return as PCT[Thermochem]:CHC.FCI  sensi multiplier[Thermochem],interaction,dynamic_discovery,1.2875053784004171,1.0,True
-23,WW.progress ratios commercial[SludgeToHTL]:WW.FCI  sensi multiplier[SludgeToHTL],interaction,dynamic_discovery,1.2718479314009046,1.0,True
-24,CHC.Mature Industry Rate of Return as PCT[Thermochem]:CHC.progress ratios commercial[Thermochem],interaction,dynamic_discovery,1.168835845800093,1.0,True
-25,CHC.Mature Industry Rate of Return as PCT[Thermochem]:CHC.initial indices of Commercial Maturity[Thermochem],interaction,dynamic_discovery,1.1349534764659377,1.0,True
-26,inverse_WW.PY sensi multiplier[ManureToHTL],transformation,dynamic_discovery,1.1303618377318974,1.0,True
-27,CHC.initial indices of Commercial Maturity[Brownfield]:CHC.FCI  sensi multiplier[Brownfield],interaction,dynamic_discovery,1.0224777670787617,1.0,True
-28,inverse_WW.PY sensi multiplier[SludgeToHTL],transformation,dynamic_discovery,1.016251654079913,1.0,True
-29,OHC.Retirement Frac[TransEster]:OHC.PY sensi multiplier[HEFA],interaction,dynamic_discovery,0.9776087685416774,1.0,True
-30,CHC.initial indices of Commercial Maturity[Brownfield],numeric,model_factors,0.9738585418701575,1.0,True
-31,OHC.PY sensi multiplier[HEFA]:OHC.Mature Industry Rate of Return as PCT[HEFA],interaction,dynamic_discovery,0.954931395187512,1.0,True
-32,CHC.initial indices of Commercial Maturity[Thermochem]:CHC.FCI  sensi multiplier[Thermochem],interaction,dynamic_discovery,0.9492094314487178,1.0,True
-33,WW.PY sensi multiplier[ManureToHTL]:WW.ORNOOC sensi multiplier[ManureToHTL],interaction,dynamic_discovery,0.9267798025190631,1.0,True
-34,WW.progress ratios commercial[SludgeToHTL]:WW.ORNOOC sensi multiplier[SludgeToHTL],interaction,dynamic_discovery,0.919784187691488,1.0,True
-35,CHC.Mature Industry Rate of Return as PCT[Brownfield]:CHC.PY sensi multiplier[Brownfield],interaction,dynamic_discovery,0.910801536500879,1.0,True
-36,WW.PY sensi multiplier[SludgeToHTL]:WW.ORNOOC sensi multiplier[SludgeToHTL],interaction,dynamic_discovery,0.8925991499932532,1.0,True
-37,WW.PY sensi multiplier[SludgeToHTL]:WW.FCI  sensi multiplier[SludgeToHTL],interaction,dynamic_discovery,0.891904387161478,1.0,True
-38,OHC.PY sensi multiplier[HEFA]:OHC.ORNOOC sensi multiplier[HEFA],interaction,dynamic_discovery,0.8532090347384106,1.0,True
-39,WW.PY sensi multiplier[ManureToHTL]:WW.progress ratios commercial[ManureToHTL],interaction,dynamic_discovery,0.8395051198664639,1.0,True
-40,sqrt_OHC.PY sensi multiplier[HEFABrownfield],transformation,dynamic_discovery,0.8177186404597689,1.0,True
-41,inverse_WW.progress ratios commercial[SludgeToHTL],transformation,dynamic_discovery,0.7961860535789624,1.0,True
-42,CHC.PY sensi multiplier[Thermochem]:WW.progress ratios commercial[SludgeToHTL],interaction,dynamic_discovery,0.7859165745620623,1.0,True
-43,WW.PY sensi multiplier[ManureToHTL]:WW.initial indices of Commercial Maturity[ManureToHTL],interaction,dynamic_discovery,0.7845544200204851,1.0,True
-44,CHC.Mature Industry Rate of Return as PCT[Biochem]:CHC.FCI  sensi multiplier[Biochem],interaction,dynamic_discovery,0.7601065242148276,1.0,True
-45,WW.progress ratios commercial[SludgeToHTL]:AHC.initial indices of Commercial Maturity[HTL],interaction,dynamic_discovery,0.7471777786059184,1.0,True
-46,CHC.Mature Industry Rate of Return as PCT[Biochem]:CHC.PY sensi multiplier[Biochem],interaction,dynamic_discovery,0.7451086679910353,1.0,True
-47,CHC.Mature Industry Rate of Return as PCT[Biochem],numeric,model_factors,0.7307821365436807,1.0,True
-48,WW.progress ratios commercial[SludgeToHTL],numeric,model_factors,0.717412762287168,1.0,True
-49,CHC.initial indices of Commercial Maturity[Thermochem]:CHC.progress ratios commercial[Thermochem],interaction,dynamic_discovery,0.6964437553382238,1.0,True
-50,OHC.PY sensi multiplier[HEFABrownfield],numeric,model_factors,0.6894028032026258,1.0,True
-51,WW.FCI  sensi multiplier[SludgeToHTL],numeric,model_factors,0.6840341526375524,1.0,True
-52,OHC.PY sensi multiplier[HEFABrownfield]:OHC.progress ratios commercial[HEFA],interaction,dynamic_discovery,0.6729581618285314,1.0,True
-53,OHC.Retirement Frac[TransEster]:OHC.PY sensi multiplier[HEFABrownfield],interaction,dynamic_discovery,0.6723496511490048,1.0,True
-54,WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:WW.FCI  sensi multiplier[SludgeToHTL],interaction,dynamic_discovery,0.6668926478086756,1.0,True
-55,CHC.Mature Industry Rate of Return as PCT[Brownfield]:CHC.FCI  sensi multiplier[Brownfield],interaction,dynamic_discovery,0.651301258573711,1.0,True
-56,CHC.FCI  sensi multiplier[Thermochem]:CHC.progress ratios commercial[Thermochem],interaction,dynamic_discovery,0.6504798579271891,1.0,True
-57,AHC.initial indices of Commercial Maturity[HTL],numeric,model_factors,0.6455311275302282,1.0,True
-58,OHC.PY sensi multiplier[HEFA]:OHC.FCI  sensi multiplier[HEFA],interaction,dynamic_discovery,0.6392609721843145,1.0,True
-59,WW.PY sensi multiplier[SludgeToHTL]:CHC.PY sensi multiplier[Thermochem],interaction,dynamic_discovery,0.6073577125095683,1.0,True
-60,CHC.initial indices of Commercial Maturity[Brownfield]:CHC.progress ratios commercial[Brownfield],interaction,dynamic_discovery,0.6039858255111661,1.0,True
-61,CHC.Mature Industry Rate of Return as PCT[Brownfield],numeric,model_factors,0.5851943206184564,1.0,True
-62,CHC.initial indices of Commercial Maturity[Thermochem]_squared,transformation,dynamic_discovery,0.5804323314529862,1.0,True
-63,WW.progress ratios commercial[SludgeToHTL]:AHC.Mature Industry Rate of Return as PCT[HTL],interaction,dynamic_discovery,0.5756360664380727,1.0,True
-64,WW.PY sensi multiplier[ManureToHTL]:WW.FCI  sensi multiplier[ManureToHTL],interaction,dynamic_discovery,0.5747064794237948,1.0,True
-65,WW.Mature Industry Rate of Return as PCT[ManureToHTL]:WW.ORNOOC sensi multiplier[ManureToHTL],interaction,dynamic_discovery,0.5454331712504107,1.0,True
-66,CHC.Mature Industry Rate of Return as PCT[Biochem]:CHC.initial indices of Commercial Maturity[Biochem],interaction,dynamic_discovery,0.5439431731390731,1.0,True
-67,WW.Mature Industry Rate of Return as PCT[ManureToHTL]_squared,transformation,dynamic_discovery,0.5426526645957018,1.0,True
-68,WW.Mature Industry Rate of Return as PCT[ManureToHTL]:WW.FCI  sensi multiplier[ManureToHTL],interaction,dynamic_discovery,0.537435946452846,1.0,True
-69,CHC.Mature Industry Rate of Return as PCT[Thermochem],numeric,model_factors,0.5345635773050688,1.0,True
-70,CHC.PY sensi multiplier[Thermochem]:WW.Mature Industry Rate of Return as PCT[SludgeToHTL],interaction,dynamic_discovery,0.5273845950456236,1.0,True
-71,CHC.PY sensi multiplier[Brownfield],numeric,model_factors,0.5251129852056634,1.0,True
-72,WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:WW.ORNOOC sensi multiplier[SludgeToHTL],interaction,dynamic_discovery,0.5194527800918499,1.0,True
-73,OHC.PY sensi multiplier[HEFA]:CHC.PY sensi multiplier[Thermochem],interaction,dynamic_discovery,0.509635120662566,1.0,True
-74,inverse_WW.Mature Industry Rate of Return as PCT[SludgeToHTL],transformation,dynamic_discovery,0.5093647014853975,1.0,True
-75,WW.initial indices of Commercial Maturity[SludgeToHTL],numeric,model_factors,0.5056289903639111,1.0,True
-76,WW.PY sensi multiplier[SludgeToHTL]:AHC.initial indices of Commercial Maturity[HTL],interaction,dynamic_discovery,0.500844991886413,1.0,True
-77,WW.progress ratios commercial[SludgeToHTL]:WW.initial indices of Commercial Maturity[SludgeToHTL],interaction,dynamic_discovery,0.49839563867033254,1.0,True
-78,inverse_SE.Max Jet Investment Hit Rate,transformation,dynamic_discovery,0.49193943322768663,1.0,True
-79,WW.progress ratios commercial[SludgeToHTL]:CHC.Mature Industry Rate of Return as PCT[Thermochem],interaction,dynamic_discovery,0.4650643289385024,1.0,True
-80,CHC.FCI  sensi multiplier[Thermochem],numeric,model_factors,0.45595216687265505,1.0,True
-81,OHC.Mature Industry Rate of Return as PCT[HEFA],numeric,model_factors,0.4553580237176037,1.0,True
-82,WW.PY sensi multiplier[SludgeToHTL]:CHC.Mature Industry Rate of Return as PCT[Thermochem],interaction,dynamic_discovery,0.44925344897408664,1.0,True
-83,WW.Mature Industry Rate of Return as PCT[ManureToHTL]:WW.initial indices of Commercial Maturity[ManureToHTL],interaction,dynamic_discovery,0.4431459820603433,1.0,True
-84,WW.Mature Industry Rate of Return as PCT[ManureToHTL]:WW.progress ratios commercial[ManureToHTL],interaction,dynamic_discovery,0.43594810018617836,1.0,True
-85,OHC.Retirement Frac[TransEster],numeric,model_factors,0.435693697394214,1.0,True
-86,OHC.PY sensi multiplier[HEFA]:CHC.Mature Industry Rate of Return as PCT[Thermochem],interaction,dynamic_discovery,0.40875763712315094,1.0,True
-87,CHC.PY sensi multiplier[Thermochem]:CHC.Debt Interest Rate as pct[Thermochem],interaction,dynamic_discovery,0.4078062065834853,1.0,True
-88,CHC.initial indices of Commercial Maturity[Brownfield]:CHC.PY sensi multiplier[Thermochem],interaction,dynamic_discovery,0.4033173130433435,1.0,True
-89,AHC.PY sensi multiplier[HTL]:WW.progress ratios commercial[SludgeToHTL],interaction,dynamic_discovery,0.3838285551159953,1.0,True
-90,SE.Max Jet Investment Hit Rate:SE.PY sensi multiplier[Jet],interaction,dynamic_discovery,0.3693674006610184,1.0,True
-91,CHC.initial indices of Commercial Maturity[Biochem]:CHC.PY sensi multiplier[Biochem],interaction,dynamic_discovery,0.34500518673097785,1.0,True
-92,CHC.PY sensi multiplier[Biochem]:CHC.FCI  sensi multiplier[Biochem],interaction,dynamic_discovery,0.3423676731484257,1.0,True
-93,"OHC.PY sensi multiplier[HEFA]:OHC.Policy Duration[Price,HEFA]",interaction,dynamic_discovery,0.33377605671809163,1.0,True
-94,WW.PY sensi multiplier[SludgeToHTL]:CHC.FCI  sensi multiplier[Thermochem],interaction,dynamic_discovery,0.3294056982171198,1.0,True
-95,CHC.initial indices of Commercial Maturity[Biochem]:CHC.FCI  sensi multiplier[Biochem],interaction,dynamic_discovery,0.31985918171071054,1.0,True
-96,CHC.PY sensi multiplier[Thermochem]:CHC.Mature Industry Rate of Return as PCT[Brownfield],interaction,dynamic_discovery,0.31766464390313326,1.0,True
-97,WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:CHC.Mature Industry Rate of Return as PCT[Thermochem],interaction,dynamic_discovery,0.3142267215552431,1.0,True
-98,"WW.PY sensi multiplier[ManureToHTL]:WW.Policy Duration[Price,ManureToHTL]",interaction,dynamic_discovery,0.31411187335298557,1.0,True
-99,OHC.ORNOOC sensi multiplier[HEFA],numeric,model_factors,0.3138578936575032,1.0,True
-100,inverse_CHC.Mature Industry Rate of Return as PCT[Brownfield],transformation,dynamic_discovery,0.3050525963965353,1.0,True
-101,WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:AHC.initial indices of Commercial Maturity[HTL],interaction,dynamic_discovery,0.2958444216166674,1.0,True
-102,CHC.Mature Industry Rate of Return as PCT[Brownfield]:CHC.progress ratios commercial[Brownfield],interaction,dynamic_discovery,0.2946611579433171,1.0,True
-103,WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:CHC.progress ratios commercial[Thermochem],interaction,dynamic_discovery,0.2868342022000393,1.0,True
-104,CHC.PY sensi multiplier[Thermochem]:CHC.ORNOOC sensi multiplier[Thermochem],interaction,dynamic_discovery,0.28403523272246284,1.0,True
-105,CHC.Mature Industry Rate of Return as PCT[Thermochem]:CHC.ORNOOC sensi multiplier[Thermochem],interaction,dynamic_discovery,0.27826717144240787,1.0,True
-106,CHC.Mature Industry Rate of Return as PCT[Biochem]_squared,transformation,dynamic_discovery,0.2775735371654507,1.0,True
-107,SE.Mature Industry Rate of Return as PCT[Jet]:SE.FCI  sensi multiplier[Jet],interaction,dynamic_discovery,0.27352088201032143,1.0,True
-108,CHC.FCI  sensi multiplier[Biochem],numeric,model_factors,0.2733002621903496,1.0,True
-109,CHC.PY sensi multiplier[Brownfield]:CHC.FCI  sensi multiplier[Brownfield],interaction,dynamic_discovery,0.27241343477917324,1.0,True
-110,SE.Max Jet Investment Hit Rate:WW.PY sensi multiplier[ManureToHTL],interaction,dynamic_discovery,0.26999559543653284,1.0,True
-111,WW.PY sensi multiplier[SludgeToHTL]:WW.initial indices of Commercial Maturity[SludgeToHTL],interaction,dynamic_discovery,0.26976793700635365,1.0,True
-112,CHC.PY sensi multiplier[Thermochem]:WW.FCI  sensi multiplier[SludgeToHTL],interaction,dynamic_discovery,0.26771491143890674,1.0,True
-113,SE.PY sensi multiplier[Jet]:SE.Mature Industry Rate of Return as PCT[Jet],interaction,dynamic_discovery,0.26348048228505744,1.0,True
-114,inverse_CHC.FCI  sensi multiplier[Thermochem],transformation,dynamic_discovery,0.26296700913679694,1.0,True
-115,WW.progress ratios commercial[SludgeToHTL]:AHC.FCI  sensi multiplier[HTL],interaction,dynamic_discovery,0.26049953137152654,1.0,True
-116,WW.PY sensi multiplier[SludgeToHTL]:CHC.initial indices of Commercial Maturity[Thermochem],interaction,dynamic_discovery,0.26035382685054176,1.0,True
-117,WW.progress ratios commercial[SludgeToHTL]:CHC.initial indices of Commercial Maturity[Thermochem],interaction,dynamic_discovery,0.2562512593541412,1.0,True
-118,inverse_SE.PY sensi multiplier[Jet],transformation,dynamic_discovery,0.2504019071460081,1.0,True
-119,AHC.Mature Industry Rate of Return as PCT[HTL]:AHC.FCI  sensi multiplier[HTL],interaction,dynamic_discovery,0.2500184206262922,1.0,True
-120,AHC.Mature Industry Rate of Return as PCT[HTL],numeric,model_factors,0.2486079073965083,1.0,True
-121,OHC.PY sensi multiplier[HEFABrownfield]:CHC.PY sensi multiplier[Thermochem],interaction,dynamic_discovery,0.24667883607577357,1.0,True
-122,"WW.Mature Industry Rate of Return as PCT[ManureToHTL]:WW.Policy Duration[Price,ManureToHTL]",interaction,dynamic_discovery,0.2465992400500646,1.0,True
-123,WW.PY sensi multiplier[SludgeToHTL]:CHC.progress ratios commercial[Thermochem],interaction,dynamic_discovery,0.2457749683294231,1.0,True
-124,WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:CHC.FCI  sensi multiplier[Thermochem],interaction,dynamic_discovery,0.23969786177949998,1.0,True
-125,WW.ORNOOC sensi multiplier[SludgeToHTL],numeric,model_factors,0.23962950328513904,1.0,True
-126,WW.ORNOOC sensi multiplier[ManureToHTL]:WW.progress ratios commercial[ManureToHTL],interaction,dynamic_discovery,0.23681378511522225,1.0,True
-127,CHC.initial indices of Commercial Maturity[Brownfield]:CHC.FCI  sensi multiplier[Thermochem],interaction,dynamic_discovery,0.2334899637888276,1.0,True
-128,CHC.initial indices of Commercial Maturity[Brownfield]:CHC.Mature Industry Rate of Return as PCT[Thermochem],interaction,dynamic_discovery,0.22801763871780928,1.0,True
-129,CHC.Mature Industry Rate of Return as PCT[Thermochem]:CHC.Debt Interest Rate as pct[Thermochem],interaction,dynamic_discovery,0.22257967166026027,1.0,True
-130,OHC.PY sensi multiplier[HEFABrownfield]:OHC.ORNOOC sensi multiplier[HEFA],interaction,dynamic_discovery,0.2215200857863722,1.0,True
-131,WW.PY sensi multiplier[SludgeToHTL]:WW.PY sensi multiplier[ManureToHTL],interaction,dynamic_discovery,0.2186462070708356,1.0,True
-132,OHC.PY sensi multiplier[HEFA]:WW.Mature Industry Rate of Return as PCT[SludgeToHTL],interaction,dynamic_discovery,0.21577461593828753,1.0,True
-133,CHC.PY sensi multiplier[Thermochem]:WW.ORNOOC sensi multiplier[SludgeToHTL],interaction,dynamic_discovery,0.21393269646526417,1.0,True
-134,WW.PY sensi multiplier[ManureToHTL]:CHC.Mature Industry Rate of Return as PCT[Thermochem],interaction,dynamic_discovery,0.2137538893170949,1.0,True
-135,AHC.PY sensi multiplier[HTL]:AHC.Mature Industry Rate of Return as PCT[HTL],interaction,dynamic_discovery,0.21358051983301726,1.0,True
-136,WW.initial indices of Commercial Maturity[ManureToHTL]:WW.FCI  sensi multiplier[ManureToHTL],interaction,dynamic_discovery,0.21354023335507533,1.0,True
-137,OHC.PY sensi multiplier[HEFA]:OHC.Debt Interest Rate as pct[HEFA],interaction,dynamic_discovery,0.21190442037983767,1.0,True
-138,OHC.PY sensi multiplier[HEFA]:CHC.FCI  sensi multiplier[Thermochem],interaction,dynamic_discovery,0.20607931156578185,1.0,True
-139,SE.ORNOOC sensi multiplier[Jet],numeric,model_factors,0.20528962788963714,1.0,True
-140,WW.initial indices of Commercial Maturity[ManureToHTL]:WW.ORNOOC sensi multiplier[ManureToHTL],interaction,dynamic_discovery,0.2025387227348832,1.0,True
-141,WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:WW.initial indices of Commercial Maturity[SludgeToHTL],interaction,dynamic_discovery,0.19800020876474572,1.0,True
-142,OHC.PY sensi multiplier[HEFA]:OHC.ORNOOC sensi multiplier[HEFABrownfield],interaction,dynamic_discovery,0.19182416227345125,1.0,True
-143,WW.PY sensi multiplier[SludgeToHTL]:WW.Mature Industry Rate of Return as PCT[ManureToHTL],interaction,dynamic_discovery,0.1918126510009943,1.0,True
-144,OHC.PY sensi multiplier[HEFA]:CHC.initial indices of Commercial Maturity[Thermochem],interaction,dynamic_discovery,0.18448988679789272,1.0,True
-145,OHC.PY sensi multiplier[HEFA]:OHC.progress ratios commercial[HEFABrownfield],interaction,dynamic_discovery,0.1839625428385708,1.0,True
-146,CHC.PY sensi multiplier[Thermochem]:WW.PY sensi multiplier[ManureToHTL],interaction,dynamic_discovery,0.1836515308299027,1.0,True
-147,WW.FCI  sensi multiplier[ManureToHTL]:WW.ORNOOC sensi multiplier[ManureToHTL],interaction,dynamic_discovery,0.18358965457029205,1.0,True
-148,OHC.progress ratios commercial[HEFA],numeric,model_factors,0.1832679917236204,1.0,True
-149,CHC.PY sensi multiplier[Biochem],numeric,model_factors,0.18280675939235796,1.0,True
-150,OHC.Debt Interest Rate as pct[HEFA],numeric,model_factors,0.17948186153469176,1.0,True
-151,OHC.PY sensi multiplier[HEFABrownfield]:OHC.Mature Industry Rate of Return as PCT[HEFA],interaction,dynamic_discovery,0.17917699894579048,1.0,True
-152,SE.Max Jet Investment Hit Rate:WW.progress ratios commercial[ManureToHTL],interaction,dynamic_discovery,0.17732342176101012,1.0,True
-153,OHC.PY sensi multiplier[HEFABrownfield]:CHC.Mature Industry Rate of Return as PCT[Thermochem],interaction,dynamic_discovery,0.17548741766234888,1.0,True
-154,AHC.Mature Industry Rate of Return as PCT[HEFA]:AHC.FCI  sensi multiplier[HEFA],interaction,dynamic_discovery,0.17496531970519322,1.0,True
-155,SE.Max Jet Investment Hit Rate:CHC.PY sensi multiplier[Thermochem],interaction,dynamic_discovery,0.17359723966462617,1.0,True
-156,OHC.PY sensi multiplier[HEFABrownfield]:OHC.FCI  sensi multiplier[HEFA],interaction,dynamic_discovery,0.17129053749414797,1.0,True
-157,SE.Mature Industry Rate of Return as PCT[Jet],numeric,model_factors,0.1709681136866515,0.76,True
-158,CHC.FCI  sensi multiplier[Brownfield],numeric,model_factors,0.16873650347711755,1.0,True
-159,WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:CHC.initial indices of Commercial Maturity[Thermochem],interaction,dynamic_discovery,0.1666631895001855,1.0,True
-160,AHC.initial indices of Commercial Maturity[HTL]:WW.initial indices of Commercial Maturity[SludgeToHTL],interaction,dynamic_discovery,0.16027836272792495,1.0,True
-161,OHC.PY sensi multiplier[HEFA]:CHC.progress ratios commercial[Thermochem],interaction,dynamic_discovery,0.16015255210182827,1.0,True
-162,OHC.progress ratios commercial[HEFA]:OHC.progress ratios commercial[HEFABrownfield],interaction,dynamic_discovery,0.15908193548021377,1.0,True
-163,WW.FCI  sensi multiplier[ManureToHTL]:WW.progress ratios commercial[ManureToHTL],interaction,dynamic_discovery,0.15884448273732996,1.0,True
-164,"OHC.PY sensi multiplier[HEFABrownfield]:OHC.Policy Duration[Price,HEFA]",interaction,dynamic_discovery,0.15746593454987848,1.0,True
-165,WW.PY sensi multiplier[SludgeToHTL]:AHC.Mature Industry Rate of Return as PCT[HTL],interaction,dynamic_discovery,0.15557019679803152,1.0,True
-166,SE.Mature Industry Rate of Return as PCT[Jet]:SE.initial indices of Commercial Maturity[Jet],interaction,dynamic_discovery,0.15442646854452471,1.0,True
-167,CHC.PY sensi multiplier[Brownfield]:CHC.progress ratios commercial[Brownfield],interaction,dynamic_discovery,0.15439315457271208,1.0,True
-168,AHC.PY sensi multiplier[HTL]:AHC.FCI  sensi multiplier[HTL],interaction,dynamic_discovery,0.15189179147403975,1.0,True
-169,CHC.initial indices of Commercial Maturity[Thermochem]:CHC.ORNOOC sensi multiplier[Thermochem],interaction,dynamic_discovery,0.1495970501944186,1.0,True
-170,AHC.PY sensi multiplier[HEFA]:AHC.Mature Industry Rate of Return as PCT[HEFA],interaction,dynamic_discovery,0.14913464653945557,1.0,True
-171,"SE.Max Jet Investment Hit Rate:SE.Policy Duration[Price,Jet]",interaction,dynamic_discovery,0.1489627264085224,1.0,True
-172,CHC.Mature Industry Rate of Return as PCT[Thermochem]:CHC.PY sensi multiplier[Brownfield],interaction,dynamic_discovery,0.14799581366254336,1.0,True
-173,WW.ORNOOC sensi multiplier[SludgeToHTL]:WW.FCI  sensi multiplier[SludgeToHTL],interaction,dynamic_discovery,0.14748228612089537,1.0,True
-174,WW.Mature Industry Rate of Return as PCT[ManureToHTL]:WW.ORNOOC sensi multiplier[SludgeToHTL],interaction,dynamic_discovery,0.14714486441643645,1.0,True
-175,WW.progress ratios commercial[SludgeToHTL]:CHC.FCI  sensi multiplier[Thermochem],interaction,dynamic_discovery,0.1466360731303911,1.0,True
-176,WW.FCI  sensi multiplier[SludgeToHTL]:AHC.initial indices of Commercial Maturity[HTL],interaction,dynamic_discovery,0.14596754252388922,1.0,True
-177,OHC.ORNOOC sensi multiplier[HEFA]:OHC.FCI  sensi multiplier[HEFA],interaction,dynamic_discovery,0.14583613674755905,1.0,True
-178,OHC.ORNOOC sensi multiplier[HEFABrownfield],numeric,model_factors,0.14573995207716364,1.0,True
-179,SE.Max Jet Investment Hit Rate:WW.Mature Industry Rate of Return as PCT[ManureToHTL],interaction,dynamic_discovery,0.1450212581771468,1.0,True
-180,SE.Max Jet Investment Hit Rate:WW.PY sensi multiplier[SludgeToHTL],interaction,dynamic_discovery,0.14477557774185607,1.0,True
-181,OHC.Retirement Frac[TransEster]:OHC.progress ratios commercial[HEFA],interaction,dynamic_discovery,0.1441653034230022,1.0,True
-182,CHC.Mature Industry Rate of Return as PCT[Thermochem]:WW.ORNOOC sensi multiplier[SludgeToHTL],interaction,dynamic_discovery,0.1439870824549209,1.0,True
-183,OHC.PY sensi multiplier[HEFA]:WW.progress ratios commercial[SludgeToHTL],interaction,dynamic_discovery,0.14383246505793137,1.0,True
-184,inverse_WW.FCI  sensi multiplier[SludgeToHTL],transformation,dynamic_discovery,0.1432141861062749,1.0,True
-185,CHC.Mature Industry Rate of Return as PCT[Thermochem]:CHC.Mature Industry Rate of Return as PCT[Brownfield],interaction,dynamic_discovery,0.1413583458769884,1.0,True
-186,SE.PY sensi multiplier[Jet]:SE.ORNOOC sensi multiplier[Jet],interaction,dynamic_discovery,0.13722051474550567,1.0,True
-187,SE.Mature Industry Rate of Return as PCT[Jet]:SE.progress ratios commercial[Jet],interaction,dynamic_discovery,0.1349290064780254,1.0,True
-188,CHC.FCI  sensi multiplier[Thermochem]:CHC.Debt Interest Rate as pct[Thermochem],interaction,dynamic_discovery,0.13461064195534891,1.0,True
-189,"OHC.Policy Duration[Price,HEFA]",numeric,model_factors,0.13340043597881032,1.0,True
-190,CHC.PY sensi multiplier[Thermochem]:WW.ORNOOC sensi multiplier[ManureToHTL],interaction,dynamic_discovery,0.13016534679426972,1.0,True
-191,OHC.FCI  sensi multiplier[HEFA],numeric,model_factors,0.12968090561223317,1.0,True
-192,WW.progress ratios commercial[SludgeToHTL]:OHC.progress ratios commercial[HEFA],interaction,dynamic_discovery,0.1286642592346391,1.0,True
-193,OHC.Retirement Frac[TransEster]:CHC.PY sensi multiplier[Thermochem],interaction,dynamic_discovery,0.12805693541455737,1.0,True
-194,WW.PY sensi multiplier[ManureToHTL]:WW.Mature Industry Rate of Return as PCT[SludgeToHTL],interaction,dynamic_discovery,0.12802435685707583,1.0,True
-195,WW.PY sensi multiplier[ManureToHTL]:WW.ORNOOC sensi multiplier[SludgeToHTL],interaction,dynamic_discovery,0.12789090432723246,1.0,True
-196,CHC.PY sensi multiplier[Thermochem]:CHC.PY sensi multiplier[Brownfield],interaction,dynamic_discovery,0.1272294443857346,1.0,True
-197,AHC.PY sensi multiplier[HTL]:WW.PY sensi multiplier[SludgeToHTL],interaction,dynamic_discovery,0.1254403106734726,1.0,True
-198,SE.PY sensi multiplier[Jet]:SE.FCI  sensi multiplier[Jet],interaction,dynamic_discovery,0.12518169889742772,1.0,True
-199,OHC.PY sensi multiplier[HEFA]:SE.Max Jet Investment Hit Rate,interaction,dynamic_discovery,0.1225239054870081,1.0,True
-200,AHC.initial indices of Commercial Maturity[HTL]_squared,transformation,dynamic_discovery,0.12250652240540152,1.0,True
-201,CHC.initial indices of Commercial Maturity[Brownfield]:CHC.initial indices of Commercial Maturity[Thermochem],interaction,dynamic_discovery,0.12117815908742091,1.0,True
-202,CHC.PY sensi multiplier[Thermochem]:WW.Mature Industry Rate of Return as PCT[ManureToHTL],interaction,dynamic_discovery,0.11851310395941315,1.0,True
-203,SE.Max Jet Investment Hit Rate:WW.ORNOOC sensi multiplier[ManureToHTL],interaction,dynamic_discovery,0.11738501601118849,1.0,True
-204,AHC.PY sensi multiplier[HEFA]:AHC.FCI  sensi multiplier[HEFA],interaction,dynamic_discovery,0.1169660486274139,1.0,True
-205,WW.initial indices of Commercial Maturity[SludgeToHTL]_squared,transformation,dynamic_discovery,0.11470482237003912,1.0,True
-206,OHC.PY sensi multiplier[HEFA]:WW.PY sensi multiplier[SludgeToHTL],interaction,dynamic_discovery,0.11440348866969272,1.0,True
-207,AHC.Mature Industry Rate of Return as PCT[HEFA]:OHC.progress ratios commercial[HEFA],interaction,dynamic_discovery,0.10975339216670578,1.0,True
-208,CHC.ORNOOC sensi multiplier[Thermochem],numeric,model_factors,0.10920529170274058,1.0,True
-209,CHC.Mature Industry Rate of Return as PCT[Thermochem]:WW.FCI  sensi multiplier[SludgeToHTL],interaction,dynamic_discovery,0.10719025127871314,1.0,True
-210,WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:AHC.Mature Industry Rate of Return as PCT[HTL],interaction,dynamic_discovery,0.10715276567924979,1.0,True
-211,OHC.PY sensi multiplier[HEFABrownfield]:CHC.initial indices of Commercial Maturity[Thermochem],interaction,dynamic_discovery,0.1057407595017566,1.0,True
-212,OHC.PY sensi multiplier[HEFABrownfield]:WW.progress ratios commercial[SludgeToHTL],interaction,dynamic_discovery,0.1052146442814883,1.0,True
-213,SE.PY sensi multiplier[Jet]:SE.initial indices of Commercial Maturity[Jet],interaction,dynamic_discovery,0.10450802291223833,1.0,True
-214,CHC.progress ratios commercial[Thermochem]:CHC.Debt Interest Rate as pct[Thermochem],interaction,dynamic_discovery,0.10348519045024991,1.0,True
-215,AHC.ORNOOC sensi multiplier[HTL],numeric,model_factors,0.09910856319612124,1.0,True
-216,SE.FCI  sensi multiplier[Jet],numeric,model_factors,0.09619437978330107,0.82,True
-217,OHC.PY sensi multiplier[HEFA]:SE.ORNOOC sensi multiplier[Jet],interaction,dynamic_discovery,0.09579221852511878,1.0,True
-218,SE.Max Jet Investment Hit Rate:WW.progress ratios commercial[SludgeToHTL],interaction,dynamic_discovery,0.09526805691692401,1.0,True
-219,WW.PY sensi multiplier[ManureToHTL]:SE.ORNOOC sensi multiplier[Jet],interaction,dynamic_discovery,0.0945020114512894,1.0,True
-220,SE.Max Jet Investment Hit Rate:CHC.Mature Industry Rate of Return as PCT[Thermochem],interaction,dynamic_discovery,0.09441986354683515,1.0,True
-221,WW.ORNOOC sensi multiplier[SludgeToHTL]:CHC.progress ratios commercial[Thermochem],interaction,dynamic_discovery,0.09433175433116393,1.0,True
-222,CHC.initial indices of Commercial Maturity[Thermochem]:CHC.Mature Industry Rate of Return as PCT[Brownfield],interaction,dynamic_discovery,0.09416597049413984,1.0,True
-223,OHC.progress ratios commercial[HEFA]:OHC.Mature Industry Rate of Return as PCT[HEFA],interaction,dynamic_discovery,0.09288075065789929,1.0,True
-224,AHC.PY sensi multiplier[HEFA]:OHC.progress ratios commercial[HEFA],interaction,dynamic_discovery,0.09195238391870232,1.0,True
-225,AHC.PY sensi multiplier[HTL]:WW.Mature Industry Rate of Return as PCT[SludgeToHTL],interaction,dynamic_discovery,0.09137257716653642,1.0,True
-226,CHC.Mature Industry Rate of Return as PCT[Thermochem]:CHC.FCI  sensi multiplier[Brownfield],interaction,dynamic_discovery,0.09123762625263152,1.0,True
-227,WW.PY sensi multiplier[SludgeToHTL]:CHC.Mature Industry Rate of Return as PCT[Brownfield],interaction,dynamic_discovery,0.08873807585705448,1.0,True
-228,AHC.FCI  sensi multiplier[HEFA],numeric,model_factors,0.08595655895555773,1.0,True
-229,SE.FCI  sensi multiplier[Jet]:SE.initial indices of Commercial Maturity[Jet],interaction,dynamic_discovery,0.08536498763594197,1.0,True
-230,SE.Max Jet Investment Hit Rate:SE.Mature Industry Rate of Return as PCT[Jet],interaction,dynamic_discovery,0.08419302289870068,1.0,True
-231,OHC.Mature Industry Rate of Return as PCT[HEFA]:OHC.ORNOOC sensi multiplier[HEFA],interaction,dynamic_discovery,0.08314430600063179,1.0,True
-232,CHC.initial indices of Commercial Maturity[Thermochem]:WW.ORNOOC sensi multiplier[SludgeToHTL],interaction,dynamic_discovery,0.08208963806208593,1.0,True
-233,CHC.FCI  sensi multiplier[Brownfield]:CHC.progress ratios commercial[Brownfield],interaction,dynamic_discovery,0.07960552534334421,1.0,True
-234,OHC.Mature Industry Rate of Return as PCT[HEFA]:OHC.FCI  sensi multiplier[HEFA],interaction,dynamic_discovery,0.0790930992364091,1.0,True
-235,"WW.Policy Duration[Price,ManureToHTL]_squared",transformation,dynamic_discovery,0.07706628599573366,1.0,True
-236,CHC.FCI  sensi multiplier[Thermochem]:WW.FCI  sensi multiplier[SludgeToHTL],interaction,dynamic_discovery,0.07636192380159323,1.0,True
-237,WW.FCI  sensi multiplier[SludgeToHTL]:WW.initial indices of Commercial Maturity[SludgeToHTL],interaction,dynamic_discovery,0.07482921388048888,1.0,True
-238,inverse_WW.ORNOOC sensi multiplier[SludgeToHTL],transformation,dynamic_discovery,0.07468518272727,1.0,True
-239,WW.PY sensi multiplier[ManureToHTL]:CHC.Mature Industry Rate of Return as PCT[Brownfield],interaction,dynamic_discovery,0.07398530884389308,1.0,True
-240,SE.Max Jet Investment Hit Rate,numeric,model_factors,0.07388427436826027,0.78,True
-241,OHC.progress ratios commercial[HEFABrownfield],numeric,model_factors,0.07359274461511185,1.0,True
-242,OHC.PY sensi multiplier[HEFABrownfield]:OHC.progress ratios commercial[HEFABrownfield],interaction,dynamic_discovery,0.07359073654349721,1.0,True
-243,OHC.progress ratios commercial[HEFA]:OHC.FCI  sensi multiplier[HEFA],interaction,dynamic_discovery,0.07283529648225628,1.0,True
-244,CHC.Mature Industry Rate of Return as PCT[Thermochem]:AHC.initial indices of Commercial Maturity[HTL],interaction,dynamic_discovery,0.07265297831758549,1.0,True
-245,CHC.initial indices of Commercial Maturity[Biochem],numeric,model_factors,0.07167129966934163,1.0,True
-246,CHC.initial indices of Commercial Maturity[Brownfield]:CHC.Debt Interest Rate as pct[Brownfield],interaction,dynamic_discovery,0.07107129676272289,1.0,True
-247,SE.Max Jet Investment Hit Rate:CHC.Mature Industry Rate of Return as PCT[Brownfield],interaction,dynamic_discovery,0.07021444256709242,1.0,True
-248,WW.FCI  sensi multiplier[SludgeToHTL]:CHC.progress ratios commercial[Thermochem],interaction,dynamic_discovery,0.06994634129782001,1.0,True
-249,SE.PY sensi multiplier[Jet]:CHC.PY sensi multiplier[Thermochem],interaction,dynamic_discovery,0.06966403461491483,0.94,True
-250,WW.PY sensi multiplier[SludgeToHTL]:AHC.FCI  sensi multiplier[HTL],interaction,dynamic_discovery,0.06878891294140539,1.0,True
-251,SE.Max Jet Investment Hit Rate:CHC.initial indices of Commercial Maturity[Brownfield],interaction,dynamic_discovery,0.06705503736225675,1.0,True
-252,"OHC.Retirement Frac[TransEster]:OHC.Policy Duration[Price,HEFA]",interaction,dynamic_discovery,0.06696655179171912,1.0,True
-253,SE.Max Jet Investment Hit Rate:CHC.FCI  sensi multiplier[Thermochem],interaction,dynamic_discovery,0.06321382969783083,1.0,True
-254,SE.Max Jet Investment Hit Rate:CHC.progress ratios commercial[Thermochem],interaction,dynamic_discovery,0.0629654329821711,1.0,True
-255,OHC.Retirement Frac[TransEster]:OHC.Mature Industry Rate of Return as PCT[HEFA],interaction,dynamic_discovery,0.06244097933168187,1.0,True
-256,CHC.initial indices of Commercial Maturity[Thermochem]:WW.FCI  sensi multiplier[SludgeToHTL],interaction,dynamic_discovery,0.06082798518725419,1.0,True
-257,SE.ORNOOC sensi multiplier[Jet]:WW.FCI  sensi multiplier[SludgeToHTL],interaction,dynamic_discovery,0.06064046142067782,1.0,True
-258,WW.ORNOOC sensi multiplier[SludgeToHTL]:CHC.FCI  sensi multiplier[Thermochem],interaction,dynamic_discovery,0.060166653682474286,1.0,True
-259,OHC.Retirement Frac[TransEster]:WW.progress ratios commercial[SludgeToHTL],interaction,dynamic_discovery,0.05961384198871371,1.0,True
-260,OHC.PY sensi multiplier[HEFA]:WW.ORNOOC sensi multiplier[SludgeToHTL],interaction,dynamic_discovery,0.05917185773616011,1.0,True
-261,OHC.PY sensi multiplier[HEFABrownfield]:SE.Max Jet Investment Hit Rate,interaction,dynamic_discovery,0.058458405013954856,1.0,True
-262,OHC.Retirement Frac[TransEster]:WW.ORNOOC sensi multiplier[SludgeToHTL],interaction,dynamic_discovery,0.058337651947793556,1.0,True
-263,CHC.initial indices of Commercial Maturity[Thermochem]:CHC.PY sensi multiplier[Brownfield],interaction,dynamic_discovery,0.058028683498038865,1.0,True
-264,OHC.PY sensi multiplier[HEFABrownfield]:CHC.progress ratios commercial[Thermochem],interaction,dynamic_discovery,0.0561642873347112,1.0,True
-265,SE.Max Jet Investment Hit Rate:CHC.initial indices of Commercial Maturity[Thermochem],interaction,dynamic_discovery,0.05509126613613715,1.0,True
-266,WW.ORNOOC sensi multiplier[SludgeToHTL]:SE.FCI  sensi multiplier[Jet],interaction,dynamic_discovery,0.0550583875636971,1.0,True
-267,SE.Max Jet Investment Hit Rate:WW.initial indices of Commercial Maturity[ManureToHTL],interaction,dynamic_discovery,0.054235420212258474,1.0,True
-268,OHC.Retirement Frac[TransEster]:WW.ORNOOC sensi multiplier[ManureToHTL],interaction,dynamic_discovery,0.05325760147119331,1.0,True
-269,CHC.initial indices of Commercial Maturity[Brownfield]:WW.Mature Industry Rate of Return as PCT[SludgeToHTL],interaction,dynamic_discovery,0.05263559469284021,1.0,True
-270,AHC.FCI  sensi multiplier[HTL],numeric,model_factors,0.05214118958289016,1.0,True
-271,AHC.FCI  sensi multiplier[HEFA]:AHC.Debt Interest Rate as pct[HEFA],interaction,dynamic_discovery,0.04970608928904709,1.0,True
-272,OHC.PY sensi multiplier[HEFABrownfield]:CHC.initial indices of Commercial Maturity[Brownfield],interaction,dynamic_discovery,0.04951622851192046,0.96,True
-273,SE.PY sensi multiplier[Jet]:WW.PY sensi multiplier[ManureToHTL],interaction,dynamic_discovery,0.04916315365061504,1.0,True
-274,SE.Max Jet Investment Hit Rate:OHC.progress ratios commercial[HEFA],interaction,dynamic_discovery,0.04877368477673155,1.0,True
-275,SE.Mature Industry Rate of Return as PCT[Jet]:SE.ORNOOC sensi multiplier[Jet],interaction,dynamic_discovery,0.0483636285533952,1.0,True
-276,SE.PY sensi multiplier[Jet]:CHC.progress ratios commercial[Thermochem],interaction,dynamic_discovery,0.04811875996648265,1.0,True
-277,AHC.Mature Industry Rate of Return as PCT[HTL]:AHC.initial indices of Commercial Maturity[HTL],interaction,dynamic_discovery,0.047576899454711864,1.0,True
-278,SE.Mature Industry Rate of Return as PCT[Jet]:WW.ORNOOC sensi multiplier[SludgeToHTL],interaction,dynamic_discovery,0.04706581556865826,1.0,True
-279,SE.PY sensi multiplier[Jet]:CHC.Mature Industry Rate of Return as PCT[Thermochem],interaction,dynamic_discovery,0.04703823216675104,1.0,True
-280,WW.PY sensi multiplier[SludgeToHTL]:CHC.ORNOOC sensi multiplier[Thermochem],interaction,dynamic_discovery,0.04670343237457309,1.0,True
-281,"OHC.Policy Duration[Price,TransEster]",numeric,model_factors,0.04627639936261532,1.0,True
-282,OHC.Retirement Frac[TransEster]:SE.Max Jet Investment Hit Rate,interaction,dynamic_discovery,0.04566565825385744,1.0,True
-283,OHC.Retirement Frac[TransEster]:CHC.initial indices of Commercial Maturity[Thermochem],interaction,dynamic_discovery,0.04520478116745132,1.0,True
-284,SE.Max Jet Investment Hit Rate:CHC.PY sensi multiplier[Brownfield],interaction,dynamic_discovery,0.045121632345163656,1.0,True
-285,"OHC.Retirement Frac[TransEster]:OHC.Policy Duration[Price,TransEster]",interaction,dynamic_discovery,0.04480497034446039,1.0,True
-286,SE.Max Jet Investment Hit Rate:WW.ORNOOC sensi multiplier[SludgeToHTL],interaction,dynamic_discovery,0.04476755180854897,1.0,True
-287,OHC.PY sensi multiplier[HEFA]:AHC.PY sensi multiplier[HTL],interaction,dynamic_discovery,0.04404514837101756,1.0,True
-288,WW.PY sensi multiplier[SludgeToHTL]:SE.Mature Industry Rate of Return as PCT[Jet],interaction,dynamic_discovery,0.043993965241617625,1.0,True
-289,AHC.PY sensi multiplier[HTL]:WW.ORNOOC sensi multiplier[SludgeToHTL],interaction,dynamic_discovery,0.043809068748171455,1.0,True
-290,WW.ORNOOC sensi multiplier[SludgeToHTL]:SE.ORNOOC sensi multiplier[Jet],interaction,dynamic_discovery,0.04338811633722251,1.0,True
-291,SE.ORNOOC sensi multiplier[Jet]:SE.progress ratios commercial[Jet],interaction,dynamic_discovery,0.04330760220982525,1.0,True
-292,inverse_WW.ORNOOC sensi multiplier[ManureToHTL],transformation,dynamic_discovery,0.043154099409698776,1.0,True
-293,"SE.Policy Duration[Price,Jet]",numeric,model_factors,0.04298938122267909,1.0,True
-294,WW.ORNOOC sensi multiplier[ManureToHTL],numeric,model_factors,0.04286183159202709,0.92,True
-295,WW.ORNOOC sensi multiplier[SludgeToHTL]:WW.initial indices of Commercial Maturity[SludgeToHTL],interaction,dynamic_discovery,0.04254440746978993,1.0,True
-296,AHC.Mature Industry Rate of Return as PCT[HEFA]:AHC.Debt Interest Rate as pct[HEFA],interaction,dynamic_discovery,0.041705633502160215,1.0,True
-297,OHC.Retirement Frac[TransEster]:WW.PY sensi multiplier[SludgeToHTL],interaction,dynamic_discovery,0.04134883186157569,1.0,True
-298,OHC.Retirement Frac[TransEster]:CHC.FCI  sensi multiplier[Thermochem],interaction,dynamic_discovery,0.040928348325735844,1.0,True
-299,CHC.Mature Industry Rate of Return as PCT[Brownfield]:SE.ORNOOC sensi multiplier[Jet],interaction,dynamic_discovery,0.04060598171724167,1.0,True
-300,OHC.PY sensi multiplier[HEFABrownfield]:WW.Mature Industry Rate of Return as PCT[SludgeToHTL],interaction,dynamic_discovery,0.040194135579198986,1.0,True
-301,AHC.PY sensi multiplier[HTL]:AHC.ORNOOC sensi multiplier[HTL],interaction,dynamic_discovery,0.03995896628445415,1.0,True
-302,OHC.PY sensi multiplier[HEFA]:SE.FCI  sensi multiplier[Jet],interaction,dynamic_discovery,0.038949077455629186,1.0,True
-303,SE.Max Jet Investment Hit Rate:SE.ORNOOC sensi multiplier[Jet],interaction,dynamic_discovery,0.03889721548440191,0.98,True
-304,OHC.Retirement Frac[TransEster]:CHC.Mature Industry Rate of Return as PCT[Thermochem],interaction,dynamic_discovery,0.03831756266008637,1.0,True
-305,OHC.PY sensi multiplier[HEFA]:SE.PY sensi multiplier[Jet],interaction,dynamic_discovery,0.0375792637371758,1.0,True
-306,SE.PY sensi multiplier[Jet]:CHC.FCI  sensi multiplier[Thermochem],interaction,dynamic_discovery,0.037321857540674394,1.0,True
-307,WW.ORNOOC sensi multiplier[SludgeToHTL]:OHC.progress ratios commercial[HEFA],interaction,dynamic_discovery,0.036688147230444425,0.96,True
-308,CHC.PY sensi multiplier[Thermochem]:SE.Mature Industry Rate of Return as PCT[Jet],interaction,dynamic_discovery,0.03643668617600976,1.0,True
-309,OHC.PY sensi multiplier[HEFABrownfield]:SE.ORNOOC sensi multiplier[Jet],interaction,dynamic_discovery,0.036299958857462386,1.0,True
-310,"OHC.PY sensi multiplier[HEFABrownfield]:OHC.Policy Duration[Price,HEFABrownfield]",interaction,dynamic_discovery,0.036229561470400684,1.0,True
-311,"SE.Max Jet Investment Hit Rate:OHC.Policy Duration[Price,HEFA]",interaction,dynamic_discovery,0.03590520799400687,1.0,True
-312,SE.Max Jet Investment Hit Rate:SE.initial indices of Commercial Maturity[Jet],interaction,dynamic_discovery,0.03589831221272612,1.0,True
-313,WW.progress ratios commercial[SludgeToHTL]:SE.Mature Industry Rate of Return as PCT[Jet],interaction,dynamic_discovery,0.035767458166232266,1.0,True
-314,inverse_OHC.progress ratios commercial[HEFA],transformation,dynamic_discovery,0.03525392323658292,1.0,True
-315,SE.ORNOOC sensi multiplier[Jet]:SE.FCI  sensi multiplier[Jet],interaction,dynamic_discovery,0.03510860332912268,1.0,True
-316,WW.ORNOOC sensi multiplier[SludgeToHTL]:WW.FCI  sensi multiplier[ManureToHTL],interaction,dynamic_discovery,0.03504876651778648,1.0,True
-317,SE.Debt Interest Rate as pct[Jet],numeric,model_factors,0.03491383727007904,1.0,True
-318,AHC.FCI  sensi multiplier[HTL]:AHC.Debt Interest Rate as pct[HTL],interaction,dynamic_discovery,0.034560131573891706,1.0,True
-319,AHC.PY sensi multiplier[HTL]:AHC.initial indices of Commercial Maturity[HTL],interaction,dynamic_discovery,0.03437072926521803,1.0,True
-320,OHC.PY sensi multiplier[HEFA]:CHC.initial indices of Commercial Maturity[Brownfield],interaction,dynamic_discovery,0.03395098701421496,1.0,True
-321,SE.PY sensi multiplier[Jet]:WW.ORNOOC sensi multiplier[ManureToHTL],interaction,dynamic_discovery,0.03394368645630408,1.0,True
-322,AHC.PY sensi multiplier[HTL]:WW.FCI  sensi multiplier[SludgeToHTL],interaction,dynamic_discovery,0.033869237429594065,1.0,True
-323,inverse_CHC.progress ratios commercial[Brownfield],transformation,dynamic_discovery,0.0335966982267724,0.98,True
-324,"SE.Mature Industry Rate of Return as PCT[Jet]:CHC.Policy Duration[Price,Thermochem]",interaction,dynamic_discovery,0.033479361273688626,1.0,True
-325,CHC.initial indices of Commercial Maturity[Thermochem]:SE.ORNOOC sensi multiplier[Jet],interaction,dynamic_discovery,0.033327221358062195,0.96,True
-326,WW.ORNOOC sensi multiplier[SludgeToHTL]:AHC.Mature Industry Rate of Return as PCT[HTL],interaction,dynamic_discovery,0.03295707326069774,1.0,True
-327,OHC.PY sensi multiplier[HEFABrownfield]:CHC.Mature Industry Rate of Return as PCT[Brownfield],interaction,dynamic_discovery,0.03286306233453578,1.0,True
-328,OHC.Retirement Frac[TransEster]:SE.ORNOOC sensi multiplier[Jet],interaction,dynamic_discovery,0.032758734287177724,1.0,True
-329,CHC.PY sensi multiplier[Thermochem]:SE.ORNOOC sensi multiplier[Jet],interaction,dynamic_discovery,0.03223110029676788,1.0,True
-330,CHC.progress ratios commercial[Brownfield],numeric,model_factors,0.03219969923319161,1.0,True
-331,WW.progress ratios commercial[ManureToHTL],numeric,model_factors,0.031537581759694004,1.0,True
-332,"SE.Mature Industry Rate of Return as PCT[Jet]:SE.Policy Duration[Price,Jet]",interaction,dynamic_discovery,0.031333861085307564,1.0,True
-333,OHC.PY sensi multiplier[HEFABrownfield]:WW.Mature Industry Rate of Return as PCT[ManureToHTL],interaction,dynamic_discovery,0.031159168324841953,1.0,True
-334,"OHC.Retirement Frac[TransEster]:SE.Policy Duration[Price,Jet]",interaction,dynamic_discovery,0.031011641754416494,1.0,True
-335,OHC.Retirement Frac[TransEster]:CHC.Debt Interest Rate as pct[Thermochem],interaction,dynamic_discovery,0.030871214182549442,1.0,True
-336,WW.PY sensi multiplier[SludgeToHTL]:CHC.initial indices of Commercial Maturity[Brownfield],interaction,dynamic_discovery,0.030763507209211137,0.88,True
-337,inverse_CHC.initial indices of Commercial Maturity[Brownfield],transformation,dynamic_discovery,0.030370093401107138,1.0,True
-338,AHC.Mature Industry Rate of Return as PCT[HTL]:AHC.Debt Interest Rate as pct[HTL],interaction,dynamic_discovery,0.030267305847078964,1.0,True
-339,AHC.PY sensi multiplier[HTL]:SE.Debt Interest Rate as pct[Jet],interaction,dynamic_discovery,0.03020630526445918,1.0,True
-340,SE.Max Jet Investment Hit Rate:WW.FCI  sensi multiplier[ManureToHTL],interaction,dynamic_discovery,0.029805818063846166,1.0,True
-341,CHC.initial indices of Commercial Maturity[Brownfield]:SE.Mature Industry Rate of Return as PCT[Jet],interaction,dynamic_discovery,0.029690111971711196,1.0,True
-342,SE.Max Jet Investment Hit Rate:WW.FCI  sensi multiplier[SludgeToHTL],interaction,dynamic_discovery,0.02950240582330339,1.0,True
-343,WW.PY sensi multiplier[SludgeToHTL]:SE.PY sensi multiplier[Jet],interaction,dynamic_discovery,0.029484564723929366,1.0,True
-344,WW.Mature Industry Rate of Return as PCT[ManureToHTL]:CHC.initial indices of Commercial Maturity[Thermochem],interaction,dynamic_discovery,0.028781484859759322,1.0,True
-345,"WW.Policy Duration[Price,SludgeToHTL]",numeric,model_factors,0.0284739651832751,1.0,True
-346,WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:WW.initial indices of Commercial Maturity[ManureToHTL],interaction,dynamic_discovery,0.028372967651403187,1.0,True
-347,inverse_OHC.progress ratios commercial[HEFABrownfield],transformation,dynamic_discovery,0.028233006889365985,1.0,True
-348,AHC.PY sensi multiplier[HEFA]:AHC.Debt Interest Rate as pct[HEFA],interaction,dynamic_discovery,0.028204641392947517,1.0,True
-349,WW.ORNOOC sensi multiplier[SludgeToHTL]:AHC.FCI  sensi multiplier[HTL],interaction,dynamic_discovery,0.028027919123913662,1.0,True
-350,WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:CHC.Mature Industry Rate of Return as PCT[Brownfield],interaction,dynamic_discovery,0.028002334812108568,1.0,True
-351,SE.Mature Industry Rate of Return as PCT[Jet]:CHC.FCI  sensi multiplier[Thermochem],interaction,dynamic_discovery,0.02769817758022713,0.98,True
-352,WW.PY sensi multiplier[SludgeToHTL]:CHC.FCI  sensi multiplier[Brownfield],interaction,dynamic_discovery,0.027608343847419434,0.98,True
-353,WW.progress ratios commercial[SludgeToHTL]:SE.ORNOOC sensi multiplier[Jet],interaction,dynamic_discovery,0.027603911855862705,1.0,True
-354,SE.PY sensi multiplier[Jet]:WW.FCI  sensi multiplier[ManureToHTL],interaction,dynamic_discovery,0.027602624684098173,1.0,True
-355,CHC.PY sensi multiplier[Thermochem]:SE.FCI  sensi multiplier[Jet],interaction,dynamic_discovery,0.026870086469897216,1.0,True
-356,AHC.PY sensi multiplier[HTL]:SE.Mature Industry Rate of Return as PCT[Jet],interaction,dynamic_discovery,0.026456783601705225,0.98,True
-357,OHC.PY sensi multiplier[HEFABrownfield]:WW.ORNOOC sensi multiplier[SludgeToHTL],interaction,dynamic_discovery,0.026296104843964687,1.0,True
-358,OHC.Retirement Frac[TransEster]:OHC.ORNOOC sensi multiplier[HEFABrownfield],interaction,dynamic_discovery,0.02626099290209581,1.0,True
-359,WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:OHC.progress ratios commercial[HEFA],interaction,dynamic_discovery,0.026164444886091168,0.82,True
-360,WW.Mature Industry Rate of Return as PCT[ManureToHTL]:SE.ORNOOC sensi multiplier[Jet],interaction,dynamic_discovery,0.025792466958867437,0.96,True
-361,OHC.PY sensi multiplier[HEFABrownfield]:SE.PY sensi multiplier[Jet],interaction,dynamic_discovery,0.02578316841293293,1.0,True
-362,OHC.PY sensi multiplier[HEFA]:WW.FCI  sensi multiplier[SludgeToHTL],interaction,dynamic_discovery,0.025739795540948057,1.0,True
-363,AHC.Mature Industry Rate of Return as PCT[HTL]:WW.initial indices of Commercial Maturity[SludgeToHTL],interaction,dynamic_discovery,0.02561755905117259,1.0,True
-364,OHC.PY sensi multiplier[HEFABrownfield]:WW.PY sensi multiplier[SludgeToHTL],interaction,dynamic_discovery,0.025305671254556326,1.0,True
-365,WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:CHC.progress ratios commercial[Brownfield],interaction,dynamic_discovery,0.024664570137119812,0.96,True
-366,OHC.PY sensi multiplier[HEFA]:SE.initial indices of Commercial Maturity[Jet],interaction,dynamic_discovery,0.02461346275593306,1.0,True
-367,OHC.Mature Industry Rate of Return as PCT[HEFABrownfield],numeric,model_factors,0.02459980970456924,1.0,True
-368,log1p_OHC.Mature Industry Rate of Return as PCT[HEFA],transformation,dynamic_discovery,0.024355038314183747,1.0,True
-369,WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:WW.Debt Interest Rate as pct[SludgeToHTL],interaction,dynamic_discovery,0.024011598855642163,1.0,True
-370,SE.ORNOOC sensi multiplier[Jet]:WW.initial indices of Commercial Maturity[SludgeToHTL],interaction,dynamic_discovery,0.023934407659516894,1.0,True
-371,AHC.PY sensi multiplier[HTL]:CHC.Mature Industry Rate of Return as PCT[Thermochem],interaction,dynamic_discovery,0.02390144675847816,0.98,True
-372,SE.Mature Industry Rate of Return as PCT[Jet]:CHC.Mature Industry Rate of Return as PCT[Brownfield],interaction,dynamic_discovery,0.023899909526835367,1.0,True
-373,SE.Mature Industry Rate of Return as PCT[Jet]:WW.FCI  sensi multiplier[SludgeToHTL],interaction,dynamic_discovery,0.023635016875851806,1.0,True
-374,SE.ORNOOC sensi multiplier[Jet]:WW.FCI  sensi multiplier[ManureToHTL],interaction,dynamic_discovery,0.02340284870095711,1.0,True
-375,AHC.PY sensi multiplier[HTL]:CHC.ORNOOC sensi multiplier[Thermochem],interaction,dynamic_discovery,0.02329272607157376,1.0,True
-376,"WW.PY sensi multiplier[ManureToHTL]:WW.Policy Duration[Price,SludgeToHTL]",interaction,dynamic_discovery,0.02269315915524831,1.0,True
-377,"CHC.Policy Duration[Price,Thermochem]",numeric,model_factors,0.02233519750729735,1.0,True
-378,CHC.initial indices of Commercial Maturity[Brownfield]:WW.FCI  sensi multiplier[SludgeToHTL],interaction,dynamic_discovery,0.02220357992922857,1.0,True
-379,SE.PY sensi multiplier[Jet]:CHC.initial indices of Commercial Maturity[Thermochem],interaction,dynamic_discovery,0.022093072153982676,0.94,True
-380,SE.Max Jet Investment Hit Rate:OHC.FCI  sensi multiplier[HEFA],interaction,dynamic_discovery,0.021934574730001963,1.0,True
-381,OHC.PY sensi multiplier[HEFABrownfield]:WW.PY sensi multiplier[ManureToHTL],interaction,dynamic_discovery,0.02181724544649806,1.0,True
-382,AHC.PY sensi multiplier[HTL]:CHC.initial indices of Commercial Maturity[Brownfield],interaction,dynamic_discovery,0.0217008036107977,0.98,True
-383,WW.PY sensi multiplier[ManureToHTL]:CHC.initial indices of Commercial Maturity[Thermochem],interaction,dynamic_discovery,0.021534618419704114,0.98,True
-384,OHC.Retirement Frac[TransEster]:WW.PY sensi multiplier[ManureToHTL],interaction,dynamic_discovery,0.021389486055698126,1.0,True
-385,OHC.PY sensi multiplier[HEFABrownfield]:SE.initial indices of Commercial Maturity[Jet],interaction,dynamic_discovery,0.02137073894546812,0.98,True
-386,CHC.initial indices of Commercial Maturity[Brownfield]:WW.ORNOOC sensi multiplier[SludgeToHTL],interaction,dynamic_discovery,0.021346582830791987,1.0,True
-387,SE.PY sensi multiplier[Jet]:WW.ORNOOC sensi multiplier[SludgeToHTL],interaction,dynamic_discovery,0.020988039806446222,1.0,True
-388,CHC.initial indices of Commercial Maturity[Thermochem]:AHC.initial indices of Commercial Maturity[HTL],interaction,dynamic_discovery,0.020973967382514603,1.0,True
-389,AHC.PY sensi multiplier[HTL]:CHC.FCI  sensi multiplier[Thermochem],interaction,dynamic_discovery,0.02065805365493061,0.92,True
-390,OHC.Retirement Frac[TransEster]:SE.Mature Industry Rate of Return as PCT[Jet],interaction,dynamic_discovery,0.020481982226778585,1.0,True
-391,CHC.initial indices of Commercial Maturity[Brownfield]:SE.FCI  sensi multiplier[Jet],interaction,dynamic_discovery,0.020435781399491416,0.96,True
-392,WW.Mature Industry Rate of Return as PCT[ManureToHTL]:CHC.PY sensi multiplier[Brownfield],interaction,dynamic_discovery,0.020304397502173825,0.9,True
-393,SE.PY sensi multiplier[Jet]:WW.Mature Industry Rate of Return as PCT[ManureToHTL],interaction,dynamic_discovery,0.020272950196603638,1.0,True
-394,SE.Max Jet Investment Hit Rate:OHC.Mature Industry Rate of Return as PCT[HEFA],interaction,dynamic_discovery,0.01990784151889802,1.0,True
-395,OHC.Retirement Frac[TransEster]:SE.PY sensi multiplier[Jet],interaction,dynamic_discovery,0.01985278186863843,0.98,True
-396,WW.ORNOOC sensi multiplier[SludgeToHTL]:SE.initial indices of Commercial Maturity[Jet],interaction,dynamic_discovery,0.019380734412576244,0.92,True
-397,CHC.Mature Industry Rate of Return as PCT[Biochem]:CHC.PY sensi multiplier[Thermochem],interaction,dynamic_discovery,0.01899307118342665,1.0,True
-398,CHC.initial indices of Commercial Maturity[Brownfield]:WW.Mature Industry Rate of Return as PCT[ManureToHTL],interaction,dynamic_discovery,0.018784883569496525,1.0,True
-399,SE.Mature Industry Rate of Return as PCT[Jet]:CHC.progress ratios commercial[Thermochem],interaction,dynamic_discovery,0.01861811631085511,0.9,True
-400,WW.ORNOOC sensi multiplier[SludgeToHTL]:WW.initial indices of Commercial Maturity[ManureToHTL],interaction,dynamic_discovery,0.018437785476967873,1.0,True
-401,WW.PY sensi multiplier[ManureToHTL]:SE.Mature Industry Rate of Return as PCT[Jet],interaction,dynamic_discovery,0.018410752454336113,0.96,True
-402,CHC.Mature Industry Rate of Return as PCT[Thermochem]:SE.ORNOOC sensi multiplier[Jet],interaction,dynamic_discovery,0.017605784914318575,0.96,True
-403,WW.Mature Industry Rate of Return as PCT[ManureToHTL]:SE.initial indices of Commercial Maturity[Jet],interaction,dynamic_discovery,0.01744933530431705,1.0,True
-404,CHC.PY sensi multiplier[Thermochem]:SE.initial indices of Commercial Maturity[Jet],interaction,dynamic_discovery,0.017399087300977282,0.8,True
-405,CHC.progress ratios commercial[Thermochem],numeric,model_factors,0.017328791852503824,0.96,True
-406,SE.PY sensi multiplier[Jet]:WW.progress ratios commercial[SludgeToHTL],interaction,dynamic_discovery,0.017136362527381165,1.0,True
-407,WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:OHC.Mature Industry Rate of Return as PCT[HEFA],interaction,dynamic_discovery,0.017050729391190355,1.0,True
-408,OHC.PY sensi multiplier[HEFA]:WW.ORNOOC sensi multiplier[ManureToHTL],interaction,dynamic_discovery,0.016952343188668832,1.0,True
-409,SE.progress ratios commercial[Jet]_squared,transformation,dynamic_discovery,0.016931377984124363,1.0,True
-410,CHC.Mature Industry Rate of Return as PCT[Thermochem]:SE.initial indices of Commercial Maturity[Jet],interaction,dynamic_discovery,0.016912062549823848,1.0,True
-411,WW.Mature Industry Rate of Return as PCT[ManureToHTL]:SE.FCI  sensi multiplier[Jet],interaction,dynamic_discovery,0.016890103555402766,1.0,True
-412,"OHC.Policy Duration[Price,HEFABrownfield]",numeric,model_factors,0.016700273611109446,1.0,True
-413,"OHC.PY sensi multiplier[HEFA]:WW.Policy Duration[Price,SludgeToHTL]",interaction,dynamic_discovery,0.01664183275594232,1.0,True
-414,WW.FCI  sensi multiplier[SludgeToHTL]:CHC.Debt Interest Rate as pct[Thermochem],interaction,dynamic_discovery,0.01660597888160036,1.0,True
-415,"WW.progress ratios commercial[SludgeToHTL]:WW.Policy Duration[Price,SludgeToHTL]",interaction,dynamic_discovery,0.016563940153278146,1.0,True
-416,SE.PY sensi multiplier[Jet]:CHC.PY sensi multiplier[Brownfield],interaction,dynamic_discovery,0.016481638105070834,1.0,True
-417,SE.Max Jet Investment Hit Rate:OHC.ORNOOC sensi multiplier[HEFA],interaction,dynamic_discovery,0.016389802190145332,1.0,True
-418,OHC.Retirement Frac[TransEster]:CHC.initial indices of Commercial Maturity[Brownfield],interaction,dynamic_discovery,0.016292104059044958,1.0,True
-419,WW.Mature Industry Rate of Return as PCT[ManureToHTL]:CHC.Mature Industry Rate of Return as PCT[Brownfield],interaction,dynamic_discovery,0.016238459273691934,1.0,True
-420,OHC.PY sensi multiplier[HEFABrownfield]:WW.initial indices of Commercial Maturity[ManureToHTL],interaction,dynamic_discovery,0.01606897666114886,0.9,True
-421,SE.FCI  sensi multiplier[Jet]:SE.progress ratios commercial[Jet],interaction,dynamic_discovery,0.016017380429808933,1.0,True
-422,AHC.PY sensi multiplier[HTL]:SE.PY sensi multiplier[Jet],interaction,dynamic_discovery,0.0159923065296617,1.0,True
-423,CHC.initial indices of Commercial Maturity[Brownfield]:WW.PY sensi multiplier[ManureToHTL],interaction,dynamic_discovery,0.015901668377963165,0.96,True
-424,OHC.Retirement Frac[TransEster]:CHC.Mature Industry Rate of Return as PCT[Biochem],interaction,dynamic_discovery,0.015777422085489417,1.0,True
-425,WW.progress ratios commercial[SludgeToHTL]:CHC.progress ratios commercial[Thermochem],interaction,dynamic_discovery,0.01575272400672156,1.0,True
-426,OHC.PY sensi multiplier[HEFABrownfield]:SE.FCI  sensi multiplier[Jet],interaction,dynamic_discovery,0.01567714933996761,0.98,True
-427,inverse_SE.initial indices of Commercial Maturity[Jet],transformation,dynamic_discovery,0.015626972118021144,1.0,True
-428,SE.progress ratios commercial[Jet],numeric,model_factors,0.015484240262358296,1.0,True
-429,SE.Mature Industry Rate of Return as PCT[Jet]:AHC.initial indices of Commercial Maturity[HTL],interaction,dynamic_discovery,0.015385154702285275,1.0,True
-430,WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:SE.ORNOOC sensi multiplier[Jet],interaction,dynamic_discovery,0.01534637758736924,0.98,True
-431,SE.PY sensi multiplier[Jet]:WW.Mature Industry Rate of Return as PCT[SludgeToHTL],interaction,dynamic_discovery,0.014663920647097234,1.0,True
-432,WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:SE.initial indices of Commercial Maturity[Jet],interaction,dynamic_discovery,0.014330093221195826,0.98,True
-433,OHC.PY sensi multiplier[HEFA]:SE.Mature Industry Rate of Return as PCT[Jet],interaction,dynamic_discovery,0.014162967664509684,0.98,True
-434,SE.Mature Industry Rate of Return as PCT[Jet]:CHC.initial indices of Commercial Maturity[Thermochem],interaction,dynamic_discovery,0.014141062781564196,1.0,True
-435,"CHC.Policy Duration[Price,Brownfield]",numeric,model_factors,0.013938969782291942,1.0,True
-436,SE.initial indices of Commercial Maturity[Jet]:WW.initial indices of Commercial Maturity[SludgeToHTL],interaction,dynamic_discovery,0.0138497132440274,1.0,True
-437,OHC.Retirement Frac[TransEster]:SE.initial indices of Commercial Maturity[Jet],interaction,dynamic_discovery,0.013621729795333073,1.0,True
-438,OHC.Retirement Frac[TransEster]:WW.Mature Industry Rate of Return as PCT[ManureToHTL],interaction,dynamic_discovery,0.013449151958886194,1.0,True
-439,WW.FCI  sensi multiplier[ManureToHTL]:SE.initial indices of Commercial Maturity[Jet],interaction,dynamic_discovery,0.01342572828065273,0.94,True
-440,"SE.Mature Industry Rate of Return as PCT[Jet]:OHC.Policy Duration[Price,TransEster]",interaction,dynamic_discovery,0.013325467253875595,1.0,True
-441,WW.initial indices of Commercial Maturity[ManureToHTL]:SE.initial indices of Commercial Maturity[Jet],interaction,dynamic_discovery,0.01317639752889715,1.0,True
-442,WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:SE.Mature Industry Rate of Return as PCT[Jet],interaction,dynamic_discovery,0.012990989213240416,1.0,True
-443,"SE.PY sensi multiplier[Jet]:SE.Policy Duration[Price,Jet]",interaction,dynamic_discovery,0.012474398754772499,1.0,True
-444,SE.Mature Industry Rate of Return as PCT[Jet]:WW.ORNOOC sensi multiplier[ManureToHTL],interaction,dynamic_discovery,0.012414865219758668,1.0,True
-445,OHC.Retirement Frac[TransEster]:SE.FCI  sensi multiplier[Jet],interaction,dynamic_discovery,0.012243034016185917,0.96,True
-446,CHC.Mature Industry Rate of Return as PCT[Brownfield]:SE.initial indices of Commercial Maturity[Jet],interaction,dynamic_discovery,0.012056341776463213,1.0,True
-447,OHC.Retirement Frac[TransEster]:AHC.initial indices of Commercial Maturity[HTL],interaction,dynamic_discovery,0.01171802455736417,1.0,True
-448,OHC.PY sensi multiplier[HEFABrownfield]:SE.Mature Industry Rate of Return as PCT[Jet],interaction,dynamic_discovery,0.011131612763357878,0.92,True
-449,SE.Max Jet Investment Hit Rate:AHC.initial indices of Commercial Maturity[HTL],interaction,dynamic_discovery,0.01106017955546011,1.0,True
-450,inverse_SE.Mature Industry Rate of Return as PCT[Jet],transformation,dynamic_discovery,0.011009366774991746,1.0,True
-451,inverse_CHC.Debt Interest Rate as pct[Thermochem],transformation,dynamic_discovery,0.0109194967811556,1.0,True
-452,AHC.PY sensi multiplier[HTL]:SE.ORNOOC sensi multiplier[Jet],interaction,dynamic_discovery,0.010588397036574267,0.98,True
-453,AHC.PY sensi multiplier[HTL]:SE.initial indices of Commercial Maturity[Jet],interaction,dynamic_discovery,0.010515643814533918,0.9,True
-454,"WW.PY sensi multiplier[ManureToHTL]:CHC.Policy Duration[Price,Thermochem]",interaction,dynamic_discovery,0.010397082882250592,1.0,True
-455,CHC.initial indices of Commercial Maturity[Brownfield]:SE.ORNOOC sensi multiplier[Jet],interaction,dynamic_discovery,0.010286250529375821,0.96,True
-456,OHC.FCI  sensi multiplier[HEFA]:OHC.Mature Industry Rate of Return as PCT[HEFABrownfield],interaction,dynamic_discovery,0.01024855834849705,1.0,True
-457,WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:CHC.PY sensi multiplier[Brownfield],interaction,dynamic_discovery,0.010244537424175066,1.0,True
-458,"OHC.Mature Industry Rate of Return as PCT[HEFA]:OHC.Policy Duration[Price,HEFA]",interaction,dynamic_discovery,0.009985659466131629,1.0,True
-459,AHC.PY sensi multiplier[HTL]:OHC.progress ratios commercial[HEFA],interaction,dynamic_discovery,0.00926897238244014,0.98,True
-460,CHC.Mature Industry Rate of Return as PCT[Thermochem]:SE.Mature Industry Rate of Return as PCT[Jet],interaction,dynamic_discovery,0.00920488403298925,1.0,True
-461,CHC.Mature Industry Rate of Return as PCT[Biochem]:WW.FCI  sensi multiplier[ManureToHTL],interaction,dynamic_discovery,0.00902511620546376,1.0,True
-462,OHC.PY sensi multiplier[HEFA]:WW.initial indices of Commercial Maturity[SludgeToHTL],interaction,dynamic_discovery,0.008841421761309805,1.0,True
-463,WW.Debt Interest Rate as pct[SludgeToHTL],numeric,model_factors,0.008834918939390401,1.0,True
-464,AHC.PY sensi multiplier[HTL]:CHC.initial indices of Commercial Maturity[Thermochem],interaction,dynamic_discovery,0.00870530337918555,0.96,True
-465,CHC.Debt Interest Rate as pct[Biochem],numeric,model_factors,0.008534236417332992,1.0,True
-466,SE.PY sensi multiplier[Jet]:WW.initial indices of Commercial Maturity[ManureToHTL],interaction,dynamic_discovery,0.008424047153625765,0.94,True
-467,inverse_OHC.Retirement Frac[TransEster],transformation,dynamic_discovery,0.00832963085206822,1.0,True
-468,CHC.initial indices of Commercial Maturity[Brownfield]:SE.initial indices of Commercial Maturity[Jet],interaction,dynamic_discovery,0.008026125096155067,0.98,True
-469,OHC.PY sensi multiplier[HEFA]:WW.Mature Industry Rate of Return as PCT[ManureToHTL],interaction,dynamic_discovery,0.007789484449248647,0.92,True
-470,"WW.progress ratios commercial[SludgeToHTL]:OHC.Policy Duration[Price,HEFA]",interaction,dynamic_discovery,0.007665437452128986,1.0,True
-471,WW.Mature Industry Rate of Return as PCT[ManureToHTL]:SE.Mature Industry Rate of Return as PCT[Jet],interaction,dynamic_discovery,0.007320509628670836,0.98,True
-472,WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:WW.FCI  sensi multiplier[ManureToHTL],interaction,dynamic_discovery,0.0073191434013853114,0.92,True
-473,inverse_AHC.FCI  sensi multiplier[HTL],transformation,dynamic_discovery,0.007062305344264243,0.96,True
-474,inverse_AHC.Mature Industry Rate of Return as PCT[HTL],transformation,dynamic_discovery,0.006992828227171125,1.0,True
-475,WW.PY sensi multiplier[ManureToHTL]:SE.initial indices of Commercial Maturity[Jet],interaction,dynamic_discovery,0.006863921947652688,0.98,True
-476,OHC.Retirement Frac[TransEster]:WW.initial indices of Commercial Maturity[ManureToHTL],interaction,dynamic_discovery,0.0068122556812266885,1.0,True
-477,CHC.Debt Interest Rate as pct[Brownfield],numeric,model_factors,0.0062861559163528554,1.0,True
-478,"OHC.Policy Duration[FCI,HEFABrownfield]",numeric,model_factors,0.006193011434800708,1.0,True
-479,AHC.Debt Interest Rate as pct[HEFA],numeric,model_factors,0.005942218969453487,1.0,True
-480,AHC.Mature Industry Rate of Return as PCT[HEFA],numeric,model_factors,0.005824465848724981,0.96,True
-481,inverse_OHC.ORNOOC sensi multiplier[HEFABrownfield],transformation,dynamic_discovery,0.0053514657813176734,1.0,True
-482,CHC.initial indices of Commercial Maturity[Thermochem]:SE.initial indices of Commercial Maturity[Jet],interaction,dynamic_discovery,0.004994035637256565,1.0,True
-483,OHC.Retirement Frac[TransEster]:WW.FCI  sensi multiplier[ManureToHTL],interaction,dynamic_discovery,0.004988572183677892,1.0,True
-484,OHC.PY sensi multiplier[HEFA]:AHC.initial indices of Commercial Maturity[HTL],interaction,dynamic_discovery,0.004902837729310581,1.0,True
-485,SE.PY sensi multiplier[Jet]:CHC.Mature Industry Rate of Return as PCT[Brownfield],interaction,dynamic_discovery,0.004660878958726378,0.92,True
-486,CHC.Mature Industry Rate of Return as PCT[Thermochem]:SE.FCI  sensi multiplier[Jet],interaction,dynamic_discovery,0.004555559682519377,0.92,True
-487,inverse_CHC.initial indices of Commercial Maturity[Biochem],transformation,dynamic_discovery,0.004554632898636971,1.0,True
-488,AHC.PY sensi multiplier[HTL]:CHC.PY sensi multiplier[Thermochem],interaction,dynamic_discovery,0.004132160567568062,1.0,True
-489,CHC.Debt Interest Rate as pct[Biochem]_squared,transformation,dynamic_discovery,0.0038512755043592336,1.0,True
-490,SE.Mature Industry Rate of Return as PCT[Jet]:WW.initial indices of Commercial Maturity[SludgeToHTL],interaction,dynamic_discovery,0.003726092387637938,1.0,True
-491,SE.initial indices of Commercial Maturity[Jet]:WW.FCI  sensi multiplier[SludgeToHTL],interaction,dynamic_discovery,0.0034934921720984067,0.88,True
-492,OHC.PY sensi multiplier[HEFABrownfield]:CHC.PY sensi multiplier[Brownfield],interaction,dynamic_discovery,0.0032019896524487948,1.0,True
-493,inverse_AHC.FCI  sensi multiplier[HEFA],transformation,dynamic_discovery,0.0031315259703779286,1.0,True
-494,WW.progress ratios commercial[ManureToHTL]_squared,transformation,dynamic_discovery,0.0030799891514978754,0.96,True
-495,"SE.Policy Duration[Price,Jet]_squared",transformation,dynamic_discovery,0.0027432057720745504,0.96,True
-496,WW.PY sensi multiplier[SludgeToHTL]:CHC.PY sensi multiplier[Brownfield],interaction,dynamic_discovery,0.0025573151510027555,0.82,True
-497,SE.Mature Industry Rate of Return as PCT[Jet]:WW.initial indices of Commercial Maturity[ManureToHTL],interaction,dynamic_discovery,0.00249812653941454,1.0,True
-498,AHC.Debt Interest Rate as pct[HTL],numeric,model_factors,0.0022815999889017114,1.0,True
-499,WW.FCI  sensi multiplier[ManureToHTL],numeric,model_factors,0.0020211175480090767,0.82,True
-500,SE.Mature Industry Rate of Return as PCT[Jet]:WW.FCI  sensi multiplier[ManureToHTL],interaction,dynamic_discovery,0.0019263931417744047,0.92,True
-501,SE.FCI  sensi multiplier[Jet]:WW.ORNOOC sensi multiplier[ManureToHTL],interaction,dynamic_discovery,0.0013540789641138566,0.94,True
-502,"WW.Policy Duration[Price,ManureToHTL]",numeric,model_factors,0.00069337118931685,0.84,True
-503,inverse_SE.FCI  sensi multiplier[Jet],transformation,dynamic_discovery,0.0005379161626189456,0.8,True
-504,CHC.initial indices of Commercial Maturity[Thermochem]:SE.FCI  sensi multiplier[Jet],interaction,dynamic_discovery,0.00048709036832027177,0.8,True
-505,CHC.initial indices of Commercial Maturity[Brownfield]:SE.PY sensi multiplier[Jet],interaction,dynamic_discovery,0.0002719230624945842,0.76,True
+0,OHC.PY sensi multiplier[HEFA],numeric,model_factors,7.601801348172755,1.0,True
+1,WW.PY sensi multiplier[SludgeToHTL],numeric,model_factors,4.4895630389777486,1.0,True
+2,inverse_OHC.PY sensi multiplier[HEFA],transformation,dynamic_discovery,3.6332653133748303,1.0,True
+3,WW.PY sensi multiplier[SludgeToHTL]:WW.progress ratios commercial[SludgeToHTL],interaction,dynamic_discovery,3.630695203125996,1.0,True
+4,sqrt_AHC.PY sensi multiplier[HEFA],transformation,dynamic_discovery,3.612906406597674,1.0,True
+5,WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:WW.progress ratios commercial[SludgeToHTL],interaction,dynamic_discovery,3.4857058120340443,1.0,True
+6,WW.Mature Industry Rate of Return as PCT[SludgeToHTL],numeric,model_factors,3.3228596049996124,1.0,True
+7,sqrt_AHC.PY sensi multiplier[HTL],transformation,dynamic_discovery,3.105348098237255,1.0,True
+8,OHC.PY sensi multiplier[HEFABrownfield]:OHC.PY sensi multiplier[HEFA],interaction,dynamic_discovery,2.775715386285977,1.0,True
+9,WW.PY sensi multiplier[ManureToHTL],numeric,model_factors,2.762122556940472,1.0,True
+10,CHC.PY sensi multiplier[Thermochem]:CHC.Mature Industry Rate of Return as PCT[Thermochem],interaction,dynamic_discovery,2.705877066127861,1.0,True
+11,AHC.PY sensi multiplier[HEFA],numeric,model_factors,2.643197936339486,1.0,True
+12,AHC.PY sensi multiplier[HTL],numeric,model_factors,2.2156731639758744,1.0,True
+13,CHC.PY sensi multiplier[Thermochem]:CHC.initial indices of Commercial Maturity[Thermochem],interaction,dynamic_discovery,2.0322662644055014,1.0,True
+14,CHC.Mature Industry Rate of Return as PCT[Brownfield],numeric,model_factors,1.996731031471476,1.0,True
+15,CHC.initial indices of Commercial Maturity[Brownfield]:CHC.PY sensi multiplier[Brownfield],interaction,dynamic_discovery,1.94041867989428,1.0,True
+16,CHC.Mature Industry Rate of Return as PCT[Thermochem],numeric,model_factors,1.8878537328053824,1.0,True
+17,OHC.PY sensi multiplier[HEFABrownfield],numeric,model_factors,1.885546052470649,1.0,True
+18,WW.PY sensi multiplier[ManureToHTL]:WW.Mature Industry Rate of Return as PCT[ManureToHTL],interaction,dynamic_discovery,1.800338338814478,1.0,True
+19,CHC.PY sensi multiplier[Thermochem]:CHC.FCI  sensi multiplier[Thermochem],interaction,dynamic_discovery,1.7462002629985862,1.0,True
+20,CHC.PY sensi multiplier[Thermochem],numeric,model_factors,1.712756644461786,1.0,True
+21,CHC.initial indices of Commercial Maturity[Brownfield]:CHC.Mature Industry Rate of Return as PCT[Brownfield],interaction,dynamic_discovery,1.7004714785054242,1.0,True
+22,OHC.PY sensi multiplier[HEFA]:OHC.progress ratios commercial[HEFA],interaction,dynamic_discovery,1.637501848994817,1.0,True
+23,WW.progress ratios commercial[SludgeToHTL]:WW.FCI  sensi multiplier[SludgeToHTL],interaction,dynamic_discovery,1.3033049493396889,1.0,True
+24,CHC.Mature Industry Rate of Return as PCT[Thermochem]:CHC.FCI  sensi multiplier[Thermochem],interaction,dynamic_discovery,1.2956814118225888,1.0,True
+25,CHC.FCI  sensi multiplier[Thermochem],numeric,model_factors,1.2544963969831049,1.0,True
+26,inverse_WW.PY sensi multiplier[ManureToHTL],transformation,dynamic_discovery,1.1995984086346323,1.0,True
+27,CHC.Mature Industry Rate of Return as PCT[Thermochem]:CHC.initial indices of Commercial Maturity[Thermochem],interaction,dynamic_discovery,1.145785390812395,1.0,True
+28,CHC.initial indices of Commercial Maturity[Brownfield]:CHC.FCI  sensi multiplier[Brownfield],interaction,dynamic_discovery,1.1207128010997738,1.0,True
+29,inverse_WW.PY sensi multiplier[SludgeToHTL],transformation,dynamic_discovery,1.0380264980971738,1.0,True
+30,CHC.initial indices of Commercial Maturity[Thermochem]:CHC.FCI  sensi multiplier[Thermochem],interaction,dynamic_discovery,1.01584089833567,1.0,True
+31,CHC.Mature Industry Rate of Return as PCT[Brownfield]:CHC.PY sensi multiplier[Brownfield],interaction,dynamic_discovery,1.008037473916969,1.0,True
+32,WW.FCI  sensi multiplier[SludgeToHTL],numeric,model_factors,1.0062887692549938,1.0,True
+33,WW.PY sensi multiplier[ManureToHTL]:WW.ORNOOC sensi multiplier[ManureToHTL],interaction,dynamic_discovery,0.9941774427398016,1.0,True
+34,OHC.PY sensi multiplier[HEFA]:OHC.Mature Industry Rate of Return as PCT[HEFA],interaction,dynamic_discovery,0.9817568921975216,1.0,True
+35,OHC.Retirement Frac[TransEster]:OHC.PY sensi multiplier[HEFA],interaction,dynamic_discovery,0.979979659037302,1.0,True
+36,inverse_WW.progress ratios commercial[SludgeToHTL],transformation,dynamic_discovery,0.8804090550867133,1.0,True
+37,OHC.Mature Industry Rate of Return as PCT[HEFA],numeric,model_factors,0.8482118959616989,1.0,True
+38,WW.PY sensi multiplier[SludgeToHTL]:WW.ORNOOC sensi multiplier[SludgeToHTL],interaction,dynamic_discovery,0.8237374476697502,1.0,True
+39,sqrt_OHC.PY sensi multiplier[HEFABrownfield],transformation,dynamic_discovery,0.8211526640362224,1.0,True
+40,WW.progress ratios commercial[SludgeToHTL],numeric,model_factors,0.7743829650816928,1.0,True
+41,WW.ORNOOC sensi multiplier[SludgeToHTL],numeric,model_factors,0.7611385569315359,1.0,True
+42,CHC.Mature Industry Rate of Return as PCT[Biochem]:CHC.FCI  sensi multiplier[Biochem],interaction,dynamic_discovery,0.760213618526735,1.0,True
+43,WW.PY sensi multiplier[ManureToHTL]:WW.initial indices of Commercial Maturity[ManureToHTL],interaction,dynamic_discovery,0.7597001347798398,1.0,True
+44,CHC.Mature Industry Rate of Return as PCT[Biochem]:CHC.PY sensi multiplier[Biochem],interaction,dynamic_discovery,0.7560753550423751,1.0,True
+45,CHC.Mature Industry Rate of Return as PCT[Biochem],numeric,model_factors,0.7415394552394761,1.0,True
+46,OHC.PY sensi multiplier[HEFA]:OHC.FCI  sensi multiplier[HEFA],interaction,dynamic_discovery,0.7049716551227214,1.0,True
+47,OHC.Retirement Frac[TransEster]:OHC.PY sensi multiplier[HEFABrownfield],interaction,dynamic_discovery,0.6961519401120593,1.0,True
+48,OHC.progress ratios commercial[HEFA],numeric,model_factors,0.6935739013317226,1.0,True
+49,WW.Mature Industry Rate of Return as PCT[ManureToHTL]:WW.ORNOOC sensi multiplier[ManureToHTL],interaction,dynamic_discovery,0.6907682025018194,1.0,True
+50,WW.PY sensi multiplier[ManureToHTL]:WW.FCI  sensi multiplier[ManureToHTL],interaction,dynamic_discovery,0.6883668459874157,1.0,True
+51,WW.Mature Industry Rate of Return as PCT[ManureToHTL]_squared,transformation,dynamic_discovery,0.6857649722684567,1.0,True
+52,WW.Mature Industry Rate of Return as PCT[ManureToHTL]:WW.FCI  sensi multiplier[ManureToHTL],interaction,dynamic_discovery,0.6808400589963962,1.0,True
+53,OHC.Retirement Frac[TransEster],numeric,model_factors,0.6448016042349011,1.0,True
+54,CHC.initial indices of Commercial Maturity[Thermochem]_squared,transformation,dynamic_discovery,0.5545864241808017,1.0,True
+55,CHC.Mature Industry Rate of Return as PCT[Biochem]:CHC.initial indices of Commercial Maturity[Biochem],interaction,dynamic_discovery,0.5456823965325779,1.0,True
+56,CHC.PY sensi multiplier[Thermochem]:WW.Mature Industry Rate of Return as PCT[SludgeToHTL],interaction,dynamic_discovery,0.5307724258837525,1.0,True
+57,CHC.initial indices of Commercial Maturity[Thermochem],numeric,model_factors,0.5237454608704339,1.0,True
+58,CHC.initial indices of Commercial Maturity[Brownfield],numeric,model_factors,0.5217273475244044,1.0,True
+59,inverse_WW.Mature Industry Rate of Return as PCT[SludgeToHTL],transformation,dynamic_discovery,0.5022801933950165,1.0,True
+60,OHC.FCI  sensi multiplier[HEFA],numeric,model_factors,0.4976598228237133,1.0,True
+61,inverse_SE.Max Jet Investment Hit Rate,transformation,dynamic_discovery,0.4965771325302089,1.0,True
+62,SE.Max Jet Investment Hit Rate,numeric,model_factors,0.4817091017072676,1.0,True
+63,WW.PY sensi multiplier[SludgeToHTL]:AHC.initial indices of Commercial Maturity[HTL],interaction,dynamic_discovery,0.480801979508266,1.0,True
+64,SE.Max Jet Investment Hit Rate:SE.PY sensi multiplier[Jet],interaction,dynamic_discovery,0.4745154186113966,1.0,True
+65,WW.Mature Industry Rate of Return as PCT[ManureToHTL]:WW.initial indices of Commercial Maturity[ManureToHTL],interaction,dynamic_discovery,0.4532296034911831,1.0,True
+66,CHC.initial indices of Commercial Maturity[Biochem],numeric,model_factors,0.409581550035333,1.0,True
+67,WW.ORNOOC sensi multiplier[ManureToHTL],numeric,model_factors,0.4040115161292161,1.0,True
+68,WW.initial indices of Commercial Maturity[ManureToHTL],numeric,model_factors,0.393884547814574,1.0,True
+69,"WW.PY sensi multiplier[ManureToHTL]:WW.Policy Duration[Price,ManureToHTL]",interaction,dynamic_discovery,0.3640145404748814,1.0,True
+70,CHC.initial indices of Commercial Maturity[Biochem]:CHC.FCI  sensi multiplier[Biochem],interaction,dynamic_discovery,0.324585180571257,1.0,True
+71,inverse_CHC.Mature Industry Rate of Return as PCT[Brownfield],transformation,dynamic_discovery,0.3238735397440342,1.0,True
+72,inverse_SE.PY sensi multiplier[Jet],transformation,dynamic_discovery,0.3075291734097869,1.0,True
+73,WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:AHC.initial indices of Commercial Maturity[HTL],interaction,dynamic_discovery,0.3032017753642297,1.0,True
+74,AHC.Mature Industry Rate of Return as PCT[HTL],numeric,model_factors,0.2861285148826055,1.0,True
+75,CHC.Mature Industry Rate of Return as PCT[Biochem]_squared,transformation,dynamic_discovery,0.2820398376805371,1.0,True
+76,SE.Max Jet Investment Hit Rate:WW.PY sensi multiplier[ManureToHTL],interaction,dynamic_discovery,0.2758171260765412,1.0,True
+77,inverse_CHC.FCI  sensi multiplier[Thermochem],transformation,dynamic_discovery,0.2724962309170014,1.0,True
+78,CHC.FCI  sensi multiplier[Brownfield],numeric,model_factors,0.2697331317683999,1.0,True
+79,SE.Mature Industry Rate of Return as PCT[Jet],numeric,model_factors,0.2661056318320917,1.0,True
+80,WW.Mature Industry Rate of Return as PCT[ManureToHTL],numeric,model_factors,0.2630313410240373,1.0,True
+81,WW.FCI  sensi multiplier[ManureToHTL],numeric,model_factors,0.23427017503051,1.0,True
+82,CHC.PY sensi multiplier[Brownfield],numeric,model_factors,0.2129275654656253,1.0,True
+83,SE.ORNOOC sensi multiplier[Jet],numeric,model_factors,0.1755601287940399,1.0,True
+84,AHC.initial indices of Commercial Maturity[HTL]:WW.initial indices of Commercial Maturity[SludgeToHTL],interaction,dynamic_discovery,0.1646431111754814,1.0,True
+85,AHC.Mature Industry Rate of Return as PCT[HEFA],numeric,model_factors,0.1621708821720464,1.0,True
+86,AHC.initial indices of Commercial Maturity[HTL],numeric,model_factors,0.1568382438435514,1.0,True
+87,"WW.Policy Duration[Price,ManureToHTL]",numeric,model_factors,0.1491610060141659,1.0,True
+88,AHC.FCI  sensi multiplier[HTL],numeric,model_factors,0.1427360068825797,1.0,True
+89,CHC.progress ratios commercial[Thermochem],numeric,model_factors,0.1379007765057137,1.0,True
+90,inverse_WW.FCI  sensi multiplier[SludgeToHTL],transformation,dynamic_discovery,0.1377257500560358,1.0,True
+91,SE.FCI  sensi multiplier[Jet],numeric,model_factors,0.1311168900180326,1.0,True
+92,SE.PY sensi multiplier[Jet],numeric,model_factors,0.1142554910207256,1.0,True
+93,AHC.initial indices of Commercial Maturity[HTL]_squared,transformation,dynamic_discovery,0.1104071156167453,1.0,True
+94,WW.initial indices of Commercial Maturity[SludgeToHTL]_squared,transformation,dynamic_discovery,0.1060809693601948,1.0,True
+95,AHC.FCI  sensi multiplier[HEFA],numeric,model_factors,0.1047562321841306,1.0,True
+96,"WW.Policy Duration[Price,ManureToHTL]_squared",transformation,dynamic_discovery,0.0920387108670356,1.0,True
+97,OHC.ORNOOC sensi multiplier[HEFA],numeric,model_factors,0.0878344284458478,1.0,True
+98,SE.initial indices of Commercial Maturity[Jet],numeric,model_factors,0.0846246727430813,1.0,True
+99,WW.initial indices of Commercial Maturity[SludgeToHTL],numeric,model_factors,0.0744586411410074,1.0,True
+100,CHC.progress ratios commercial[Thermochem]:OHC.progress ratios commercial[HEFA],interaction,dynamic_discovery,0.0718957476138414,1.0,True
+101,AHC.ORNOOC sensi multiplier[HTL],numeric,model_factors,0.0704194345521712,1.0,True
+102,WW.progress ratios commercial[ManureToHTL],numeric,model_factors,0.0639488438695451,1.0,True
+103,OHC.ORNOOC sensi multiplier[HEFABrownfield],numeric,model_factors,0.0631999643666915,1.0,True
+104,inverse_WW.ORNOOC sensi multiplier[ManureToHTL],transformation,dynamic_discovery,0.062627274936583,1.0,True
+105,CHC.FCI  sensi multiplier[Thermochem]:SE.initial indices of Commercial Maturity[Jet],interaction,dynamic_discovery,0.0546722764509665,1.0,True
+106,OHC.PY sensi multiplier[HEFABrownfield]:WW.PY sensi multiplier[ManureToHTL],interaction,dynamic_discovery,0.0509356774735501,1.0,True
+107,CHC.progress ratios commercial[Brownfield],numeric,model_factors,0.0502735962376893,1.0,True
+108,AHC.Debt Interest Rate as pct[HTL],numeric,model_factors,0.0475500333127475,1.0,True
+109,CHC.Debt Interest Rate as pct[Thermochem],numeric,model_factors,0.0475279696189175,1.0,True
+110,OHC.Retirement Frac[TransEster]:CHC.PY sensi multiplier[Biochem],interaction,dynamic_discovery,0.0472606997251319,1.0,True
+111,SE.Max Jet Investment Hit Rate:OHC.progress ratios commercial[HEFA],interaction,dynamic_discovery,0.0468356678222785,1.0,True
+112,inverse_SE.Mature Industry Rate of Return as PCT[Jet],transformation,dynamic_discovery,0.04670291658474,1.0,True
+113,AHC.Debt Interest Rate as pct[HEFA],numeric,model_factors,0.0448209421009581,1.0,True
+114,SE.progress ratios commercial[Jet]_squared,transformation,dynamic_discovery,0.0432196696830929,1.0,True
+115,CHC.ORNOOC sensi multiplier[Thermochem],numeric,model_factors,0.0427823334501249,1.0,True
+116,WW.PY sensi multiplier[SludgeToHTL]:CHC.FCI  sensi multiplier[Brownfield],interaction,dynamic_discovery,0.0407931007802887,1.0,True
+117,SE.Debt Interest Rate as pct[Jet],numeric,model_factors,0.035850087904238,1.0,True
+118,inverse_WW.ORNOOC sensi multiplier[SludgeToHTL],transformation,dynamic_discovery,0.0350173168230997,1.0,True
+119,"OHC.Policy Duration[Price,HEFA]",numeric,model_factors,0.0333342466336454,1.0,True
+120,CHC.FCI  sensi multiplier[Biochem],numeric,model_factors,0.0330913437784921,1.0,True
+121,log1p_OHC.Mature Industry Rate of Return as PCT[HEFA],transformation,dynamic_discovery,0.0328441883044396,1.0,True
+122,"OHC.Policy Duration[Price,TransEster]",numeric,model_factors,0.0326259204182586,1.0,True
+123,OHC.PY sensi multiplier[HEFABrownfield]:OHC.ORNOOC sensi multiplier[HEFABrownfield],interaction,dynamic_discovery,0.0316025736354589,1.0,True
+124,CHC.Mature Industry Rate of Return as PCT[Brownfield]:AHC.Mature Industry Rate of Return as PCT[HTL],interaction,dynamic_discovery,0.0307958405916993,1.0,True
+125,inverse_AHC.FCI  sensi multiplier[HTL],transformation,dynamic_discovery,0.0307237126795961,1.0,True
+126,OHC.ORNOOC sensi multiplier[HEFABrownfield]:SE.progress ratios commercial[Jet],interaction,dynamic_discovery,0.0302268150128945,1.0,True
+127,inverse_CHC.initial indices of Commercial Maturity[Brownfield],transformation,dynamic_discovery,0.0300530041171141,1.0,True
+128,"SE.Policy Duration[Price,Jet]",numeric,model_factors,0.0296892043193027,1.0,True
+129,OHC.Debt Interest Rate as pct[HEFA],numeric,model_factors,0.028471063500825,1.0,True
+130,CHC.PY sensi multiplier[Biochem],numeric,model_factors,0.0282472913890487,1.0,True
+131,OHC.Retirement Frac[TransEster]:OHC.ORNOOC sensi multiplier[HEFABrownfield],interaction,dynamic_discovery,0.027269563411873,1.0,True
+132,"WW.Policy Duration[Price,SludgeToHTL]",numeric,model_factors,0.0268974234018587,1.0,True
+133,OHC.PY sensi multiplier[HEFABrownfield]:CHC.progress ratios commercial[Brownfield],interaction,dynamic_discovery,0.0259494660576752,1.0,True
+134,inverse_OHC.progress ratios commercial[HEFABrownfield],transformation,dynamic_discovery,0.0253699999326505,1.0,True
+135,"CHC.Policy Duration[Price,Thermochem]",numeric,model_factors,0.025180933030455,1.0,True
+136,OHC.Mature Industry Rate of Return as PCT[HEFABrownfield],numeric,model_factors,0.0249295504737786,1.0,True
+137,OHC.progress ratios commercial[HEFABrownfield],numeric,model_factors,0.0245188845276068,1.0,True
+138,CHC.Mature Industry Rate of Return as PCT[Brownfield]:SE.progress ratios commercial[Jet],interaction,dynamic_discovery,0.0235087978583154,1.0,True
+139,"OHC.Policy Duration[Price,HEFABrownfield]",numeric,model_factors,0.023179640709253,1.0,True
+140,"OHC.progress ratios commercial[HEFA]:CHC.Policy Duration[Price,Thermochem]",interaction,dynamic_discovery,0.0227312280479644,1.0,True
+141,"WW.Mature Industry Rate of Return as PCT[ManureToHTL]:OHC.Policy Duration[Price,HEFABrownfield]",interaction,dynamic_discovery,0.0227233346087974,1.0,True
+142,inverse_SE.FCI  sensi multiplier[Jet],transformation,dynamic_discovery,0.0226370754570969,1.0,True
+143,"CHC.FCI  sensi multiplier[Thermochem]:CHC.Policy Duration[Price,Thermochem]",interaction,dynamic_discovery,0.0219761696782158,1.0,True
+144,inverse_SE.initial indices of Commercial Maturity[Jet],transformation,dynamic_discovery,0.0217448331032476,1.0,True
+145,inverse_OHC.progress ratios commercial[HEFA],transformation,dynamic_discovery,0.0214375584096685,1.0,True
+146,WW.Debt Interest Rate as pct[SludgeToHTL],numeric,model_factors,0.0207393824597051,1.0,True
+147,CHC.Debt Interest Rate as pct[Brownfield],numeric,model_factors,0.0202894891479438,1.0,True
+148,"SE.initial indices of Commercial Maturity[Jet]:CHC.Policy Duration[Price,Thermochem]",interaction,dynamic_discovery,0.0197055594487122,1.0,True
+149,"OHC.Policy Duration[Price,HEFA]:WW.Policy Duration[Price,ManureToHTL]",interaction,dynamic_discovery,0.0172945377993428,1.0,True
+150,CHC.PY sensi multiplier[Brownfield]:CHC.ORNOOC sensi multiplier[Thermochem],interaction,dynamic_discovery,0.0152300952220375,1.0,True
+151,inverse_OHC.ORNOOC sensi multiplier[HEFABrownfield],transformation,dynamic_discovery,0.0145649320747946,1.0,True
+152,"SE.Policy Duration[Price,Jet]:OHC.Policy Duration[Price,HEFABrownfield]",interaction,dynamic_discovery,0.0141531353718503,1.0,True
+153,"CHC.Policy Duration[Price,Brownfield]",numeric,model_factors,0.01372829900747,1.0,True
+154,sqrt_CHC.progress ratios commercial[Thermochem],transformation,dynamic_discovery,0.0130521978075903,1.0,True
+155,inverse_AHC.Mature Industry Rate of Return as PCT[HTL],transformation,dynamic_discovery,0.0127450445595889,1.0,True
+156,"WW.progress ratios commercial[SludgeToHTL]:CHC.Policy Duration[Price,Thermochem]",interaction,dynamic_discovery,0.0126976377995815,0.98,True
+157,inverse_CHC.Debt Interest Rate as pct[Thermochem],transformation,dynamic_discovery,0.0122880480366142,1.0,True
+158,SE.progress ratios commercial[Jet],numeric,model_factors,0.012076645688975,1.0,True
+159,inverse_CHC.progress ratios commercial[Brownfield],transformation,dynamic_discovery,0.0106097226679493,0.98,True
+160,CHC.FCI  sensi multiplier[Biochem]:OHC.ORNOOC sensi multiplier[HEFABrownfield],interaction,dynamic_discovery,0.009662690692204,1.0,True
+161,WW.initial indices of Commercial Maturity[SludgeToHTL]:OHC.ORNOOC sensi multiplier[HEFABrownfield],interaction,dynamic_discovery,0.0095287669797172,1.0,True
+162,"SE.Policy Duration[Price,Jet]_squared",transformation,dynamic_discovery,0.0095013059700077,1.0,True
+163,inverse_OHC.Retirement Frac[TransEster],transformation,dynamic_discovery,0.0091233994490902,1.0,True
+164,CHC.Debt Interest Rate as pct[Biochem],numeric,model_factors,0.0080161686880799,1.0,True
+165,inverse_AHC.FCI  sensi multiplier[HEFA],transformation,dynamic_discovery,0.007137405236587,1.0,True
+166,"OHC.Policy Duration[FCI,HEFABrownfield]",numeric,model_factors,0.0061462282667462,1.0,True
+167,"WW.Policy Duration[Price,ManureToHTL]:OHC.Policy Duration[Price,HEFABrownfield]",interaction,dynamic_discovery,0.0059061202358395,1.0,True
+168,CHC.Debt Interest Rate as pct[Biochem]_squared,transformation,dynamic_discovery,0.0056017187215666,1.0,True
+169,"CHC.Policy Duration[Price,Thermochem]:OHC.Policy Duration[FCI,HEFABrownfield]",interaction,dynamic_discovery,0.0054801254006988,1.0,True
+170,inverse_CHC.initial indices of Commercial Maturity[Biochem],transformation,dynamic_discovery,0.0046416495434236,1.0,True
+171,WW.progress ratios commercial[ManureToHTL]_squared,transformation,dynamic_discovery,0.0036575656755347,1.0,True
