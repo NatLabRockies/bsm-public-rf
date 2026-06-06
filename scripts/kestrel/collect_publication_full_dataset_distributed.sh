@@ -4,7 +4,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 
-HPC_HOST="${HPC_HOST:-kl1.hpc.nrel.gov}"
+# CONFIGURE: set HPC_HOST env var or edit this line to your HPC login node
+HPC_HOST="${HPC_HOST:-your.hpc.login.node}"
 HPC_USER="${HPC_USER:-${USER}}"
 STUDY_ID="${STUDY_ID:-publication_full_dataset_distributed_20260519}"
 STUDY_ROOT="${STUDY_ROOT:-/scratch/${HPC_USER}/bsm/studies/${STUDY_ID}}"
@@ -21,7 +22,7 @@ Usage:
 Collect distributed-run artifacts from Kestrel to local machine.
 
 Options:
-  --host HOST          Kestrel host (default: kl1.hpc.nrel.gov)
+  --host HOST          HPC host (default: your.hpc.login.node)
   --user USER          Kestrel user (default: $USER)
   --study-id ID        Study identifier
   --study-root DIR     Study root on HPC

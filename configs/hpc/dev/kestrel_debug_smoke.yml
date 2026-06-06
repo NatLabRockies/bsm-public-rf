@@ -53,7 +53,7 @@ distributed:
   pixi_env_path: /projects/bsm/.pixi
 
   slurm:
-    account: bsm
+    account: bsm  # CONFIGURE: replace with your HPC allocation account
     partition: debug          # Debug partition for quick smoke tests
     walltime: "00:30:00"
     memory_gb: 32

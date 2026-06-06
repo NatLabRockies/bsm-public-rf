@@ -70,7 +70,7 @@ distributed:
   pixi_env_path: /projects/bsm/.pixi
 
   slurm:
-    account: bsm
+    account: bsm  # CONFIGURE: replace with your HPC allocation account
     partition: shared
     walltime: "08:00:00"
     memory_gb: 240          # Leave headroom below 256 GB node limit

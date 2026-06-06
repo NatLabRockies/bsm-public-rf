@@ -65,7 +65,7 @@ distributed:
   run_id: bsm_pub_full_dist_base
   pixi_env_path: /projects/bsm/.pixi
   slurm:
-    account: bsm
+    account: bsm  # CONFIGURE: replace with your HPC allocation account
     partition: shared
     walltime: "04:00:00"
     memory_gb: 128

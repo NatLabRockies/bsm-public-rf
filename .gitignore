@@ -14,3 +14,4 @@ outputs/
 artifacts/final_model/hc3_wald_intervals.csv
 # Local HPC orchestration overrides — contain real cluster hostnames and user paths
 configs/hpc/*.local.yml
+${SCRATCH_DIR}/

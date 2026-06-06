@@ -97,8 +97,8 @@ distributed:
     signal_seconds_before_timeout: 60
 
   kestrel:
-    projects_root: /projects/bsm
-    pixi_cache_dir: /projects/bsm/.cache/pixi
+    projects_root: /projects/bsm  # CONFIGURE: path to your cluster shared projects directory
+    pixi_cache_dir: /projects/bsm/.cache/pixi  # CONFIGURE: shared Pixi package cache on cluster
     dask_network_interface: hsn0
     max_array_size: 11000
     debug_partition: debug
