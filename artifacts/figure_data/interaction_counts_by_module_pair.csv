@@ -1,0 +1,11 @@
+module_a,module_b,count
+Algal Hydrocarbons,Wet Waste Hydrocarbons,2
+Cellulosic Hydrocarbons,Cellulosic Hydrocarbons,16
+Cellulosic Hydrocarbons,Oil Hydrocarbons,4
+Cellulosic Hydrocarbons,Starch Ethanol Hydrocarbons,1
+Cellulosic Hydrocarbons,Wet Waste Hydrocarbons,3
+Oil Hydrocarbons,Oil Hydrocarbons,7
+Oil Hydrocarbons,Starch Ethanol Hydrocarbons,2
+Oil Hydrocarbons,Wet Waste Hydrocarbons,1
+Starch Ethanol Hydrocarbons,Starch Ethanol Hydrocarbons,1
+Wet Waste Hydrocarbons,Wet Waste Hydrocarbons,12
