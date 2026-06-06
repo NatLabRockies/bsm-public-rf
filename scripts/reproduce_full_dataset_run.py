@@ -1,11 +1,16 @@
 """Reproduce the full BSM dataset run on HPC.
 
 This script drives the rfm_pipeline orchestration using the BSM publication configs.
-It is intended to be run from the bsm-public-rf repo root.
+It is intended to be run from the bsm-public-rf repo root on a SLURM HPC cluster.
 
-Note: This script uses a subprocess approach to invoke run_manuscript_pipeline.py,
-which handles the full HPC orchestration. It requires Kestrel HPC access, the BSM
-dataset, and the environment variables described in the README (SCRATCH_DIR, etc.).
+Prerequisites (see README.md for full details):
+  - SLURM HPC cluster access (publication run used NREL Kestrel)
+  - SCRATCH_DIR environment variable set to your cluster scratch root
+    e.g.: export SCRATCH_DIR=/scratch/${USER}
+  - SLURM_ACCOUNT environment variable set to your HPC allocation account
+    e.g.: export SLURM_ACCOUNT=my_project
+  - BSM dataset files at: ${SCRATCH_DIR}/bsm/bsm-public-rf/artifacts/preprocessed_real_data_30k/
+  - configs/manuscript_paths.yml configured (copy from configs/manuscript_paths_template.yml)
 """
 from __future__ import annotations
 
@@ -23,12 +28,55 @@ os.environ.setdefault("RFM_STUDY_ROOT", str(REPO_ROOT))
 
 from rfm_pipeline.config import load_config  # noqa: E402
 
+_REQUIRED_ENV = ["SCRATCH_DIR", "SLURM_ACCOUNT"]
+_REQUIRED_FILES = [
+    REPO_ROOT / "configs" / "manuscript_paths.yml",
+    CONFIG_PATH,
+]
+
+
+def _check_prerequisites() -> None:
+    """Fail fast with a human-readable message if required env/files are missing."""
+    errors: list[str] = []
+
+    for var in _REQUIRED_ENV:
+        if not os.environ.get(var):
+            errors.append(
+                f"  Missing environment variable: {var}\n"
+                f"    → export {var}=<your value> before running this script"
+            )
+
+    for path in _REQUIRED_FILES:
+        if not path.exists():
+            if path.name == "manuscript_paths.yml":
+                errors.append(
+                    f"  Missing required file: {path}\n"
+                    f"    → cp configs/manuscript_paths_template.yml configs/manuscript_paths.yml\n"
+                    f"    → Edit the copy to set real data paths on your cluster"
+                )
+            else:
+                errors.append(f"  Missing required file: {path}")
+
+    if errors:
+        print("ERROR: Prerequisites not met for reproduce-full. See README.md for setup.\n")
+        for e in errors:
+            print(e)
+        sys.exit(1)
+
 
 def main() -> None:
+    _check_prerequisites()
+
     cfg = load_config(str(CONFIG_PATH))
-    print(f"Loaded config for dataset={cfg.dataset.type}")
-    print(f"Artifact dir: {cfg.output.artifact_dir}")
-    print("Launching full pipeline runner via subprocess...")
+    artifact_dir = cfg.output.artifact_dir
+    if "${" in artifact_dir:
+        print(f"WARNING: artifact_dir contains unexpanded variable: {artifact_dir!r}")
+        print(f"  Make sure SCRATCH_DIR and other referenced env vars are exported.")
+
+    print(f"Config loaded: dataset={cfg.dataset.type}")
+    print(f"Artifact dir:  {artifact_dir}")
+    print(f"Launching full pipeline runner via subprocess...")
+
     if not RUNNER_PATH.is_file():
         raise FileNotFoundError(f"Pipeline runner not found: {RUNNER_PATH}")
     subprocess.run([sys.executable, str(RUNNER_PATH), str(CONFIG_PATH)], check=True)
