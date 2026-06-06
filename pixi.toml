@@ -13,7 +13,7 @@ pyarrow = ">=16.0"
 tqdm = ">=4.0"
 
 [pypi-dependencies]
-rfm-pipeline = {git = "https://github.com/NatLabRockies/rfm-pipeline.git", rev = "7a61b32"}
+rfm-pipeline = {git = "https://github.com/NatLabRockies/rfm-pipeline.git", rev = "87f126c"}
 
 [tasks]
 reproduce-full = "python scripts/reproduce_full_dataset_run.py"
