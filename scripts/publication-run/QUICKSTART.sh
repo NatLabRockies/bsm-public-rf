@@ -10,8 +10,8 @@ cat << 'EOF'
 ╚═══════════════════════════════════════════════════════════════════╝
 
 DATASET
-  • Real BSM study (30,000 samples, 160 inputs, 23,497 outputs)
-  • Location: artifacts/preprocessed_real_data/
+  • Real BSM study (30,000 samples, 160 inputs, 23,495 outputs)
+  • Location: artifacts/preprocessed_real_data_30k/
   • Status: ✓ Ready
 
 CONFIGURATION
@@ -58,7 +58,7 @@ EXPECTED STAGES (each 1-6 hours)
   6. sparse_selection              (~2-4 hours)
   7. final_artifacts               (~2-4 hours)
 
-  Total: ~24 hours
+  4-hour window per job stage; full pipeline runs 6 stages (~24h total wall time)
 
 STATUS INTERPRETATION
   queued_or_pending     = Waiting to start
@@ -77,7 +77,7 @@ QUICK START
    Check output for:
    ✓ Valid SLURM headers
    ✓ Correct partition (shared)
-   ✓ Correct walltime (24:00:00)
+   ✓ Correct walltime (04:00:00 per job stage; ~24h total across 6 pipeline stages)
    ✓ All stage commands present
 
 2. SUBMIT (2 minutes)
@@ -129,13 +129,13 @@ TROUBLESHOOTING
 ───────────────
 
 Issue: Dry-run fails with config error
-→ pixi run python -c "from bsm_rfm.config import load_config; load_config('configs/hpc/kestrel_publication_full_dataset.yml')"
+→ pixi run python -c "from rfm_pipeline.config import load_config; load_config('configs/hpc/kestrel_publication_full_dataset.yml')"
 
 Issue: Submit hangs
-→ ssh -T dhetting@kl1.hpc.nrel.gov "echo 'SSH works'"
+→ ssh -T ${USER}@${HPC_HOST} "echo 'SSH works'"
 
 Issue: Monitor shows "queued" after 30+ minutes
-→ ssh -T dhetting@kl1.hpc.nrel.gov "squeue -u dhetting"
+→ ssh -T ${USER}@${HPC_HOST} "squeue -u ${USER}"
 
 Issue: Collection fails
 → bash scripts/publication-run/03_monitor_publication_run.sh

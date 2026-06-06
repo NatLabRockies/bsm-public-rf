@@ -7,7 +7,7 @@
 #   2. Data on Kestrel:
 #      /projects/bsm/<repo>/artifacts/test_dataset_3k/   (or full dataset path)
 #   3. Submit GPU job from login node:
-#      pixi run bsm-hpc-submit --config configs/hpc/kestrel_gpu_h100.yml \
+#      pixi run rfm-hpc-submit --config configs/hpc/kestrel_gpu_h100.yml \
 #          --stage interaction_discovery --submit
 #
 # GPU resource guide:

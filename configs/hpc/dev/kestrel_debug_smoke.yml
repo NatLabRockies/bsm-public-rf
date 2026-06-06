@@ -3,7 +3,7 @@
 # Fits within debug partition limits (1 hour, limited nodes).
 #
 # Usage:
-#   pixi run bsm-hpc-submit --config configs/hpc/kestrel_debug_smoke.yml --diagnostic-only --submit
+#   pixi run rfm-hpc-submit --config configs/hpc/kestrel_debug_smoke.yml --diagnostic-only --submit
 
 dataset:
   type: "synthetic_300_sample"

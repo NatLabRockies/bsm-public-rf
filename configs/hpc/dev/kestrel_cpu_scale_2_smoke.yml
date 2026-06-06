@@ -9,7 +9,7 @@
 #   (queue wait time is scheduler-dependent and not included).
 #
 # Typical usage on Kestrel login node:
-#   pixi run bsm-hpc-submit --config configs/hpc/kestrel_cpu_scale_2_smoke.yml \
+#   pixi run rfm-hpc-submit --config configs/hpc/kestrel_cpu_scale_2_smoke.yml \
 #       --stage interaction_discovery --n-shards 2 --submit
 
 dataset:

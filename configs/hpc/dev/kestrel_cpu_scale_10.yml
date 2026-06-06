@@ -4,7 +4,7 @@
 #   Medium-stress CPU scaling validation after 2-node baseline passes.
 #
 # Typical usage on Kestrel login node:
-#   pixi run bsm-hpc-submit --config configs/hpc/kestrel_cpu_scale_10.yml \
+#   pixi run rfm-hpc-submit --config configs/hpc/kestrel_cpu_scale_10.yml \
 #       --stage interaction_discovery --n-shards 10 --submit
 
 dataset:

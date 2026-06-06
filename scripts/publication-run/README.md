@@ -8,15 +8,15 @@ This directory contains a complete script suite for executing the publication-gr
 
 - **Source**: Real BSM study data (30,000 samples)
 - **Inputs**: 160 parameters (raw, not standardized)
-- **Outputs**: 23,497 economic metrics
-- **Location**: `artifacts/preprocessed_real_data/`
+- **Outputs**: 23,495 economic metrics
+- **Location**: `artifacts/preprocessed_real_data_30k/`
 - **Size**: 2.1 GB
 
 ## Configuration
 
 - **Config file**: `configs/hpc/kestrel_publication_full_dataset.yml`
 - **Hyperparameters**: Quality-first (201 permutations, 250 trees, 100 bootstrap)
-- **HPC resource**: Shared partition, 24-hour walltime, 240 GB memory, 104 CPUs
+- **HPC resource**: Shared partition, 4-hour window per job stage; full pipeline runs 6 stages (~24h total wall time), 240 GB memory, 104 CPUs
 - **Expected total runtime**: ~24 hours
 
 ## Scripts
@@ -211,7 +211,7 @@ pixi run python -c "from rfm_pipeline.config import load_config; load_config('co
 **Solution**: Verify SSH access to Kestrel
 
 ```bash
-ssh -T dhetting@kl1.hpc.nrel.gov "echo 'SSH works'"
+ssh -T ${USER}@${HPC_HOST} "echo 'SSH works'"
 ```
 
 ### Issue: Monitor script shows "queued_or_pending" after 30+ minutes
@@ -219,7 +219,7 @@ ssh -T dhetting@kl1.hpc.nrel.gov "echo 'SSH works'"
 **Solution**: Check HPC queue status manually
 
 ```bash
-ssh -T dhetting@kl1.hpc.nrel.gov "squeue -u dhetting"
+ssh -T ${USER}@${HPC_HOST} "squeue -u ${USER}"
 ```
 
 ### Issue: Collection fails with "no bundle found"
@@ -321,8 +321,8 @@ ______________________________________________________________________
 For issues or questions:
 
 1. Review the troubleshooting section above
-1. Check HPC status manually: `squeue -u dhetting`
-1. Review remote logs: `tail -f /scratch/dhetting/bsm/bsm_kestrel_publication_full/logs/*.out`
+1. Check HPC status manually: `squeue -u ${USER}`
+1. Review remote logs: `tail -f /scratch/${USER}/bsm/bsm_kestrel_publication_full/logs/*.out`
 1. Check latest bundle: `ls -lh artifacts/kestrel_collected_bundles/ | tail -1`
 
 ______________________________________________________________________
