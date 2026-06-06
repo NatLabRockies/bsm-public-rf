@@ -57,6 +57,35 @@ def _check_prerequisites() -> None:
             else:
                 errors.append(f"  Missing required file: {path}")
 
+    # If manuscript_paths.yml exists, verify it contains real paths rather
+    # than the unedited /path/to/... template placeholders. This catches the
+    # common reviewer error of copying the template and forgetting to edit
+    # it; without this guard the failure would surface deep inside the
+    # pipeline with an unhelpful "Dataset root not found" message.
+    paths_file = REPO_ROOT / "configs" / "manuscript_paths.yml"
+    if paths_file.exists():
+        try:
+            import yaml
+
+            with open(paths_file, encoding="utf-8") as f:
+                paths_data = yaml.safe_load(f) or {}
+            unedited = [
+                key
+                for key, value in paths_data.items()
+                if isinstance(value, str) and value.startswith("/path/to/")
+            ]
+            if unedited:
+                errors.append(
+                    f"  configs/manuscript_paths.yml still contains template placeholders: "
+                    f"{', '.join(unedited)}\n"
+                    f"    → Edit each /path/to/... value to point at your local BSM data\n"
+                    f"    → See configs/manuscript_paths_template.yml for the expected schema"
+                )
+        except Exception as exc:  # noqa: BLE001 — surfaced verbatim to user
+            errors.append(
+                f"  configs/manuscript_paths.yml failed to parse: {exc}"
+            )
+
     # Validate dataset directory when SCRATCH_DIR is resolvable
     scratch_dir = os.environ.get("SCRATCH_DIR", "")
     if scratch_dir:

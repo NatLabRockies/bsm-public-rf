@@ -49,10 +49,13 @@ stages:
     max_tree_depth: 5                # Slightly deeper: capture more complexity
     p_threshold: 0.05                # Stricter: more conservative significance
 
-  # Nonlinear discovery: comprehensive family exploration
+  # Nonlinear discovery: algebraic transform library matching manuscript §3.5
+  # (quadratic, logarithmic, inverse, square-root). Setting this empty or
+  # omitting the key uses the rfm_pipeline default which already matches the
+  # manuscript family list. The historical ``transform_families`` key was
+  # silently dropped by the loader — do not reintroduce it.
   nonlinear_discovery:
     edf_threshold: 2.5               # Standard threshold
-    transform_families: ["spline", "poly", "log", "sqrt", "exp"]  # More families
 
   # Sparse selection: high stability for feature robustness
   sparse_selection:
