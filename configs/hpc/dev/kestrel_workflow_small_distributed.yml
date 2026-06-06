@@ -7,12 +7,7 @@
 hpc_workflow:
   cluster:
     # CONFIGURE: replace with your HPC login node hostname.
-    host: kl1.hpc.nrel.gov
-    user: "${USER}"
-    account: bsm
-
-  paths:
-    remote_repo_root: /home/${USER}/src/bsm-public-rf
+    host: your.hpc.login.node
     remote_artifacts_root: /scratch/${USER}/bsm/bsm-public-rf/artifacts
     remote_logs_root: /scratch/${USER}/bsm
     remote_snapshot_root: /scratch/${USER}/bsm/kestrel_hpc_snapshots
