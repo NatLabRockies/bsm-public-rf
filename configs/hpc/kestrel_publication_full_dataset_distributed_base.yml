@@ -63,6 +63,8 @@ distributed:
   backend: slurm_array
   # Overridden by controller.
   run_id: bsm_pub_full_dist_base
+  # CONFIGURE: shared Pixi env reachable from every compute node (Kestrel
+  # publication run used /projects/bsm/.pixi).
   pixi_env_path: /projects/bsm/.pixi
   slurm:
     account: bsm  # CONFIGURE: replace with your HPC allocation account
@@ -76,6 +78,10 @@ distributed:
     requeue: false
     signal_seconds_before_timeout: 60
   kestrel:
+    # CONFIGURE: cluster-specific roots and partition names. Replace
+    # projects_root / pixi_cache_dir with your project filesystem,
+    # dask_network_interface with your high-speed NIC (e.g. ``ib0``), and
+    # partition names to match your scheduler config.
     projects_root: /projects/bsm
     pixi_cache_dir: /projects/bsm/.cache/pixi
     dask_network_interface: hsn0
@@ -84,6 +90,7 @@ distributed:
     gpu_partition: gpu-h100s
     production_partition: shared
   spill:
+    # CONFIGURE: fast scratch path for Dask spilling.
     scratch_root: "/scratch/${USER}/bsm"
     tmpdir_spill_enabled: false
     min_free_gb: 20.0

@@ -11,6 +11,7 @@ import signal
 import sys
 import time
 import traceback
+import yaml
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -215,7 +216,18 @@ def _read_parquet_with_mode(
 
 
 def _resolve_data_root(config: WorkflowConfig) -> Path:
-    """Resolve dataset root from config.dataset.{path,type}."""
+    """Resolve dataset root from config.dataset.{path,type}.
+
+    Resolution order:
+
+    1. Explicit ``config.dataset.path`` (highest priority).
+    2. ``configs/manuscript_paths.yml`` overrides for the BSM ``real_full_dataset``
+       dataset type — the parent directory of ``case_study_input_matrix``
+       becomes the data root. This is the user-facing override path
+       advertised in the README (``cp manuscript_paths_template.yml
+       manuscript_paths.yml``).
+    3. Hardcoded per-``dataset.type`` fallback rooted under ``REPO_ROOT``.
+    """
     if config.dataset.path:
         candidate = Path(config.dataset.path)
         if not candidate.is_absolute():
@@ -229,6 +241,26 @@ def _resolve_data_root(config: WorkflowConfig) -> Path:
         # Sensitivity study: caller must provide dataset.path
         "synthetic_controlled_dgp": None,
     }
+
+    # For the BSM publication dataset, honor configs/manuscript_paths.yml when
+    # present so that operators can point at scratch-resident inputs without
+    # editing a committed config. The runner consumes the parent directory
+    # because the rest of the pipeline assumes X/Y/holdout/feature_catalog
+    # live alongside each other.
+    if config.dataset.type == "real_full_dataset":
+        paths_override = REPO_ROOT / "configs" / "manuscript_paths.yml"
+        if paths_override.exists():
+            try:
+                with open(paths_override, encoding="utf-8") as f:
+                    overrides = yaml.safe_load(f) or {}
+                input_matrix = overrides.get("case_study_input_matrix")
+                if input_matrix:
+                    return Path(input_matrix).expanduser().resolve().parent
+            except (OSError, yaml.YAMLError):
+                # Fall through to the hardcoded path on parse failure rather
+                # than masking the real I/O error here.
+                pass
+
     try:
         root = dataset_roots[config.dataset.type]
         if root is None:

@@ -54,6 +54,9 @@ validation:
   fast_mode_overrides: {}
 
 output:
+  # CONFIGURE: replace /projects/bsm/... with a writable artifact dir on your
+  # cluster (the publication run used the BSM project allocation). The path
+  # must be accessible from every compute node.
   artifact_dir: "/projects/bsm/bsm-public-rf/artifacts/kestrel_30k_run"
   seed: 0
   verbose: true
@@ -66,7 +69,8 @@ distributed:
   backend: slurm_array
   run_id: bsm_kestrel_30k
 
-  # Path to shared Pixi environment (must be accessible from all compute nodes)
+  # CONFIGURE: path to a shared Pixi environment installed under your project
+  # allocation; must be readable from every compute node.
   pixi_env_path: /projects/bsm/.pixi
 
   slurm:
@@ -81,6 +85,10 @@ distributed:
     signal_seconds_before_timeout: 60
 
   kestrel:
+    # CONFIGURE: cluster-specific roots. The publication run targeted NREL
+    # Kestrel; on other systems set projects_root / pixi_cache_dir to your
+    # equivalent shared project filesystem and dask_network_interface to the
+    # high-speed network interface name (e.g. ``ib0``, ``eth1``).
     projects_root: /projects/bsm
     pixi_cache_dir: /projects/bsm/.cache/pixi
     dask_network_interface: hsn0
@@ -90,6 +98,8 @@ distributed:
     production_partition: shared
 
   spill:
+    # CONFIGURE: scratch_root must point at fast node-local or burst-buffer
+    # storage with at least ~min_free_gb free per task.
     scratch_root: "/scratch/${USER}/bsm"
     tmpdir_spill_enabled: false   # $TMPDIR can be RAM-backed on Kestrel CPU nodes
     min_free_gb: 20.0
