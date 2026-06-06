@@ -1,67 +1,66 @@
-# BSM Case Study Reproducibility
+# BSM Reduced-Form Model — Manuscript Reproduction Repository
 
-This repository contains the configuration, final model artifacts, and reproduction
-scripts for the Biomass Scenario Model (BSM) reduced-form modeling case study.
+This repository contains the configuration, committed artifacts, and helper scripts needed to reproduce the published Biomass Scenario Model (BSM) reduced-form modeling results with `rfm-pipeline`.
 
-The generic pipeline framework is in [NatLabRockies/rfm-pipeline](https://github.com/NatLabRockies/rfm-pipeline).
+## Prerequisites
 
-## Structure
+- Python >= 3.10
+- [Pixi](https://pixi.sh)
+- `rfm-pipeline` (installed automatically by `pixi install` in this repository)
+- Access to the BSM simulation data required for reproduction
 
-```
-configs/                  # BSM-specific pipeline configuration
-  manuscript_case_study.yml         # Main case study config
-  manuscript_data_contract.yml      # Data schema and feature definitions
-  manuscript_paths.template.yml     # Path template (copy → manuscript_paths.yml)
-  manuscript_runtime.yml            # Runtime settings
-  datasets/real_data.yml            # BSM dataset source config
-  hpc/                              # Kestrel HPC submission configs
+## Input Data
 
-artifacts/                # Committed final model artifacts
-  final_model/            # Coefficients, support features, standardization
-  tables/                 # Performance and ablation tables
+BSM simulation data are not included in this repository. A full reproduction requires:
 
-scripts/                  # Thin reproduction scripts
-figures/                  # Figure output directory (generated)
-```
+- `X.parquet` — input matrix
+- `Y.parquet` — output matrix
+- `all_input_metadata.parquet`
+- `output_metadata.parquet`
+- `manuscript_feature_catalog.parquet`
+- `fixed_holdout_assignments.parquet`
 
-## Reproducing the results
+Obtain these files from the data release associated with the manuscript, or generate them with the corresponding BSM simulation and preprocessing workflow before running this repository.
 
-### Prerequisites
-
-1. Install [pixi](https://pixi.sh)
-2. Clone this repository
-3. Copy and edit the paths template:
-   ```bash
-   cp configs/manuscript_paths.template.yml configs/manuscript_paths.yml
-   # Edit manuscript_paths.yml to point to your BSM data
-   ```
-4. Install dependencies:
-   ```bash
-   pixi install
-   ```
-
-### Run the full dataset pipeline (requires HPC)
+## Installation
 
 ```bash
-pixi run reproduce-full
+git clone https://github.com/NatLabRockies/bsm-public-rf.git
+cd bsm-public-rf
+pixi install
 ```
 
-See `configs/hpc/` for Kestrel SLURM submission configs.
+## Configuration
 
-### Regenerate artifacts from committed model
+Create a local paths file from the template and update it for your environment:
 
 ```bash
-pixi run reproduce-artifacts
+cp configs/manuscript_paths_template.yml configs/manuscript_paths.yml
 ```
 
-## Data access
+`configs/manuscript_paths.yml` is gitignored. Set each path in that file to your local BSM input data and writable output location. If you adapt the optional cluster configs under `configs/hpc/`, also set any required environment-specific paths such as `BSM_DATA_ROOT` or `SCRATCH_DIR`.
 
-The BSM input data (`real_data.yml`) points to the NREL BSM output dataset.
-Contact the repository owners for data access instructions.
+## Reproducing the manuscript
+
+1. Install the environment with `pixi install`.
+2. Copy `configs/manuscript_paths_template.yml` to `configs/manuscript_paths.yml` and edit the paths.
+3. Regenerate manuscript-facing outputs from the committed model artifacts:
+   ```bash
+   pixi run reproduce-artifacts
+   ```
+4. Re-run the full case-study workflow when the full BSM dataset and appropriate compute environment are available:
+   ```bash
+   pixi run reproduce-full
+   ```
+5. Collect regenerated figures from `figures/` and produced artifacts from `artifacts/` or your configured output directory.
+
+## Repository structure
+
+- `configs/` — dataset, runtime, and optional cluster configuration files
+- `scripts/` — reproduction entry points that call `rfm-pipeline`
+- `artifacts/` — committed manuscript artifacts and model outputs
+- `figures/` — generated figures
 
 ## Citation
 
-If you use this case study or the rfm-pipeline framework, please cite:
-
-> Hettinger, D. et al. (2026). Reduced-form modeling workflow for large-scale
-> simulator output. *Journal of Data Science*.
+Citation information for the manuscript should be added here when the final publication metadata are available.

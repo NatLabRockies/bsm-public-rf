@@ -12,10 +12,10 @@
 # Prerequisites:
 #   1. Pixi environment on shared filesystem
 #   2. Full dataset available
-#   3. Submit from Kestrel login node
+#   3. Submit from your cluster login node
 #
 # Typical usage:
-#   cd /home/dhetting/src/bsm-public-rf
+#   cd /path/to/your/repo
 #   pixi run hpc-workflow -- \
 #     --config configs/hpc/kestrel_publication_full_dataset.yml \
 #     --action submit
@@ -70,7 +70,7 @@ validation:
   fast_mode_overrides: {}
 
 output:
-  artifact_dir: "/scratch/dhetting/bsm/artifacts/kestrel_publication_full_dataset_run"
+  artifact_dir: "${SCRATCH_DIR}/bsm/artifacts/kestrel_publication_full_dataset_run"
   seed: 0
   verbose: true
 
