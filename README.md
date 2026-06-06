@@ -9,6 +9,14 @@ This repository contains the configuration, committed artifacts, and helper scri
 - `rfm-pipeline` (installed automatically by `pixi install` in this repository)
 - Access to the BSM simulation data required for reproduction
 
+**HPC-only prerequisites** (required only for step 4 — full pipeline re-run):
+
+- SLURM HPC cluster access (the publication run used NREL's Kestrel)
+- `SCRATCH_DIR` environment variable set to your cluster scratch root
+  (e.g., `export SCRATCH_DIR=/scratch/${USER}`)
+- `SLURM_ACCOUNT` environment variable set to your HPC allocation account
+- BSM dataset placed at `${SCRATCH_DIR}/bsm/bsm-public-rf/artifacts/preprocessed_real_data_30k/`
+
 ## Input Data
 
 BSM simulation data are not included in this repository. A full reproduction requires:
@@ -48,10 +56,13 @@ cp configs/manuscript_paths_template.yml configs/manuscript_paths.yml
    ```bash
    pixi run reproduce-artifacts
    ```
-4. Re-run the full case-study workflow when the full BSM dataset and appropriate compute environment are available:
+4. (**HPC only** — requires Kestrel access, BSM dataset, and `SCRATCH_DIR` set)
+   Re-run the full pipeline from scratch:
    ```bash
    pixi run reproduce-full
    ```
+   This uses `configs/hpc/kestrel_publication_full_dataset.yml` and submits SLURM
+   jobs. See `scripts/publication-run/README.md` for the full orchestration workflow.
 5. Collect regenerated figures from `figures/` and produced artifacts from `artifacts/` or your configured output directory.
 
 ## Repository structure
