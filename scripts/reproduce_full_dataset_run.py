@@ -2,6 +2,10 @@
 
 This script drives the rfm_pipeline orchestration using the BSM publication configs.
 It is intended to be run from the bsm-public-rf repo root.
+
+Note: This script uses a subprocess approach to invoke run_manuscript_pipeline.py,
+which handles the full HPC orchestration. It requires Kestrel HPC access, the BSM
+dataset, and the environment variables described in the README (SCRATCH_DIR, etc.).
 """
 from __future__ import annotations
 
@@ -18,18 +22,16 @@ RUNNER_PATH = REPO_ROOT / "scripts" / "run_manuscript_pipeline.py"
 os.environ.setdefault("RFM_STUDY_ROOT", str(REPO_ROOT))
 
 from rfm_pipeline.config import load_config  # noqa: E402
-from rfm_pipeline.workflow import run_canonical_workflow as _rfm_run_canonical_workflow  # noqa: F401,E402
-
-
-def run_canonical_workflow(cfg: object) -> None:
-    if not RUNNER_PATH.is_file():
-        raise FileNotFoundError(f"Pipeline runner not found: {RUNNER_PATH}")
-    subprocess.run([sys.executable, str(RUNNER_PATH), str(CONFIG_PATH)], check=True)
 
 
 def main() -> None:
     cfg = load_config(str(CONFIG_PATH))
-    run_canonical_workflow(cfg)
+    print(f"Loaded config for dataset={cfg.dataset.type}")
+    print(f"Artifact dir: {cfg.output.artifact_dir}")
+    print("Launching full pipeline runner via subprocess...")
+    if not RUNNER_PATH.is_file():
+        raise FileNotFoundError(f"Pipeline runner not found: {RUNNER_PATH}")
+    subprocess.run([sys.executable, str(RUNNER_PATH), str(CONFIG_PATH)], check=True)
 
 
 if __name__ == "__main__":
