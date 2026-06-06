@@ -12,3 +12,7 @@ outputs/
 # HC3 Wald intervals: 450MB, exceeds GitHub limit.
 # Regenerate with: rfm_pipeline final_manuscript_artifacts stage (reuses bootstrap checkpoints).
 artifacts/final_model/hc3_wald_intervals.csv
+# Local HPC orchestration overrides — contain real cluster hostnames and user paths
+configs/hpc/*.local.yml
+# Local sensitivity study configs
+configs/sensitivity_study/study_spec*.local.yml

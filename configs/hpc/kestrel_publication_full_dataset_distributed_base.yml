@@ -1,4 +1,6 @@
 # Publication-grade full-dataset baseline for staged distributed HPC execution.
+# CONFIGURE: set SCRATCH_DIR to your cluster scratch root.
+# Example: export SCRATCH_DIR=/path/to/scratch/${USER}
 #
 # This file pins all manuscript-facing analysis parameters.
 # Stage-specific SLURM settings (walltime/memory/cpus/concurrency/run_id/log_dir)
@@ -6,7 +8,7 @@
 
 dataset:
   type: "real_full_dataset"
-  path: "/scratch/dhetting/bsm/bsm-public-rf/artifacts/preprocessed_real_data_30k"
+  path: "${SCRATCH_DIR}/bsm/bsm-public-rf/artifacts/preprocessed_real_data_30k"
 
 algorithm:
   variance_threshold: 0.90
@@ -52,7 +54,7 @@ validation:
 
 output:
   # Overridden by controller to study-scoped artifact root.
-  artifact_dir: "/scratch/dhetting/bsm/studies/publication_full_dataset_distributed_20260519/artifacts"
+  artifact_dir: "${SCRATCH_DIR}/bsm/studies/publication_full_dataset_distributed_20260519/artifacts"
   seed: 0
   verbose: true
 

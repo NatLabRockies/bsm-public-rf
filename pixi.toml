@@ -10,7 +10,7 @@ platforms = ["osx-arm64", "osx-64", "linux-64"]
 python = ">=3.10,<3.13"
 
 [pypi-dependencies]
-rfm-pipeline = {git = "https://github.com/NatLabRockies/rfm-pipeline.git", branch = "main"}
+rfm-pipeline = {git = "https://github.com/NatLabRockies/rfm-pipeline.git", rev = "c81a01df632c853e0ccbf4d927e02f4dea7a545e"}
 
 [tasks]
 reproduce-full = "python scripts/reproduce_full_dataset_run.py"
