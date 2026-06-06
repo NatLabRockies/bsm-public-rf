@@ -54,41 +54,64 @@ cp configs/manuscript_paths_template.yml configs/manuscript_paths.yml
 
 ## Reproducing the manuscript
 
+The fastest path for journal reviewers is **step 1 + step 2 (figures only — no
+raw data, no HPC required)**. The HPC path (steps 3–4) is only needed to
+re-run the full pipeline from raw BSM simulator outputs.
+
+### Quick path — regenerate manuscript figures from committed artifacts
+
 1. Install the environment with `pixi install`.
-2. Copy `configs/manuscript_paths_template.yml` to `configs/manuscript_paths.yml` and edit the paths.
 
-   > **Note:** If `configs/manuscript_paths.yml` is absent the pipeline falls back to
-   > `demo_fallback` mode, which uses a small synthetic dataset instead of the real BSM data.
-   > Fallback mode exercises the full workflow mechanics but does not reproduce publication results.
+2. Regenerate manuscript-facing figures from the committed model artifacts:
 
-3. Regenerate manuscript-facing outputs from the committed model artifacts:
    ```bash
    pixi run reproduce-artifacts
    ```
-   This regenerates the 11 main BSM results figures (SVG + PDF if Chrome is available) to `figures/`
-   using the same rendering code as the original pipeline run — no raw BSM data required.
-   Figures produced: `figure_model_performance`, `figure_nrmse_bootstrap_summary`,
-   `figure_per_output_nrmse_distribution`, `figure_support_composition`,
-   `figure_selected_by_module_count`, `figure_selected_by_module_share`,
-   `figure_feature_pruning_curve`, `fig_feature_type_distribution`,
-   `fig_influential_by_module`, `fig_module_pair_heatmap`, `fig_module_total_interactions`.
 
-   > **Note on sensitivity figures:** The 6 `fig_sensitivity_*.pdf` figures in the manuscript
-   > are produced by the rfm-pipeline sensitivity analysis (`scripts/plot_sensitivity_results.py`
-   > and `scripts/plot_sensitivity_rf_figures.py` in the rfm-pipeline repo). They require
-   > completed sensitivity analysis runs and are not reproduced by this repository.
+   This emits SVG (and PDF when Chrome is available) under `figures/` by
+   replaying the same rendering code used for the published submission. The
+   following figures are reproduced (sensitivity figures are produced by the
+   rfm-pipeline repo — see the note below):
+
+   **Cited in the manuscript (5):**
+   `figure_nrmse_bootstrap_summary`, `figure_per_output_nrmse_distribution`,
+   `figure_support_composition`, `figure_selected_by_module_count`,
+   `fig_module_pair_heatmap`.
+
+   **Supplementary diagnostics (6, not cited in v22 but shipped for reviewer
+   convenience):** `figure_model_performance`, `figure_selected_by_module_share`,
+   `figure_feature_pruning_curve`, `fig_feature_type_distribution`,
+   `fig_influential_by_module`, `fig_module_total_interactions`.
+
+   > **Note on sensitivity figures:** The 4 `fig_sensitivity_*.pdf` figures in
+   > the manuscript are produced by the rfm-pipeline sensitivity analysis
+   > (`scripts/plot_sensitivity_results.py` and
+   > `scripts/plot_sensitivity_rf_figures.py` in the rfm-pipeline repo). They
+   > require completed sensitivity analysis runs and are not reproduced by
+   > this repository.
+
+### Full path — re-run pipeline from raw BSM simulator data
+
+3. Copy `configs/manuscript_paths_template.yml` to
+   `configs/manuscript_paths.yml` and edit the paths to point at your local
+   BSM dataset. The file is gitignored. If `manuscript_paths.yml` is absent
+   the runner fails fast with a `Dataset root not found` error; there is no
+   demo-mode fallback.
 
 4. (**HPC only** — requires cluster access, BSM dataset, and `SCRATCH_DIR` set)
    Re-run the full pipeline from scratch:
+
    ```bash
    pixi run reproduce-full
    ```
+
    This submits the distributed SLURM job array using
-   `configs/hpc/kestrel_publication_full_dataset.yml`.
-   For orchestration details (kickoff, status, artifact collection), see the helper scripts in
+   `configs/hpc/kestrel_publication_full_dataset.yml`. For orchestration
+   details (kickoff, status, artifact collection), see the helper scripts in
    `scripts/kestrel/` and the `hpc-workflow` command below.
 
-5. Collect regenerated figures from `figures/` and produced artifacts from `artifacts/` or your configured output directory.
+5. Collect regenerated figures from `figures/` and produced artifacts from
+   `artifacts/` or your configured output directory.
 
 ## HPC workflow command
 

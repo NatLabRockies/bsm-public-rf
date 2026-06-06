@@ -45,4 +45,3 @@ stages:
 orchestrator: scripts/run_manuscript_pipeline.py
 artifact_root: artifacts/
 local_path_override: configs/manuscript_paths.yml
-default_execution_mode: demo_fallback

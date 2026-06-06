@@ -32,7 +32,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--config",
         required=True,
-        help="Path to orchestration YAML (see configs/hpc/kestrel_workflow_orchestration.yml)",
+        help="Path to orchestration YAML (see configs/hpc/kestrel_publication_orchestration.yml)",
     )
     parser.add_argument(
         "--action",
