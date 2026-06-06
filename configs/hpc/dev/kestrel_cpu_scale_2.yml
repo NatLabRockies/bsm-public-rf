@@ -5,7 +5,7 @@
 #   This tier is the low-stress baseline to validate SLURM-array orchestration.
 #
 # Typical usage on Kestrel login node:
-#   pixi run bsm-hpc-submit --config configs/hpc/kestrel_cpu_scale_2.yml \
+#   pixi run rfm-hpc-submit --config configs/hpc/kestrel_cpu_scale_2.yml \
 #       --stage interaction_discovery --n-shards 2 --submit
 
 dataset:
@@ -48,7 +48,7 @@ validation:
   fast_mode_overrides: {}
 
 output:
-  artifact_dir: "/scratch/dhetting/bsm/artifacts/kestrel_cpu_scale_2_run"
+  artifact_dir: "/scratch/${USER}/bsm/artifacts/kestrel_cpu_scale_2_run"
   seed: 0
   verbose: true
 

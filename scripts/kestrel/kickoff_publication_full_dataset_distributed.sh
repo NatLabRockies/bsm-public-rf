@@ -9,7 +9,7 @@ HPC_USER="${HPC_USER:-${USER}}"
 STUDY_ID="${STUDY_ID:-publication_full_dataset_distributed_20260519}"
 REMOTE_STUDY_ROOT="${REMOTE_STUDY_ROOT:-/scratch/${HPC_USER}/bsm/studies/${STUDY_ID}}"
 REMOTE_REPO_ROOT="${REMOTE_REPO_ROOT:-/home/${HPC_USER}/src/bsm-public-rf}"
-DATASET_PATH="${DATASET_PATH:-/scratch/dhetting/bsm/bsm-public-rf/artifacts/preprocessed_real_data_30k}"
+DATASET_PATH="${DATASET_PATH:-/scratch/${USER}/bsm/bsm-public-rf/artifacts/preprocessed_real_data_30k}"
 
 SSH_TARGET="${HPC_USER}@${HPC_HOST}"
 

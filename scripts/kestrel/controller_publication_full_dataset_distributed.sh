@@ -7,7 +7,7 @@ REPO_ROOT="${REPO_ROOT:-$(cd "${SCRIPT_DIR}/../.." && pwd)}"
 STUDY_ID="${STUDY_ID:-publication_full_dataset_distributed_20260519}"
 STUDY_ROOT="${STUDY_ROOT:-/scratch/${USER}/bsm/studies/${STUDY_ID}}"
 BASE_CONFIG_REL="${BASE_CONFIG_REL:-configs/hpc/kestrel_publication_full_dataset_distributed_base.yml}"
-DATASET_PATH="${DATASET_PATH:-/scratch/dhetting/bsm/bsm-public-rf/artifacts/preprocessed_real_data_30k}"
+DATASET_PATH="${DATASET_PATH:-/scratch/${USER}/bsm/bsm-public-rf/artifacts/preprocessed_real_data_30k}"
 
 ARTIFACT_ROOT="${STUDY_ROOT}/artifacts"
 SCRIPT_ROOT="${STUDY_ROOT}/hpc_scripts"
@@ -32,7 +32,7 @@ if [[ ! -f "${BASE_CONFIG_PATH}" ]]; then
   exit 2
 fi
 
-for required in X.parquet Y.parquet holdout_assignments.parquet actual_input_feature_catalog.parquet; do
+for required in X.parquet Y.parquet fixed_holdout_assignments.parquet manuscript_feature_catalog.parquet; do
   if [[ ! -f "${DATASET_PATH}/${required}" ]]; then
     echo "error: missing required dataset artifact: ${DATASET_PATH}/${required}" >&2
     exit 2

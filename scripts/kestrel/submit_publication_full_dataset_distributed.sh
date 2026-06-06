@@ -6,7 +6,7 @@ REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 
 STUDY_ID="publication_full_dataset_distributed_20260519"
 STUDY_ROOT=""
-DATASET_PATH="/scratch/dhetting/bsm/bsm-public-rf/artifacts/preprocessed_real_data_30k"
+DATASET_PATH="${DATASET_PATH:-/scratch/${USER}/bsm/bsm-public-rf/artifacts/preprocessed_real_data_30k}"
 CONTROLLER_WALLTIME="48:00:00"
 PARTITION="shared"
 ACCOUNT="bsm"
