@@ -4,7 +4,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="${REPO_ROOT:-$(cd "${SCRIPT_DIR}/../.." && pwd)}"
 
-STUDY_ID="${STUDY_ID:-publication_full_dataset_distributed_20260519}"
+STUDY_ID="${STUDY_ID:-publication_full_dataset_distributed_20260519}"  # Original publication run; override: export STUDY_ID=publication_$(date +%Y%m%d)
 STUDY_ROOT="${STUDY_ROOT:-/scratch/${USER}/bsm/studies/${STUDY_ID}}"
 BASE_CONFIG_REL="${BASE_CONFIG_REL:-configs/hpc/kestrel_publication_full_dataset_distributed_base.yml}"
 DATASET_PATH="${DATASET_PATH:-/scratch/${USER}/bsm/bsm-public-rf/artifacts/preprocessed_real_data_30k}"

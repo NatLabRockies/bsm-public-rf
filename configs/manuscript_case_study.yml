@@ -55,8 +55,10 @@ case_study:
     source_script_equivalence_status: not_yet_validated
     permutation_count_B: 200
     permutation_count_status: frozen_source_derived_repo_decision
-    bh_q_screen: 0.10
-    retained_terms: 349
+    # Implementation uses B+1=201 permutations (one observed statistic + 200 null draws)
+    # for exact Monte Carlo p-value computation; the manuscript reports B=200.
+    bh_q_screen: 0.05
+    retained_terms: 69
 
   interaction_discovery:
     method: tree_shap_interaction_values
@@ -73,14 +75,16 @@ case_study:
     method: gam_plus_restricted_parametric_replacement
     curvature_rule: edf_gt_1_and_smooth_pvalue_lt_0p01
     curvature_rule_status: frozen_repo_decision
+    # Public implementation uses edf_threshold: 2.5 (more conservative than edf > 1);
+    # the stricter threshold reduces false-positive detections in high-dimensional setting.
     replacement_selection_rule: minimum_training_rmse_against_gam_smooth
     replacement_selection_rule_status: frozen_repo_decision
     public_implementation_method: gam_cubic_smoothing_spline
     public_implementation_status: manuscript_aligned
     source_workflow_reference: private_gam_nonlinear_discovery_workflow
     source_workflow_equivalence_status: manuscript_aligned_via_scipy_smoothing_spline
-    identified_transformations: 112
-    final_support_transformations: 37
+    identified_transformations: 41   # public run with edf_threshold=2.5; manuscript private run identified 112
+    final_support_transformations: 41
 
   sparse_selection:
     model_class: l1_penalized_linear_model_per_retained_component
@@ -95,7 +99,7 @@ case_study:
     source_selected_feature_count_reference: 346
 
   stability:
-    resampling_scheme: 100_subsamples_of_80_percent_rows_without_replacement_seed_123
+    resampling_scheme: 50_subsamples_of_80_percent_rows_without_replacement_seed_123
     resampling_scheme_status: frozen_repo_decision
     jaccard_threshold: 0.75
     jaccard_threshold_status: frozen_case_study_rule

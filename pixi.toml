@@ -1,4 +1,4 @@
-[project]
+[workspace]
 name = "bsm-public-rf"
 version = "0.1.0"
 description = "BSM case study reproducibility package"
@@ -13,9 +13,10 @@ pyarrow = ">=16.0"
 tqdm = ">=4.0"
 
 [pypi-dependencies]
-rfm-pipeline = {git = "https://github.com/NatLabRockies/rfm-pipeline.git", rev = "178399e55fed4ef2c88cdd9a377599dc8bdf8680"}
+rfm-pipeline = {git = "https://github.com/NatLabRockies/rfm-pipeline.git", rev = "41053c3bc7ad00e9fd134a489610e10731be4a2d"}
 
 [tasks]
 reproduce-full = "python scripts/reproduce_full_dataset_run.py"
 reproduce-artifacts = "python scripts/reproduce_artifacts.py"
 hpc-workflow = "python scripts/hpc_workflow.py"
+rfm-hpc-submit = "python -m rfm_pipeline.hpc_submit"
