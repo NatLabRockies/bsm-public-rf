@@ -39,7 +39,7 @@ runtime:
 stages:
   # Empirical null screening: more permutations for conservative significance
   empirical_null_screening:
-    n_permutations: 201              # Higher: more rigorous null distribution
+    n_permutations: 201              # B+1 design: 200 null draws + 1 observed statistic (manuscript reports B=200)
     bh_q_threshold: 0.05             # Stricter: more conservative FDR control
 
   # Interaction discovery: more permutations + estimators for robustness
@@ -83,10 +83,10 @@ distributed:
   run_id: bsm_kestrel_publication_full
 
   # Path to shared Pixi environment (must be accessible from all compute nodes)
-  pixi_env_path: /projects/bsm/.pixi
+  pixi_env_path: /projects/bsm/.pixi  # CONFIGURE: path to shared pixi env on your cluster
 
   slurm:
-    account: bsm
+    account: bsm  # CONFIGURE: replace with your HPC allocation account
     partition: shared
     walltime: "04:00:00"             # 4-hour windows per job
     memory_gb: 240                   # Leave headroom below 256 GB node limit

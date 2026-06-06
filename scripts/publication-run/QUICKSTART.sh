@@ -12,7 +12,8 @@ cat << 'EOF'
 DATASET
   • Real BSM study (30,000 samples, 160 inputs, 23,495 outputs)
   • Location: artifacts/preprocessed_real_data_30k/
-  • Status: ✓ Ready
+  • Status: NOT INCLUDED — obtain from data release associated with the manuscript
+             (see README "Data Access" section for instructions)
 
 CONFIGURATION
   • File: configs/hpc/kestrel_publication_full_dataset.yml
@@ -43,7 +44,7 @@ SCRIPTS
   Stage 3: Monitor execution (~1-2 min per check)
   bash scripts/publication-run/03_monitor_publication_run.sh
   bash scripts/publication-run/03_monitor_publication_run.sh 300  # Auto-check every 5 min
-  ✓ Polls HPC for progress through all 7 stages (~24 hours total)
+  ✓ Polls HPC for progress through all 6 pipeline stages (~24 hours total)
 
   Stage 4: Collect results (~10 minutes)
   bash scripts/publication-run/04_collect_publication_artifacts.sh
