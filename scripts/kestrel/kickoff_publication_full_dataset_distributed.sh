@@ -4,7 +4,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 
-HPC_HOST="${HPC_HOST:-kl1.hpc.nrel.gov}"
+# CONFIGURE: set HPC_HOST env var or edit this line to your HPC login node
+HPC_HOST="${HPC_HOST:-your.hpc.login.node}"
 HPC_USER="${HPC_USER:-${USER}}"
 STUDY_ID="${STUDY_ID:-publication_full_dataset_distributed_20260519}"
 REMOTE_STUDY_ROOT="${REMOTE_STUDY_ROOT:-/scratch/${HPC_USER}/bsm/studies/${STUDY_ID}}"
@@ -21,7 +22,7 @@ Usage:
 Git-based kickoff (no rsync): require local clean branch, push, pull on HPC, then submit.
 
 Options:
-  --host HOST               Kestrel host (default: kl1.hpc.nrel.gov)
+  --host HOST               HPC host (default: your.hpc.login.node)
   --user USER               Kestrel username (default: $USER)
   --study-id ID             Study identifier
   --remote-study-root DIR   Root directory for this study on HPC

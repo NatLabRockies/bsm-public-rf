@@ -57,6 +57,17 @@ def _check_prerequisites() -> None:
             else:
                 errors.append(f"  Missing required file: {path}")
 
+    # Validate dataset directory when SCRATCH_DIR is resolvable
+    scratch_dir = os.environ.get("SCRATCH_DIR", "")
+    if scratch_dir:
+        dataset_dir = Path(scratch_dir) / "bsm" / "bsm-public-rf" / "artifacts" / "preprocessed_real_data_30k"
+        if not dataset_dir.exists():
+            errors.append(
+                f"  BSM dataset directory not found: {dataset_dir}\n"
+                f"    → Obtain the BSM preprocessed dataset and place it at this path.\n"
+                f"    → See README.md §'Data Access' for the dataset source."
+            )
+
     if errors:
         print("ERROR: Prerequisites not met for reproduce-full. See README.md for setup.\n")
         for e in errors:

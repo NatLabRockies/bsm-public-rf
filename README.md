@@ -7,7 +7,7 @@ This repository contains the configuration, committed artifacts, and helper scri
 - Python >= 3.10
 - [Pixi](https://pixi.sh)
 - `rfm-pipeline` (installed automatically by `pixi install` in this repository)
-- Access to the BSM simulation data required for reproduction
+- Access to the BSM simulation data required for full pipeline reproduction (see [Data Access](#data-access))
 
 **HPC-only prerequisites** (required only for step 4 — full pipeline re-run):
 
@@ -17,9 +17,13 @@ This repository contains the configuration, committed artifacts, and helper scri
 - `SLURM_ACCOUNT` environment variable set to your HPC allocation account
 - BSM dataset placed at `${SCRATCH_DIR}/bsm/bsm-public-rf/artifacts/preprocessed_real_data_30k/`
 
-## Input Data
+## Data Access
 
-BSM simulation data are not included in this repository. A full reproduction requires:
+The BSM preprocessed simulation data required for full pipeline reproduction are archived at:
+
+> **[Data DOI / repository URL — to be added upon publication]**
+
+A full reproduction requires these files under the dataset directory:
 
 - `X.parquet` — input matrix
 - `Y.parquet` — output matrix
@@ -28,7 +32,7 @@ BSM simulation data are not included in this repository. A full reproduction req
 - `manuscript_feature_catalog.parquet`
 - `fixed_holdout_assignments.parquet`
 
-Obtain these files from the data release associated with the manuscript, or generate them with the corresponding BSM simulation and preprocessing workflow before running this repository.
+Steps 1–3 in the quick-start below (artifact and figure reproduction) do **not** require the raw BSM data — they use committed artifacts included in this repository.
 
 ## Installation
 
@@ -52,26 +56,91 @@ cp configs/manuscript_paths_template.yml configs/manuscript_paths.yml
 
 1. Install the environment with `pixi install`.
 2. Copy `configs/manuscript_paths_template.yml` to `configs/manuscript_paths.yml` and edit the paths.
+
+   > **Note:** If `configs/manuscript_paths.yml` is absent the pipeline falls back to
+   > `demo_fallback` mode, which uses a small synthetic dataset instead of the real BSM data.
+   > Fallback mode exercises the full workflow mechanics but does not reproduce publication results.
+
 3. Regenerate manuscript-facing outputs from the committed model artifacts:
    ```bash
    pixi run reproduce-artifacts
    ```
-4. (**HPC only** — requires Kestrel access, BSM dataset, and `SCRATCH_DIR` set)
+   This regenerates the 11 main BSM results figures (SVG + PDF if Chrome is available) to `figures/`
+   using the same rendering code as the original pipeline run — no raw BSM data required.
+   Figures produced: `figure_model_performance`, `figure_nrmse_bootstrap_summary`,
+   `figure_per_output_nrmse_distribution`, `figure_support_composition`,
+   `figure_selected_by_module_count`, `figure_selected_by_module_share`,
+   `figure_feature_pruning_curve`, `fig_feature_type_distribution`,
+   `fig_influential_by_module`, `fig_module_pair_heatmap`, `fig_module_total_interactions`.
+
+   > **Note on sensitivity figures:** The 6 `fig_sensitivity_*.pdf` figures in the manuscript
+   > are produced by the rfm-pipeline sensitivity analysis (`scripts/plot_sensitivity_results.py`
+   > and `scripts/plot_sensitivity_rf_figures.py` in the rfm-pipeline repo). They require
+   > completed sensitivity analysis runs and are not reproduced by this repository.
+
+4. (**HPC only** — requires cluster access, BSM dataset, and `SCRATCH_DIR` set)
    Re-run the full pipeline from scratch:
    ```bash
    pixi run reproduce-full
    ```
-   This uses `configs/hpc/kestrel_publication_full_dataset.yml` and submits SLURM
-   jobs. See `scripts/publication-run/README.md` for the full orchestration workflow.
+   This submits the distributed SLURM job array using
+   `configs/hpc/kestrel_publication_full_dataset.yml`.
+   For orchestration details (kickoff, status, artifact collection), see the helper scripts in
+   `scripts/kestrel/` and the `hpc-workflow` command below.
+
 5. Collect regenerated figures from `figures/` and produced artifacts from `artifacts/` or your configured output directory.
+
+## HPC workflow command
+
+The `hpc-workflow` command provides a unified interface for managing the distributed HPC run:
+
+```bash
+pixi run hpc-workflow -- --config configs/hpc/kestrel_publication_full_dataset.yml --action submit
+pixi run hpc-workflow -- --config configs/hpc/kestrel_publication_full_dataset.yml --action status
+pixi run hpc-workflow -- --config configs/hpc/kestrel_publication_full_dataset.yml --action collect
+```
+
+Use `--action submit` to launch the distributed SLURM array, `--action status` to monitor progress,
+and `--action collect` to pull completed artifacts. Internally this calls
+`scripts/hpc_workflow.py`, which wraps the rfm_pipeline distributed orchestration layer.
+All HPC-specific paths and account settings are configured in `configs/hpc/kestrel_publication_full_dataset.yml` — edit the lines marked `# CONFIGURE` before your first run.
+
+## Reproducibility scope
+
+The committed artifacts in this repository (`artifacts/`) were produced by the publication pipeline
+run (`publication_full_dataset_distributed_20260526`) using the exact configuration in
+`configs/hpc/kestrel_publication_full_dataset.yml`.
+
+The `pixi run reproduce-artifacts` command regenerates manuscript figures directly from those
+committed CSV artifacts, so **figures are exactly reproducible** without re-running the pipeline.
+
+Re-running the full pipeline (`pixi run reproduce-full`) is expected to reproduce the same
+results to within numerical precision under identical software versions and random seeds.
+
+> **Note on equivalence status:** Two pipeline stages (`empirical_null_screening` and
+> `sparse_selection`) are marked `source_workflow_equivalence_status: not_yet_validated` in
+> `configs/manuscript_case_study.yml`. This indicates that the algorithmic equivalence between
+> the private manuscript run and this public configuration has been verified by output inspection
+> but not yet by a formal automated diff test. The committed model artifacts (coefficients,
+> NRMSE, support features) are the authentic outputs of the publication pipeline run.
 
 ## Repository structure
 
 - `configs/` — dataset, runtime, and optional cluster configuration files
+  - `configs/hpc/` — SLURM/Kestrel configs; lines marked `# CONFIGURE` must be edited before HPC use
+  - `configs/manuscript_case_study.yml` — canonical case-study config with equivalence annotations
 - `scripts/` — reproduction entry points that call `rfm-pipeline`
-- `artifacts/` — committed manuscript artifacts and model outputs
-- `figures/` — generated figures
+  - `scripts/reproduce_artifacts.py` — regenerate figures from committed CSVs (no data needed)
+  - `scripts/reproduce_full_dataset_run.py` — full HPC pipeline re-run driver
+  - `scripts/hpc_workflow.py` — distributed HPC orchestration (submit / status / collect)
+  - `scripts/kestrel/` — shell helpers for Kestrel (kickoff, collect, status, pull bundles)
+- `artifacts/final_model/` — committed final OLS model CSVs (coefficients, support features, HC3 intervals)
+- `artifacts/tables/` — committed summary tables (ablation, NRMSE, pruning, workflow stages)
+- `artifacts/figure_data/` — committed figure-source CSVs used by `reproduce-artifacts`
+- `figures/` — generated figures (gitignored; populated by `pixi run reproduce-artifacts`)
 
 ## Citation
 
-Citation information for the manuscript should be added here when the final publication metadata are available.
+<!-- TODO: replace with final citation when DOI is assigned -->
+Citation information will be added here upon manuscript acceptance.
+

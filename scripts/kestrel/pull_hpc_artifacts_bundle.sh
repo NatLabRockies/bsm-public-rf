@@ -7,7 +7,8 @@ REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 # shellcheck source=common_paths.sh
 source "${REPO_ROOT}/scripts/kestrel/common_paths.sh"
 
-HPC_HOST="${HPC_HOST:-kl1.hpc.nrel.gov}"
+# CONFIGURE: set HPC_HOST env var or edit this line to your HPC login node
+HPC_HOST="${HPC_HOST:-your.hpc.login.node}"
 HPC_REPO_ROOT="${HPC_REPO_ROOT:-/projects/bsm/bsm-public-rf}"
 HPC_ARTIFACTS_ROOT="${HPC_ARTIFACTS_ROOT:-__AUTO__}"
 LOCAL_OUT_DIR="${LOCAL_OUT_DIR:-${REPO_ROOT}/artifacts/kestrel_collected_bundles}"

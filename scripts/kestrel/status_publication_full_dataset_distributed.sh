@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-HPC_HOST="${HPC_HOST:-kl1.hpc.nrel.gov}"
+# CONFIGURE: set HPC_HOST env var or edit this line to your HPC login node
+HPC_HOST="${HPC_HOST:-your.hpc.login.node}"
 HPC_USER="${HPC_USER:-${USER}}"
 STUDY_ID="${STUDY_ID:-publication_full_dataset_distributed_20260519}"
 STUDY_ROOT="${STUDY_ROOT:-/scratch/${HPC_USER}/bsm/studies/${STUDY_ID}}"
@@ -16,7 +17,7 @@ Usage:
 Show controller status and per-stage shard/reduce progress for the distributed full run.
 
 Options:
-  --host HOST          Kestrel host (default: kl1.hpc.nrel.gov)
+  --host HOST          HPC host (default: your.hpc.login.node)
   --user USER          Kestrel user (default: $USER)
   --study-id ID        Study identifier
   --study-root DIR     Study root on HPC

@@ -12,7 +12,7 @@ hpc_workflow:
     # The original value targeted the NREL Kestrel login node.
     host: your.hpc.login.node
     user: "${USER}"
-    account: bsm
+    account: bsm  # CONFIGURE: replace with your HPC allocation account
 
   paths:
     remote_repo_root: /path/to/your/repo

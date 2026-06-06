@@ -86,7 +86,7 @@ distributed:
   pixi_env_path: /projects/bsm/.pixi
 
   slurm:
-    account: bsm
+    account: bsm  # CONFIGURE: replace with your HPC allocation account
     partition: gpu-h100s         # H100 GPU partition on Kestrel
     walltime: "04:00:00"         # H100 max is typically 4 hours
     memory_gb: 700               # Leave headroom below 768 GB node limit
