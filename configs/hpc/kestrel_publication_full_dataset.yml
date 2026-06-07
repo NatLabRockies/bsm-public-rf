@@ -14,11 +14,14 @@
 #   2. Full dataset available
 #   3. Submit from your cluster login node
 #
-# Typical usage:
+# Typical usage (this is the per-tier run config; pass it via the
+# orchestration YAML, not directly to ``hpc-workflow``):
 #   cd /path/to/your/repo
 #   pixi run hpc-workflow -- \
-#     --config configs/hpc/kestrel_publication_full_dataset.yml \
+#     --config configs/hpc/kestrel_publication_orchestration.yml \
 #     --action submit
+# The orchestration config references this file under
+# ``execution.cpu_tiers[].config_path``.
 
 dataset:
   type: "real_full_dataset"
