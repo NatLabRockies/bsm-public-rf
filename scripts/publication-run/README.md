@@ -2,7 +2,7 @@
 
 ## Overview
 
-This directory contains a complete script suite for executing the publication-grade full-dataset study on NREL Kestrel HPC. The workflow has 4 independent stages that can be run sequentially or individually.
+This directory contains a complete script suite for executing the publication-grade full-dataset study on NREL Kestrel HPC. The workflow has 4 independent steps that can be run sequentially or individually.
 
 ## Dataset
 
@@ -16,7 +16,7 @@ This directory contains a complete script suite for executing the publication-gr
 
 - **Config file**: `configs/hpc/kestrel_publication_full_dataset.yml`
 - **Hyperparameters**: Quality-first (201 permutations, 250 trees, 100 bootstrap)
-- **HPC resource**: Shared partition, 4-hour window per job stage; full pipeline runs 6 stages (~24h total wall time), 240 GB memory, 104 CPUs
+- **HPC resource**: Shared partition, 4-hour window per HPC job; full pipeline runs 6 stages (~24h total wall time), 240 GB memory, 104 CPUs
 - **Expected total runtime**: ~24 hours
 
 ## Scripts
@@ -29,8 +29,8 @@ bash scripts/publication-run/00_publication_run_master.sh
 
 **What it does:**
 
-- Prompts through all 4 stages sequentially
-- Validates before proceeding to next stage
+- Prompts through all 4 steps sequentially
+- Validates before proceeding to next step
 - Provides clear instructions and interpretations
 - Estimated time: 24+ hours (with monitoring pauses)
 
@@ -38,7 +38,7 @@ ______________________________________________________________________
 
 ### Option 2: Individual Scripts (Manual Control)
 
-#### Stage 1: Dry-run Validation
+#### Step 1: Dry-run Validation
 
 ```bash
 bash scripts/publication-run/01_dry_run_submission.sh
@@ -54,11 +54,11 @@ bash scripts/publication-run/01_dry_run_submission.sh
 
 **Time**: ~30 seconds
 
-**Next step**: Review output, then run Stage 2
+**Next step**: Review output, then run Step 2
 
 ______________________________________________________________________
 
-#### Stage 2: Live Submission
+#### Step 2: Live Submission
 
 ```bash
 bash scripts/publication-run/02_live_submission.sh
@@ -80,11 +80,11 @@ bash scripts/publication-run/02_live_submission.sh
 - Note any job IDs in output
 - Verify no error messages
 
-**Next step**: Wait for jobs to start (5-15 minutes), then run Stage 3
+**Next step**: Wait for jobs to start (5-15 minutes), then run Step 3
 
 ______________________________________________________________________
 
-#### Stage 3: Monitor Execution
+#### Step 3: Monitor Execution
 
 ```bash
 # Check status once
@@ -129,7 +129,7 @@ bash scripts/publication-run/03_monitor_publication_run.sh 900
 
 ______________________________________________________________________
 
-#### Stage 4: Collect Artifacts
+#### Step 4: Collect Artifacts
 
 ```bash
 bash scripts/publication-run/04_collect_publication_artifacts.sh
@@ -246,28 +246,28 @@ ______________________________________________________________________
 
 ## Expected Outputs
 
-### From Dry-run (Stage 1)
+### From Dry-run (Step 1)
 
 - SLURM script snippets printed to console
 - No files created on HPC
 
-### From Submission (Stage 2)
+### From Submission (Step 2)
 
 - `artifacts/publication_run_tracking.txt` (local tracking file)
 - Remote job IDs (noted in script output)
 
-### From Monitoring (Stage 3)
+### From Monitoring (Step 3)
 
 - Status summaries printed to console
 - No local files created (remote read-only)
 
-### From Collection (Stage 4)
+### From Collection (Step 4)
 
 - `artifacts/publication_full_dataset_results/` (complete study package)
   - `manifest/` (metadata and reproducibility)
   - `tables/` (CSV tables and statistics)
   - `figures/` (SVG publication figures)
-  - `logs/` (execution logs from each stage)
+  - `logs/` (execution logs from each step)
 
 ______________________________________________________________________
 
@@ -287,25 +287,25 @@ ______________________________________________________________________
 
 ## Success Criteria
 
-### Stage 1 (Dry-run) ✓
+### Step 1 (Dry-run) ✓
 
 - Script generation succeeds without errors
 - SLURM headers are valid
 - No warnings about missing configs
 
-### Stage 2 (Submission) ✓
+### Step 2 (Submission) ✓
 
 - "HPC workflow action complete" message appears
 - No SSH or permission errors
 - Tracking file created locally
 
-### Stage 3 (Monitoring) ✓
+### Step 3 (Monitoring) ✓
 
 - All 6 stages show "queued_or_pending" initially
 - Stages gradually progress to "running_or_waiting_reduce"
 - All stages show "completed" after ~24 hours
 
-### Stage 4 (Collection) ✓
+### Step 4 (Collection) ✓
 
 - Bundle extracted successfully
 - "All critical artifacts present" message appears

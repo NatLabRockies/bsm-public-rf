@@ -33,20 +33,20 @@ SCRIPTS
   OPTION 2: Individual Stages (Manual Control)
   ─────────────────────────────────────────────
 
-  Stage 1: Dry-run validation (~30 seconds)
+  Step 1: Dry-run validation (~30 seconds)
   bash scripts/publication-run/01_dry_run_submission.sh
   ✓ Generates and validates SLURM scripts without submitting
 
-  Stage 2: Live submission (~2 minutes)
+  Step 2: Live submission (~2 minutes)
   bash scripts/publication-run/02_live_submission.sh
   ✓ Submits to HPC, returns job IDs
 
-  Stage 3: Monitor execution (~1-2 min per check)
+  Step 3: Monitor execution (~1-2 min per check)
   bash scripts/publication-run/03_monitor_publication_run.sh
   bash scripts/publication-run/03_monitor_publication_run.sh 300  # Auto-check every 5 min
   ✓ Polls HPC for progress through all 6 pipeline stages (~24 hours total)
 
-  Stage 4: Collect results (~10 minutes)
+  Step 4: Collect results (~10 minutes)
   bash scripts/publication-run/04_collect_publication_artifacts.sh
   ✓ Pulls final package from HPC to ./artifacts/publication_full_dataset_results/
 
