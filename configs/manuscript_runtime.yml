@@ -35,7 +35,7 @@ stages:
   - id: sparse_selection
     label: EBIC L1 sparse selection with subsample stability
     manuscript_section: "3.7 Sparse selection"
-  - id: final_ols_and_bundle_export
+  - id: final_manuscript_artifacts
     label: final HC3 OLS fit, pruning, and reproducibility bundle export
     manuscript_section: "3.8 Final OLS"
   - id: manuscript_tables_and_figures

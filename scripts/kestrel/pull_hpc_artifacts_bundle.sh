@@ -120,7 +120,7 @@ fi
 mkdir -p "${LOCAL_OUT_DIR}"
 TS="$(date -u +%Y%m%dT%H%M%SZ)"
 REMOTE_SNAPSHOT_ARG="${REMOTE_SNAPSHOT_ROOT:-__AUTO__}"
-REMOTE_OUTPUT_FILE="$(mktemp "${TMPDIR:-/tmp}/bsm_hpc_pull.XXXXXX")"
+REMOTE_OUTPUT_FILE="${LOCAL_OUT_DIR}/bsm_hpc_pull_${TS}.log"
 trap 'rm -f "${REMOTE_OUTPUT_FILE}"' EXIT
 
 echo "==> Building remote bundle on ${HPC_HOST} (mode=${PULLBACK_MODE})"
