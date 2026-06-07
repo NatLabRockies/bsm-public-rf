@@ -136,7 +136,7 @@ All HPC-specific paths and account settings are configured in `configs/hpc/kestr
 ## Reproducibility scope
 
 The committed artifacts in this repository (`artifacts/`) were produced by the publication pipeline
-run (`publication_full_dataset_distributed_20260526`) using the exact configuration in
+run (`publication_full_dataset_distributed_20260519`) using the exact configuration in
 `configs/hpc/kestrel_publication_full_dataset.yml`.
 
 The `pixi run reproduce-artifacts` command regenerates manuscript figures directly from those

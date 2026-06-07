@@ -49,7 +49,7 @@ echo ""
 
 # Extract to working directory
 EXTRACT_DIR="./artifacts/publication_full_dataset_results"
-mkdir -p "$EXTRACT_DIR"
+rm -rf "$EXTRACT_DIR" && mkdir -p "$EXTRACT_DIR"
 unzip -q "$LATEST_BUNDLE" -d "$EXTRACT_DIR"
 
 echo "Extracted to: $EXTRACT_DIR"

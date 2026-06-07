@@ -78,7 +78,7 @@ QUICK START
    ✓ Valid SLURM headers
    ✓ Correct partition (shared)
    ✓ Correct walltime (04:00:00 per job stage; ~24h total across 6 pipeline stages)
-   ✓ All stage commands present
+   ✓ Entry-stage command present
 
 2. SUBMIT (2 minutes)
    bash scripts/publication-run/02_live_submission.sh
