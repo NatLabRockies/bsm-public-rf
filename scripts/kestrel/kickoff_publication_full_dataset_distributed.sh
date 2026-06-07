@@ -12,8 +12,6 @@ REMOTE_STUDY_ROOT="${REMOTE_STUDY_ROOT:-/scratch/${HPC_USER}/bsm/studies/${STUDY
 REMOTE_REPO_ROOT="${REMOTE_REPO_ROOT:-/home/${HPC_USER}/src/bsm-public-rf}"
 DATASET_PATH="${DATASET_PATH:-/scratch/${USER}/bsm/bsm-public-rf/artifacts/preprocessed_real_data_30k}"
 
-SSH_TARGET="${HPC_USER}@${HPC_HOST}"
-
 usage() {
   cat <<'USAGE'
 Usage:

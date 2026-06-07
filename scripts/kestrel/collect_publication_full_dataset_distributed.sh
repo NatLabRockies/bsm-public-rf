@@ -12,8 +12,6 @@ STUDY_ROOT="${STUDY_ROOT:-/scratch/${HPC_USER}/bsm/studies/${STUDY_ID}}"
 LOCAL_OUT_DIR="${LOCAL_OUT_DIR:-${REPO_ROOT}/artifacts/publication_full_dataset_results}"
 MODE="${MODE:-reporting}"
 
-SSH_TARGET="${HPC_USER}@${HPC_HOST}"
-
 usage() {
   cat <<'USAGE'
 Usage:
@@ -84,6 +82,14 @@ if [[ "${MODE}" == "full" ]]; then
   rsync -az "${SSH_TARGET}:${STUDY_ROOT}/" "${DEST_ROOT}/"
 else
   echo "==> Collecting reporting bundle from ${SSH_TARGET}:${STUDY_ROOT}"
+  _pull() {
+    local rel="$1"
+    if ssh "${SSH_TARGET}" "test -d ${STUDY_ROOT}/${rel}" 2>/dev/null; then
+      rsync -az "${SSH_TARGET}:${STUDY_ROOT}/${rel}/" "${DEST_ROOT}/${rel}/"
+    else
+      echo "  warn: remote dir missing, skipping: ${rel}" >&2
+    fi
+  }
   for rel in \
     metadata \
     logs \
@@ -95,7 +101,7 @@ else
     artifacts/sparse_selection \
     artifacts/final_manuscript_artifacts \
     artifacts/runtime_diagnostics; do
-    rsync -az "${SSH_TARGET}:${STUDY_ROOT}/${rel}/" "${DEST_ROOT}/${rel}/" || true
+    _pull "${rel}"
   done
   for stage in \
     output_conditioning \
@@ -104,9 +110,7 @@ else
     nonlinear_discovery \
     sparse_selection \
     final_manuscript_artifacts; do
-    rsync -az \
-      "${SSH_TARGET}:${STUDY_ROOT}/artifacts/hpc_shards_${stage}/_merged/" \
-      "${DEST_ROOT}/artifacts/hpc_shards_${stage}/_merged/" || true
+    _pull "artifacts/hpc_shards_${stage}/_merged"
   done
 fi
 
