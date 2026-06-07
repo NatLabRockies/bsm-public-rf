@@ -116,7 +116,7 @@ bash scripts/publication-run/03_monitor_publication_run.sh 900
 1. interaction_discovery reduce (1-2 hours)
 1. nonlinear_discovery (4-12 hours)
 1. sparse_selection (2-4 hours)
-1. final_artifacts (2-4 hours)
+1. final_manuscript_artifacts (2-4 hours)
 
 **Status interpretation**:
 
