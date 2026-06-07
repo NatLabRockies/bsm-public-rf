@@ -181,7 +181,7 @@ date -u > artifacts/publication_run_start_time.txt
 bash scripts/publication-run/03_monitor_publication_run.sh
 
 # Look for all stages showing "completed"
-# Expected: all 7 stages done in ~24 hours
+# Expected: all 6 stages done in ~24 hours
 ```
 
 ### After Execution (Collect Results)
@@ -228,7 +228,7 @@ ssh -T ${USER}@${HPC_HOST} "squeue -u ${USER}"
 
 ```bash
 bash scripts/publication-run/03_monitor_publication_run.sh
-# Look for "completed" status on all 7 stages
+# Look for "completed" status on all 6 stages
 ```
 
 ______________________________________________________________________
@@ -302,7 +302,7 @@ ______________________________________________________________________
 
 ### Stage 3 (Monitoring) ✓
 
-- All 7 stages show "queued_or_pending" initially
+- All 6 stages show "queued_or_pending" initially
 - Stages gradually progress to "running_or_waiting_reduce"
 - All stages show "completed" after ~24 hours
 
