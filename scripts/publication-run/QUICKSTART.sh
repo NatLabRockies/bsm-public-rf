@@ -57,7 +57,7 @@ EXPECTED STAGES (each 1-6 hours)
   4. interaction_discovery reduce  (~1-2 hours)
   5. nonlinear_discovery           (~4-12 hours)
   6. sparse_selection              (~2-4 hours)
-  7. final_artifacts               (~2-4 hours)
+  7. final_manuscript_artifacts    (~2-4 hours)
 
   4-hour window per job stage; full pipeline runs 6 stages (~24h total wall time)
 
