@@ -73,7 +73,7 @@ def _check_prerequisites() -> None:
             unedited = [
                 key
                 for key, value in paths_data.items()
-                if isinstance(value, str) and value.startswith("/path/to/")
+                if isinstance(value, str) and (value.startswith("/path/to/") or value.startswith("/scratch/dhetting/"))
             ]
             if unedited:
                 errors.append(

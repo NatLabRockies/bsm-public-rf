@@ -32,7 +32,7 @@ START_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 # Note: uses orchestration config which points to pipeline config
 SUBMIT_OUTPUT=$(pixi run hpc-workflow -- \
   --config configs/hpc/kestrel_publication_orchestration.yml \
-  --action submit 2>&1)
+  --action submit 2>&1) || { rc=$?; printf '%s\n' "$SUBMIT_OUTPUT"; exit "$rc"; }
 
 echo "$SUBMIT_OUTPUT"
 
