@@ -51,13 +51,12 @@ SCRIPTS
   ✓ Pulls final package from HPC to ./artifacts/publication_full_dataset_results/
 
 EXPECTED STAGES (each 1-6 hours)
-  1. output_conditioning           (~1-2 hours)
-  2. empirical_null_screening      (~4-8 hours) [high permutations]
-  3. interaction_discovery array   (~2-6 hours)
-  4. interaction_discovery reduce  (~1-2 hours)
-  5. nonlinear_discovery           (~4-12 hours)
-  6. sparse_selection              (~2-4 hours)
-  7. final_manuscript_artifacts    (~2-4 hours)
+  1. output_conditioning                       (~1-2 hours)
+  2. empirical_null_screening                  (~4-8 hours) [high permutations]
+  3. interaction_discovery (array + reduce)    (~3-8 hours)
+  4. nonlinear_discovery                       (~4-12 hours)
+  5. sparse_selection                          (~2-4 hours)
+  6. final_manuscript_artifacts                (~2-4 hours)
 
   4-hour window per job stage; full pipeline runs 6 stages (~24h total wall time)
 
