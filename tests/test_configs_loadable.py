@@ -32,11 +32,16 @@ STANDALONE_CONFIGS = [
 
 ORCHESTRATION_CONFIGS = [
     "configs/hpc/kestrel_publication_orchestration.yml",
-    "configs/hpc/kestrel_publication_orchestration.local.yml",
     *sorted(
         glob.glob(str(REPO_ROOT / "configs/hpc/dev/kestrel_workflow_*.yml"))
     ),
 ]
+
+# Optional gitignored local override; loaded only when present so the test
+# suite still passes on a fresh clone.
+_LOCAL_ORCH = REPO_ROOT / "configs/hpc/kestrel_publication_orchestration.local.yml"
+if _LOCAL_ORCH.exists():
+    ORCHESTRATION_CONFIGS.append(str(_LOCAL_ORCH))
 
 
 @pytest.mark.parametrize("path", STANDALONE_CONFIGS)
