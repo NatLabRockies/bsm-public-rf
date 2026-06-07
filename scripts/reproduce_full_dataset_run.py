@@ -14,6 +14,7 @@ Prerequisites (see README.md for full details):
 """
 from __future__ import annotations
 
+import argparse
 import os
 import subprocess
 import sys
@@ -105,6 +106,7 @@ def _check_prerequisites() -> None:
 
 
 def main() -> None:
+    argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter).parse_args()
     _check_prerequisites()
 
     cfg = load_config(str(CONFIG_PATH))
