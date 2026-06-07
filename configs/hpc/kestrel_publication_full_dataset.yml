@@ -61,7 +61,7 @@ stages:
   sparse_selection:
     n_stability_subsamples: 50       # More subsamples: more robust stability ranking
     subsample_fraction: 0.8          # 80% subsampling: balance diversity and overlap
-    lasso_alpha_percentile: 40       # Slightly lower: retain more features for final model
+    lasso_alpha_grid_size: 40       # 40-point geometric alpha grid (manuscript v22 Table 1)
 
   # Final artifacts: comprehensive bootstrap for confidence intervals
   final_artifacts:
