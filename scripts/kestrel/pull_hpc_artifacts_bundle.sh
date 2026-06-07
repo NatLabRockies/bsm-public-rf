@@ -14,9 +14,9 @@ HPC_ARTIFACTS_ROOT="${HPC_ARTIFACTS_ROOT:-__AUTO__}"
 LOCAL_OUT_DIR="${LOCAL_OUT_DIR:-${REPO_ROOT}/artifacts/kestrel_collected_bundles}"
 REMOTE_SNAPSHOT_ROOT="${REMOTE_SNAPSHOT_ROOT:-}"
 PULLBACK_MODE="${PULLBACK_MODE:-reporting_bundle}"
-CPU_TIER_SPECS="${CPU_TIER_SPECS:-2=configs/hpc/kestrel_cpu_scale_2.yml,10=configs/hpc/kestrel_cpu_scale_10.yml,1000=configs/hpc/kestrel_cpu_scale_1000.yml}"
+CPU_TIER_SPECS="${CPU_TIER_SPECS:-2=configs/hpc/dev/kestrel_cpu_scale_2.yml,10=configs/hpc/dev/kestrel_cpu_scale_10.yml,1000=configs/hpc/dev/kestrel_cpu_scale_1000.yml}"
 INCLUDE_GPU="${INCLUDE_GPU:-1}"
-GPU_CONFIG_PATH="${GPU_CONFIG_PATH:-configs/hpc/kestrel_gpu_h100.yml}"
+GPU_CONFIG_PATH="${GPU_CONFIG_PATH:-configs/hpc/dev/kestrel_gpu_h100.yml}"
 KEEP_REMOTE=0
 
 usage() {
@@ -142,7 +142,7 @@ HPC_ARTIFACTS_ROOT="${4:-__AUTO__}"
 PULLBACK_MODE="${5:-reporting_bundle}"
 CPU_TIER_SPECS="${6:-}"
 INCLUDE_GPU="${7:-1}"
-GPU_CONFIG_PATH="${8:-configs/hpc/kestrel_gpu_h100.yml}"
+GPU_CONFIG_PATH="${8:-configs/hpc/dev/kestrel_gpu_h100.yml}"
 
 if [[ "${REMOTE_SNAPSHOT_ROOT}" == "__AUTO__" ]]; then
   REMOTE_SNAPSHOT_ROOT=""

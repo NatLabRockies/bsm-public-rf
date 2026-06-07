@@ -13,7 +13,7 @@ WALLTIME="${WALLTIME:-04:00:00}"
 if [[ ! -d "${HPC_SCRIPTS_DIR}" ]]; then
   echo "error: missing hpc script dir: ${HPC_SCRIPTS_DIR}" >&2
   echo "generate scripts first with:" >&2
-  echo "  pixi run rfm-hpc-submit --config configs/hpc/kestrel_gpu_h100.yml --stage interaction_discovery --dry-run" >&2
+  echo "  pixi run rfm-hpc-submit --config configs/hpc/dev/kestrel_gpu_h100.yml --stage interaction_discovery --dry-run" >&2
   exit 2
 fi
 

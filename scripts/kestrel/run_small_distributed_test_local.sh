@@ -5,7 +5,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 cd "${REPO_ROOT}"
 
-CONFIG_PATH="configs/hpc/kestrel_workflow_small_distributed.yml"
+CONFIG_PATH="configs/hpc/dev/kestrel_workflow_small_distributed.yml"
 POLL_COUNT=3
 POLL_SECONDS=60
 DRY_RUN=0
@@ -22,7 +22,7 @@ Runs a small distributed smoke workflow locally via the unified orchestration ru
   3) collect (study-package pullback by default)
 
 Options:
-  --config FILE         Orchestration config (default: configs/hpc/kestrel_workflow_small_distributed.yml)
+  --config FILE         Orchestration config (default: configs/hpc/dev/kestrel_workflow_small_distributed.yml)
   --poll-count N        Number of status polls after submit (default: 3)
   --poll-seconds N      Seconds between status polls (default: 60)
   --skip-collect        Skip final collect action
@@ -122,4 +122,4 @@ echo "==> Smoke workflow command chain complete"
 echo "If submission/status fails, review and edit:"
 echo "  - ${CONFIG_PATH}: cluster.host, cluster.user, paths.remote_repo_root"
 echo "  - ${CONFIG_PATH}: paths.remote_artifacts_root, paths.remote_logs_root, paths.remote_snapshot_root"
-echo "  - configs/hpc/kestrel_cpu_scale_2_smoke.yml: distributed.slurm.account/partition if your allocation differs"
+echo "  - configs/hpc/dev/kestrel_cpu_scale_2_smoke.yml: distributed.slurm.account/partition if your allocation differs"
