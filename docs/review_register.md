@@ -4,6 +4,12 @@ Durable record of audit findings requiring follow-up. Newest first.
 
 ______________________________________________________________________
 
+## 2026-06-07 — Round 20: pullback bundle helper missing
+
+- **Severity:** HIGH. `scripts/kestrel/pull_hpc_artifacts_bundle.sh` calls `tools/hpc_bundle_manifest.py` for create/analyze/metadata, but that file is absent from HEAD and `git ls-files`. `pixi run hpc-workflow ... --action collect --dry-run` still emits this broken command, so real collect/study-package pullback fails after HPC work completes. Required follow-up: restore/track the helper or replace the pullback path with existing `rfm_pipeline` bundle tooling and add a local test that referenced helper paths exist.
+
+______________________________________________________________________
+
 ## 2026-06-07 — Round 16: HPC dry-run only validates 1 of 6 stages
 
 - **Severity:** HIGH (silent false-confidence in reproducibility).
