@@ -7,8 +7,6 @@ HPC_USER="${HPC_USER:-${USER}}"
 STUDY_ID="${STUDY_ID:-publication_full_dataset_distributed_20260519}"
 STUDY_ROOT="${STUDY_ROOT:-/scratch/${HPC_USER}/bsm/studies/${STUDY_ID}}"
 
-SSH_TARGET="${HPC_USER}@${HPC_HOST}"
-
 usage() {
   cat <<'USAGE'
 Usage:
