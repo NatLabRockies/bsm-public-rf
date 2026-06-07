@@ -112,8 +112,7 @@ bash scripts/publication-run/03_monitor_publication_run.sh 900
 
 1. output_conditioning (1-2 hours)
 1. empirical_null_screening (4-8 hours, high permutations)
-1. interaction_discovery array (2-6 hours)
-1. interaction_discovery reduce (1-2 hours)
+1. interaction_discovery, array + reduce (3-8 hours)
 1. nonlinear_discovery (4-12 hours)
 1. sparse_selection (2-4 hours)
 1. final_manuscript_artifacts (2-4 hours)

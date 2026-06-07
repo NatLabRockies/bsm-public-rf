@@ -48,7 +48,7 @@ cat << 'EOF'
 EOF
 echo -e "${NC}"
 
-echo "This orchestrator will guide you through all 4 stages:"
+echo "This orchestrator will guide you through all 4 orchestration steps:"
 echo "  1. Dry-run validation (scripts generated but NOT submitted)"
 echo "  2. Live HPC submission (submit job to queue)"
 echo "  3. Status monitoring (track progress through all stages)"
