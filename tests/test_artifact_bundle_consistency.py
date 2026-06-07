@@ -39,7 +39,7 @@ MANUSCRIPT_NULL_NRMSE = 0.1653
 def _read_csv(rel: str) -> pd.DataFrame:
     path = ARTIFACTS / rel
     if not path.exists():
-        pytest.skip(f"artifact missing: {rel}")
+        pytest.fail(f"required artifact missing: {rel}")
     return pd.read_csv(path)
 
 
