@@ -34,7 +34,7 @@ echo "==========================================================================
 echo ""
 
 # Find the most recent bundle
-LATEST_BUNDLE=$(ls -t ./artifacts/kestrel_collected_bundles/kestrel_hpc_snapshot_*.zip 2>/dev/null | head -1)
+LATEST_BUNDLE=$(ls -t ./artifacts/kestrel_collected_bundles/kestrel_hpc_snapshot_*.zip 2>/dev/null | head -1 || true)
 if [ -z "$LATEST_BUNDLE" ]; then
   echo "⚠️  No bundle found. Check collection output above for errors."
   exit 1

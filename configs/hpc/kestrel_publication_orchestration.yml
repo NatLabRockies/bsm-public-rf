@@ -25,7 +25,7 @@ hpc_workflow:
   # NOTE: `hpc-workflow --action submit` honours only `stage:` (entry point) and
   # `prepare_interaction_inputs`. Downstream stage cascade is invoked by
   # separately re-running submit with the next `stage:`, OR by the
-  # 02_submit_publication_run.sh wrapper iterating over the 6 STAGES tuple.
+  # scripts/kestrel/controller_publication_full_dataset_distributed.sh wrapper iterating over the 6 STAGES tuple.
   execution:
     stage: output_conditioning          # Entry stage (first of 6)
     local_cores: 8

@@ -50,7 +50,7 @@ bash scripts/publication-run/01_dry_run_submission.sh
 
 - Validates script syntax
 - Checks partition, walltime, memory settings
-- Confirms all stages are present
+- Confirms the entry-stage command is present
 
 **Time**: ~30 seconds
 
