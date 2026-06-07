@@ -47,7 +47,7 @@ def _save_pdf(svg_path: Path) -> bool:
     chrome = next((c for c in chrome_candidates if Path(c).exists()), None)
     if chrome is None:
         return False
-    with tempfile.NamedTemporaryFile(suffix=".html", mode="w", delete=False) as f:
+    with tempfile.NamedTemporaryFile(suffix=".html", mode="w", delete=False, dir=svg_path.parent) as f:
         f.write(html_content)
         tmp_html = f.name
     try:
