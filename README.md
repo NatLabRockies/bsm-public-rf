@@ -105,10 +105,15 @@ re-run the full pipeline from raw BSM simulator outputs.
    pixi run reproduce-full
    ```
 
-   This submits the distributed SLURM job array using
-   `configs/hpc/kestrel_publication_full_dataset.yml`. For orchestration
-   details (kickoff, status, artifact collection), see the helper scripts in
-   `scripts/kestrel/` and the `hpc-workflow` command below.
+   This invokes `scripts/reproduce_full_dataset_run.py`, which drives the
+   manuscript pipeline **in-process** by calling
+   `scripts/run_manuscript_pipeline.py` with
+   `configs/hpc/kestrel_publication_full_dataset.yml`. It does **not** submit
+   a SLURM job array on its own — distributed SLURM submission is done via
+   the `hpc-workflow` command below (or the wrappers under
+   `scripts/kestrel/` and `scripts/publication-run/`). Use this entrypoint
+   when you have already provisioned a compute node with enough resources to
+   execute the full pipeline locally.
 
 5. Collect regenerated figures from `figures/` and produced artifacts from
    `artifacts/` or your configured output directory.
