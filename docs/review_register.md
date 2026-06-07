@@ -17,7 +17,7 @@ ______________________________________________________________________
 - **Mechanical fix applied (round 16):** dropped the dead key from both
   YAMLs; rewrote the misleading "Generate all 6 stages" comment to state
   the actual cascade contract (per-stage re-submit OR the
-  `02_submit_publication_run.sh` wrapper looping over the 6-stage
+  `scripts/kestrel/controller_publication_full_dataset_distributed.sh` wrapper looping over the 6-stage
   tuple).
 - **Required follow-up (not yet implemented):** either
   (a) implement a true full-pipeline cascade flag in
