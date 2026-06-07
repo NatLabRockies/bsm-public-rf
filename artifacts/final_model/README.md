@@ -54,10 +54,22 @@ For output *i* and input row *r*:
 
 ```
 y_hat[i, r] = intercept[i]
-            + sum_j  coef_raw_scale[i, j] * (X_raw[r, j] - mean_x[j]) / scale_x[j]
+            + sum_j  coef_raw_scale[i, j] * (X_raw[r, j] - mean_x[j])
 ```
 
 where `intercept[i] = per_output_intercepts.csv[intercept]` (equivalently
 `y_standardization.csv[mean]`), `coef_raw_scale` comes from
-`coefficient_matrix_raw_scale.csv`, and `mean_x` / `scale_x` come from
-`x_standardization.csv`.
+`coefficient_matrix_raw_scale.csv`, and `mean_x` comes from
+`x_standardization.csv`. The `coef_raw_scale` matrix already absorbs both the
+per-feature `scale_x` and any per-output `scale_y` standardization, so the
+prediction is on the raw response scale with only mean-centring of `X` needed.
+If you instead use `coefficient_matrix_standardized.csv` (the
+train-standardized coefficients), apply
+
+```
+y_hat[i, r] = intercept[i]
+            + scale_y[i] * sum_j coef_std[i, j] * (X_raw[r, j] - mean_x[j]) / scale_x[j]
+```
+
+with `mean_x`, `scale_x` from `x_standardization.csv` and `scale_y` from
+`y_standardization.csv`.

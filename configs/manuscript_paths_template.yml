@@ -11,5 +11,6 @@ output_metadata: /path/to/bsm/simulation/data/output_metadata.parquet
 manuscript_feature_catalog: /path/to/bsm/simulation/data/manuscript_feature_catalog.parquet
 fixed_holdout_assignments: /path/to/bsm/simulation/data/fixed_holdout_assignments.parquet
 
-# Directory where reproduced outputs, tables, and figures should be written.
-output_root: /path/to/output/directory
+# Output directory is set by the HPC config (output.artifact_dir in
+# configs/hpc/*.yml), not here. Override via env var SCRATCH_DIR or by
+# editing the active HPC YAML.

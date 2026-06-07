@@ -12,6 +12,5 @@ output_metadata: ${BSM_DATA_ROOT}/output_metadata.parquet
 manuscript_feature_catalog: ${BSM_DATA_ROOT}/manuscript_feature_catalog.parquet
 fixed_holdout_assignments: ${BSM_DATA_ROOT}/fixed_holdout_assignments.parquet
 
-# Optional: default output directory (can be overridden with --output-dir)
-# CONFIGURE: set this to a writable local output directory
-output_root: /path/to/your/bsm/output
+# Output directory is governed by the HPC YAML (output.artifact_dir),
+# not by this file. See configs/hpc/*.yml.

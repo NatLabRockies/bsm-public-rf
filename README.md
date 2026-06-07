@@ -23,7 +23,7 @@ The BSM preprocessed simulation data required for full pipeline reproduction are
 
 > **[Data DOI / repository URL — to be added upon publication]**
 
-A full reproduction requires these files under the dataset directory:
+A full reproduction requires these files **co-located in a single directory** with these **exact filenames** (the runner derives the data root from one file's parent and opens the rest by name):
 
 - `X.parquet` — input matrix
 - `Y.parquet` — output matrix

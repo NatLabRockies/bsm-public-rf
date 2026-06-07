@@ -11,9 +11,10 @@ python = ">=3.10,<3.13"
 psutil = ">=5.9"
 pyarrow = ">=16.0"
 tqdm = ">=4.0"
+pytest = ">=7.0"
 
 [pypi-dependencies]
-rfm-pipeline = {git = "https://github.com/NatLabRockies/rfm-pipeline.git", rev = "a6c18e6"}
+rfm-pipeline = {git = "https://github.com/NatLabRockies/rfm-pipeline.git", rev = "caeed3a"}
 
 [tasks]
 reproduce-full = "python scripts/reproduce_full_dataset_run.py"
