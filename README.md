@@ -118,15 +118,15 @@ re-run the full pipeline from raw BSM simulator outputs.
 The `hpc-workflow` command provides a unified interface for managing the distributed HPC run:
 
 ```bash
-pixi run hpc-workflow -- --config configs/hpc/kestrel_publication_full_dataset.yml --action submit
-pixi run hpc-workflow -- --config configs/hpc/kestrel_publication_full_dataset.yml --action status
-pixi run hpc-workflow -- --config configs/hpc/kestrel_publication_full_dataset.yml --action collect
+pixi run hpc-workflow -- --config configs/hpc/kestrel_publication_orchestration.yml --action submit
+pixi run hpc-workflow -- --config configs/hpc/kestrel_publication_orchestration.yml --action status
+pixi run hpc-workflow -- --config configs/hpc/kestrel_publication_orchestration.yml --action collect
 ```
 
 Use `--action submit` to launch the distributed SLURM array, `--action status` to monitor progress,
 and `--action collect` to pull completed artifacts. Internally this calls
 `scripts/hpc_workflow.py`, which wraps the rfm_pipeline distributed orchestration layer.
-All HPC-specific paths and account settings are configured in `configs/hpc/kestrel_publication_full_dataset.yml` — edit the lines marked `# CONFIGURE` before your first run.
+All HPC-specific paths and account settings are configured in `configs/hpc/kestrel_publication_orchestration.yml` (cluster, paths, pullback) and the per-tier run config it references, `configs/hpc/kestrel_publication_full_dataset.yml` (algorithm, runtime, stages) — edit the lines marked `# CONFIGURE` in both files before your first run.
 
 ## Reproducibility scope
 
