@@ -14,7 +14,7 @@ discovers candidates that are absent from the catalog.
 | Field | Value |
 | ----- | ----- |
 | Generator script | `scripts/generate_feature_catalog.py` in `rfm-pipeline` (committed; current entry-point copy at `rfm-pipeline @ e2d833b`) |
-| Generator arguments (manuscript run) | `--input-matrix X.parquet --output-matrix Y.parquet --interaction-strategy top-shap --max-interactions 500 --nonlinear-strategy safe` (plus the generator's default `--random-seed`) |
+| Generator arguments (manuscript run) | `--input-matrix X.parquet --output-matrix Y.parquet --output-catalog manuscript_feature_catalog.parquet --interaction-strategy top-shap --max-interactions 500 --nonlinear-strategy safe` (plus the generator's default `--random-seed 42`) |
 | Input data | Same `X.parquet` (30 000 × 160) and `Y.parquet` (30 000 × 23 495) that are archived alongside this file under the Zenodo DOI. |
 | Catalog row count (frozen) | 26 560 candidate rows (first-order numeric + top-SHAP-pruned pairwise interactions + safe nonlinear transforms over quadratic, logarithmic, inverse, square-root families). The exact row count is locked in `configs/manuscript_case_study.yml` (`candidate_library.exact_catalog_row_count`). |
 | Holdout enforcement | All SHAP-based interaction ranking is fit on the **training partition only** (28 500 rows; see `fixed_holdout_assignments.parquet`). The catalog never sees the 1 500-row holdout. |
