@@ -14,9 +14,9 @@ discovers candidates that are absent from the catalog.
 | Field | Value |
 | ----- | ----- |
 | Generator script | `scripts/generate_feature_catalog.py` in `rfm-pipeline` (committed; current entry-point copy at `rfm-pipeline @ e2d833b`) |
-| Generator arguments (manuscript run) | `--input-matrix X.parquet --output-matrix Y.parquet --interaction-strategy top-shap --max-interactions 500 --nonlinear-strategy safe` |
+| Generator arguments (manuscript run) | `--input-matrix X.parquet --output-matrix Y.parquet --interaction-strategy top-shap --max-interactions 500 --nonlinear-strategy safe` (plus the generator's default `--random-seed`) |
 | Input data | Same `X.parquet` (30 000 × 160) and `Y.parquet` (30 000 × 23 495) that are archived alongside this file under the Zenodo DOI. |
-| Catalog row counts (frozen, from manuscript v22 §3.5) | 26 560 total candidate rows = 158 first-order numeric + 158 × 158 / 2 ordered interaction pairs (pruned to 500 by top-SHAP) + 158 × 4 nonlinear transforms (quadratic, logarithmic, inverse, square_root) |
+| Catalog row count (frozen) | 26 560 candidate rows (first-order numeric + top-SHAP-pruned pairwise interactions + safe nonlinear transforms over quadratic, logarithmic, inverse, square-root families). The exact row count is locked in `configs/manuscript_case_study.yml` (`candidate_library.exact_catalog_row_count`). |
 | Holdout enforcement | All SHAP-based interaction ranking is fit on the **training partition only** (28 500 rows; see `fixed_holdout_assignments.parquet`). The catalog never sees the 1 500-row holdout. |
 
 ## Column schema
@@ -26,10 +26,9 @@ columns may exist; the pipeline only reads these:
 
 | Column | Type | Purpose |
 | ------ | ---- | ------- |
-| `feature_name` | `str` | Canonical feature identifier; for transforms encodes the suffix (e.g. `Foo_quadratic`); for interactions uses `*` (e.g. `Foo*Bar`). |
-| `feature_type` | `str` | One of `numeric` (first-order), `interaction`, or one of the four nonlinear suffixes. |
-| `base_features` | `list[str]` | Source columns the candidate is derived from. |
-| `transform` | `str | None` | Transform family for nonlinear rows; `None` for first-order/interaction. |
+| `feature_name` | `str` | Canonical feature identifier. Nonlinear transforms encode the suffix (e.g. `Foo_quadratic`, `Foo_log`, `Foo_inverse`, `Foo_sqrt`). Pairwise interactions use a `:` separator (e.g. `Foo:Bar`). |
+| `feature_type` | `str` | One of `numeric` (first-order), `interaction`, or `nonlinear`. |
+| `origin` | `str` | Provenance tag for the candidate (e.g. `model_factors`). |
 
 ## Why the catalog is frozen
 
@@ -37,7 +36,8 @@ columns may exist; the pipeline only reads these:
   and any downstream meta-regression or sensitivity study. Regenerating
   it with different random seeds (e.g. different `top-shap` interaction
   selection) would yield slightly different feature counts and break
-  the 26 560-row provenance trail cited in manuscript v22 §3.5.
+  the 26 560-row provenance trail locked in
+  `configs/manuscript_case_study.yml`.
 - The frozen catalog is bit-identical to the file that the published
   full-dataset HPC run consumed; this file MUST therefore travel with
   the data archive, not be regenerated on-the-fly by reviewers.
@@ -48,14 +48,14 @@ A reviewer who wants to **verify** the catalog (rather than just consume
 it) can regenerate a near-identical file via:
 
 ```bash
-pixi run python -m rfm_pipeline.scripts.generate_feature_catalog \
+# from a checkout of NatLabRockies/rfm-pipeline at the pinned revision
+pixi run python scripts/generate_feature_catalog.py \
     --input-matrix /path/to/X.parquet \
     --output-matrix /path/to/Y.parquet \
-    --output-catalog /tmp/regenerated_catalog.parquet \
+    --output-catalog ./regenerated_catalog.parquet \
     --interaction-strategy top-shap \
     --max-interactions 500 \
-    --nonlinear-strategy safe \
-    --random-state 123
+    --nonlinear-strategy safe
 ```
 
 Note that `top-shap` uses a stochastic SHAP tree fit; bit-identical
