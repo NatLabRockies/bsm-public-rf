@@ -4,6 +4,14 @@ Durable record of audit findings requiring follow-up. Newest first.
 
 ______________________________________________________________________
 
+## 2026-06-07 — Round 21: HPC reduce entrypoint imports absent tool module
+
+- **Severity:** HIGH (when invoked from a pip-installed rfm-pipeline). `pixi run rfm-hpc-reduce --help` failed at import time in both rfm-pipeline (source tree) and bsm-public-rf (pip install): pinned `rfm_pipeline.hpc_reduce` imports `tools.run_manuscript_pipeline`, but `tools/` is not part of the installed package.
+- **Round-21 partial fix (rfm-pipeline 7eea471):** corrected `REPO_ROOT = Path(__file__).resolve().parent.parent.parent` (was `.parent.parent`, which only added `src/` to sys.path). Now `rfm-hpc-reduce --help` works from a source-tree checkout. Verified locally.
+- **bsm-public-rf:** pin bumped to `7eea471`. **Install-mode invocation of `rfm-hpc-reduce` still fails** because `tools/` does not ship in the installed package. This is **not** part of any actual workflow — `slurm_array_runner.py` templates always `cd "{repo_root}"` (an rfm-pipeline source checkout) before invoking `rfm-hpc-reduce`, so HPC nodes use the source-tree path. The install-mode failure is a latent footgun only.
+- **Required follow-up for full fix:** move `_load_empirical_null_screening_result`, `_load_interaction_discovery_result`, `_load_nonlinear_discovery_result`, `_load_output_conditioning_result`, `_load_sparse_selection_result`, `_load_tables`, and `config_to_legacy_case_study` from `tools/run_manuscript_pipeline.py` into a proper module under `src/rfm_pipeline/` (e.g., `src/rfm_pipeline/manuscript_pipeline_helpers.py`); have `tools/run_manuscript_pipeline.py` re-export for back-compat. Add `rfm-hpc-reduce --help` and `rfm-hpc-worker --help` smoke tests in CI. ~30-50 LoC + tests.
+______________________________________________________________________
+
 ## 2026-06-07 — Round 20: pullback bundle helper missing
 
 - **Severity:** HIGH. `scripts/kestrel/pull_hpc_artifacts_bundle.sh` calls `tools/hpc_bundle_manifest.py` for create/analyze/metadata, but that file is absent from HEAD and `git ls-files`. `pixi run hpc-workflow ... --action collect --dry-run` still emits this broken command, so real collect/study-package pullback fails after HPC work completes. Required follow-up: restore/track the helper or replace the pullback path with existing `rfm_pipeline` bundle tooling and add a local test that referenced helper paths exist.
