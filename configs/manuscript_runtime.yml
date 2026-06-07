@@ -3,15 +3,15 @@
 # The historical workflow ran the manuscript pipeline as a chain of nine
 # Jupyter notebooks. Those notebooks were retired during the 2025 reorg and
 # replaced by the staged Python entry points under ``scripts/`` (which call
-# back into the ``rfm_pipeline`` package). This manifest is retained because
-# downstream tooling reads ``configs/manuscript_runtime.yml`` to discover the
-# canonical stage ordering, but it now lists the active script-based stages
-# rather than the retired notebook filenames.
+# back into the ``rfm_pipeline`` package). This manifest is retained as a
+# documentation-only record of the manuscript stage ordering; no scripts
+# currently load it (the canonical executable stage list lives in
+# ``scripts/run_manuscript_pipeline.py`` ``STAGES`` and in
+# ``scripts/kestrel/controller_publication_full_dataset_distributed.sh``).
 #
-# Each entry below names a script invocation, the input artifact directory it
-# expects, and the manuscript stage it implements. The runner ``scripts/
-# run_manuscript_pipeline.py`` is the orchestrator; the individual ``stage_*``
-# entries are listed for documentation only.
+# Each entry below names a manuscript stage and the corresponding section
+# of the paper. The runner ``scripts/run_manuscript_pipeline.py`` is the
+# orchestrator.
 
 stages:
   - id: data_intake
