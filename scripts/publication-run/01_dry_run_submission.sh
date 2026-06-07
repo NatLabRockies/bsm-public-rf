@@ -2,7 +2,7 @@
 # Publication-ready full-dataset study: Step 1 — Dry-run submission
 #
 # Purpose: Validate SLURM script generation without submitting to HPC
-# Output: Generated scripts in /tmp/ for review
+# Output: Generated SLURM commands printed for review
 # Time: ~30 seconds
 #
 # Usage: bash scripts/publication-run/01_dry_run_submission.sh

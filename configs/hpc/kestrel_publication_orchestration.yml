@@ -19,7 +19,7 @@ hpc_workflow:
     remote_artifacts_root: /scratch/${USER}/bsm/bsm-public-rf/artifacts
     remote_logs_root: /scratch/${USER}/bsm
     remote_snapshot_root: /scratch/${USER}/bsm/kestrel_hpc_snapshots
-    local_bundle_dir: ./artifacts/publication_full_dataset_results
+    local_bundle_dir: ./artifacts/kestrel_collected_bundles
 
   # Execution: run full 6-stage pipeline with thousands of independent jobs
   execution:

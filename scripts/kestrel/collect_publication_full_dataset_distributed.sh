@@ -9,7 +9,7 @@ HPC_HOST="${HPC_HOST:-your.hpc.login.node}"
 HPC_USER="${HPC_USER:-${USER}}"
 STUDY_ID="${STUDY_ID:-publication_full_dataset_distributed_20260519}"
 STUDY_ROOT="${STUDY_ROOT:-/scratch/${HPC_USER}/bsm/studies/${STUDY_ID}}"
-LOCAL_OUT_DIR="${LOCAL_OUT_DIR:-${REPO_ROOT}/artifacts/publication_full_dataset_distributed_results}"
+LOCAL_OUT_DIR="${LOCAL_OUT_DIR:-${REPO_ROOT}/artifacts/publication_full_dataset_results}"
 MODE="${MODE:-reporting}"
 
 SSH_TARGET="${HPC_USER}@${HPC_HOST}"
