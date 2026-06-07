@@ -86,15 +86,15 @@ echo ">>> CPU scaling suite mode=${MODE} stage=${STAGE} output_root=${OUTPUT_ROO
 # Step 0: diagnostic smoke test (debug partition config).
 run_submit_tool \
   pixi run rfm-hpc-submit \
-  --config configs/hpc/kestrel_cpu_scale_2.yml \
+  --config configs/hpc/dev/kestrel_cpu_scale_2.yml \
   --diagnostic-only \
   --output-dir "${OUTPUT_ROOT}/diagnostic/hpc_scripts" \
   "${common_flags[@]}"
 
 declare -a TIER_CONFIGS=(
-  "2:configs/hpc/kestrel_cpu_scale_2.yml"
-  "10:configs/hpc/kestrel_cpu_scale_10.yml"
-  "1000:configs/hpc/kestrel_cpu_scale_1000.yml"
+  "2:configs/hpc/dev/kestrel_cpu_scale_2.yml"
+  "10:configs/hpc/dev/kestrel_cpu_scale_10.yml"
+  "1000:configs/hpc/dev/kestrel_cpu_scale_1000.yml"
 )
 
 for tier in "${TIER_CONFIGS[@]}"; do
