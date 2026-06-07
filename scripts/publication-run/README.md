@@ -233,17 +233,15 @@ bash scripts/publication-run/03_monitor_publication_run.sh
 
 ______________________________________________________________________
 
-## Environment Variables (Optional)
+## Environment Variables
 
-You can customize behavior with environment variables:
-
-```bash
-# Use different config (default: kestrel_publication_full_dataset.yml)
-CONFIG=configs/hpc/my_custom_config.yml bash scripts/publication-run/02_live_submission.sh
-
-# Set output directory for artifacts
-OUTPUT_DIR=./results_backup bash scripts/publication-run/04_collect_publication_artifacts.sh
-```
+These helper scripts do **not** read environment-variable overrides; the
+config path and output directory are hard-coded to the publication-run
+values (`configs/hpc/kestrel_publication_orchestration.yml` and the
+`local_bundle_dir` declared inside it). To run with a different config or
+collect into a different directory, either edit the orchestration YAML or
+invoke `pixi run hpc-workflow -- --config <your-config> --action <submit|status|collect>`
+directly.
 
 ______________________________________________________________________
 

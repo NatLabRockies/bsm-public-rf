@@ -4,7 +4,7 @@
 #   High-stress CPU scaling validation before optional GPU completion work.
 #
 # Typical usage on Kestrel login node:
-#   pixi run rfm-hpc-submit --config configs/hpc/kestrel_cpu_scale_1000.yml \
+#   pixi run rfm-hpc-submit --config configs/hpc/dev/kestrel_cpu_scale_1000.yml \
 #       --stage interaction_discovery --n-shards 1000 --submit
 
 dataset:

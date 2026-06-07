@@ -7,7 +7,7 @@
 #   2. Data on Kestrel:
 #      /projects/bsm/<repo>/artifacts/test_dataset_3k/   (or full dataset path)
 #   3. Submit from login node:
-#      pixi run rfm-hpc-submit --config configs/hpc/kestrel_30k.yml --stage interaction_discovery --submit
+#      pixi run rfm-hpc-submit --config configs/hpc/dev/kestrel_30k.yml --stage interaction_discovery --submit
 #
 # Resource guide (adjust per actual run):
 #   debug partition:  max 1 hour, limited nodes — use for smoke tests

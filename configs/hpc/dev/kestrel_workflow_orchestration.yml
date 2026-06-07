@@ -1,6 +1,6 @@
 # Unified HPC workflow orchestration config.
 # Use with:
-#   pixi run hpc-workflow -- --config configs/hpc/kestrel_workflow_orchestration.yml --action submit
+#   pixi run hpc-workflow -- --config configs/hpc/dev/kestrel_workflow_orchestration.yml --action submit
 
 hpc_workflow:
   cluster:
@@ -19,15 +19,15 @@ hpc_workflow:
     run_diagnostic: true
     cpu_tiers:
       - nodes: 2
-        config_path: configs/hpc/kestrel_cpu_scale_2.yml
+        config_path: configs/hpc/dev/kestrel_cpu_scale_2.yml
       - nodes: 10
-        config_path: configs/hpc/kestrel_cpu_scale_10.yml
+        config_path: configs/hpc/dev/kestrel_cpu_scale_10.yml
       - nodes: 1000
-        config_path: configs/hpc/kestrel_cpu_scale_1000.yml
+        config_path: configs/hpc/dev/kestrel_cpu_scale_1000.yml
 
   gpu:
     enabled: true
-    config_path: configs/hpc/kestrel_gpu_h100.yml
+    config_path: configs/hpc/dev/kestrel_gpu_h100.yml
     n_shards: 10
 
   pullback:

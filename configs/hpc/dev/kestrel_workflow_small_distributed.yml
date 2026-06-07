@@ -23,11 +23,11 @@ hpc_workflow:
     prepare_full_pipeline_artifacts: true
     cpu_tiers:
       - nodes: 2
-        config_path: configs/hpc/kestrel_cpu_scale_2_smoke.yml
+        config_path: configs/hpc/dev/kestrel_cpu_scale_2_smoke.yml
 
   gpu:
     enabled: false
-    config_path: configs/hpc/kestrel_gpu_h100.yml
+    config_path: configs/hpc/dev/kestrel_gpu_h100.yml
     n_shards: 10
 
   pullback:
