@@ -39,7 +39,7 @@ Steps 1–3 in the quick-start below (artifact and figure reproduction) do **not
 ```bash
 git clone https://github.com/NatLabRockies/bsm-public-rf.git
 cd bsm-public-rf
-pixi install
+pixi install --locked
 ```
 
 ## Configuration
@@ -60,7 +60,7 @@ re-run the full pipeline from raw BSM simulator outputs.
 
 ### Quick path — regenerate manuscript figures from committed artifacts
 
-1. Install the environment with `pixi install`.
+1. Install the environment with `pixi install --locked`.
 
 2. Regenerate manuscript-facing figures from the committed model artifacts:
 
