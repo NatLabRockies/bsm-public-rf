@@ -120,3 +120,83 @@ ______________________________________________________________________
 - **Tests:** rfm 462 pass / 11 skip (added per-stage shard test +
   array-dependency injection tests + grouped-builder test); bsm 20
   pass; orchestrator smoke-import + marker parser verified.
+
+______________________________________________________________________
+
+## 2026-06-07 — Round 24: orchestrator parity, marker robustness, name drift
+
+- **Severity:** HIGH (both repos).
+- **Evidence:**
+  - rfm `tools/run_hpc_workflow.py` never adopted the round-23
+    grouped builder; the rfm orchestrator submitted cascade stages
+    via the flat `build_remote_submit_commands` list with no
+    dependency chaining, so jobs raced ahead of upstream reduce.
+  - rfm `tools/hpc_bundle_manifest.py:463` scanned legacy
+    `hpc_shards` only; missed per-stage `hpc_shards_<stage>` outputs
+    after the round-23 layout change.
+  - rfm `src/rfm_pipeline/hpc_submit.py:343` still built the manifest
+    `output_path` against the legacy un-suffixed `hpc_shards`
+    directory while workers now write to `hpc_shards_<stage>`.
+  - rfm `_make_submit_all_script` reduce-only path referenced
+    `ARRAY_JOB_ID` even when no array job was generated (would be
+    unbound).
+  - rfm `pixi.toml` task `hpc-small-test` and
+    `docs/RUNNING_MANUSCRIPT_REPRODUCTION.md:57` pointed at
+    `scripts/kestrel/run_small_distributed_test_local.sh` which does
+    not exist in the repository (the entire `scripts/kestrel/`
+    directory is absent on the rfm side).
+  - bsm `scripts/hpc_workflow.py:368` silently ignored a missing /
+    malformed `RFM_HPC_SUBMIT_REDUCE_JOB_ID` marker, leaving
+    `prev_reduce_job_id` stale; the next cascade stage would then
+    chain onto an earlier stage's reduce and race against the
+    current stage.
+  - bsm `_parse_reduce_job_id` returned the FIRST marker, not the
+    last; sparse re-submits print the marker more than once and
+    only the last reflects the actually-submitted reduce.
+  - bsm pullback + 04-collect used HPC stage name
+    `empirical_null_screening` for both shard dirs AND artifact
+    dirs, but the canonical post-reduce artifact dir written by
+    `manuscript_pipeline_helpers` is `empirical_null_screen`
+    (no `-ing`). Per-stage pullback therefore copied a nonexistent
+    `empirical_null_screening` directory and the 04-collect
+    completeness check would never find it in correctly-collected
+    runs.
+  - bsm `--dry-run --generate-only` still SSHed despite docs saying
+    fully local.
+  - bsm tests had zero coverage for the cascade chaining helpers.
+- **CLOSED (round 24, rfm-pipeline c9dbc7e, bsm pending commit):**
+  - New shared module `rfm_pipeline/hpc_cascade.py` exposes
+    `parse_reduce_job_id` (returns LAST marker, skips malformed),
+    `inject_dependency_flag` (idempotent), and
+    `CascadeChainError`. Both orchestrators import them so behavior
+    cannot drift.
+  - rfm `tools/run_hpc_workflow.py` now mirrors the bsm cascade
+    pattern (grouped builder + capture + chain) and raises
+    `CascadeChainError` on missing marker.
+  - rfm `hpc_submit.py` `_build_fresh_manifest` writes the manifest
+    against `hpc_shards_<stage>` to match the per-stage layout.
+  - rfm `_make_submit_all_script` reduce-only path submits the
+    reduce directly with no stale `ARRAY_JOB_ID` reference; log
+    glob `bsm_*` → `rfm_*`.
+  - rfm `tools/hpc_bundle_manifest.py` scans
+    `hpc_shards_interaction_discovery` (cascade) with legacy
+    `hpc_shards` fallback; log glob accepts both `rfm_*` and
+    `bsm_*`.
+  - rfm `pixi.toml` `hpc-small-test` task removed; doc snippet
+    replaced with an equivalent `hpc-workflow --generate-only
+    --dry-run` invocation.
+  - bsm orchestrator: deleted local parser; imports shared helpers;
+    raises `CascadeChainError` on missing marker; honors
+    `--dry-run --generate-only` by skipping SSH (`>>> [skip ssh:
+    ...]` log line so the operator can still review the commands).
+  - bsm pullback + 04-collect: two parallel lists distinguish HPC
+    stage names (for shard dirs / SLURM logs) from canonical
+    artifact dir names (for `${run_dir}/${artifact_dir}` copy and
+    completeness check).
+  - bsm `--dry-run` help text updated to document the local-only
+    `--dry-run --generate-only` combination.
+  - New `bsm tests/test_cascade_chaining.py` (6 cases) covers
+    helper-import wiring, last-marker semantics, idempotent
+    injection, and `CascadeChainError` semantics.
+- **Tests:** rfm 473 pass / 11 skipped (added test_hpc_cascade.py);
+  bsm 26 pass (added test_cascade_chaining.py).

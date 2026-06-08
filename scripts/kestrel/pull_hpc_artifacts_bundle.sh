@@ -413,19 +413,43 @@ while IFS=$'\t' read -r target kind run_dir log_dir suite_manifest config_path g
     copy_tree "${run_dir}/hpc_shards/_merged" "${out_run}/hpc_shards/_merged"
     # Per-stage shard merged outputs (publication distributed run layout):
     # artifacts/hpc_shards_<stage>/_merged/ — copy whatever exists.
-    # Stage names match rfm_pipeline._VALID_STAGES exactly (used as
-    # --stage arg to rfm-hpc-submit and as a suffix in shard/script dirs).
-    for stage in \
-      output_conditioning \
-      empirical_null_screening \
-      interaction_discovery \
-      nonlinear_discovery \
-      sparse_selection \
-      final_manuscript_artifacts; do
+    # HPC stage name (used in --stage / hpc_shards_<stage> / SLURM job
+    # names) and the canonical artifact directory name written by the
+    # reduce script (run_manuscript_pipeline writer convention) do not
+    # always agree:
+    #   HPC stage                      canonical artifact dir
+    #   output_conditioning            output_conditioning
+    #   empirical_null_screening       empirical_null_screen  (no -ing)
+    #   interaction_discovery          interaction_discovery
+    #   nonlinear_discovery            nonlinear_discovery
+    #   sparse_selection               sparse_selection
+    #   final_manuscript_artifacts     final_manuscript_artifacts
+    # The empirical_null mismatch comes from run_manuscript_pipeline.py
+    # which writes to output_root/empirical_null_screen (no -ing); the
+    # HPC stage name carries -ing per rfm_pipeline._VALID_STAGES.
+    hpc_stages=(
+      output_conditioning
+      empirical_null_screening
+      interaction_discovery
+      nonlinear_discovery
+      sparse_selection
+      final_manuscript_artifacts
+    )
+    artifact_dirs=(
+      output_conditioning
+      empirical_null_screen
+      interaction_discovery
+      nonlinear_discovery
+      sparse_selection
+      final_manuscript_artifacts
+    )
+    for i in "${!hpc_stages[@]}"; do
+      stage="${hpc_stages[$i]}"
+      artifact_dir="${artifact_dirs[$i]}"
       copy_tree "${run_dir}/hpc_shards_${stage}/_merged" \
                 "${out_run}/hpc_shards_${stage}/_merged"
-      # Canonical stage artifact directories (post-reduce).
-      copy_tree "${run_dir}/${stage}" "${out_run}/${stage}"
+      # Canonical post-reduce artifact directory (writer convention).
+      copy_tree "${run_dir}/${artifact_dir}" "${out_run}/${artifact_dir}"
     done
     # Per-stage HPC script dirs (cascade layout: cpu_nodes_<n>_<stage>).
     # Falls through when the run was single-stage (no per-stage suite_root).
