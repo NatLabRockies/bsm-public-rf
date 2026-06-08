@@ -443,6 +443,12 @@ while IFS=$'\t' read -r target kind run_dir log_dir suite_manifest config_path g
       sparse_selection
       final_manuscript_artifacts
     )
+    if [[ "${#hpc_stages[@]}" -ne "${#artifact_dirs[@]}" ]]; then
+      echo "[pullback] FATAL: hpc_stages (${#hpc_stages[@]}) and " \
+           "artifact_dirs (${#artifact_dirs[@]}) array lengths differ; " \
+           "edit both lists together to preserve HPC↔writer dir mapping." >&2
+      exit 2
+    fi
     for i in "${!hpc_stages[@]}"; do
       stage="${hpc_stages[$i]}"
       artifact_dir="${artifact_dirs[$i]}"
@@ -474,14 +480,9 @@ while IFS=$'\t' read -r target kind run_dir log_dir suite_manifest config_path g
     fi
     # Latest per-stage stdout + reduce logs (one of each pattern per stage).
     # SLURM job name templates are rfm_<stage>_<run_id> (array) and
-    # rfm_reduce_<stage>_<run_id> (reduce).
-    for stage in \
-      output_conditioning \
-      empirical_null_screening \
-      interaction_discovery \
-      nonlinear_discovery \
-      sparse_selection \
-      final_manuscript_artifacts; do
+    # rfm_reduce_<stage>_<run_id> (reduce). Reuses ${hpc_stages[@]} so the
+    # canonical stage list is defined exactly once in this function.
+    for stage in "${hpc_stages[@]}"; do
       copy_latest_match "${log_dir}/rfm_${stage}_*.out" "${out_logs}"
       copy_latest_match "${log_dir}/rfm_reduce_${stage}_*.out" "${out_logs}"
     done

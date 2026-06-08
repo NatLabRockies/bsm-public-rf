@@ -141,6 +141,11 @@ if [ "$ALL_PRESENT" = true ]; then
 else
   echo "⚠️  Some artifacts missing. Review the bundle contents."
   echo "    Check: ls -R $EXTRACT_DIR"
+  echo ""
+  # Exit non-zero so the master orchestrator (set -euo pipefail) halts
+  # before printing a misleading "WORKFLOW COMPLETE" banner. Operators
+  # can rerun collection after diagnosing the missing artifacts.
+  exit 1
 fi
 
 echo ""
