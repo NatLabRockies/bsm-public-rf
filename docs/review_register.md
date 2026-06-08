@@ -236,3 +236,65 @@ ______________________________________________________________________
     stage list is defined exactly once in `_per_stage_files_copy`.
 - **Tests:** 26 pass; bash syntax checks pass for both modified
   scripts.
+
+______________________________________________________________________
+
+## 2026-06-07 — Round 26: multi-tier cascade chain + summarizer port + SSH safety
+
+- **Severity:** HIGH (chaining bug, mirrors rfm r26).
+- **Evidence:**
+  - `scripts/hpc_workflow.py` chained the next cascade stage to only
+    the LAST tier's reduce job id (same bug class as rfm r26#1).
+  - `tools/hpc_bundle_manifest.py` was the pre-r25-followup version;
+    cascade runs got `scripts_missing` rows because the summarizer
+    only knew about `hpc_shards_interaction_discovery`.
+  - `scripts/publication-run/04_collect_publication_artifacts.sh`:
+    when `$EXTRACT_DIR/runs` was missing entirely (manifest-only
+    bundle), all per-stage checks were skipped and the script
+    reported "All critical artifacts present" purely on the
+    strength of the manifest files.
+  - `tools/hpc_bundle_manifest.py` `_collect_stage_metrics` only
+    looked at `runs/<target>/run_artifacts/<stage>/`. The
+    `reporting_bundle` pullback mode copies stages directly under
+    `runs/<target>/<stage>/`, so stage-metric columns were dropped
+    from bundles produced via that mode.
+  - `scripts/kestrel/status_publication_full_dataset_distributed.sh`
+    interpolated `${STUDY_ROOT}` directly into the remote SSH
+    command string; spaces or shell metacharacters in
+    `--study-root` could break the script or inject commands.
+  - `scripts/kestrel/pull_hpc_artifacts_bundle.sh` array-length
+    guard accepted equal-but-empty arrays (a maintainer edit that
+    cleared both lists silently copied zero stage dirs/logs).
+  - `scripts/kestrel/controller_publication_full_dataset_distributed.sh`
+    had ten parallel per-stage resource arrays (`N_SHARDS`,
+    `WALLTIME`, `MAX_CONCURRENT`, etc.) and no length guard —
+    drift would silently misassign resources to wrong stages.
+- **CLOSED (round 26, bsm-public-rf pending commit):**
+  - Bumped rfm-pipeline pin → 25ef483 to pick up
+    `parse_all_reduce_job_ids`, multi-id `inject_dependency_flag`,
+    and the cascade-aware summarizer helpers.
+  - `scripts/hpc_workflow.py` now collects one id per per-tier
+    invocation and threads the FULL list into the next stage as a
+    colon list. `CascadeChainError` fires on partial markers too.
+  - `tools/hpc_bundle_manifest.py` replaced wholesale with the
+    rfm-pipeline r26 version: `_discover_stages_in_run_dir`,
+    `_stages_to_summarize`, `_stage_suffixed_manifest`,
+    cascade-aware `_summarize_target` with `stage=` parameter,
+    cascade-aware `_collect_stage_metrics` (run_artifacts/ nested
+    OR flat reporting_bundle layout).
+  - `04_collect_publication_artifacts.sh` now flips
+    `ALL_PRESENT=false` AND prints an explicit "MISSING: runs/"
+    line when no per-target stage dirs exist (so exit 1 from r25
+    actually fires for manifest-only bundles).
+  - `pull_hpc_artifacts_bundle.sh` array guard now also rejects
+    empty arrays (length-> 0 check before length-equality check).
+  - `status_publication_full_dataset_distributed.sh` rewritten to
+    pass STUDY_ROOT / STUDY_ID as POSITIONAL args to `bash -s`
+    via a quoted heredoc — no more inline interpolation, no more
+    triple-backslash escaping; metacharacters in --study-root are
+    inert.
+  - `controller_publication_full_dataset_distributed.sh` asserts
+    every per-stage resource array length matches STAGES length
+    via a `declare -n` loop (bash 4.3+, Kestrel default).
+- **Tests:** 26 pass; bash syntax checks pass on all four
+  modified scripts.

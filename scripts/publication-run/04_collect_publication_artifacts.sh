@@ -112,6 +112,14 @@ if [ -d "$EXTRACT_DIR/runs" ]; then
       ALL_PRESENT=false
     fi
   done
+else
+  # A bundle that contains a manifest but no runs/ directory cannot
+  # regenerate any manuscript table or figure. Flag this loudly rather
+  # than letting the script print "All critical artifacts present"
+  # solely on the strength of the manifest files above.
+  echo ""
+  echo "  ✗ MISSING: runs/ (no per-target stage artifact directories in bundle)"
+  ALL_PRESENT=false
 fi
 
 echo ""
