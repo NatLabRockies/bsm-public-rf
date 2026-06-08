@@ -46,6 +46,12 @@ bash scripts/publication-run/01_dry_run_submission.sh
 
 **Purpose**: Generate SLURM scripts without submitting to HPC
 
+> **Prerequisite**: dry-run still SSHes to the configured remote host and
+> runs `rfm-hpc-submit --dry-run` there. SLURM scripts are generated on
+> the remote scratch dir (not locally), so a working SSH connection and
+> a current remote checkout are required. To skip SSH entirely and only
+> print the local plan, pass `--generate-only` to `hpc_workflow.py`.
+
 **Outputs**:
 
 - Validates script syntax

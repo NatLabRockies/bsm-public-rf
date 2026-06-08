@@ -72,7 +72,7 @@ CHECKS=(
 # run directory in EXTRACT_DIR/runs/<target>/.
 STAGE_DIR_CHECKS=(
   "output_conditioning"
-  "empirical_null_screen"
+  "empirical_null_screening"
   "interaction_discovery"
   "nonlinear_discovery"
   "sparse_selection"
@@ -98,7 +98,10 @@ if [ -d "$EXTRACT_DIR/runs" ]; then
   echo ""
   echo "Stage artifact directories (must exist for manuscript reproducibility):"
   for stage in "${STAGE_DIR_CHECKS[@]}"; do
-    if find "$EXTRACT_DIR/runs" -type d -name "$stage" -print -quit | grep -q .; then
+    # Restrict to canonical layout: runs/<target>/<stage>/ (depth 2 from
+    # runs/). Looser `-name "$stage"` would also match nested SLURM
+    # script dirs and shard merge dirs under hpc_shards_<stage>/.
+    if find "$EXTRACT_DIR/runs" -mindepth 2 -maxdepth 2 -type d -name "$stage" -print -quit | grep -q .; then
       echo "  ✓ $stage"
     else
       echo "  ✗ MISSING: $stage (no run target contains this stage's artifacts)"
