@@ -200,3 +200,39 @@ ______________________________________________________________________
     injection, and `CascadeChainError` semantics.
 - **Tests:** rfm 473 pass / 11 skipped (added test_hpc_cascade.py);
   bsm 26 pass (added test_cascade_chaining.py).
+
+______________________________________________________________________
+
+## 2026-06-07 — Round 25: collect exit code, pullback hardening, provenance link
+
+- **Severity:** MED.
+- **Evidence:**
+  - `scripts/publication-run/04_collect_publication_artifacts.sh`
+    printed "⚠️ Some artifacts missing" and exited 0, so the
+    master orchestrator's downstream "WORKFLOW COMPLETE" banner
+    would fire on incomplete collection.
+  - `docs/manuscript_feature_catalog_provenance.md:73` referenced
+    `docs/manuscripts/manuscript_impact_log.md` without making
+    clear that the file lives in the upstream `rfm-pipeline` repo
+    (this repo has no `docs/manuscripts/` directory). A new reader
+    auditing the catalog could not locate the impact log.
+  - `scripts/kestrel/pull_hpc_artifacts_bundle.sh:430` parallel
+    arrays `hpc_stages[]` and `artifact_dirs[]` had no length
+    guard; a single-array edit could silently mis-map HPC stage
+    names to writer dir names.
+  - `scripts/kestrel/pull_hpc_artifacts_bundle.sh:478` duplicated
+    the cascade stage list for the per-stage log copy loop,
+    reintroducing drift risk.
+- **CLOSED (round 25, bsm-public-rf pending commit):**
+  - `04_collect_publication_artifacts.sh` now `exit 1`s after the
+    missing-artifacts summary so the master orchestrator (set
+    -euo pipefail) halts before the success banner.
+  - `manuscript_feature_catalog_provenance.md` makes the upstream
+    repo path explicit and links to the GitHub URL.
+  - `pull_hpc_artifacts_bundle.sh` asserts
+    `${#hpc_stages[@]} == ${#artifact_dirs[@]}` and exits 2 with a
+    clear maintainer message on mismatch.
+  - Log-copy loop iterates `${hpc_stages[@]}` so the canonical
+    stage list is defined exactly once in `_per_stage_files_copy`.
+- **Tests:** 26 pass; bash syntax checks pass for both modified
+  scripts.
