@@ -59,6 +59,23 @@ REDUCE_MEMORY_GB=(128 128 128 128 128 128)
 PARTITIONS=(short short short short short short)
 RUN_ID_SUFFIX=(s01_output s02_empirical s03_interaction s04_nonlinear s05_sparse s06_final)
 
+# Guard against parallel-array drift: every resource list MUST have the
+# same length as STAGES so the for-i loop assigns shards / walltime /
+# resources to the right stage. A single edit to one array (e.g.
+# adding a stage to STAGES without extending the others) would
+# otherwise silently misassign every later stage's resources.
+n_stages="${#STAGES[@]}"
+for arr_name in N_SHARDS N_JOBS CPUS_PER_TASK MEMORY_GB WALLTIME MAX_CONCURRENT \
+                REDUCE_WALLTIME REDUCE_MEMORY_GB PARTITIONS RUN_ID_SUFFIX; do
+  declare -n _arr="${arr_name}"
+  if [[ "${#_arr[@]}" -ne "${n_stages}" ]]; then
+    echo "controller: FATAL: resource array ${arr_name} length ${#_arr[@]} != STAGES length ${n_stages}; " \
+         "edit all per-stage arrays together." >&2
+    exit 2
+  fi
+  unset -n _arr
+done
+
 echo -e "stage\tarray_job_id\treduce_job_id\tstatus" > "${STAGE_JOBS_FILE}"
 
 wait_for_job() {

@@ -443,6 +443,12 @@ while IFS=$'\t' read -r target kind run_dir log_dir suite_manifest config_path g
       sparse_selection
       final_manuscript_artifacts
     )
+    if [[ "${#hpc_stages[@]}" -eq 0 ]] || [[ "${#artifact_dirs[@]}" -eq 0 ]]; then
+      echo "[pullback] FATAL: hpc_stages and artifact_dirs must be non-empty; " \
+           "maintainer edit cleared one or both arrays. Restore the cascade " \
+           "stage list before re-running." >&2
+      exit 2
+    fi
     if [[ "${#hpc_stages[@]}" -ne "${#artifact_dirs[@]}" ]]; then
       echo "[pullback] FATAL: hpc_stages (${#hpc_stages[@]}) and " \
            "artifact_dirs (${#artifact_dirs[@]}) array lengths differ; " \
