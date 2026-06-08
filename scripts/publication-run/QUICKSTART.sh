@@ -27,10 +27,10 @@ SCRIPTS
   ─────────────────────────────────
   bash scripts/publication-run/00_publication_run_master.sh
 
-  Walks through all 4 stages with prompts.
+  Walks through all 4 steps with prompts.
   Estimated time: 24+ hours (with monitoring pauses)
 
-  OPTION 2: Individual Stages (Manual Control)
+  OPTION 2: Individual Steps (Manual Control)
   ─────────────────────────────────────────────
 
   Step 1: Dry-run validation (~30 seconds)

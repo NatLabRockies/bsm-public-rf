@@ -253,13 +253,14 @@ def _resolve_data_root(config: WorkflowConfig) -> Path:
             try:
                 with open(paths_override, encoding="utf-8") as f:
                     overrides = yaml.safe_load(f) or {}
-                input_matrix = overrides.get("case_study_input_matrix")
-                if input_matrix:
-                    return Path(input_matrix).expanduser().resolve().parent
-            except (OSError, yaml.YAMLError):
-                # Fall through to the hardcoded path on parse failure rather
-                # than masking the real I/O error here.
-                pass
+            except (OSError, yaml.YAMLError) as exc:
+                raise RuntimeError(
+                    f"Failed to read manuscript paths override {paths_override}: {exc}. "
+                    "Fix the file (or delete it to fall back to the default data root)."
+                ) from exc
+            input_matrix = overrides.get("case_study_input_matrix")
+            if input_matrix:
+                return Path(input_matrix).expanduser().resolve().parent
 
     try:
         root = dataset_roots[config.dataset.type]

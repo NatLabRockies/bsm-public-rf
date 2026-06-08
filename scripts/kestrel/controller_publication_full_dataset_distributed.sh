@@ -65,6 +65,11 @@ wait_for_job() {
   local job_id="$1"
   local label="$2"
   local state=""
+  # Bail out if both sacct AND squeue stop returning information for the
+  # job after a reasonable grace period — that means the job vanished
+  # without recording a terminal state and we'd otherwise loop forever.
+  local empty_polls=0
+  local max_empty_polls="${CONTROLLER_MAX_EMPTY_POLLS:-40}"  # 40 × 30s = 20 min
   while true; do
     state="$(
       sacct -X -n -j "${job_id}" --format=State 2>/dev/null \
@@ -73,12 +78,20 @@ wait_for_job() {
     )"
     if [[ -z "${state}" ]]; then
       if [[ -n "$(squeue -h -j "${job_id}" 2>/dev/null)" ]]; then
+        empty_polls=0
         sleep 30
         continue
+      fi
+      empty_polls=$((empty_polls + 1))
+      if (( empty_polls >= max_empty_polls )); then
+        echo "[controller] ${label} disappeared from sacct+squeue for ${empty_polls} polls" >&2
+        echo "[controller]   (job=${job_id}); aborting wait. Inspect cluster manually." >&2
+        return 2
       fi
       sleep 30
       continue
     fi
+    empty_polls=0
     case "${state}" in
       COMPLETED*)
         echo "[controller] ${label} completed (job=${job_id})"

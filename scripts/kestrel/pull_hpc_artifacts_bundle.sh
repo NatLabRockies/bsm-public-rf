@@ -411,6 +411,20 @@ while IFS=$'\t' read -r target kind run_dir log_dir suite_manifest config_path g
   if [[ "${PULLBACK_MODE}" == "reporting_bundle" ]]; then
     copy_tree "${run_dir}/hpc_scripts" "${out_run}/hpc_scripts"
     copy_tree "${run_dir}/hpc_shards/_merged" "${out_run}/hpc_shards/_merged"
+    # Per-stage shard merged outputs (publication distributed run layout):
+    # artifacts/hpc_shards_<stage>/_merged/ — copy whatever exists.
+    for stage in \
+      output_conditioning \
+      empirical_null_screen \
+      interaction_discovery \
+      nonlinear_discovery \
+      sparse_selection \
+      final_manuscript_artifacts; do
+      copy_tree "${run_dir}/hpc_shards_${stage}/_merged" \
+                "${out_run}/hpc_shards_${stage}/_merged"
+      # Canonical stage artifact directories (post-reduce).
+      copy_tree "${run_dir}/${stage}" "${out_run}/${stage}"
+    done
     if [[ -n "${suite_manifest}" ]]; then
       copy_tree "$(dirname "${suite_manifest}")" "${out_run}/hpc_scripts"
       copy_file_if_exists "${suite_manifest}" "${out_run}/hpc_scripts/suite_manifest.jsonl"
@@ -418,8 +432,17 @@ while IFS=$'\t' read -r target kind run_dir log_dir suite_manifest config_path g
     if [[ "${gpu_mode}" == "1" ]]; then
       copy_latest_match "${log_dir}/bsm_gpu_interaction_discovery_*.out" "${out_logs}"
     fi
-    copy_latest_match "${log_dir}/bsm_interaction_discovery_*.out" "${out_logs}"
-    copy_latest_match "${log_dir}/bsm_reduce_interaction_discovery_*.out" "${out_logs}"
+    # Latest per-stage stdout + reduce logs (one of each pattern per stage).
+    for stage in \
+      output_conditioning \
+      empirical_null_screen \
+      interaction_discovery \
+      nonlinear_discovery \
+      sparse_selection \
+      final_manuscript_artifacts; do
+      copy_latest_match "${log_dir}/bsm_${stage}_*.out" "${out_logs}"
+      copy_latest_match "${log_dir}/bsm_reduce_${stage}_*.out" "${out_logs}"
+    done
   elif [[ "${PULLBACK_MODE}" == "full" ]]; then
     copy_tree "${run_dir}/hpc_scripts" "${out_run}/hpc_scripts"
     copy_tree "${run_dir}/hpc_shards" "${out_run}/hpc_shards"

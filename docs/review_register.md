@@ -8,8 +8,8 @@ ______________________________________________________________________
 
 - **Severity:** HIGH (when invoked from a pip-installed rfm-pipeline). `pixi run rfm-hpc-reduce --help` failed at import time in both rfm-pipeline (source tree) and bsm-public-rf (pip install): pinned `rfm_pipeline.hpc_reduce` imports `tools.run_manuscript_pipeline`, but `tools/` is not part of the installed package.
 - **Round-21 partial fix (rfm-pipeline 7eea471):** corrected `REPO_ROOT = Path(__file__).resolve().parent.parent.parent` (was `.parent.parent`, which only added `src/` to sys.path). Now `rfm-hpc-reduce --help` works from a source-tree checkout. Verified locally.
-- **bsm-public-rf:** pin bumped to `7eea471`. **Install-mode invocation of `rfm-hpc-reduce` still fails** because `tools/` does not ship in the installed package. This is **not** part of any actual workflow — `slurm_array_runner.py` templates always `cd "{repo_root}"` (an rfm-pipeline source checkout) before invoking `rfm-hpc-reduce`, so HPC nodes use the source-tree path. The install-mode failure is a latent footgun only.
-- **Required follow-up for full fix:** move `_load_empirical_null_screening_result`, `_load_interaction_discovery_result`, `_load_nonlinear_discovery_result`, `_load_output_conditioning_result`, `_load_sparse_selection_result`, `_load_tables`, and `config_to_legacy_case_study` from `tools/run_manuscript_pipeline.py` into a proper module under `src/rfm_pipeline/` (e.g., `src/rfm_pipeline/manuscript_pipeline_helpers.py`); have `tools/run_manuscript_pipeline.py` re-export for back-compat. Add `rfm-hpc-reduce --help` and `rfm-hpc-worker --help` smoke tests in CI. ~30-50 LoC + tests.
+- **CLOSED (round 22, rfm-pipeline 6826edd, bsm-public-rf 18b4555):** helpers moved into `src/rfm_pipeline/manuscript_pipeline_helpers.py` (installable package). `hpc_reduce.py` now imports cleanly without sys.path hacks. `pixi run rfm-hpc-reduce --help` verified in install mode under bsm-public-rf. Smoke tests added in rfm `tests/test_docs_snippets_smoke.py` to guard the regression.
+- **Further cleanup (rfm-pipeline e53f9c0):** duplicate helper bodies removed from `tools/run_manuscript_pipeline.py`; that script now imports from the package (-370 LoC, single source of truth).
 ______________________________________________________________________
 
 ## 2026-06-07 — Round 20: pullback bundle helper missing
@@ -30,19 +30,22 @@ ______________________________________________________________________
   the orchestration YAML — only `output_conditioning` is validated.
 - **Mechanical fix applied (round 16):** dropped the dead key from both
   YAMLs; rewrote the misleading "Generate all 6 stages" comment to state
-  the actual cascade contract (per-stage re-submit OR the
-  `scripts/kestrel/controller_publication_full_dataset_distributed.sh` wrapper looping over the 6-stage
-  tuple).
-- **Required follow-up (not yet implemented):** either
-  (a) implement a true full-pipeline cascade flag in
-  `scripts/hpc_workflow.py` (orchestrator iterates STAGES, waits for
-  each, submits next), with tests; OR
-  (b) document the per-stage manual re-submit workflow in the
-  publication-run README and add a wrapper that calls submit
-  N times in sequence.
-- **Why this matters:** a new user following the publication-run
-  workflow will dry-run-validate stage 1, submit, and not realise
-  stages 2-6 require additional invocations.
+  the actual cascade contract.
+- **CLOSED (round 22, rfm-pipeline b6ed313 + bsm orchestration update):**
+  added `execution.stages` (ordered list) to `HpcExecutionConfig` and
+  `build_remote_submit_commands`; orchestrator now emits one
+  `rfm-hpc-submit` per (stage, tier) with per-stage output dirs.
+  `configs/hpc/kestrel_publication_orchestration.yml` updated to use
+  `stages:` list for all 6 stages. **Companion HIGH (round 22):**
+  `scripts/hpc_workflow.py` previously short-circuited remote execution
+  when `--dry-run`, so the remote `rfm-hpc-submit --dry-run` (which
+  generates the SLURM scripts for inspection) never ran — fixed by
+  always executing the submit SSH call; the safety comes from the
+  remote command's own `--dry-run` flag (commit pending in bsm).
+  Cascade + dry-run propagation guarded by new tests
+  `tests/test_hpc_workflow_orchestration.py::
+  test_submit_commands_cascade_over_stages_list` and
+  `test_submit_commands_dry_run_propagates_to_rfm_hpc_submit`.
 
 ______________________________________________________________________
 
