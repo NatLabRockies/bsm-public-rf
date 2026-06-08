@@ -71,3 +71,52 @@ ______________________________________________________________________
   pipeline STAGES tuple. Terminology rename, not mechanical.
 - **Round 15 (LOW):** `README.md` Zenodo DOI placeholder — waits on
   submission.
+
+______________________________________________________________________
+
+## 2026-06-08 — Round 23: cascade shard-dir collision + dependency gap
+
+- **Severity:** HIGH (both rfm-pipeline and bsm-public-rf).
+- **Evidence:**
+  - rfm `hpc_submit.py:163` set `output_root = artifact_dir/hpc_shards`
+    regardless of `--stage`, so cascade stages shared `_SUCCESS.json`
+    markers — stage 2's `_find_incomplete_task_ids` would treat all
+    shards as already complete and skip real work.
+  - rfm `build_remote_submit_commands` emitted N pixi commands per
+    cascade run with no SLURM `--dependency=afterok` chain, allowing
+    stage N+1 to start before stage N reduce completes (race on
+    canonical stage artifact).
+  - bsm orchestration consumed the flat command list with no way to
+    capture or thread reduce job IDs between stages.
+  - bsm pullback used `bsm_*.out` log glob (job names are `rfm_*`),
+    `empirical_null_screen` (HPC name is `empirical_null_screening`),
+    and `cpu_nodes_<n>/hpc_scripts/manifest.jsonl` (cascade uses
+    `cpu_nodes_<n>_<stage>/hpc_scripts/manifest.jsonl`).
+  - bsm 04-collect `find -name "$stage"` matched nested non-canonical
+    directories.
+  - bsm `--dry-run` help still said "without executing" after r22 made
+    it always SSH-execute.
+- **CLOSED (round 23, rfm-pipeline 8ca839d + 7c33036, bsm ef49f17):**
+  - rfm: per-stage shard output dirs (`hpc_shards_<stage>`);
+    `rfm-hpc-submit --depends-on-job-id` flag injects
+    `#SBATCH --dependency=afterok:<id>` into array and GPU array
+    scripts; emits `RFM_HPC_SUBMIT_REDUCE_JOB_ID=<id>` marker on
+    stdout; new `build_remote_submit_command_groups` returns
+    `[(stage|None, [cmds])]` so orchestrators can chain; status
+    command emits per-stage `hpc_shards_<stage>` entries; validation
+    picks stage XOR stages; prep block keys off `effective_stages()`.
+  - bsm: orchestrator uses the grouped builder, captures each cascade
+    stage's reduce job id from the marker line, and rewrites the next
+    stage's commands to append `--depends-on-job-id <id>`. Pullback
+    log glob → `rfm_*`, stage name fixed to `empirical_null_screening`,
+    per-stage script-dir pullback added. 04-collect tightened to
+    depth-2 stage path check. `--dry-run` help rewritten with SSH
+    prereq.
+  - Doc drift: `docs/HPC_DISTRIBUTED_EXECUTION.md` `rfm-hpc-shard`
+    typo → `rfm-hpc-worker`; rfm `README.md:94` stage names aligned
+    with `_VALID_STAGES`; `paper/paper.md:107` "shipped pre-fitted
+    Random Forest" rephrased to "regenerated from collected runs via
+    `plot_sensitivity_rf_figures.py`".
+- **Tests:** rfm 462 pass / 11 skip (added per-stage shard test +
+  array-dependency injection tests + grouped-builder test); bsm 20
+  pass; orchestrator smoke-import + marker parser verified.
