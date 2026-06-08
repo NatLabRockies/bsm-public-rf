@@ -413,9 +413,11 @@ while IFS=$'\t' read -r target kind run_dir log_dir suite_manifest config_path g
     copy_tree "${run_dir}/hpc_shards/_merged" "${out_run}/hpc_shards/_merged"
     # Per-stage shard merged outputs (publication distributed run layout):
     # artifacts/hpc_shards_<stage>/_merged/ — copy whatever exists.
+    # Stage names match rfm_pipeline._VALID_STAGES exactly (used as
+    # --stage arg to rfm-hpc-submit and as a suffix in shard/script dirs).
     for stage in \
       output_conditioning \
-      empirical_null_screen \
+      empirical_null_screening \
       interaction_discovery \
       nonlinear_discovery \
       sparse_selection \
@@ -425,23 +427,39 @@ while IFS=$'\t' read -r target kind run_dir log_dir suite_manifest config_path g
       # Canonical stage artifact directories (post-reduce).
       copy_tree "${run_dir}/${stage}" "${out_run}/${stage}"
     done
+    # Per-stage HPC script dirs (cascade layout: cpu_nodes_<n>_<stage>).
+    # Falls through when the run was single-stage (no per-stage suite_root).
+    suite_root_base="$(dirname "${suite_manifest}")"
+    suite_root_parent="$(dirname "${suite_root_base}")"
+    suite_grandparent="$(dirname "${suite_root_parent}")"
+    base_name="$(basename "${suite_root_parent}")"
+    for cascade_dir in "${suite_grandparent}/${base_name}"_*; do
+      [[ -d "${cascade_dir}" ]] || continue
+      cascade_name="$(basename "${cascade_dir}")"
+      copy_tree "${cascade_dir}/hpc_scripts" \
+                "${out_run}/${cascade_name}/hpc_scripts"
+    done
     if [[ -n "${suite_manifest}" ]]; then
       copy_tree "$(dirname "${suite_manifest}")" "${out_run}/hpc_scripts"
       copy_file_if_exists "${suite_manifest}" "${out_run}/hpc_scripts/suite_manifest.jsonl"
     fi
     if [[ "${gpu_mode}" == "1" ]]; then
-      copy_latest_match "${log_dir}/bsm_gpu_interaction_discovery_*.out" "${out_logs}"
+      # SLURM job name template is rfm_gpu_<stage>_<run_id> (see
+      # rfm_pipeline.distributed.slurm_array_runner _GPU_STAGE_SBATCH_TEMPLATE).
+      copy_latest_match "${log_dir}/rfm_gpu_interaction_discovery_*.out" "${out_logs}"
     fi
     # Latest per-stage stdout + reduce logs (one of each pattern per stage).
+    # SLURM job name templates are rfm_<stage>_<run_id> (array) and
+    # rfm_reduce_<stage>_<run_id> (reduce).
     for stage in \
       output_conditioning \
-      empirical_null_screen \
+      empirical_null_screening \
       interaction_discovery \
       nonlinear_discovery \
       sparse_selection \
       final_manuscript_artifacts; do
-      copy_latest_match "${log_dir}/bsm_${stage}_*.out" "${out_logs}"
-      copy_latest_match "${log_dir}/bsm_reduce_${stage}_*.out" "${out_logs}"
+      copy_latest_match "${log_dir}/rfm_${stage}_*.out" "${out_logs}"
+      copy_latest_match "${log_dir}/rfm_reduce_${stage}_*.out" "${out_logs}"
     done
   elif [[ "${PULLBACK_MODE}" == "full" ]]; then
     copy_tree "${run_dir}/hpc_scripts" "${out_run}/hpc_scripts"

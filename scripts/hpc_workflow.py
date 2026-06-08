@@ -19,7 +19,7 @@ if str(REPO_ROOT) not in sys.path:
 from rfm_pipeline.hpc_workflow_config import (  # noqa: E402
     build_collect_command,
     build_remote_status_command,
-    build_remote_submit_commands,
+    build_remote_submit_command_groups,
     load_hpc_workflow_config,
     resolved_remote_artifacts_root,
     resolved_remote_logs_root,
@@ -46,7 +46,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--dry-run",
         action="store_true",
-        help="Print commands without executing them.",
+        help=(
+            "Forward --dry-run to remote rfm-hpc-submit so SLURM scripts are "
+            "generated on the remote host but no sbatch calls are made. SSH "
+            "still executes (the remote command must run to produce the "
+            "scripts). For a fully local validation, also pass --generate-only."
+        ),
     )
     parser.add_argument(
         "--generate-only",
@@ -74,7 +79,15 @@ def _run_remote_shell(
     remote_command: str,
     *,
     dry_run: bool,
-) -> None:
+    capture_output: bool = False,
+) -> str:
+    """Run a shell command on the remote host via SSH.
+
+    When ``capture_output=True``, the command's stdout is tee'd locally
+    (so the user still sees it) and returned. Used by cascade chaining
+    to capture each rfm-hpc-submit's RFM_HPC_SUBMIT_REDUCE_JOB_ID
+    marker line.
+    """
     remote_shell = f"cd {shlex.quote(remote_repo_root)} && {remote_command}"
     command = [
         "ssh",
@@ -82,7 +95,33 @@ def _run_remote_shell(
         ssh_dest,
         f"bash -lc {shlex.quote(remote_shell)}",
     ]
-    _run_command(command, dry_run=dry_run)
+    print(f">>> {' '.join(shlex.quote(part) for part in command)}")
+    if dry_run:
+        return ""
+    if capture_output:
+        proc = subprocess.run(command, check=True, capture_output=True, text=True)
+        # Tee stdout/stderr so the operator still sees the remote output.
+        if proc.stdout:
+            sys.stdout.write(proc.stdout)
+        if proc.stderr:
+            sys.stderr.write(proc.stderr)
+        return proc.stdout
+    subprocess.run(command, check=True)
+    return ""
+
+
+def _parse_reduce_job_id(stdout: str) -> int | None:
+    """Pull the RFM_HPC_SUBMIT_REDUCE_JOB_ID=<id> marker from stdout."""
+    marker = "RFM_HPC_SUBMIT_REDUCE_JOB_ID="
+    for line in stdout.splitlines():
+        line = line.strip()
+        if line.startswith(marker):
+            tail = line[len(marker) :].strip()
+            try:
+                return int(tail)
+            except ValueError:
+                return None
+    return None
 
 
 def _load_yaml(path: Path) -> dict:
@@ -285,23 +324,63 @@ def main() -> int:
                 cpu_tier_configs=cpu_tier_configs,
                 dry_run=args.dry_run,
             )
-        submit_cmds = build_remote_submit_commands(
+        # Cascade-aware submission: groups are (stage|None, [cmds]).
+        # Prep/diagnostic carry stage=None and don't produce a SLURM job
+        # id to chain. Per-stage groups: capture stdout of the last
+        # command in each group to harvest RFM_HPC_SUBMIT_REDUCE_JOB_ID
+        # and inject it as --depends-on-job-id on the next stage's
+        # commands so SLURM enforces cascade ordering.
+        groups = build_remote_submit_command_groups(
             config,
             submit=should_submit,
             dry_run=args.dry_run,
         )
-        for remote_cmd in submit_cmds:
-            # When args.dry_run is true the remote command itself already
-            # carries `--dry-run` (so rfm-hpc-submit will GENERATE SLURM
-            # scripts but not submit them). Skipping execution entirely
-            # here would mean dry-run mode silently produces zero scripts
-            # for the user to validate — see audit round 22 HIGH#1.
-            _run_remote_shell(
-                ssh_dest,
-                config.paths.remote_repo_root,
-                remote_cmd,
-                dry_run=False,
-            )
+        prev_reduce_job_id: int | None = None
+        for stage_name, group_cmds in groups:
+            chained_cmds: list[str] = []
+            for c in group_cmds:
+                if (
+                    stage_name is not None
+                    and prev_reduce_job_id is not None
+                    and "rfm-hpc-submit" in c
+                    and "--depends-on-job-id" not in c
+                ):
+                    c = c + f" --depends-on-job-id {prev_reduce_job_id}"
+                chained_cmds.append(c)
+
+            captured_for_stage: list[str] = []
+            for c in chained_cmds:
+                # Capture stdout when this group represents a cascade
+                # stage and we actually submitted (not dry-run, not
+                # generate-only) — otherwise no real job id exists to
+                # chain.
+                capture = (
+                    stage_name is not None
+                    and should_submit
+                    and not args.dry_run
+                )
+                stdout = _run_remote_shell(
+                    ssh_dest,
+                    config.paths.remote_repo_root,
+                    c,
+                    # Remote command carries --dry-run already when
+                    # args.dry_run, so SSH itself must execute.
+                    dry_run=False,
+                    capture_output=capture,
+                )
+                if capture:
+                    captured_for_stage.append(stdout)
+
+            if stage_name is not None and captured_for_stage:
+                # The final tier (or GPU) reduce is the cascade barrier
+                # for downstream stages; take the last captured marker.
+                last_id = _parse_reduce_job_id(captured_for_stage[-1])
+                if last_id is not None:
+                    prev_reduce_job_id = last_id
+                    print(
+                        f"[cascade] captured reduce job {last_id} for stage "
+                        f"{stage_name}; chaining next stage with --depends-on-job-id"
+                    )
 
     if args.action in {"status", "full"}:
         status_cmd = build_remote_status_command(config)
