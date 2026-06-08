@@ -68,11 +68,15 @@ CHECKS=(
 )
 
 # Per-stage canonical artifacts that must be present for the manuscript
-# tables/figures to be reproducible. Patterns are evaluated under each
-# run directory in EXTRACT_DIR/runs/<target>/.
+# tables/figures to be reproducible. These are the post-reduce artifact
+# directory names (writer convention from
+# rfm_pipeline.manuscript_pipeline_helpers); the HPC stage names used
+# in --stage / hpc_shards_<stage> / SLURM job names differ for
+# empirical_null_screening (the HPC name carries -ing; the writer dir
+# does not).
 STAGE_DIR_CHECKS=(
   "output_conditioning"
-  "empirical_null_screening"
+  "empirical_null_screen"
   "interaction_discovery"
   "nonlinear_discovery"
   "sparse_selection"

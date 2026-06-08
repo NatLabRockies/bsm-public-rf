@@ -16,6 +16,11 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
+from rfm_pipeline.hpc_cascade import (  # noqa: E402
+    CascadeChainError,
+    inject_dependency_flag,
+    parse_reduce_job_id,
+)
 from rfm_pipeline.hpc_workflow_config import (  # noqa: E402
     build_collect_command,
     build_remote_status_command,
@@ -47,10 +52,12 @@ def parse_args() -> argparse.Namespace:
         "--dry-run",
         action="store_true",
         help=(
-            "Forward --dry-run to remote rfm-hpc-submit so SLURM scripts are "
-            "generated on the remote host but no sbatch calls are made. SSH "
-            "still executes (the remote command must run to produce the "
-            "scripts). For a fully local validation, also pass --generate-only."
+            "Forward --dry-run to remote rfm-hpc-submit so SLURM scripts "
+            "are generated on the remote host but no sbatch calls are "
+            "made. SSH still executes by default (the remote command "
+            "must run to produce the scripts). Pair with --generate-only "
+            "for a fully local validation (no SSH at all; commands are "
+            "printed only)."
         ),
     )
     parser.add_argument(
@@ -108,20 +115,6 @@ def _run_remote_shell(
         return proc.stdout
     subprocess.run(command, check=True)
     return ""
-
-
-def _parse_reduce_job_id(stdout: str) -> int | None:
-    """Pull the RFM_HPC_SUBMIT_REDUCE_JOB_ID=<id> marker from stdout."""
-    marker = "RFM_HPC_SUBMIT_REDUCE_JOB_ID="
-    for line in stdout.splitlines():
-        line = line.strip()
-        if line.startswith(marker):
-            tail = line[len(marker) :].strip()
-            try:
-                return int(tail)
-            except ValueError:
-                return None
-    return None
 
 
 def _load_yaml(path: Path) -> dict:
@@ -337,16 +330,12 @@ def main() -> int:
         )
         prev_reduce_job_id: int | None = None
         for stage_name, group_cmds in groups:
-            chained_cmds: list[str] = []
-            for c in group_cmds:
-                if (
-                    stage_name is not None
-                    and prev_reduce_job_id is not None
-                    and "rfm-hpc-submit" in c
-                    and "--depends-on-job-id" not in c
-                ):
-                    c = c + f" --depends-on-job-id {prev_reduce_job_id}"
-                chained_cmds.append(c)
+            chained_cmds = [
+                inject_dependency_flag(c, prev_reduce_job_id)
+                if (stage_name is not None and prev_reduce_job_id is not None)
+                else c
+                for c in group_cmds
+            ]
 
             captured_for_stage: list[str] = []
             for c in chained_cmds:
@@ -359,6 +348,14 @@ def main() -> int:
                     and should_submit
                     and not args.dry_run
                 )
+                # When the user asked for --dry-run + --generate-only
+                # together they want a fully local validation: no SSH,
+                # no remote rfm-hpc-submit. Skip the remote shell
+                # entirely (the per-stage commands are still printed by
+                # build_remote_submit_command_groups in submit-mode docs).
+                if args.dry_run and args.generate_only:
+                    print(f">>> [skip ssh: --dry-run --generate-only] {c}")
+                    continue
                 stdout = _run_remote_shell(
                     ssh_dest,
                     config.paths.remote_repo_root,
@@ -372,15 +369,24 @@ def main() -> int:
                     captured_for_stage.append(stdout)
 
             if stage_name is not None and captured_for_stage:
-                # The final tier (or GPU) reduce is the cascade barrier
-                # for downstream stages; take the last captured marker.
-                last_id = _parse_reduce_job_id(captured_for_stage[-1])
-                if last_id is not None:
-                    prev_reduce_job_id = last_id
-                    print(
-                        f"[cascade] captured reduce job {last_id} for stage "
-                        f"{stage_name}; chaining next stage with --depends-on-job-id"
+                # The terminal (last) command in a stage group is the
+                # cascade barrier — use its captured marker as the next
+                # stage's upstream dependency.
+                last_id = parse_reduce_job_id(captured_for_stage[-1])
+                if last_id is None:
+                    raise CascadeChainError(
+                        f"Cascade stage {stage_name!r} submitted but no "
+                        "RFM_HPC_SUBMIT_REDUCE_JOB_ID=<id> marker was "
+                        "captured from rfm-hpc-submit stdout. Refusing "
+                        "to chain the next stage with a stale upstream "
+                        "id (would let it race ahead of this stage)."
                     )
+                prev_reduce_job_id = last_id
+                print(
+                    f"[cascade] captured reduce job {last_id} for stage "
+                    f"{stage_name}; chaining next stage with "
+                    "--depends-on-job-id"
+                )
 
     if args.action in {"status", "full"}:
         status_cmd = build_remote_status_command(config)
