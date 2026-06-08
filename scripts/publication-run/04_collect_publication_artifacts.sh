@@ -67,6 +67,18 @@ CHECKS=(
   "manifest/study_metadata_manifest.json"
 )
 
+# Per-stage canonical artifacts that must be present for the manuscript
+# tables/figures to be reproducible. Patterns are evaluated under each
+# run directory in EXTRACT_DIR/runs/<target>/.
+STAGE_DIR_CHECKS=(
+  "output_conditioning"
+  "empirical_null_screen"
+  "interaction_discovery"
+  "nonlinear_discovery"
+  "sparse_selection"
+  "final_manuscript_artifacts"
+)
+
 ALL_PRESENT=true
 for check_path in "${CHECKS[@]}"; do
   full_path="$EXTRACT_DIR/$check_path"
@@ -78,6 +90,22 @@ for check_path in "${CHECKS[@]}"; do
     ALL_PRESENT=false
   fi
 done
+
+# Verify that at least one stage artifact directory exists per stage in
+# at least one run target. Missing stage artifacts mean the manuscript
+# tables/figures cannot be regenerated even if the manifest is intact.
+if [ -d "$EXTRACT_DIR/runs" ]; then
+  echo ""
+  echo "Stage artifact directories (must exist for manuscript reproducibility):"
+  for stage in "${STAGE_DIR_CHECKS[@]}"; do
+    if find "$EXTRACT_DIR/runs" -type d -name "$stage" -print -quit | grep -q .; then
+      echo "  ✓ $stage"
+    else
+      echo "  ✗ MISSING: $stage (no run target contains this stage's artifacts)"
+      ALL_PRESENT=false
+    fi
+  done
+fi
 
 echo ""
 echo "================================================================================"

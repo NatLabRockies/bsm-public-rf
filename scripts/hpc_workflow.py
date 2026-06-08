@@ -112,7 +112,11 @@ def _resolve_dataset_sync_specs(
         specs.append((local_path, remote_norm))
 
     def _remote_from_config_path(path_value: str) -> str:
-        cfg_path = Path(path_value)
+        # Expand ${ENV} placeholders so e.g. ${SCRATCH_DIR}/... is treated
+        # as an absolute path on the remote, not a relative subdir of the
+        # repo root.
+        expanded = os.path.expandvars(path_value)
+        cfg_path = Path(expanded)
         if cfg_path.is_absolute():
             return cfg_path.as_posix()
         return f"{remote_repo_root.rstrip('/')}/{cfg_path.as_posix()}"
@@ -287,11 +291,16 @@ def main() -> int:
             dry_run=args.dry_run,
         )
         for remote_cmd in submit_cmds:
+            # When args.dry_run is true the remote command itself already
+            # carries `--dry-run` (so rfm-hpc-submit will GENERATE SLURM
+            # scripts but not submit them). Skipping execution entirely
+            # here would mean dry-run mode silently produces zero scripts
+            # for the user to validate — see audit round 22 HIGH#1.
             _run_remote_shell(
                 ssh_dest,
                 config.paths.remote_repo_root,
                 remote_cmd,
-                dry_run=args.dry_run,
+                dry_run=False,
             )
 
     if args.action in {"status", "full"}:
