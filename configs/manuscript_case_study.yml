@@ -50,7 +50,7 @@ case_study:
       method: pca
       method_status: frozen_case_study_choice
       screening_target: retained_pca_scores
-      retained_components: 20
+      retained_components: 17
       retained_variance_fraction: 0.90
 
   empirical_null_screen:
@@ -65,7 +65,7 @@ case_study:
     # Implementation uses B+1=201 permutations (one observed statistic + 200 null draws)
     # for exact Monte Carlo p-value computation; the manuscript reports B=200.
     bh_q_screen: 0.05
-    retained_terms: 69
+    retained_terms: 70
 
   interaction_discovery:
     method: tree_shap_interaction_values
@@ -90,8 +90,8 @@ case_study:
     public_implementation_status: manuscript_aligned
     source_workflow_reference: private_gam_nonlinear_discovery_workflow
     source_workflow_equivalence_status: manuscript_aligned_via_scipy_smoothing_spline
-    identified_transformations: 41
-    final_support_transformations: 29
+    identified_transformations: 25
+    final_support_transformations: 22
 
   sparse_selection:
     model_class: l1_penalized_linear_model_per_retained_component
@@ -103,7 +103,7 @@ case_study:
     source_workflow_reference: notebook_pca_debiased_lasso
     source_artifact: LASSO_to_OLS_v9.ipynb
     source_workflow_equivalence_status: not_yet_validated
-    source_selected_feature_count_reference: 172
+    source_selected_feature_count_reference: 157
 
   stability:
     resampling_scheme: 50_subsamples_of_80_percent_rows_without_replacement_seed_123
@@ -120,19 +120,19 @@ case_study:
       error_scale_quantile: 0.95
       # delta_threshold_override: retain only features whose individual removal
       # improves macro nRMSE by less than this value. 0.002 is the manuscript
-      # baseline; it prunes 40 of the 172 enriched features to yield the 132
+      # baseline; it prunes 34 of the 157 enriched features to yield the 123
       # final features reported in Table 1 of the JDS manuscript.
       delta_threshold_override: 0.002
 
   final_model:
-    final_predictor_count: 132
-    final_main_effect_count: 54
+    final_predictor_count: 123
+    final_main_effect_count: 52
     final_interaction_count: 49
-    final_transformation_count: 29
-    intermediate_penalized_holdout_nrmse: 0.0709
-    final_ols_holdout_nrmse: 0.0721
-    final_ols_holdout_nrmse_ci_lower: 0.0706
-    final_ols_holdout_nrmse_ci_upper: 0.0730
+    final_transformation_count: 22
+    intermediate_penalized_holdout_nrmse: 0.0706
+    final_ols_holdout_nrmse: 0.0714
+    final_ols_holdout_nrmse_ci_lower: 0.0699
+    final_ols_holdout_nrmse_ci_upper: 0.0724
     nrmse_denominator_definition: macro_average_rmse_divided_by_training_response_range
     nrmse_min_range: 1.0e-6
     nrmse_reference_matrix: Y_train

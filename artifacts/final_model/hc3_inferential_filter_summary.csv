@@ -1,173 +1,158 @@
 feature_name,n_outputs,n_outputs_excluding_zero,hc3_retained_after_filter,hc3_drop_reason,max_abs_hc3_t_statistic,interval_method,alpha
-OHC.PY sensi multiplier[HEFA],9954,3802,True,retained_by_at_least_one_output,252.24725624868702,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-WW.PY sensi multiplier[SludgeToHTL],9954,2815,True,retained_by_at_least_one_output,148.64299374970523,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-inverse_OHC.PY sensi multiplier[HEFA],9954,4203,True,retained_by_at_least_one_output,359.78256206578556,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-WW.PY sensi multiplier[SludgeToHTL]:WW.progress ratios commercial[SludgeToHTL],9954,2582,True,retained_by_at_least_one_output,111.8303187830547,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-sqrt_AHC.PY sensi multiplier[HEFA],9954,498,True,retained_by_at_least_one_output,211.7933331656344,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:WW.progress ratios commercial[SludgeToHTL],9954,3070,True,retained_by_at_least_one_output,106.84835732227047,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-WW.Mature Industry Rate of Return as PCT[SludgeToHTL],9954,4352,True,retained_by_at_least_one_output,93.38190045529342,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-sqrt_AHC.PY sensi multiplier[HTL],9954,750,True,retained_by_at_least_one_output,170.4964516566092,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-OHC.PY sensi multiplier[HEFABrownfield]:OHC.PY sensi multiplier[HEFA],9954,4205,True,retained_by_at_least_one_output,154.13751684532377,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-WW.PY sensi multiplier[ManureToHTL],9954,1328,True,retained_by_at_least_one_output,182.78292425051623,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-CHC.PY sensi multiplier[Thermochem]:CHC.Mature Industry Rate of Return as PCT[Thermochem],9954,5938,True,retained_by_at_least_one_output,134.25959482452203,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-AHC.PY sensi multiplier[HEFA],9954,494,True,retained_by_at_least_one_output,160.7029330731463,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-AHC.PY sensi multiplier[HTL],9954,757,True,retained_by_at_least_one_output,129.57438460336957,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-CHC.PY sensi multiplier[Thermochem]:CHC.initial indices of Commercial Maturity[Thermochem],9954,5162,True,retained_by_at_least_one_output,151.47070044047308,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-CHC.Mature Industry Rate of Return as PCT[Brownfield],9954,2881,True,retained_by_at_least_one_output,64.20460053854076,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-CHC.initial indices of Commercial Maturity[Brownfield]:CHC.PY sensi multiplier[Brownfield],9954,4575,True,retained_by_at_least_one_output,76.63222326808177,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-CHC.Mature Industry Rate of Return as PCT[Thermochem],9954,4850,True,retained_by_at_least_one_output,173.10914602626846,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-OHC.PY sensi multiplier[HEFABrownfield],9954,2940,True,retained_by_at_least_one_output,398.6141727917469,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-WW.PY sensi multiplier[ManureToHTL]:WW.Mature Industry Rate of Return as PCT[ManureToHTL],9954,2832,True,retained_by_at_least_one_output,328.5504770238969,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-CHC.PY sensi multiplier[Thermochem]:CHC.FCI  sensi multiplier[Thermochem],9954,5052,True,retained_by_at_least_one_output,75.61959067380246,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-CHC.PY sensi multiplier[Thermochem],9954,6283,True,retained_by_at_least_one_output,102.93708684762105,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-CHC.initial indices of Commercial Maturity[Brownfield]:CHC.Mature Industry Rate of Return as PCT[Brownfield],9954,5348,True,retained_by_at_least_one_output,178.1145820102459,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-OHC.PY sensi multiplier[HEFA]:OHC.progress ratios commercial[HEFA],9954,2525,True,retained_by_at_least_one_output,83.65782446423567,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-WW.progress ratios commercial[SludgeToHTL]:WW.FCI  sensi multiplier[SludgeToHTL],9954,2427,True,retained_by_at_least_one_output,36.56036602877664,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-CHC.Mature Industry Rate of Return as PCT[Thermochem]:CHC.FCI  sensi multiplier[Thermochem],9954,4259,True,retained_by_at_least_one_output,128.6350165432447,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-CHC.FCI  sensi multiplier[Thermochem],9954,4131,True,retained_by_at_least_one_output,64.50702576808563,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-inverse_WW.PY sensi multiplier[ManureToHTL],9954,1209,True,retained_by_at_least_one_output,328.6713693954991,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-CHC.Mature Industry Rate of Return as PCT[Thermochem]:CHC.initial indices of Commercial Maturity[Thermochem],9954,5523,True,retained_by_at_least_one_output,328.3339638813567,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-CHC.initial indices of Commercial Maturity[Brownfield]:CHC.FCI  sensi multiplier[Brownfield],9954,3642,True,retained_by_at_least_one_output,48.155461395814555,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-inverse_WW.PY sensi multiplier[SludgeToHTL],9954,3311,True,retained_by_at_least_one_output,157.5704403279589,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-CHC.initial indices of Commercial Maturity[Thermochem]:CHC.FCI  sensi multiplier[Thermochem],9954,3645,True,retained_by_at_least_one_output,132.90057973065376,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-CHC.Mature Industry Rate of Return as PCT[Brownfield]:CHC.PY sensi multiplier[Brownfield],9954,3380,True,retained_by_at_least_one_output,45.04153535739124,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-WW.FCI  sensi multiplier[SludgeToHTL],9954,2383,True,retained_by_at_least_one_output,31.61188395024688,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-WW.PY sensi multiplier[ManureToHTL]:WW.ORNOOC sensi multiplier[ManureToHTL],9954,937,True,retained_by_at_least_one_output,79.86905877935703,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-OHC.PY sensi multiplier[HEFA]:OHC.Mature Industry Rate of Return as PCT[HEFA],9954,2564,True,retained_by_at_least_one_output,156.83406435177912,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-OHC.Retirement Frac[TransEster]:OHC.PY sensi multiplier[HEFA],9954,2128,True,retained_by_at_least_one_output,70.20495660936751,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-inverse_WW.progress ratios commercial[SludgeToHTL],9954,3628,True,retained_by_at_least_one_output,172.18811439838,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-OHC.Mature Industry Rate of Return as PCT[HEFA],9954,2121,True,retained_by_at_least_one_output,110.86603127405442,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-WW.PY sensi multiplier[SludgeToHTL]:WW.ORNOOC sensi multiplier[SludgeToHTL],9954,3360,True,retained_by_at_least_one_output,138.1980529350961,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-sqrt_OHC.PY sensi multiplier[HEFABrownfield],9954,2962,True,retained_by_at_least_one_output,403.49857435901004,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-WW.progress ratios commercial[SludgeToHTL],9954,3026,True,retained_by_at_least_one_output,128.2656452140163,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-WW.ORNOOC sensi multiplier[SludgeToHTL],9954,3272,True,retained_by_at_least_one_output,188.62804956801608,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-CHC.Mature Industry Rate of Return as PCT[Biochem]:CHC.FCI  sensi multiplier[Biochem],9954,870,True,retained_by_at_least_one_output,175.74488731442284,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-WW.PY sensi multiplier[ManureToHTL]:WW.initial indices of Commercial Maturity[ManureToHTL],9954,1026,True,retained_by_at_least_one_output,127.75314678870575,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-CHC.Mature Industry Rate of Return as PCT[Biochem]:CHC.PY sensi multiplier[Biochem],9954,442,True,retained_by_at_least_one_output,161.95860587666658,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-CHC.Mature Industry Rate of Return as PCT[Biochem],9954,733,True,retained_by_at_least_one_output,217.74089812446712,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-OHC.PY sensi multiplier[HEFA]:OHC.FCI  sensi multiplier[HEFA],9954,2775,True,retained_by_at_least_one_output,97.02109948219668,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-OHC.Retirement Frac[TransEster]:OHC.PY sensi multiplier[HEFABrownfield],9954,2135,True,retained_by_at_least_one_output,153.42432689888204,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-OHC.progress ratios commercial[HEFA],9954,2326,True,retained_by_at_least_one_output,33.01147943621083,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-WW.Mature Industry Rate of Return as PCT[ManureToHTL]:WW.ORNOOC sensi multiplier[ManureToHTL],9954,1378,True,retained_by_at_least_one_output,70.51279865087075,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-WW.PY sensi multiplier[ManureToHTL]:WW.FCI  sensi multiplier[ManureToHTL],9954,1099,True,retained_by_at_least_one_output,89.58647566366291,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-WW.Mature Industry Rate of Return as PCT[ManureToHTL]_squared,9954,971,True,retained_by_at_least_one_output,138.75176059221627,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-WW.Mature Industry Rate of Return as PCT[ManureToHTL]:WW.FCI  sensi multiplier[ManureToHTL],9954,933,True,retained_by_at_least_one_output,271.36676963608846,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-OHC.Retirement Frac[TransEster],9954,2075,True,retained_by_at_least_one_output,211.2819266480969,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-CHC.initial indices of Commercial Maturity[Thermochem]_squared,9954,3740,True,retained_by_at_least_one_output,155.8799656216942,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-CHC.Mature Industry Rate of Return as PCT[Biochem]:CHC.initial indices of Commercial Maturity[Biochem],9954,483,True,retained_by_at_least_one_output,230.11678204157022,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-CHC.PY sensi multiplier[Thermochem]:WW.Mature Industry Rate of Return as PCT[SludgeToHTL],9954,4846,True,retained_by_at_least_one_output,46.59966643050926,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-CHC.initial indices of Commercial Maturity[Thermochem],9954,3081,True,retained_by_at_least_one_output,55.1928855212747,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-CHC.initial indices of Commercial Maturity[Brownfield],9954,2748,True,retained_by_at_least_one_output,57.22834808522635,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-inverse_WW.Mature Industry Rate of Return as PCT[SludgeToHTL],9954,3166,True,retained_by_at_least_one_output,77.03637560642157,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-OHC.FCI  sensi multiplier[HEFA],9954,2738,True,retained_by_at_least_one_output,96.3505797900281,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-inverse_SE.Max Jet Investment Hit Rate,9954,4083,True,retained_by_at_least_one_output,163.05988004307628,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-SE.Max Jet Investment Hit Rate,9954,3768,True,retained_by_at_least_one_output,55.344108765336934,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-WW.PY sensi multiplier[SludgeToHTL]:AHC.initial indices of Commercial Maturity[HTL],9954,2345,True,retained_by_at_least_one_output,25.391255905261087,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-SE.Max Jet Investment Hit Rate:SE.PY sensi multiplier[Jet],9954,3125,True,retained_by_at_least_one_output,161.49720599681234,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-WW.Mature Industry Rate of Return as PCT[ManureToHTL]:WW.initial indices of Commercial Maturity[ManureToHTL],9954,918,True,retained_by_at_least_one_output,312.9207359258587,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-CHC.initial indices of Commercial Maturity[Biochem],9954,956,True,retained_by_at_least_one_output,115.90877567838905,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-WW.ORNOOC sensi multiplier[ManureToHTL],9954,1036,True,retained_by_at_least_one_output,98.03021377417174,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-WW.initial indices of Commercial Maturity[ManureToHTL],9954,988,True,retained_by_at_least_one_output,104.05816047728125,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-"WW.PY sensi multiplier[ManureToHTL]:WW.Policy Duration[Price,ManureToHTL]",9954,1918,True,retained_by_at_least_one_output,10.448855786127965,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-CHC.initial indices of Commercial Maturity[Biochem]:CHC.FCI  sensi multiplier[Biochem],9954,1095,True,retained_by_at_least_one_output,60.04048158193504,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-inverse_CHC.Mature Industry Rate of Return as PCT[Brownfield],9954,3448,True,retained_by_at_least_one_output,55.88696214049626,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-inverse_SE.PY sensi multiplier[Jet],9954,1415,True,retained_by_at_least_one_output,64.00681010557022,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:AHC.initial indices of Commercial Maturity[HTL],9954,2495,True,retained_by_at_least_one_output,39.81902048423807,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-AHC.Mature Industry Rate of Return as PCT[HTL],9954,493,True,retained_by_at_least_one_output,203.71735097732727,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-CHC.Mature Industry Rate of Return as PCT[Biochem]_squared,9954,626,True,retained_by_at_least_one_output,214.10785219016344,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-SE.Max Jet Investment Hit Rate:WW.PY sensi multiplier[ManureToHTL],9954,577,True,retained_by_at_least_one_output,10.989291101887911,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-inverse_CHC.FCI  sensi multiplier[Thermochem],9954,3102,True,retained_by_at_least_one_output,20.895067901514345,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-CHC.FCI  sensi multiplier[Brownfield],9954,606,True,retained_by_at_least_one_output,29.899990455522584,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-SE.Mature Industry Rate of Return as PCT[Jet],9954,2443,True,retained_by_at_least_one_output,131.10296505014597,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-WW.Mature Industry Rate of Return as PCT[ManureToHTL],9954,1702,True,retained_by_at_least_one_output,128.72980593777925,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-WW.FCI  sensi multiplier[ManureToHTL],9954,850,True,retained_by_at_least_one_output,61.95912131077858,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-CHC.PY sensi multiplier[Brownfield],9954,1697,True,retained_by_at_least_one_output,24.622685731773807,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-SE.ORNOOC sensi multiplier[Jet],9954,3454,True,retained_by_at_least_one_output,287.4654679121758,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-AHC.initial indices of Commercial Maturity[HTL]:WW.initial indices of Commercial Maturity[SludgeToHTL],9954,4589,True,retained_by_at_least_one_output,142.51207131377404,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-AHC.Mature Industry Rate of Return as PCT[HEFA],9954,1131,True,retained_by_at_least_one_output,440.77836086990845,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-AHC.initial indices of Commercial Maturity[HTL],9954,1562,True,retained_by_at_least_one_output,34.67064135589465,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-"WW.Policy Duration[Price,ManureToHTL]",9954,1128,True,retained_by_at_least_one_output,4.061820331666177,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-AHC.FCI  sensi multiplier[HTL],9954,522,True,retained_by_at_least_one_output,37.38265903098777,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-CHC.progress ratios commercial[Thermochem],9954,2438,True,retained_by_at_least_one_output,30.25055920608861,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-inverse_WW.FCI  sensi multiplier[SludgeToHTL],9954,831,True,retained_by_at_least_one_output,18.30543067766485,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-SE.FCI  sensi multiplier[Jet],9954,690,True,retained_by_at_least_one_output,29.647930342930188,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-SE.PY sensi multiplier[Jet],9954,1733,True,retained_by_at_least_one_output,15.729747693446447,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-AHC.initial indices of Commercial Maturity[HTL]_squared,9954,2214,True,retained_by_at_least_one_output,56.951936536125054,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-WW.initial indices of Commercial Maturity[SludgeToHTL]_squared,9954,2435,True,retained_by_at_least_one_output,57.501942201745116,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-AHC.FCI  sensi multiplier[HEFA],9954,713,True,retained_by_at_least_one_output,43.46825858167072,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-"WW.Policy Duration[Price,ManureToHTL]_squared",9954,412,True,retained_by_at_least_one_output,3.57057944336648,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-OHC.ORNOOC sensi multiplier[HEFA],9954,2740,True,retained_by_at_least_one_output,318.4919460853744,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-SE.initial indices of Commercial Maturity[Jet],9954,464,True,retained_by_at_least_one_output,23.713280926977657,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-WW.initial indices of Commercial Maturity[SludgeToHTL],9954,1877,True,retained_by_at_least_one_output,48.03742924265353,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-CHC.progress ratios commercial[Thermochem]:OHC.progress ratios commercial[HEFA],9954,1774,True,retained_by_at_least_one_output,3.281333324886552,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-AHC.ORNOOC sensi multiplier[HTL],9954,472,True,retained_by_at_least_one_output,179.94852813178946,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-WW.progress ratios commercial[ManureToHTL],9954,199,True,retained_by_at_least_one_output,3.9111399029720806,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-OHC.ORNOOC sensi multiplier[HEFABrownfield],9954,1363,True,retained_by_at_least_one_output,51.91213995454454,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-inverse_WW.ORNOOC sensi multiplier[ManureToHTL],9954,954,True,retained_by_at_least_one_output,9.876139774243493,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-CHC.FCI  sensi multiplier[Thermochem]:SE.initial indices of Commercial Maturity[Jet],9954,223,True,retained_by_at_least_one_output,3.054754591143253,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-OHC.PY sensi multiplier[HEFABrownfield]:WW.PY sensi multiplier[ManureToHTL],9954,791,True,retained_by_at_least_one_output,4.292949604945374,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-CHC.progress ratios commercial[Brownfield],9954,640,True,retained_by_at_least_one_output,8.815211195801234,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-AHC.Debt Interest Rate as pct[HTL],9954,585,True,retained_by_at_least_one_output,119.53358972742491,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-CHC.Debt Interest Rate as pct[Thermochem],9954,2920,True,retained_by_at_least_one_output,29.093071865901013,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-OHC.Retirement Frac[TransEster]:CHC.PY sensi multiplier[Biochem],9954,702,True,retained_by_at_least_one_output,3.702291667396917,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-SE.Max Jet Investment Hit Rate:OHC.progress ratios commercial[HEFA],9954,837,True,retained_by_at_least_one_output,9.557008140574595,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-inverse_SE.Mature Industry Rate of Return as PCT[Jet],9954,832,True,retained_by_at_least_one_output,18.259543467622475,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-AHC.Debt Interest Rate as pct[HEFA],9954,860,True,retained_by_at_least_one_output,150.87277245710663,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-SE.progress ratios commercial[Jet]_squared,9954,2209,True,retained_by_at_least_one_output,27.418655816303207,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-CHC.ORNOOC sensi multiplier[Thermochem],9954,2475,True,retained_by_at_least_one_output,12.927556277862154,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-WW.PY sensi multiplier[SludgeToHTL]:CHC.FCI  sensi multiplier[Brownfield],9954,454,True,retained_by_at_least_one_output,4.581898921963323,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-SE.Debt Interest Rate as pct[Jet],9954,1050,True,retained_by_at_least_one_output,64.5885540518862,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-inverse_WW.ORNOOC sensi multiplier[SludgeToHTL],9954,681,True,retained_by_at_least_one_output,4.706760167712469,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-"OHC.Policy Duration[Price,HEFA]",9954,770,True,retained_by_at_least_one_output,14.750318512365489,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-CHC.FCI  sensi multiplier[Biochem],9954,881,True,retained_by_at_least_one_output,69.59197995838686,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-log1p_OHC.Mature Industry Rate of Return as PCT[HEFA],9954,686,True,retained_by_at_least_one_output,16.20126159034434,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-"OHC.Policy Duration[Price,TransEster]",9954,1349,True,retained_by_at_least_one_output,61.46965688042267,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-OHC.PY sensi multiplier[HEFABrownfield]:OHC.ORNOOC sensi multiplier[HEFABrownfield],9954,1428,True,retained_by_at_least_one_output,112.89898453909463,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-CHC.Mature Industry Rate of Return as PCT[Brownfield]:AHC.Mature Industry Rate of Return as PCT[HTL],9954,2799,True,retained_by_at_least_one_output,4.297612850462169,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-inverse_AHC.FCI  sensi multiplier[HTL],9954,382,True,retained_by_at_least_one_output,22.438753307822775,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-OHC.ORNOOC sensi multiplier[HEFABrownfield]:SE.progress ratios commercial[Jet],9954,442,True,retained_by_at_least_one_output,3.4490080508958885,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-inverse_CHC.initial indices of Commercial Maturity[Brownfield],9954,687,True,retained_by_at_least_one_output,7.477655324700918,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-"SE.Policy Duration[Price,Jet]",9954,1496,True,retained_by_at_least_one_output,19.135010826788598,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-OHC.Debt Interest Rate as pct[HEFA],9954,1701,True,retained_by_at_least_one_output,130.01084226999308,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-CHC.PY sensi multiplier[Biochem],9954,607,True,retained_by_at_least_one_output,137.43385937990536,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-OHC.Retirement Frac[TransEster]:OHC.ORNOOC sensi multiplier[HEFABrownfield],9954,723,True,retained_by_at_least_one_output,7.611801625370988,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-"WW.Policy Duration[Price,SludgeToHTL]",9954,2757,True,retained_by_at_least_one_output,55.87140824804013,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-OHC.PY sensi multiplier[HEFABrownfield]:CHC.progress ratios commercial[Brownfield],9954,504,True,retained_by_at_least_one_output,3.399296844018892,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-inverse_OHC.progress ratios commercial[HEFABrownfield],9954,522,True,retained_by_at_least_one_output,11.40967522238665,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-"CHC.Policy Duration[Price,Thermochem]",9954,1399,True,retained_by_at_least_one_output,5.719253702676465,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-OHC.Mature Industry Rate of Return as PCT[HEFABrownfield],9954,1535,True,retained_by_at_least_one_output,152.4431595121687,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-OHC.progress ratios commercial[HEFABrownfield],9954,456,True,retained_by_at_least_one_output,11.427501339357796,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-CHC.Mature Industry Rate of Return as PCT[Brownfield]:SE.progress ratios commercial[Jet],9954,508,True,retained_by_at_least_one_output,3.7659192059979802,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-"OHC.Policy Duration[Price,HEFABrownfield]",9954,402,True,retained_by_at_least_one_output,14.137389274817943,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-"OHC.progress ratios commercial[HEFA]:CHC.Policy Duration[Price,Thermochem]",9954,357,True,retained_by_at_least_one_output,3.3760171417878624,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-"WW.Mature Industry Rate of Return as PCT[ManureToHTL]:OHC.Policy Duration[Price,HEFABrownfield]",9954,223,True,retained_by_at_least_one_output,3.547489739925976,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-inverse_SE.FCI  sensi multiplier[Jet],9954,303,True,retained_by_at_least_one_output,3.595979703764225,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-"CHC.FCI  sensi multiplier[Thermochem]:CHC.Policy Duration[Price,Thermochem]",9954,530,True,retained_by_at_least_one_output,6.106887008938194,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-inverse_SE.initial indices of Commercial Maturity[Jet],9954,805,True,retained_by_at_least_one_output,15.711679930453167,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-inverse_OHC.progress ratios commercial[HEFA],9954,1743,True,retained_by_at_least_one_output,18.20025794225015,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-WW.Debt Interest Rate as pct[SludgeToHTL],9954,3564,True,retained_by_at_least_one_output,108.17319439621899,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-CHC.Debt Interest Rate as pct[Brownfield],9954,1345,True,retained_by_at_least_one_output,15.671291260051602,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-"SE.initial indices of Commercial Maturity[Jet]:CHC.Policy Duration[Price,Thermochem]",9954,314,True,retained_by_at_least_one_output,3.563352476066885,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-"OHC.Policy Duration[Price,HEFA]:WW.Policy Duration[Price,ManureToHTL]",9954,293,True,retained_by_at_least_one_output,2.822704679766415,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-CHC.PY sensi multiplier[Brownfield]:CHC.ORNOOC sensi multiplier[Thermochem],9954,1168,True,retained_by_at_least_one_output,3.6512502293181597,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-inverse_OHC.ORNOOC sensi multiplier[HEFABrownfield],9954,203,True,retained_by_at_least_one_output,6.933536977660234,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-"SE.Policy Duration[Price,Jet]:OHC.Policy Duration[Price,HEFABrownfield]",9954,342,True,retained_by_at_least_one_output,4.0380047984304905,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-"CHC.Policy Duration[Price,Brownfield]",9954,1322,True,retained_by_at_least_one_output,14.542522306164333,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-sqrt_CHC.progress ratios commercial[Thermochem],9954,2355,True,retained_by_at_least_one_output,30.926653502627147,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-inverse_AHC.Mature Industry Rate of Return as PCT[HTL],9954,547,True,retained_by_at_least_one_output,100.79485633128252,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-"WW.progress ratios commercial[SludgeToHTL]:CHC.Policy Duration[Price,Thermochem]",9954,328,True,retained_by_at_least_one_output,3.310454632930804,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-inverse_CHC.Debt Interest Rate as pct[Thermochem],9954,391,True,retained_by_at_least_one_output,4.142149211897084,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-SE.progress ratios commercial[Jet],9954,2753,True,retained_by_at_least_one_output,21.59651542109597,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-inverse_CHC.progress ratios commercial[Brownfield],9954,673,True,retained_by_at_least_one_output,7.17752762534685,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-CHC.FCI  sensi multiplier[Biochem]:OHC.ORNOOC sensi multiplier[HEFABrownfield],9954,503,True,retained_by_at_least_one_output,3.356094770137693,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-WW.initial indices of Commercial Maturity[SludgeToHTL]:OHC.ORNOOC sensi multiplier[HEFABrownfield],9954,93,True,retained_by_at_least_one_output,3.191916509285737,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-"SE.Policy Duration[Price,Jet]_squared",9954,1341,True,retained_by_at_least_one_output,18.15842516119513,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-inverse_OHC.Retirement Frac[TransEster],9954,786,True,retained_by_at_least_one_output,11.051670733871683,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-CHC.Debt Interest Rate as pct[Biochem],9954,493,True,retained_by_at_least_one_output,3.397935426164656,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-inverse_AHC.FCI  sensi multiplier[HEFA],9954,543,True,retained_by_at_least_one_output,7.989176942177814,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-"OHC.Policy Duration[FCI,HEFABrownfield]",9954,304,True,retained_by_at_least_one_output,3.2951087263097536,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-"WW.Policy Duration[Price,ManureToHTL]:OHC.Policy Duration[Price,HEFABrownfield]",9954,434,True,retained_by_at_least_one_output,3.2174913286999405,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-CHC.Debt Interest Rate as pct[Biochem]_squared,9954,423,True,retained_by_at_least_one_output,3.4907802381027935,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-"CHC.Policy Duration[Price,Thermochem]:OHC.Policy Duration[FCI,HEFABrownfield]",9954,286,True,retained_by_at_least_one_output,3.5428463924540026,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-inverse_CHC.initial indices of Commercial Maturity[Biochem],9954,1988,True,retained_by_at_least_one_output,6.188530917143914,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
-WW.progress ratios commercial[ManureToHTL]_squared,9954,285,True,retained_by_at_least_one_output,3.720636581594181,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+WW.PY sensi multiplier[SludgeToHTL],9954,3270,True,retained_by_at_least_one_output,136.718606473406,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+WW.PY sensi multiplier[SludgeToHTL]_sqrt,9954,3346,True,retained_by_at_least_one_output,161.21137573512652,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+WW.PY sensi multiplier[SludgeToHTL]:WW.progress ratios commercial[SludgeToHTL],9954,2596,True,retained_by_at_least_one_output,111.80448152855419,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:WW.progress ratios commercial[SludgeToHTL],9954,3042,True,retained_by_at_least_one_output,107.21419667440374,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.Mature Industry Rate of Return as PCT[Thermochem],9954,5363,True,retained_by_at_least_one_output,177.23771659489913,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.Mature Industry Rate of Return as PCT[Brownfield],9954,3709,True,retained_by_at_least_one_output,59.13494928062027,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+AHC.PY sensi multiplier[HEFA],9954,472,True,retained_by_at_least_one_output,307.28335337985465,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+AHC.PY sensi multiplier[HTL],9954,743,True,retained_by_at_least_one_output,248.28768539695642,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+WW.PY sensi multiplier[ManureToHTL]_sq,9954,1321,True,retained_by_at_least_one_output,318.07344787319005,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+OHC.PY sensi multiplier[HEFA],9954,3848,True,retained_by_at_least_one_output,252.7913516562171,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.PY sensi multiplier[Thermochem]_sq,9954,4638,True,retained_by_at_least_one_output,158.65395801548297,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.PY sensi multiplier[Thermochem]:CHC.Mature Industry Rate of Return as PCT[Thermochem],9954,5904,True,retained_by_at_least_one_output,198.5647130369637,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+WW.Mature Industry Rate of Return as PCT[SludgeToHTL]_sqrt,9954,3165,True,retained_by_at_least_one_output,82.18233369662389,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+WW.progress ratios commercial[SludgeToHTL],9954,3477,True,retained_by_at_least_one_output,171.72864549946155,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.initial indices of Commercial Maturity[Brownfield]:CHC.PY sensi multiplier[Brownfield],9954,4727,True,retained_by_at_least_one_output,77.98362641689745,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+WW.progress ratios commercial[SludgeToHTL]_sq,9954,3799,True,retained_by_at_least_one_output,182.1435533388838,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+AHC.PY sensi multiplier[HEFA]_sq,9954,476,True,retained_by_at_least_one_output,210.41522961939285,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+WW.Mature Industry Rate of Return as PCT[SludgeToHTL],9954,4073,True,retained_by_at_least_one_output,72.40111579004164,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+WW.PY sensi multiplier[ManureToHTL]:WW.Mature Industry Rate of Return as PCT[ManureToHTL],9954,2973,True,retained_by_at_least_one_output,318.7704577322357,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.initial indices of Commercial Maturity[Brownfield]:CHC.Mature Industry Rate of Return as PCT[Brownfield],9954,5402,True,retained_by_at_least_one_output,178.13252561300857,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+SE.Max Jet Investment Hit Rate_log1p,9954,4108,True,retained_by_at_least_one_output,247.86234412839863,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.Mature Industry Rate of Return as PCT[Thermochem]_sqrt,9954,4842,True,retained_by_at_least_one_output,88.15235053669556,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+SE.Max Jet Investment Hit Rate,9954,4202,True,retained_by_at_least_one_output,216.40861223474886,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+AHC.PY sensi multiplier[HTL]_sq,9954,757,True,retained_by_at_least_one_output,169.75847969154745,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.PY sensi multiplier[Thermochem]:CHC.initial indices of Commercial Maturity[Thermochem],9954,5200,True,retained_by_at_least_one_output,203.6006125046999,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.FCI  sensi multiplier[Thermochem],9954,3806,True,retained_by_at_least_one_output,42.17777697618019,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.PY sensi multiplier[Thermochem]:CHC.FCI  sensi multiplier[Thermochem],9954,5075,True,retained_by_at_least_one_output,104.9009211324346,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.initial indices of Commercial Maturity[Thermochem]_log1p,9954,3597,True,retained_by_at_least_one_output,192.15176449201167,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+WW.progress ratios commercial[SludgeToHTL]:WW.FCI  sensi multiplier[SludgeToHTL],9954,2424,True,retained_by_at_least_one_output,36.66509772619506,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.initial indices of Commercial Maturity[Thermochem],9954,3748,True,retained_by_at_least_one_output,181.40678975793142,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.Mature Industry Rate of Return as PCT[Brownfield]_sqrt,9954,3309,True,retained_by_at_least_one_output,56.15612105626536,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+WW.FCI  sensi multiplier[SludgeToHTL],9954,2565,True,retained_by_at_least_one_output,39.788847086713275,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.Mature Industry Rate of Return as PCT[Biochem],9954,676,True,retained_by_at_least_one_output,202.79173852216954,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.initial indices of Commercial Maturity[Brownfield]:CHC.FCI  sensi multiplier[Brownfield],9954,3825,True,retained_by_at_least_one_output,48.26938579964046,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+OHC.Retirement Frac[TransEster],9954,2078,True,retained_by_at_least_one_output,232.7545881919302,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.PY sensi multiplier[Thermochem],9954,5001,True,retained_by_at_least_one_output,175.4762012166881,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+WW.PY sensi multiplier[ManureToHTL]:WW.ORNOOC sensi multiplier[ManureToHTL],9954,932,True,retained_by_at_least_one_output,79.54651917844097,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+OHC.PY sensi multiplier[HEFABrownfield],9954,2892,True,retained_by_at_least_one_output,404.1259463957829,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.Mature Industry Rate of Return as PCT[Thermochem]:CHC.FCI  sensi multiplier[Thermochem],9954,4296,True,retained_by_at_least_one_output,165.30478233392097,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.Mature Industry Rate of Return as PCT[Brownfield]:CHC.PY sensi multiplier[Brownfield],9954,3424,True,retained_by_at_least_one_output,45.17835305894748,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+OHC.PY sensi multiplier[HEFABrownfield]:OHC.PY sensi multiplier[HEFA],9954,4236,True,retained_by_at_least_one_output,154.36130633487988,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.Mature Industry Rate of Return as PCT[Thermochem]:CHC.initial indices of Commercial Maturity[Thermochem],9954,5533,True,retained_by_at_least_one_output,410.9681474425842,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+WW.PY sensi multiplier[ManureToHTL],9954,801,True,retained_by_at_least_one_output,223.33488950418982,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+WW.PY sensi multiplier[SludgeToHTL]:WW.ORNOOC sensi multiplier[SludgeToHTL],9954,3417,True,retained_by_at_least_one_output,138.902464606727,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+WW.initial indices of Commercial Maturity[SludgeToHTL],9954,2470,True,retained_by_at_least_one_output,64.27878822352687,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+OHC.PY sensi multiplier[HEFABrownfield]_log1p,9954,3061,True,retained_by_at_least_one_output,408.32770009867613,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+WW.PY sensi multiplier[ManureToHTL]:WW.FCI  sensi multiplier[ManureToHTL],9954,1133,True,retained_by_at_least_one_output,87.56858715942414,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+WW.ORNOOC sensi multiplier[SludgeToHTL],9954,4447,True,retained_by_at_least_one_output,261.57639709562886,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.Mature Industry Rate of Return as PCT[Biochem]:CHC.FCI  sensi multiplier[Biochem],9954,866,True,retained_by_at_least_one_output,187.94171695132874,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.initial indices of Commercial Maturity[Thermochem]:CHC.FCI  sensi multiplier[Thermochem],9954,3734,True,retained_by_at_least_one_output,174.79639897867762,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+WW.initial indices of Commercial Maturity[SludgeToHTL]_log1p,9954,2433,True,retained_by_at_least_one_output,54.45293995750905,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.Mature Industry Rate of Return as PCT[Biochem]:CHC.PY sensi multiplier[Biochem],9954,420,True,retained_by_at_least_one_output,177.33783560229813,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+WW.PY sensi multiplier[ManureToHTL]:WW.initial indices of Commercial Maturity[ManureToHTL],9954,1061,True,retained_by_at_least_one_output,127.48223247369064,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.FCI  sensi multiplier[Thermochem]_log1p,9954,3090,True,retained_by_at_least_one_output,22.607400074997948,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+WW.Mature Industry Rate of Return as PCT[ManureToHTL]:WW.ORNOOC sensi multiplier[ManureToHTL],9954,1485,True,retained_by_at_least_one_output,69.92265556534933,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+WW.Mature Industry Rate of Return as PCT[ManureToHTL]:WW.FCI  sensi multiplier[ManureToHTL],9954,929,True,retained_by_at_least_one_output,268.48174708581365,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+WW.Mature Industry Rate of Return as PCT[ManureToHTL]_sq,9954,1043,True,retained_by_at_least_one_output,136.30799876192634,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+OHC.PY sensi multiplier[HEFA]_inv,9954,4289,True,retained_by_at_least_one_output,359.63325577536807,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.PY sensi multiplier[Thermochem]:WW.Mature Industry Rate of Return as PCT[SludgeToHTL],9954,4917,True,retained_by_at_least_one_output,46.71920993758931,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.Mature Industry Rate of Return as PCT[Biochem]:CHC.initial indices of Commercial Maturity[Biochem],9954,495,True,retained_by_at_least_one_output,239.29460762129526,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.progress ratios commercial[Thermochem],9954,2398,True,retained_by_at_least_one_output,28.2570464667521,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+WW.PY sensi multiplier[SludgeToHTL]:AHC.initial indices of Commercial Maturity[HTL],9954,2262,True,retained_by_at_least_one_output,25.346501869307865,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.progress ratios commercial[Thermochem]_sq,9954,2353,True,retained_by_at_least_one_output,31.056770219624475,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.initial indices of Commercial Maturity[Brownfield],9954,2796,True,retained_by_at_least_one_output,57.289477290830035,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+OHC.PY sensi multiplier[HEFA]:OHC.progress ratios commercial[HEFA],9954,2553,True,retained_by_at_least_one_output,83.20952741659619,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+OHC.Retirement Frac[TransEster]_sq,9954,3248,True,retained_by_at_least_one_output,337.19184700914803,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+WW.Mature Industry Rate of Return as PCT[ManureToHTL]:WW.initial indices of Commercial Maturity[ManureToHTL],9954,1164,True,retained_by_at_least_one_output,306.3133352861931,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+OHC.Retirement Frac[TransEster]:OHC.PY sensi multiplier[HEFABrownfield],9954,2140,True,retained_by_at_least_one_output,153.27314010848855,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+WW.ORNOOC sensi multiplier[ManureToHTL],9954,1053,True,retained_by_at_least_one_output,146.10604838377932,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.initial indices of Commercial Maturity[Biochem],9954,822,True,retained_by_at_least_one_output,130.60517182363031,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+SE.Max Jet Investment Hit Rate:SE.PY sensi multiplier[Jet],9954,3132,True,retained_by_at_least_one_output,162.06084175637412,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+WW.initial indices of Commercial Maturity[ManureToHTL],9954,1033,True,retained_by_at_least_one_output,103.56161570360791,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.initial indices of Commercial Maturity[Biochem]:CHC.FCI  sensi multiplier[Biochem],9954,1009,True,retained_by_at_least_one_output,63.289458138064866,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+SE.PY sensi multiplier[Jet]_inv,9954,1339,True,retained_by_at_least_one_output,63.30418511575676,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+WW.Mature Industry Rate of Return as PCT[ManureToHTL],9954,1768,True,retained_by_at_least_one_output,128.41879433432723,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+WW.Mature Industry Rate of Return as PCT[SludgeToHTL]:AHC.initial indices of Commercial Maturity[HTL],9954,2503,True,retained_by_at_least_one_output,39.728669550205666,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+"WW.PY sensi multiplier[ManureToHTL]:WW.Policy Duration[Price,ManureToHTL]",9954,2067,True,retained_by_at_least_one_output,10.477034411681927,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+SE.Max Jet Investment Hit Rate:WW.PY sensi multiplier[ManureToHTL],9954,579,True,retained_by_at_least_one_output,11.015360068393594,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+WW.FCI  sensi multiplier[ManureToHTL],9954,970,True,retained_by_at_least_one_output,61.37269517119398,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.PY sensi multiplier[Biochem],9954,626,True,retained_by_at_least_one_output,86.4799942489601,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.PY sensi multiplier[Brownfield],9954,1368,True,retained_by_at_least_one_output,20.28545564223684,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+AHC.Mature Industry Rate of Return as PCT[HTL],9954,2969,True,retained_by_at_least_one_output,295.36515598463654,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.PY sensi multiplier[Brownfield]_inv,9954,1250,True,retained_by_at_least_one_output,17.912071610408898,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.PY sensi multiplier[Biochem]_inv,9954,738,True,retained_by_at_least_one_output,60.74393464715371,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.FCI  sensi multiplier[Brownfield],9954,576,True,retained_by_at_least_one_output,30.17223464314405,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+SE.Mature Industry Rate of Return as PCT[Jet],9954,3917,True,retained_by_at_least_one_output,390.95309032662965,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+OHC.PY sensi multiplier[HEFA]:OHC.Mature Industry Rate of Return as PCT[HEFA],9954,2750,True,retained_by_at_least_one_output,156.92192485991663,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+OHC.Retirement Frac[TransEster]:OHC.PY sensi multiplier[HEFA],9954,2157,True,retained_by_at_least_one_output,70.59994161062114,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+AHC.initial indices of Commercial Maturity[HTL],9954,2565,True,retained_by_at_least_one_output,78.78579121252452,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+OHC.PY sensi multiplier[HEFA]:OHC.FCI  sensi multiplier[HEFA],9954,2822,True,retained_by_at_least_one_output,97.13426591746556,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+"WW.Policy Duration[Price,ManureToHTL]",9954,1244,True,retained_by_at_least_one_output,8.86457417103726,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+OHC.progress ratios commercial[HEFA],9954,3497,True,retained_by_at_least_one_output,29.916990976391283,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+SE.ORNOOC sensi multiplier[Jet],9954,3539,True,retained_by_at_least_one_output,284.3215365048452,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+AHC.initial indices of Commercial Maturity[HTL]:WW.initial indices of Commercial Maturity[SludgeToHTL],9954,4541,True,retained_by_at_least_one_output,136.42499871907415,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+AHC.Mature Industry Rate of Return as PCT[HEFA],9954,1155,True,retained_by_at_least_one_output,436.7488706181904,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+AHC.FCI  sensi multiplier[HTL],9954,752,True,retained_by_at_least_one_output,401.3561849432283,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+SE.FCI  sensi multiplier[Jet],9954,2897,True,retained_by_at_least_one_output,209.159048896154,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+OHC.PY sensi multiplier[HEFABrownfield]:WW.PY sensi multiplier[ManureToHTL],9954,823,True,retained_by_at_least_one_output,4.248697730068828,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.Mature Industry Rate of Return as PCT[Biochem]_inv,9954,586,True,retained_by_at_least_one_output,241.6429707905944,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+OHC.Mature Industry Rate of Return as PCT[HEFA],9954,2667,True,retained_by_at_least_one_output,154.26689558049387,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+SE.PY sensi multiplier[Jet],9954,1684,True,retained_by_at_least_one_output,15.579867635508505,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+AHC.FCI  sensi multiplier[HEFA],9954,608,True,retained_by_at_least_one_output,317.55189206069326,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+AHC.initial indices of Commercial Maturity[HTL]_sqrt,9954,2097,True,retained_by_at_least_one_output,45.201125773335754,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+SE.initial indices of Commercial Maturity[Jet],9954,495,True,retained_by_at_least_one_output,28.0731942732814,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+OHC.ORNOOC sensi multiplier[HEFA],9954,2753,True,retained_by_at_least_one_output,317.37315999224575,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+OHC.FCI  sensi multiplier[HEFA],9954,2805,True,retained_by_at_least_one_output,96.38671438834619,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+AHC.ORNOOC sensi multiplier[HTL],9954,472,True,retained_by_at_least_one_output,180.04417859595748,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+WW.progress ratios commercial[ManureToHTL],9954,844,True,retained_by_at_least_one_output,19.095610277694053,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.Debt Interest Rate as pct[Thermochem],9954,5958,True,retained_by_at_least_one_output,191.70933712750752,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.progress ratios commercial[Brownfield],9954,944,True,retained_by_at_least_one_output,5.365085348759987,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.FCI  sensi multiplier[Thermochem]:SE.initial indices of Commercial Maturity[Jet],9954,202,True,retained_by_at_least_one_output,3.042555798012896,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+OHC.Retirement Frac[TransEster]:CHC.PY sensi multiplier[Biochem],9954,710,True,retained_by_at_least_one_output,3.7197199052137004,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+AHC.Debt Interest Rate as pct[HTL],9954,557,True,retained_by_at_least_one_output,119.84104280269392,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+SE.Max Jet Investment Hit Rate:OHC.progress ratios commercial[HEFA],9954,819,True,retained_by_at_least_one_output,10.003528142990065,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+OHC.ORNOOC sensi multiplier[HEFABrownfield],9954,1203,True,retained_by_at_least_one_output,58.11056549572056,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+AHC.Debt Interest Rate as pct[HEFA],9954,816,True,retained_by_at_least_one_output,149.24652888172346,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.ORNOOC sensi multiplier[Thermochem],9954,2615,True,retained_by_at_least_one_output,19.044137449279276,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+OHC.ORNOOC sensi multiplier[HEFABrownfield]:SE.progress ratios commercial[Jet],9954,525,True,retained_by_at_least_one_output,3.532903805084,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.progress ratios commercial[Thermochem]:OHC.progress ratios commercial[HEFA],9954,1803,True,retained_by_at_least_one_output,3.239179444160867,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+"OHC.progress ratios commercial[HEFA]:CHC.Policy Duration[Price,Thermochem]",9954,336,True,retained_by_at_least_one_output,3.333982294241921,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+OHC.PY sensi multiplier[HEFABrownfield]:OHC.ORNOOC sensi multiplier[HEFABrownfield],9954,1497,True,retained_by_at_least_one_output,114.07955480877855,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.Mature Industry Rate of Return as PCT[Brownfield]:AHC.Mature Industry Rate of Return as PCT[HTL],9954,2946,True,retained_by_at_least_one_output,4.616755351059736,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+SE.Debt Interest Rate as pct[Jet],9954,1075,True,retained_by_at_least_one_output,63.701468906649005,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.Mature Industry Rate of Return as PCT[Brownfield]:SE.progress ratios commercial[Jet],9954,437,True,retained_by_at_least_one_output,3.757474318608131,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+WW.PY sensi multiplier[SludgeToHTL]:CHC.FCI  sensi multiplier[Brownfield],9954,448,True,retained_by_at_least_one_output,4.508021726661516,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+SE.progress ratios commercial[Jet],9954,1108,True,retained_by_at_least_one_output,21.89122612272388,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+"OHC.Policy Duration[Price,TransEster]",9954,1410,True,retained_by_at_least_one_output,62.54813071690926,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.FCI  sensi multiplier[Biochem],9954,804,True,retained_by_at_least_one_output,77.73586851818074,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+OHC.PY sensi multiplier[HEFABrownfield]:CHC.progress ratios commercial[Brownfield],9954,554,True,retained_by_at_least_one_output,3.4134507452840195,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.initial indices of Commercial Maturity[Brownfield]_inv,9954,661,True,retained_by_at_least_one_output,7.471751806605333,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+"CHC.Policy Duration[Price,Thermochem]",9954,1294,True,retained_by_at_least_one_output,5.92940068154063,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+"SE.Policy Duration[Price,Jet]",9954,941,True,retained_by_at_least_one_output,7.898302715628587,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+OHC.Debt Interest Rate as pct[HEFA],9954,1706,True,retained_by_at_least_one_output,128.9525626309839,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+OHC.Retirement Frac[TransEster]:OHC.ORNOOC sensi multiplier[HEFABrownfield],9954,724,True,retained_by_at_least_one_output,7.793885622481717,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+"OHC.Policy Duration[Price,HEFA]",9954,772,True,retained_by_at_least_one_output,14.706708395848535,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+"OHC.Policy Duration[Price,HEFABrownfield]",9954,429,True,retained_by_at_least_one_output,14.18293605760491,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+OHC.progress ratios commercial[HEFABrownfield],9954,2402,True,retained_by_at_least_one_output,91.30929067450882,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+OHC.Mature Industry Rate of Return as PCT[HEFABrownfield],9954,1565,True,retained_by_at_least_one_output,150.84572894250073,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+"SE.initial indices of Commercial Maturity[Jet]:CHC.Policy Duration[Price,Thermochem]",9954,333,True,retained_by_at_least_one_output,3.6038547535734704,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+"WW.Mature Industry Rate of Return as PCT[ManureToHTL]:OHC.Policy Duration[Price,HEFABrownfield]",9954,198,True,retained_by_at_least_one_output,3.078606859839168,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.PY sensi multiplier[Brownfield]:CHC.ORNOOC sensi multiplier[Thermochem],9954,1286,True,retained_by_at_least_one_output,3.5895493119275472,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+"WW.progress ratios commercial[SludgeToHTL]:CHC.Policy Duration[Price,Thermochem]",9954,302,True,retained_by_at_least_one_output,3.3293683219981687,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+"OHC.Policy Duration[Price,HEFA]:WW.Policy Duration[Price,ManureToHTL]",9954,280,True,retained_by_at_least_one_output,2.7786355359965698,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+"CHC.FCI  sensi multiplier[Thermochem]:CHC.Policy Duration[Price,Thermochem]",9954,577,True,retained_by_at_least_one_output,6.359047360736187,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+WW.Debt Interest Rate as pct[SludgeToHTL],9954,3371,True,retained_by_at_least_one_output,108.94918881569784,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.Debt Interest Rate as pct[Brownfield],9954,1333,True,retained_by_at_least_one_output,15.621063286885212,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+"WW.Policy Duration[Price,SludgeToHTL]",9954,2693,True,retained_by_at_least_one_output,55.90886652646386,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+WW.initial indices of Commercial Maturity[SludgeToHTL]:OHC.ORNOOC sensi multiplier[HEFABrownfield],9954,112,True,retained_by_at_least_one_output,3.1915976399105306,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+"CHC.Policy Duration[Price,Brownfield]",9954,1217,True,retained_by_at_least_one_output,14.482652727278465,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.FCI  sensi multiplier[Biochem]:OHC.ORNOOC sensi multiplier[HEFABrownfield],9954,469,True,retained_by_at_least_one_output,3.455169316089373,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+"SE.Policy Duration[Price,Jet]:OHC.Policy Duration[Price,HEFABrownfield]",9954,317,True,retained_by_at_least_one_output,4.036509841918608,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.Debt Interest Rate as pct[Biochem],9954,1015,True,retained_by_at_least_one_output,18.378339756646774,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+"OHC.Policy Duration[FCI,HEFABrownfield]",9954,339,True,retained_by_at_least_one_output,3.298926329623519,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+SE.Alt Price Sensi multiplier[EtOH],9954,352,True,retained_by_at_least_one_output,3.2103144630976397,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+"WW.Policy Duration[Price,ManureToHTL]:OHC.Policy Duration[Price,HEFABrownfield]",9954,437,True,retained_by_at_least_one_output,2.9919022439270235,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+"CHC.Policy Duration[Price,Thermochem]:OHC.Policy Duration[FCI,HEFABrownfield]",9954,308,True,retained_by_at_least_one_output,3.596065481471826,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05
+CHC.initial indices of Commercial Maturity[Biochem]_inv,9954,2020,True,retained_by_at_least_one_output,6.219745367109602,hc3_wald_95_percent_drop_if_zero_compatible_for_all_outputs,0.05

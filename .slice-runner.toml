@@ -1,0 +1,27 @@
+[plan]
+path = "docs/IMPLEMENTATION_PLAN.md"
+slice_header_re = "^### Slice ([\\w\\-]+)"
+deps_field_re   = "\\*\\*Depends on:\\*\\* (.+)"
+phase_field_re  = "\\*\\*Phase:\\*\\* (\\S+)"
+
+[validation]
+command = "pixi run pytest tests/ --tb=short -q"
+timeout_seconds = 1800
+
+[models]
+default_tier = "sonnet"
+escalation_chain = ["sonnet", "opus"]
+
+[models.model_ids]
+sonnet = "claude-sonnet-4.5"
+opus   = "claude-opus-4.5"
+
+[parallel]
+max_concurrent = 1
+
+[state]
+dir = ".slice-runner"
+
+[copilot]
+max_autopilot_continues = 50
+extra_args = []
