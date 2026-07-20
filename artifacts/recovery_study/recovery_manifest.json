@@ -1,0 +1,46 @@
+{
+  "generated": "2026-07-20T20:21:31.152937+00:00",
+  "master_seed": 42,
+  "scale": "reduced-local BSM design: n_inputs=30 (158-continuous + 2-binary structure, subset to 28 continuous + 2 binary), n_outputs=40, n_runs=2000, B=199, B_screen=199, fwer_reps=100, alt_reps=20 \u2014 deliberate reduction from the executed ~30 000-run / 23 495-output HPC scale. Preserves empirical input ranges, the 158-continuous + 2-binary structure, multivariate low-rank responses (PCA path), hierarchical residualized interaction discovery, and train-only selection. Candidate-family logic (BH screening -> fwer_max_stat_exact selection) unchanged.",
+  "n_inputs": 30,
+  "n_outputs": 40,
+  "n_runs": 2000,
+  "B": 199,
+  "B_screen": 199,
+  "fwer_reps": 100,
+  "alpha": 0.1,
+  "binary_input_names": [
+    "FM.Use Agnostic FS Conversion",
+    "OI.Use AEO Reference Oil"
+  ],
+  "scenarios": [
+    {
+      "name": "global_null",
+      "description": "Complete global null: no main, interaction, or transform signal."
+    },
+    {
+      "name": "interaction_null",
+      "description": "Main effects (including both binary switches) and a nonlinear main-effect transform, but no true interactions."
+    },
+    {
+      "name": "sparse_strong_hierarchical",
+      "description": "Sparse strong-signal hierarchical model: main + continuous-continuous and continuous-binary interactions + a transformation term."
+    },
+    {
+      "name": "weak_signal",
+      "description": "Same hierarchical support as sparse_strong but low signal-to-noise."
+    },
+    {
+      "name": "correlated_redundant",
+      "description": "Dense active set with many candidate pairs (redundant active and inactive predictors) stressing selection precision."
+    },
+    {
+      "name": "pure_interaction",
+      "description": "Pure-interaction signals (continuous-continuous and binary-binary) with negligible marginal main effects; a required screen stress test."
+    },
+    {
+      "name": "nonlinear_misspecified",
+      "description": "Nonlinear main-effect signal via the declared transform library plus one misspecified form outside the library; a required stress test."
+    }
+  ]
+}
