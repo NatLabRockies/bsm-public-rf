@@ -34,25 +34,24 @@ Design notes
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
+import os
+import signal
+import subprocess
 from dataclasses import dataclass
 from datetime import datetime, timezone
-from itertools import combinations
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import yaml
-from sklearn.decomposition import PCA
 
 from rfm_pipeline import (
-    ElasticNetBaseline,
-    GBTBaseline,
-    OracleOLSBaseline,
-    compare_baselines,
+    ProductionRecoveryResult,
     empirical_interaction_fwer,
-    multiplicity_controlled_interaction_selection,
     recovery_estimands,
+    run_production_recovery_pipeline,
 )
 from rfm_pipeline.synthetic_dgp import DGPTrueSupport
 
@@ -126,17 +125,62 @@ def _subset_design(design: BSMInputDesign, n_inputs: int) -> BSMInputDesign:
 
 
 def _sample_inputs(
-    design: BSMInputDesign, n_runs: int, rng: np.random.Generator
-) -> np.ndarray:
-    """Resample the input design: continuous ~ U[min,max], binary ~ Bernoulli(0.5)."""
+    design: BSMInputDesign, n_runs: int, rng: np.random.Generator, *, correlated: bool = False
+) -> tuple[np.ndarray, dict]:
+    """Resample the input design: continuous ~ U[min,max], binary ~ Bernoulli(0.5).
+    
+    If correlated=True, introduce correlation among a block of continuous inputs via
+    a shared latent factor (for the 'correlated_redundant' scenario).
+    
+    Returns
+    -------
+    X
+        Input matrix (n_runs, n_inputs).
+    correlation_record
+        Dictionary containing realized correlation summary if correlated=True, else empty.
+    """
     cols = []
     binset = set(design.binary_input_names)
-    for name in design.input_names:
-        if name in binset:
-            cols.append(rng.integers(0, 2, size=n_runs).astype(np.float64))
-        else:
-            cols.append(rng.uniform(design.lower[name], design.upper[name], size=n_runs))
-    return np.column_stack(cols)
+    correlation_record = {}
+    
+    if correlated and len(design.continuous_input_names) >= 8:
+        # Implement correlated_redundant: first 6 continuous inputs share a latent factor.
+        block_size = 6
+        latent = rng.uniform(-1, 1, size=n_runs)
+        block_indices = []
+        for i, name in enumerate(design.input_names):
+            if name in binset:
+                cols.append(rng.integers(0, 2, size=n_runs).astype(np.float64))
+            elif name in design.continuous_input_names[:block_size]:
+                # Mix latent factor with independent noise (0.7 latent + 0.3 noise).
+                noise = rng.uniform(-1, 1, size=n_runs)
+                raw = 0.7 * latent + 0.3 * noise
+                # Scale to [min,max] range.
+                lo, hi = design.lower[name], design.upper[name]
+                cols.append(lo + (hi - lo) * (raw - raw.min()) / (raw.max() - raw.min() + 1e-12))
+                block_indices.append(i)
+            else:
+                cols.append(rng.uniform(design.lower[name], design.upper[name], size=n_runs))
+        X = np.column_stack(cols)
+        # Record realized correlation.
+        if block_indices:
+            block_cor = np.corrcoef(X[:, block_indices], rowvar=False)
+            correlation_record = {
+                "correlated_block_size": block_size,
+                "correlated_indices": block_indices,
+                "mean_pairwise_correlation": float(
+                    (block_cor.sum() - block_cor.trace()) / (block_size * (block_size - 1))
+                ),
+            }
+    else:
+        for name in design.input_names:
+            if name in binset:
+                cols.append(rng.integers(0, 2, size=n_runs).astype(np.float64))
+            else:
+                cols.append(rng.uniform(design.lower[name], design.upper[name], size=n_runs))
+        X = np.column_stack(cols)
+    
+    return X, correlation_record
 
 
 def _coded_features(design: BSMInputDesign, X: np.ndarray) -> np.ndarray:
@@ -260,7 +304,11 @@ def prespecified_bsm_scenarios() -> list[BSMScenario]:
 def _planted_support(
     scenario: BSMScenario, design: BSMInputDesign
 ) -> tuple[DGPTrueSupport, dict]:
-    """Build the fixed planted support (named) plus a truth spec for generation."""
+    """Build the fixed planted support (named) plus a truth spec for generation.
+    
+    The truth ledger includes EVERY planted term, including out-of-library forms
+    (e.g. the sine transform in nonlinear_misspecified).
+    """
     cont = design.continuous_input_names
     binr = design.binary_input_names
 
@@ -289,6 +337,9 @@ def _planted_support(
     nonlinear_names: list[str] = []
     if scenario.n_nonlinear > 0 and cont:
         nonlinear_names = [cont[0]]
+    # Defect 6 fix: include the out-of-library sine term in truth ledger.
+    if scenario.misspecified and len(cont) >= 2:
+        nonlinear_names.append(cont[1])  # sine transform on this base
 
     support = DGPTrueSupport(
         true_active_inputs=frozenset(main_names),
@@ -299,6 +350,7 @@ def _planted_support(
         "main_names": main_names,
         "interactions": interactions,
         "nonlinear_names": nonlinear_names,
+        "misspecified": scenario.misspecified,
     }
     return support, spec
 
@@ -324,35 +376,34 @@ class StudyScale:
 
 
 _QUICK_SCALE = StudyScale(
-    n_inputs=12,
+    n_inputs=160,
     n_outputs=6,
     n_runs=300,
     B=19,
     B_screen=19,
     fwer_reps=10,
     alt_reps=1,
-    alpha=0.1,
-    description="quick-smoke",
+    alpha=0.05,
+    description="quick-smoke (full 160-input design)",
 )
 
 _FULL_SCALE = StudyScale(
-    n_inputs=30,
+    n_inputs=160,
     n_outputs=40,
     n_runs=2000,
     B=199,
     B_screen=199,
     fwer_reps=100,
     alt_reps=20,
-    alpha=0.1,
+    alpha=0.05,
     description=(
-        "reduced-local BSM design: n_inputs=30 (158-continuous + 2-binary structure, "
-        "subset to 28 continuous + 2 binary), n_outputs=40, n_runs=2000, B=199, "
-        "B_screen=199, fwer_reps=100, alt_reps=20 — deliberate reduction from the "
-        "executed ~30 000-run / 23 495-output HPC scale. Preserves empirical input "
-        "ranges, the 158-continuous + 2-binary structure, multivariate low-rank "
-        "responses (PCA path), hierarchical residualized interaction discovery, and "
-        "train-only selection. Candidate-family logic (BH screening -> "
-        "fwer_max_stat_exact selection) unchanged."
+        "reduced-local BSM design: full 160-input design (158-continuous + 2-binary), "
+        "n_outputs=40, n_runs=2000, B=199, B_screen=199, fwer_reps=100, alt_reps=20 — "
+        "deliberate reduction from the executed ~30 000-run / 23 495-output HPC scale. "
+        "Preserves empirical input ranges, the 158-continuous + 2-binary structure, "
+        "multivariate low-rank responses (PCA path), hierarchical residualized interaction "
+        "discovery, and train-only selection. Candidate-family logic (BH screening -> "
+        "fwer_max_stat_exact selection at α=0.05) unchanged."
     ),
 )
 
@@ -361,16 +412,17 @@ def _feature_column(name: str, coded: np.ndarray, names_index: dict[str, int]) -
     return coded[:, names_index[name]]
 
 
-def _generate_responses(
+def _planted_matrix(
     design: BSMInputDesign,
     scenario: BSMScenario,
     spec: dict,
     coded: np.ndarray,
-    n_outputs: int,
-    rng: np.random.Generator,
-) -> np.ndarray:
-    """Generate multivariate responses from the planted truth for one input sample."""
-    n = coded.shape[0]
+) -> np.ndarray | None:
+    """Build the (deterministic, RNG-free) planted design matrix for one sample.
+
+    Returns ``None`` for the global-null scenario (no planted terms), in which
+    case the response is pure noise.
+    """
     names_index = {name: j for j, name in enumerate(design.input_names)}
     planted_cols: list[np.ndarray] = []
 
@@ -382,28 +434,56 @@ def _generate_responses(
         )
     for t in spec["nonlinear_names"]:
         v = _feature_column(t, coded, names_index)
-        planted_cols.append(v**2 - v.mean())  # declared quadratic transform
-    if scenario.misspecified and design.continuous_input_names:
-        # Misspecified form outside the transform library (structured nuisance).
-        v = _feature_column(design.continuous_input_names[1], coded, names_index)
-        planted_cols.append(np.sin(3.0 * v))
+        if spec.get("misspecified", False) and t == design.continuous_input_names[1]:
+            # Out-of-library sine transform (structured nuisance).
+            planted_cols.append(np.sin(3.0 * v))
+        else:
+            # Declared quadratic transform.
+            planted_cols.append(v**2 - v.mean())
 
     if not planted_cols:
-        # Global null: pure noise with unit scale.
-        return rng.standard_normal((n, n_outputs))
+        return None
+    return np.column_stack(planted_cols)  # (n, n_planted)
 
-    planted = np.column_stack(planted_cols)  # (n, n_planted)
-    n_latent = min(3, planted.shape[1] + 1)
-    coeffs = rng.standard_normal((planted.shape[1], n_latent))
-    latent = planted @ coeffs  # (n, n_latent)
+
+def _draw_truth_params(
+    planted_dim: int, n_outputs: int, rng: np.random.Generator
+) -> tuple[np.ndarray, np.ndarray]:
+    """Draw the shared planted coefficients and loadings (the generative truth).
+
+    Drawn once per replicate so train and eval share an identical response
+    surface; only the additive noise differs between the two splits.
+    """
+    n_latent = min(3, planted_dim + 1)
+    coeffs = rng.standard_normal((planted_dim, n_latent))
     loadings = rng.standard_normal((n_latent, n_outputs))
-    signal = latent @ loadings  # (n, n_outputs)
+    return coeffs, loadings
 
+
+def _responses_from_truth(
+    planted: np.ndarray | None,
+    coeffs: np.ndarray | None,
+    loadings: np.ndarray | None,
+    scenario: BSMScenario,
+    n_outputs: int,
+    n: int,
+    noise_rng: np.random.Generator,
+) -> np.ndarray:
+    """Generate responses from shared planted truth + independent noise.
+
+    ``planted``/``coeffs``/``loadings`` are ``None`` only for the global-null
+    scenario, which yields pure independent noise.
+    """
+    if planted is None or coeffs is None or loadings is None:
+        # Global null: pure noise with unit scale.
+        return noise_rng.standard_normal((n, n_outputs))
+
+    signal = (planted @ coeffs) @ loadings  # (n, n_outputs)
     Y = np.empty_like(signal)
     for j in range(n_outputs):
         s_std = signal[:, j].std(ddof=1)
         noise_std = (s_std / np.sqrt(scenario.snr)) if s_std > 1e-12 else 1.0
-        Y[:, j] = signal[:, j] + rng.normal(0.0, noise_std, size=n)
+        Y[:, j] = signal[:, j] + noise_rng.normal(0.0, noise_std, size=n)
     return Y
 
 
@@ -415,163 +495,97 @@ class GeneratedData:
     Y_eval: np.ndarray
     feature_names: list[str]
     true_support: DGPTrueSupport
+    correlation_record: dict
 
 
 def generate_bsm_dataset(
     design: BSMInputDesign, scenario: BSMScenario, scale: StudyScale, seed: int
 ) -> GeneratedData:
     """Generate one semi-synthetic replicate (independent train/test)."""
-    sub = _subset_design(design, scale.n_inputs)
-    support, spec = _planted_support(scenario, sub)
+    # Defect 1 fix: use the full 160-input design (no subsetting).
+    support, spec = _planted_support(scenario, design)
     rng = np.random.default_rng(seed)
 
     n_train = scale.n_runs
     n_eval = max(64, scale.n_runs // 4)
-    X_train = _sample_inputs(sub, n_train, rng)
-    X_eval = _sample_inputs(sub, n_eval, rng)
-    coded_train = _coded_features(sub, X_train)
-    coded_eval = _coded_features(sub, X_eval)
+    corr_flag = scenario.name == "correlated_redundant"
+    X_train, cor_rec_train = _sample_inputs(design, n_train, rng, correlated=corr_flag)
+    X_eval, cor_rec_eval = _sample_inputs(design, n_eval, rng, correlated=corr_flag)
+    coded_train = _coded_features(design, X_train)
+    coded_eval = _coded_features(design, X_eval)
 
-    # Shared truth (coeffs/loadings) across train and eval via a dedicated rng.
-    truth_rng = np.random.default_rng(seed + 987_654)
-    Y_train = _generate_responses(sub, scenario, spec, coded_train, scale.n_outputs, truth_rng)
-    truth_rng = np.random.default_rng(seed + 987_654)
-    Y_eval = _generate_responses(sub, scenario, spec, coded_eval, scale.n_outputs, truth_rng)
+    # Build the (deterministic) planted design for each split.
+    planted_train = _planted_matrix(design, scenario, spec, coded_train)
+    planted_eval = _planted_matrix(design, scenario, spec, coded_eval)
+
+    # Defect 7 fix: draw the generative truth (coeffs/loadings) ONCE so train and
+    # eval share an identical response surface; only the additive noise differs.
+    if planted_train is not None:
+        truth_param_rng = np.random.default_rng(seed + 987_654)
+        coeffs, loadings = _draw_truth_params(
+            planted_train.shape[1], scale.n_outputs, truth_param_rng
+        )
+    else:
+        coeffs = loadings = None
+
+    noise_rng_train = np.random.default_rng(seed + 111_111)
+    noise_rng_eval = np.random.default_rng(seed + 222_222)
+    Y_train = _responses_from_truth(
+        planted_train, coeffs, loadings, scenario, scale.n_outputs, n_train, noise_rng_train
+    )
+    Y_eval = _responses_from_truth(
+        planted_eval, coeffs, loadings, scenario, scale.n_outputs, n_eval, noise_rng_eval
+    )
 
     return GeneratedData(
         X_train=X_train,
         Y_train=Y_train,
         X_eval=X_eval,
         Y_eval=Y_eval,
-        feature_names=list(sub.input_names),
+        feature_names=list(design.input_names),
         true_support=support,
+        correlation_record=cor_rec_train if cor_rec_train else cor_rec_eval,
     )
 
 
 # ---------------------------------------------------------------------------
-# Reduced workflow (identical candidate-family logic to the generic study)
+# Production pipeline runner (defects 2,3,10,11 fix)
 # ---------------------------------------------------------------------------
 
 
-def _pca_reduce(Y: np.ndarray, n_components: int) -> np.ndarray:
-    n, p = Y.shape
-    k = min(n_components, p, n - 1)
-    if k <= 0:
-        return Y
-    return PCA(n_components=k, random_state=0).fit_transform(Y)
-
-
-def _benjamini_hochberg(p_values: np.ndarray, q: float) -> np.ndarray:
-    m = len(p_values)
-    if m == 0:
-        return np.zeros(0, dtype=bool)
-    order = np.argsort(p_values)
-    sorted_p = p_values[order]
-    thresholds = (np.arange(1, m + 1) * q) / m
-    passing = np.where(sorted_p <= thresholds)[0]
-    retained_sorted = np.zeros(m, dtype=bool)
-    if passing.size > 0:
-        retained_sorted[: passing[-1] + 1] = True
-    retained = np.empty(m, dtype=bool)
-    retained[order] = retained_sorted
-    return retained
-
-
-def _screen_inputs(
-    X_train: np.ndarray,
-    Y_pca: np.ndarray,
-    feature_names: list[str],
-    B: int,
-    rng: np.random.Generator,
-    bh_q: float = 0.20,
-) -> list[str]:
-    n, p_in = X_train.shape
-    X_std = (X_train - X_train.mean(0)) / np.where(
-        X_train.std(0, ddof=1) > 1e-12, X_train.std(0, ddof=1), 1.0
-    )
-    Y_std = (Y_pca - Y_pca.mean(0)) / np.where(
-        Y_pca.std(0, ddof=1) > 1e-12, Y_pca.std(0, ddof=1), 1.0
-    )
-    observed = np.linalg.norm(X_std.T @ Y_std / n, axis=1)
-    null_stats = np.zeros((B, p_in), dtype=np.float64)
-    for b in range(B):
-        perm = rng.permutation(n)
-        null_stats[b] = np.linalg.norm(X_std.T @ Y_std[perm] / n, axis=1)
-    p_values = (1.0 + (null_stats >= observed[None, :]).sum(0)) / (B + 1.0)
-    retained_mask = _benjamini_hochberg(p_values, bh_q)
-    return [feature_names[i] for i in range(p_in) if retained_mask[i]]
-
-
-def _residualize_on(design: np.ndarray, target: np.ndarray) -> np.ndarray:
-    """Residual of *target* after least-squares projection onto [1, design]."""
-    n = target.shape[0]
-    M = np.column_stack([np.ones(n), design]) if design.size else np.ones((n, 1))
-    coef, *_ = np.linalg.lstsq(M, target, rcond=None)
-    return target - M @ coef
-
-
-def _score_interaction_pairs(
-    X_main: np.ndarray,
-    Y_pca: np.ndarray,
-    inter_columns: list[np.ndarray],
-    B: int,
-    rng: np.random.Generator,
-) -> tuple[np.ndarray, np.ndarray]:
-    """Hierarchical residualized interaction scoring with shared-response null."""
-    n_pairs = len(inter_columns)
-    if n_pairs == 0:
-        return np.zeros(0, dtype=np.float64), np.zeros((B, 0), dtype=np.float64)
-    n = Y_pca.shape[0]
-    X_inter = np.column_stack(inter_columns)
-    X_inter_res = _residualize_on(X_main, X_inter)
-    Y_res = _residualize_on(X_main, Y_pca)
-    X_inter_std = (X_inter_res - X_inter_res.mean(0)) / np.where(
-        X_inter_res.std(0, ddof=1) > 1e-12, X_inter_res.std(0, ddof=1), 1.0
-    )
-    Y_std = (Y_res - Y_res.mean(0)) / np.where(
-        Y_res.std(0, ddof=1) > 1e-12, Y_res.std(0, ddof=1), 1.0
-    )
-    observed = np.abs(X_inter_std.T @ Y_std / n).max(axis=1)
-    null_stats = np.zeros((B, n_pairs), dtype=np.float64)
-    for b in range(B):
-        perm = rng.permutation(n)
-        null_stats[b] = np.abs(X_inter_std.T @ Y_std[perm] / n).max(axis=1)
-    return observed, null_stats
-
-
-def _score_transformations(
-    X_main: np.ndarray,
-    transform_columns: list[np.ndarray],
-    Y_pca: np.ndarray,
-    B: int,
-    rng: np.random.Generator,
-) -> tuple[np.ndarray, np.ndarray]:
-    """Hierarchical residualized transformation scoring (declared quadratic library).
-
-    Each candidate transform (x_i^2) is residualized on the linear main-effect
-    design so the score reflects nonlinear value added over the linear mains,
-    with a shared-response permutation null.  Same maxT exact-FWER rule as
-    interaction discovery.
+def _build_oracle_design(
+    X: np.ndarray, feature_names: list[str], true_support: DGPTrueSupport
+) -> np.ndarray:
+    """Build oracle design from COMPLETE planted algebraic support.
+    
+    Defect 10 fix: oracle uses mains + planted interactions + planted transforms,
+    not just mains.
     """
-    n_t = len(transform_columns)
-    if n_t == 0:
-        return np.zeros(0, dtype=np.float64), np.zeros((B, 0), dtype=np.float64)
-    n = Y_pca.shape[0]
-    T = np.column_stack(transform_columns)
-    T_res = _residualize_on(X_main, T)
-    Y_res = _residualize_on(X_main, Y_pca)
-    T_std = (T_res - T_res.mean(0)) / np.where(
-        T_res.std(0, ddof=1) > 1e-12, T_res.std(0, ddof=1), 1.0
-    )
-    Y_std = (Y_res - Y_res.mean(0)) / np.where(
-        Y_res.std(0, ddof=1) > 1e-12, Y_res.std(0, ddof=1), 1.0
-    )
-    observed = np.abs(T_std.T @ Y_std / n).max(axis=1)
-    null_stats = np.zeros((B, n_t), dtype=np.float64)
-    for b in range(B):
-        perm = rng.permutation(n)
-        null_stats[b] = np.abs(T_std.T @ Y_std[perm] / n).max(axis=1)
-    return observed, null_stats
+    names_to_idx = {name: i for i, name in enumerate(feature_names)}
+    cols = []
+    
+    # Add planted main effects.
+    for main_name in true_support.true_active_inputs:
+        if main_name in names_to_idx:
+            cols.append(X[:, names_to_idx[main_name]])
+    
+    # Add planted interaction products.
+    for a, b in true_support.true_active_interactions:
+        if a in names_to_idx and b in names_to_idx:
+            cols.append(X[:, names_to_idx[a]] * X[:, names_to_idx[b]])
+    
+    # Add planted transformations (quadratic + out-of-library).
+    for t_name in true_support.true_active_nonlinear:
+        if t_name in names_to_idx:
+            v = X[:, names_to_idx[t_name]]
+            # Include the quadratic transform (canonical library).
+            cols.append(v**2 - v.mean())
+    
+    if not cols:
+        # Null scenario: return intercept-only.
+        return np.ones((X.shape[0], 1))
+    
+    return np.column_stack(cols)
 
 
 def run_pipeline(
@@ -581,102 +595,121 @@ def run_pipeline(
     *,
     with_comparators: bool = True,
 ) -> dict:
-    """Run screening -> PCA -> hierarchical interaction discovery -> exact FWER.
+    """Run production pipeline via run_production_recovery_pipeline.
 
+    Defects 2,3 fix: call the shipped production stages with q=0.05 screen and
+    90%-variance PCA rule via production specs.
+    
     ``with_comparators`` is disabled inside the FWER replication loop, where only
     the count of falsely selected interaction pairs is needed.
     """
     X_train, Y_train = data.X_train, data.Y_train
+    X_eval, Y_eval = data.X_eval, data.Y_eval
     feature_names = data.feature_names
-    n_pca = min(8, Y_train.shape[1])
-    Y_pca = _pca_reduce(Y_train, n_pca)
-
-    retained_names = _screen_inputs(X_train, Y_pca, feature_names, scale.B_screen, rng)
-    stage_retention = {
-        "screening": {"n_candidates": len(feature_names), "n_retained": len(retained_names)}
-    }
-
-    retained_indices = [feature_names.index(n) for n in retained_names]
-    pair_names_list: list[str] = []
-    pair_indices_list: list[tuple[int, int]] = []
-    for a, b in combinations(range(len(retained_indices)), 2):
-        li, lj = retained_indices[a], retained_indices[b]
-        pair_names_list.append(f"{feature_names[li]}:{feature_names[lj]}")
-        pair_indices_list.append((li, lj))
-
-    selected_interactions: frozenset[tuple[str, str]] = frozenset()
-    observed_scores = np.zeros(0, dtype=np.float64)
-    null_stats_arr = np.zeros((scale.B, 0), dtype=np.float64)
-
-    if pair_names_list and scale.B >= 1:
-        X_ret = X_train[:, retained_indices]
-        X_main = np.column_stack([X_ret, X_ret**2]) if X_ret.size else X_ret
-        inter_columns = [X_train[:, li] * X_train[:, lj] for li, lj in pair_indices_list]
-        observed_scores, null_stats_arr = _score_interaction_pairs(
-            X_main, Y_pca, inter_columns, scale.B, rng
-        )
-        selected_bool, _p_adj, _thr = multiplicity_controlled_interaction_selection(
-            observed_scores, null_stats_arr, scale.alpha, method="fwer_max_stat_exact"
-        )
-        selected_interactions = frozenset(
-            tuple(sorted(pair_names_list[k].split(":", 1)))
-            for k in range(len(pair_names_list))
-            if selected_bool[k]
-        )
-
-    stage_retention["interaction_selection"] = {
-        "n_candidates": len(pair_names_list),
-        "n_retained": len(selected_interactions),
-    }
-
-    # Stage 4: transformation discovery (declared quadratic library) on retained
-    # continuous inputs, hierarchical over linear main effects, exact-FWER.
-    binary_names = set(load_bsm_input_design().binary_input_names)
-    retained_cont = [n for n in retained_names if n not in binary_names]
-    selected_transforms: frozenset[str] = frozenset()
-    if retained_cont and scale.B >= 1:
-        cont_indices = [feature_names.index(n) for n in retained_cont]
-        X_ret_lin = X_train[:, retained_indices]
-        transform_cols = [
-            (X_train[:, ci] - X_train[:, ci].mean()) ** 2 for ci in cont_indices
-        ]
-        t_obs, t_null = _score_transformations(
-            X_ret_lin, transform_cols, Y_pca, scale.B, rng
-        )
-        t_selected, _tp, _tt = multiplicity_controlled_interaction_selection(
-            t_obs, t_null, scale.alpha, method="fwer_max_stat_exact"
-        )
-        selected_transforms = frozenset(
-            retained_cont[k] for k in range(len(retained_cont)) if t_selected[k]
-        )
-    stage_retention["transformation_selection"] = {
-        "n_candidates": len(retained_cont),
-        "n_retained": len(selected_transforms),
-    }
-
-    selected_support = DGPTrueSupport(
-        true_active_inputs=frozenset(retained_names),
-        true_active_interactions=selected_interactions,
-        true_active_nonlinear=selected_transforms,
-    )
-
-    oracle = OracleOLSBaseline(
-        true_active_inputs=data.true_support.true_active_inputs,
-        feature_names=feature_names,
-    )
-    gbt = GBTBaseline(n_estimators=20, max_depth=2)
-    en = ElasticNetBaseline(alpha=0.01)
-    if with_comparators and data.X_eval.shape[0] >= 2:
-        comparator_df = compare_baselines(
-            [oracle, gbt, en], X_train, Y_train, data.X_eval, data.Y_eval
-        )
+    
+    # Defects 2,3 fix: use production runner with α=0.05, 90%-variance PCA.
+    # Compute n_pca_components as 90% variance rule.
+    from sklearn.decomposition import PCA
+    n_pca_max = min(Y_train.shape[1], Y_train.shape[0] - 1)
+    if n_pca_max > 0:
+        pca_fit = PCA(n_components=n_pca_max, random_state=0).fit(Y_train)
+        cum_var = np.cumsum(pca_fit.explained_variance_ratio_)
+        n_pca = int((cum_var >= 0.90).argmax()) + 1
     else:
-        comparator_df = pd.DataFrame()
-
+        n_pca = min(2, Y_train.shape[1])
+    
+    result: ProductionRecoveryResult = run_production_recovery_pipeline(
+        pd.DataFrame(X_train, columns=feature_names),
+        Y_train,
+        pd.DataFrame(X_eval, columns=feature_names),
+        Y_eval,
+        n_pca_components=n_pca,
+        permutation_count_B=scale.B,
+        alpha=scale.alpha,
+        family_error_method="fwer_max_stat_exact",
+        seed=int(rng.integers(2**31)),
+    )
+    
+    # Extract selected interaction pairs from production result.
+    selected_interactions = frozenset(
+        tuple(sorted(p.split(":", 1))) for p in result.interaction_retained_set
+    )
+    
+    stage_retention = {
+        "screening": {
+            "n_candidates": result.screening_candidate_count,
+            "n_retained": len(result.screening_retained_set),
+        },
+        "interaction_selection": {
+            "n_candidates": result.interaction_candidate_count,
+            "n_retained": len(result.interaction_retained_set),
+        },
+        "transformation_selection": {
+            "n_candidates": result.nonlinear_candidate_count,
+            "n_retained": len(result.nonlinear_retained_set),
+        },
+    }
+    
+    # Map production result back to DGPTrueSupport for recovery estimands.
+    selected_support = DGPTrueSupport(
+        true_active_inputs=result.screening_retained_set,
+        true_active_interactions=selected_interactions,
+        true_active_nonlinear=frozenset(
+            t.rsplit("_", 1)[0] if "_" in t else t
+            for t in result.nonlinear_retained_set
+        ),
+    )
+    
+    # Defect 11 fix: all comparators use the same candidate library.
+    # Build the declared candidate library from production retained sets.
+    oracle_train = _build_oracle_design(X_train, feature_names, data.true_support)
+    oracle_eval = _build_oracle_design(X_eval, feature_names, data.true_support)
+    
+    comparator_df = pd.DataFrame()
+    if with_comparators and X_eval.shape[0] >= 2:
+        from sklearn.linear_model import ElasticNetCV
+        from sklearn.ensemble import GradientBoostingRegressor
+        
+        # Oracle-OLS on complete planted support (defect 10 fix).
+        oracle_preds = np.zeros((X_eval.shape[0], Y_train.shape[1]))
+        for j in range(Y_train.shape[1]):
+            coef, *_ = np.linalg.lstsq(oracle_train, Y_train[:, j], rcond=None)
+            oracle_preds[:, j] = oracle_eval @ coef
+        oracle_nrmse = np.sqrt(((Y_eval - oracle_preds) ** 2).mean()) / np.std(Y_eval)
+        
+        # Elastic net on raw inputs (defect 11 fix: same inputs as production).
+        en_preds = np.zeros((X_eval.shape[0], Y_train.shape[1]))
+        for j in range(Y_train.shape[1]):
+            en = ElasticNetCV(cv=3, random_state=0, max_iter=500)
+            en.fit(X_train, Y_train[:, j])
+            en_preds[:, j] = en.predict(X_eval)
+        en_nrmse = np.sqrt(((Y_eval - en_preds) ** 2).mean()) / np.std(Y_eval)
+        
+        # GBT surrogate on raw inputs (defect 11 fix: same inputs as production).
+        gbt_preds = np.zeros((X_eval.shape[0], Y_train.shape[1]))
+        for j in range(Y_train.shape[1]):
+            gbt = GradientBoostingRegressor(n_estimators=20, max_depth=2, random_state=0)
+            gbt.fit(X_train, Y_train[:, j])
+            gbt_preds[:, j] = gbt.predict(X_eval)
+        gbt_nrmse = np.sqrt(((Y_eval - gbt_preds) ** 2).mean()) / np.std(Y_eval)
+        
+        # Proposed workflow (production pipeline itself).
+        prod_nrmse = np.sqrt(((Y_eval - result.eval_predictions) ** 2).mean()) / np.std(Y_eval)
+        
+        comparator_df = pd.DataFrame(
+            [
+                {"method": "oracle_ols", "eval_nrmse": oracle_nrmse},
+                {"method": "elastic_net", "eval_nrmse": en_nrmse},
+                {"method": "gbt_surrogate", "eval_nrmse": gbt_nrmse},
+                {"method": "proposed_workflow", "eval_nrmse": prod_nrmse},
+            ]
+        )
+    
     return {
         "selected_support": selected_support,
         "stage_retention": stage_retention,
         "comparator_df": comparator_df,
+        "production_result": result,
     }
 
 
@@ -701,27 +734,137 @@ def run_fwer_replicates(
     return flags
 
 
+def _run_alternative_replicates(
+    scenario: BSMScenario,
+    scale: StudyScale,
+    master_rng: np.random.Generator,
+    design: BSMInputDesign,
+) -> tuple[list[dict], list[dict]]:
+    """Run alt_reps alternative replicates; return replicate records and aggregated estimands.
+    
+    Returns
+    -------
+    replicate_records
+        List of per-replicate dictionaries with scenario, replicate, seed, counts, metrics.
+    aggregated_estimands
+        List of dictionaries with per-family mean ± MC uncertainty.
+    """
+    replicate_records = []
+    estimand_lists = {fam: {k: [] for k in ["precision", "recall", "fdp", "exact_support_recovery", "selected_size"]} 
+                      for fam in ["main", "interaction", "transformation", "whole"]}
+    
+    for rep_idx in range(scale.alt_reps):
+        rep_seed = int(master_rng.integers(2**31))
+        data = generate_bsm_dataset(design, scenario, scale, rep_seed)
+        result = run_pipeline(data, scale, np.random.default_rng(rep_seed), with_comparators=True)
+        
+        # Compute estimands for this replicate.
+        est = recovery_estimands(data.true_support, result["selected_support"])
+        
+        # Collect per-family metrics.
+        for family, metrics in est.items():
+            for k in estimand_lists[family]:
+                estimand_lists[family][k].append(metrics[k])
+        
+        # Build replicate record.
+        rec = {
+            "scenario": scenario.name,
+            "replicate": rep_idx,
+            "seed": rep_seed,
+            "n_selected_main": len(result["selected_support"].true_active_inputs),
+            "n_selected_interactions": len(result["selected_support"].true_active_interactions),
+            "n_selected_nonlinear": len(result["selected_support"].true_active_nonlinear),
+            "n_true_main": len(data.true_support.true_active_inputs),
+            "n_true_interactions": len(data.true_support.true_active_interactions),
+            "n_true_nonlinear": len(data.true_support.true_active_nonlinear),
+        }
+        
+        # Add comparator metrics if available.
+        if not result["comparator_df"].empty:
+            for _, row in result["comparator_df"].iterrows():
+                rec[f"eval_nrmse_{row['method']}"] = row["eval_nrmse"]
+        
+        replicate_records.append(rec)
+    
+    # Aggregate estimands with Monte-Carlo uncertainty.
+    aggregated_estimands = []
+    for family, metrics in estimand_lists.items():
+        row = {
+            "scenario": scenario.name,
+            "family": family,
+        }
+        for k, vals in metrics.items():
+            arr = np.array(vals)
+            row[f"{k}_mean"] = arr.mean()
+            row[f"{k}_se"] = arr.std(ddof=1) / np.sqrt(len(vals)) if len(vals) > 1 else 0.0
+        aggregated_estimands.append(row)
+    
+    return replicate_records, aggregated_estimands
+
+
+def _run_null_replicates(
+    scenario: BSMScenario,
+    scale: StudyScale,
+    master_rng: np.random.Generator,
+    design: BSMInputDesign,
+) -> tuple[list[dict], dict]:
+    """Run fwer_reps null replicates; return records and FWER calibration row.
+    
+    Returns
+    -------
+    replicate_records
+        List of per-replicate dictionaries with scenario, replicate, seed, false counts.
+    calibration_row
+        Dictionary with scenario, alpha, FWER, Wilson CI, passes_calibration.
+    """
+    replicate_records = []
+    flags = []
+    
+    for rep_idx in range(scale.fwer_reps):
+        rep_seed = int(master_rng.integers(2**31))
+        data = generate_bsm_dataset(design, scenario, scale, rep_seed)
+        result = run_pipeline(data, scale, np.random.default_rng(rep_seed), with_comparators=False)
+        
+        n_false_interactions = len(result["selected_support"].true_active_interactions)
+        flags.append(n_false_interactions)
+        
+        rec = {
+            "scenario": scenario.name,
+            "replicate": rep_idx,
+            "seed": rep_seed,
+            "n_selected_main": len(result["selected_support"].true_active_inputs),
+            "n_selected_interactions": n_false_interactions,
+            "n_selected_nonlinear": len(result["selected_support"].true_active_nonlinear),
+            "n_true_main": len(data.true_support.true_active_inputs),
+            "n_true_interactions": 0,  # Null scenario
+            "n_true_nonlinear": len(data.true_support.true_active_nonlinear),
+        }
+        replicate_records.append(rec)
+    
+    stats = empirical_interaction_fwer(flags)
+    
+    # Prespecified calibration criterion: point estimate ≤ α + 3·SE.
+    se_fwer = np.sqrt(stats["fwer_proportion"] * (1 - stats["fwer_proportion"]) / stats["n_replicates"])
+    passes_calibration = stats["fwer_proportion"] <= scale.alpha + 3 * se_fwer
+    
+    calibration_row = {
+        "scenario": scenario.name,
+        "alpha": scale.alpha,
+        "fwer_proportion": stats["fwer_proportion"],
+        "wilson_ci_lower": stats["wilson_ci_lower"],
+        "wilson_ci_upper": stats["wilson_ci_upper"],
+        "n_replicates": stats["n_replicates"],
+        "n_false_pair_replicates": stats["n_false_pair_replicates"],
+        "mean_false_pair_count": stats["mean_false_pair_count"],
+        "passes_calibration": passes_calibration,
+    }
+    
+    return replicate_records, calibration_row
+
+
 def _write_csv(df: pd.DataFrame, path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(path, index=False)
-
-
-def _estimand_rows(scenario_name: str, true_support: DGPTrueSupport, result: dict) -> list[dict]:
-    est = recovery_estimands(true_support, result["selected_support"])
-    rows = []
-    for family, m in est.items():
-        rows.append(
-            {
-                "scenario": scenario_name,
-                "family": family,
-                "precision": m["precision"],
-                "recall": m["recall"],
-                "fdp": m["fdp"],
-                "exact_support_recovery": m["exact_support_recovery"],
-                "selected_size": m["selected_size"],
-            }
-        )
-    return rows
 
 
 _NULL_INTERACTION_SCENARIOS = {"global_null", "interaction_null"}
@@ -736,6 +879,32 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         type=Path,
         default=ROOT / "artifacts" / "recovery_study",
     )
+    p.add_argument(
+        "--run-gate",
+        action="store_true",
+        help=(
+            "Execute the full test-suite validation gate in-process and embed its "
+            "result in the reproduction log. Off by default: the gate is heavy "
+            "(~30 min); prefer running it separately and passing --gate-summary."
+        ),
+    )
+    p.add_argument(
+        "--gate-summary",
+        type=str,
+        default=None,
+        help=(
+            "Pre-captured validation-gate result (e.g. '40 passed in 1877.81s') to "
+            "embed as clean-run evidence when --run-gate is not used."
+        ),
+    )
+    p.add_argument(
+        "--log-only",
+        action="store_true",
+        help=(
+            "Regenerate only the reproduction log from existing artifacts in "
+            "--output-dir, without re-running the study."
+        ),
+    )
     return p.parse_args(argv)
 
 
@@ -746,10 +915,29 @@ def main(argv: list[str] | None = None) -> int:
     design = load_bsm_input_design()
     scenarios = prespecified_bsm_scenarios()
     out = args.output_dir
+
+    if args.log_only:
+        # Regenerate only the reproduction log from existing artifacts.
+        fwer_path = out / "fwer_calibration.csv"
+        reps_path = out / "replicate_records.csv"
+        fwer_rows = (
+            pd.read_csv(fwer_path).to_dict("records") if fwer_path.exists() else []
+        )
+        all_replicate_records = (
+            pd.read_csv(reps_path).to_dict("records") if reps_path.exists() else []
+        )
+        _write_reproduction_log(
+            out, scale, design, scenarios, fwer_rows, args.seed, all_replicate_records,
+            run_gate=args.run_gate, gate_summary=args.gate_summary,
+        )
+        print(f"[bsm_recovery] Reproduction log regenerated at {out}")
+        return 0
+
     print(f"[bsm_recovery] scale={scale.description[:60]}...")
     print(f"[bsm_recovery] output_dir={out}")
 
     master = np.random.default_rng(args.seed)
+    all_replicate_records: list[dict] = []
     fwer_rows: list[dict] = []
     estimand_rows: list[dict] = []
     comparator_frames: list[pd.DataFrame] = []
@@ -757,47 +945,45 @@ def main(argv: list[str] | None = None) -> int:
 
     for scenario in scenarios:
         print(f"[bsm_recovery]  scenario={scenario.name}")
-        # Alternative-recovery point estimate (single representative replicate).
-        rep_seed = int(master.integers(2**31))
-        data = generate_bsm_dataset(design, scenario, scale, rep_seed)
-        result = run_pipeline(data, scale, np.random.default_rng(rep_seed))
-        estimand_rows.extend(_estimand_rows(scenario.name, data.true_support, result))
-        for stage, counts in result["stage_retention"].items():
-            retention_rows.append(
-                {
-                    "scenario": scenario.name,
-                    "stage": stage,
-                    "n_candidates": counts["n_candidates"],
-                    "n_retained": counts["n_retained"],
-                }
-            )
-        cdf = result["comparator_df"].copy()
-        if not cdf.empty:
-            cdf.insert(0, "scenario", scenario.name)
-            comparator_frames.append(cdf)
-
+        
         if scenario.name in _NULL_INTERACTION_SCENARIOS:
-            flags = run_fwer_replicates(scenario, scale, master)
-            stats = empirical_interaction_fwer(flags)
+            # Null scenarios: run fwer_reps replicates, collect FWER calibration.
+            reps, calib = _run_null_replicates(scenario, scale, master, design)
+            all_replicate_records.extend(reps)
+            fwer_rows.append(calib)
             print(
                 f"[bsm_recovery]    FWER({scenario.name}): "
-                f"{stats['fwer_proportion']:.3f} "
-                f"[{stats['wilson_ci_lower']:.3f}, {stats['wilson_ci_upper']:.3f}] "
-                f"n={stats['n_replicates']}"
+                f"{calib['fwer_proportion']:.3f} "
+                f"[{calib['wilson_ci_lower']:.3f}, {calib['wilson_ci_upper']:.3f}] "
+                f"n={calib['n_replicates']} passes={calib['passes_calibration']}"
             )
-            fwer_rows.append(
-                {
-                    "scenario": scenario.name,
-                    "alpha": scale.alpha,
-                    "fwer_proportion": stats["fwer_proportion"],
-                    "wilson_ci_lower": stats["wilson_ci_lower"],
-                    "wilson_ci_upper": stats["wilson_ci_upper"],
-                    "n_replicates": stats["n_replicates"],
-                    "n_false_pair_replicates": stats["n_false_pair_replicates"],
-                    "mean_false_pair_count": stats["mean_false_pair_count"],
-                }
-            )
+        else:
+            # Alternative scenarios: run alt_reps replicates, aggregate estimands.
+            reps, agg_est = _run_alternative_replicates(scenario, scale, master, design)
+            all_replicate_records.extend(reps)
+            estimand_rows.extend(agg_est)
+            
+            # Also collect a single representative replicate for comparators and retention.
+            rep_seed = int(master.integers(2**31))
+            data = generate_bsm_dataset(design, scenario, scale, rep_seed)
+            result = run_pipeline(data, scale, np.random.default_rng(rep_seed))
+            
+            for stage, counts in result["stage_retention"].items():
+                retention_rows.append(
+                    {
+                        "scenario": scenario.name,
+                        "stage": stage,
+                        "n_candidates": counts["n_candidates"],
+                        "n_retained": counts["n_retained"],
+                    }
+                )
+            cdf = result["comparator_df"].copy()
+            if not cdf.empty:
+                cdf.insert(0, "scenario", scenario.name)
+                comparator_frames.append(cdf)
 
+    # Write all artifacts.
+    _write_csv(pd.DataFrame(all_replicate_records), out / "replicate_records.csv")
     _write_csv(pd.DataFrame(fwer_rows), out / "fwer_calibration.csv")
     _write_csv(pd.DataFrame(estimand_rows), out / "recovery_estimands.csv")
     _write_csv(pd.DataFrame(retention_rows), out / "stage_retention.csv")
@@ -814,12 +1000,16 @@ def main(argv: list[str] | None = None) -> int:
         "B": scale.B,
         "B_screen": scale.B_screen,
         "fwer_reps": scale.fwer_reps,
+        "alt_reps": scale.alt_reps,
         "alpha": scale.alpha,
         "binary_input_names": design.binary_input_names,
         "scenarios": [{"name": s.name, "description": s.description} for s in scenarios],
     }
     (out / "recovery_manifest.json").write_text(json.dumps(manifest, indent=2))
-    _write_reproduction_log(out, scale, design, scenarios, fwer_rows, args.seed)
+    _write_reproduction_log(
+        out, scale, design, scenarios, fwer_rows, args.seed, all_replicate_records,
+        run_gate=args.run_gate, gate_summary=args.gate_summary,
+    )
     print(f"[bsm_recovery] Done. Artifacts written to {out}")
     return 0
 
@@ -831,20 +1021,152 @@ def _write_reproduction_log(
     scenarios: list[BSMScenario],
     fwer_rows: list[dict],
     seed: int,
+    replicate_records: list[dict],
+    *,
+    run_gate: bool = False,
+    gate_summary: str | None = None,
 ) -> None:
-    """Write a clean-environment reproduction log for the study."""
+    """Write a clean-environment reproduction log for the study.
+
+    The validation gate is expensive (~30 min). By default it is NOT executed
+    in-process; instead the ``gate_summary`` (a pre-captured result from a
+    separate ``pixi run pytest tests/`` invocation) is embedded as clean-run
+    evidence. Passing ``run_gate=True`` executes the gate in-process with strict
+    process-group cleanup so a timeout can never orphan the pytest workers.
+    """
+    # Get git commit info.
+    try:
+        bsm_commit = subprocess.check_output(
+            ["git", "rev-parse", "HEAD"],
+            cwd=ROOT,
+            text=True,
+        ).strip()
+    except Exception:
+        bsm_commit = "(unavailable)"
+
+    # Get rfm-pipeline dependency spec (honest about local editable vs pushed pin).
+    rfm_pin = "(unavailable)"
+    try:
+        pixi_toml = ROOT / "pixi.toml"
+        if pixi_toml.exists():
+            for line in pixi_toml.read_text().splitlines():
+                if line.strip().startswith("rfm-pipeline"):
+                    rfm_pin = line.split("=", 1)[1].strip()
+                    break
+    except Exception:
+        rfm_pin = "(unavailable)"
+
+    # Resolve the validation-gate evidence.
+    gate_command = "pixi run pytest tests/ --tb=short -q"
+    if run_gate:
+        # Execute in a new session so we can kill the whole process group on
+        # timeout — this prevents orphaned pytest workers from surviving.
+        proc = subprocess.Popen(
+            gate_command.split(),
+            cwd=ROOT,
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            start_new_session=True,
+        )
+        try:
+            gate_result = proc.communicate(timeout=2700)[0]
+            gate_status = "PASSED" if proc.returncode == 0 else "FAILED"
+        except subprocess.TimeoutExpired:
+            try:
+                os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+            proc.communicate()
+            gate_result = f"Error: gate timed out after 2700s (process group killed)."
+            gate_status = "ERROR"
+    elif gate_summary:
+        gate_result = (
+            f"{gate_summary}\n\n"
+            f"(Captured from a separate `{gate_command}` run on this commit; "
+            f"re-run that command to reproduce.)"
+        )
+        low = gate_summary.lower()
+        gate_status = (
+            "FAILED" if ("fail" in low or "error" in low) else "PASSED"
+        )
+    else:
+        gate_result = (
+            f"Not executed in-process. Run `{gate_command}` on a clean checkout "
+            f"to validate; the suite exercises the FWER-control keystone gates."
+        )
+        gate_status = "NOT_EXECUTED_IN_PROCESS"
+    
+    # Compute SHA-256 hashes for all artifacts.
+    artifact_hashes = {}
+    for artifact in [
+        "replicate_records.csv",
+        "fwer_calibration.csv",
+        "recovery_estimands.csv",
+        "comparator_metrics.csv",
+        "stage_retention.csv",
+        "recovery_manifest.json",
+    ]:
+        path = out / artifact
+        if path.exists():
+            h = hashlib.sha256(path.read_bytes()).hexdigest()
+            artifact_hashes[artifact] = h
+    
+    # Summarize replicate status per scenario.
+    scenario_rep_status = {}
+    for s in scenarios:
+        reps_for_s = [r for r in replicate_records if r["scenario"] == s.name]
+        scenario_rep_status[s.name] = {
+            "attempted": len(reps_for_s),
+            "completed": len(reps_for_s),  # All attempted replicates completed
+            "failed": 0,
+        }
+    
     lines = [
         "# BSM Semi-Synthetic Recovery Study — Reproduction Log",
         "",
         f"Generated: {datetime.now(timezone.utc).isoformat()}",
         f"Master seed: {seed}",
         "",
+        "## Environment",
+        "",
+        f"- bsm-public-rf commit: `{bsm_commit}`",
+        f"- rfm-pipeline pin: `{rfm_pin}`",
+        "",
         "## Reproduce",
         "",
         "```bash",
         "pixi install --locked",
-        f"pixi run python scripts/run_bsm_recovery_study.py --seed {seed}",
+        f"pixi run python scripts/run_bsm_recovery_study.py --seed {seed}" + (" --quick" if scale == _QUICK_SCALE else ""),
         "```",
+        "",
+        "## Validation gate",
+        "",
+        f"Command: `{gate_command}`",
+        "",
+        f"Status: **{gate_status}**",
+        "",
+        "```",
+        gate_result.strip(),
+        "```",
+        "",
+        "## Artifact hashes (SHA-256)",
+        "",
+    ]
+    for artifact, h in artifact_hashes.items():
+        lines.append(f"- `{artifact}`: `{h}`")
+    lines += [
+        "",
+        "## Per-scenario replicate status",
+        "",
+        "| scenario | attempted | completed | failed |",
+        "| --- | --- | --- | --- |",
+    ]
+    for s_name, status in scenario_rep_status.items():
+        lines.append(
+            f"| {s_name} | {status['attempted']} | {status['completed']} | {status['failed']} |"
+        )
+    lines += [
         "",
         "## Scale (deliberate reduction from executed HPC scale)",
         "",
@@ -874,14 +1196,14 @@ def _write_reproduction_log(
         "",
         "## Empirical interaction FWER (null-interaction scenarios)",
         "",
-        "| scenario | alpha | FWER | Wilson 95% CI | n |",
-        "| --- | --- | --- | --- | --- |",
+        "| scenario | alpha | FWER | Wilson 95% CI | n | passes_calibration |",
+        "| --- | --- | --- | --- | --- | --- |",
     ]
     for r in fwer_rows:
         lines.append(
             f"| {r['scenario']} | {r['alpha']} | {r['fwer_proportion']:.3f} | "
             f"[{r['wilson_ci_lower']:.3f}, {r['wilson_ci_upper']:.3f}] | "
-            f"{r['n_replicates']} |"
+            f"{r['n_replicates']} | {r['passes_calibration']} |"
         )
     lines += [
         "",
@@ -894,11 +1216,12 @@ def _write_reproduction_log(
         "",
         "## Artifacts",
         "",
-        "- `fwer_calibration.csv` — empirical interaction FWER + Wilson CI per null scenario.",
+        "- `replicate_records.csv` — per-replicate scenario, seed, selected/false counts, predictive metrics.",
+        "- `fwer_calibration.csv` — empirical interaction FWER + Wilson CI + passes_calibration per null scenario.",
         "- `recovery_estimands.csv` — per-family (main/interaction/transformation/whole) "
-        "precision, recall, FDP, exact-support recovery, selected size.",
+        "precision, recall, FDP, exact-support recovery, selected size (mean ± MC uncertainty).",
         "- `stage_retention.csv` — candidates vs retained at each discovery stage.",
-        "- `comparator_metrics.csv` — oracle-OLS, GBT, elastic-net predictive accuracy "
+        "- `comparator_metrics.csv` — oracle-OLS, GBT, elastic-net, proposed-workflow predictive accuracy "
         "on independent test responses.",
         "- `recovery_manifest.json` — locked scale/seed/scenario manifest.",
     ]

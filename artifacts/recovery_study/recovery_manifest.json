@@ -1,14 +1,15 @@
 {
-  "generated": "2026-07-20T20:21:31.152937+00:00",
+  "generated": "2026-07-21T18:26:12.972241+00:00",
   "master_seed": 42,
-  "scale": "reduced-local BSM design: n_inputs=30 (158-continuous + 2-binary structure, subset to 28 continuous + 2 binary), n_outputs=40, n_runs=2000, B=199, B_screen=199, fwer_reps=100, alt_reps=20 \u2014 deliberate reduction from the executed ~30 000-run / 23 495-output HPC scale. Preserves empirical input ranges, the 158-continuous + 2-binary structure, multivariate low-rank responses (PCA path), hierarchical residualized interaction discovery, and train-only selection. Candidate-family logic (BH screening -> fwer_max_stat_exact selection) unchanged.",
-  "n_inputs": 30,
+  "scale": "reduced-local BSM design: full 160-input design (158-continuous + 2-binary), n_outputs=40, n_runs=2000, B=199, B_screen=199, fwer_reps=100, alt_reps=20 \u2014 deliberate reduction from the executed ~30 000-run / 23 495-output HPC scale. Preserves empirical input ranges, the 158-continuous + 2-binary structure, multivariate low-rank responses (PCA path), hierarchical residualized interaction discovery, and train-only selection. Candidate-family logic (BH screening -> fwer_max_stat_exact selection at \u03b1=0.05) unchanged.",
+  "n_inputs": 160,
   "n_outputs": 40,
   "n_runs": 2000,
   "B": 199,
   "B_screen": 199,
   "fwer_reps": 100,
-  "alpha": 0.1,
+  "alt_reps": 20,
+  "alpha": 0.05,
   "binary_input_names": [
     "FM.Use Agnostic FS Conversion",
     "OI.Use AEO Reference Oil"
