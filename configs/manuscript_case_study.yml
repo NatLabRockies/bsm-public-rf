@@ -28,7 +28,7 @@ case_study:
     source_of_truth: released_feature_catalog
     exact_catalog_row_count: 26560
     source_of_truth_status: frozen_repo_decision
-    first_order_rule: 160 exogenous inputs in original external interface order
+    first_order_rule: 158 continuously sampled inputs in external interface order (the two binary scenario switches are design/stratification variables, not first-order predictor candidates)
     interaction_rule: released_feature_catalog is authoritative for exact interaction membership
     nonlinear_library:
       families:
