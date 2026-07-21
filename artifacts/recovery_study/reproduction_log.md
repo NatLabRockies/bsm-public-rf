@@ -1,11 +1,11 @@
 # BSM Semi-Synthetic Recovery Study — Reproduction Log
 
-Generated: 2026-07-21T19:45:34.016184+00:00
+Generated: 2026-07-21T19:47:05.284610+00:00
 Master seed: 42
 
 ## Environment
 
-- bsm-public-rf commit: `08714d61c357e94cc8a382e5b2bd9297a5c3c989`
+- bsm-public-rf commit: `16f89e2353672df7117852afa07b483510aae88d`
 - rfm-pipeline pin: `{path = "../rfm-pipeline", editable = true}`
 
 ## Reproduce
