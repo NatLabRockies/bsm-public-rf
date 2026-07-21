@@ -126,3 +126,97 @@ dataset, and the current directive is small/local:
   `configs/manuscript_*_metadata.yml` / `docs/manuscript_*` via
   `pixi run python scripts/build_metadata.py` (needs the private FY25Q4 report
   DOCX in rfm-pipeline).
+
+---
+
+## Phase R4B — Rebuild the semi-synthetic recovery study on the SUBMITTED production workflow
+
+Context: the round-four adversarial audit
+(`bsm-public-rf-manuscript/docs/ANALYSIS_HANDOFF.md`, "Round-four audit of the
+current recovery attempt — not accepted"; REVIEW-0015/REVIEW-0018) rejects the
+current `scripts/run_bsm_recovery_study.py` because it runs a SEPARATE
+reimplementation (residualized-product score + PCA + quadratic-only transform)
+rather than the shipped production stages, and because of specific DGP/oracle/
+comparator/replication/FWER defects. The generic runner
+`rfm_pipeline.run_production_recovery_pipeline` / `ProductionRecoveryResult`
+(rfm-pipeline Phase R4-S02) drives the actual production stages
+(`condition_manuscript_outputs` → `screen_manuscript_empirical_null_terms` →
+`discover_manuscript_interactions` with `fwer_max_stat_exact` at α=0.05 →
+`discover_manuscript_nonlinear_transformations` → `select_manuscript_sparse_support`)
+on arbitrary in-memory data. This phase rewrites the BSM driver to call that
+production runner and fixes every listed defect. All BSM-specific code stays in
+this repo; no BSM constants are added to rfm-pipeline. Validation gate:
+`pixi run pytest tests/ --tb=short -q` (whole suite; do NOT weaken any test).
+
+Authoritative defect list to close (from the handoff round-four audit):
+1. Runs on 30 inputs while claiming the 160-input interface → run the full 160-input design (158 continuous + 2 binary).
+2. Substitute pipeline → call `rfm_pipeline.run_production_recovery_pipeline` (the shipped stages).
+3. Method changes (BH q=0.20, PCA ≤8) → use the submitted q=0.05 screen and 90%-variance PCA rule via the production specs.
+4. `alt_reps` declared but not executed → run the replication loop; keep one machine-readable record per replicate; report Monte-Carlo uncertainty.
+5. `correlated_redundant` uses independent uniforms → implement the declared correlation/redundancy mechanism and verify realized correlation.
+6. Misspecified sine omitted from truth ledger → every planted term (incl. out-of-library) appears in the truth support and recovery denominators.
+7. Train/eval share RNG/noise → share fixed coefficients/loadings but draw INDEPENDENT train and eval noise.
+8. FWER at α=0.10 → validate the submitted α=0.05; use a candidate-family size relevant to the procedure.
+9. False Wilson claim → do not assert interval coverage of the nominal rate as proof of control; use a prespecified calibration criterion and state uncertainty accurately.
+10. Oracle uses only main-effect columns → construct the oracle design from the COMPLETE planted algebraic support (mains + interactions + transforms).
+11. Elastic net on raw inputs at fixed penalty; proposed surrogate absent → all comparators use the same declared candidate library with training-only tuning and identical eval data; include the proposed selected-support workflow as its own comparator row.
+12. Reproduction log is a summary → produce clean-run evidence (env, commit, command, gate output, artifact hashes, replicate status).
+
+### Slice R4B-S01: Rebuild the driver on the production runner + fix DGP/oracle/comparator defects
+**Phase:** R4B
+**Depends on:** none
+**Estimated size:** large
+
+**Objective.** Replace the substitute pipeline in
+`scripts/run_bsm_recovery_study.py` with calls to
+`rfm_pipeline.run_production_recovery_pipeline` on the full 160-input BSM
+semi-synthetic design, and fix defects 1,2,3,5,6,7,8,10,11 above.
+
+**Files to modify:**
+- `scripts/run_bsm_recovery_study.py`
+- `tests/test_bsm_recovery_fwer.py` (update the gate to α=0.05 and production-stage usage — CORRECT the assertions to the valid procedure; do NOT weaken/skip/xfail)
+
+**Do NOT modify:** any other file under `tests/`; `configs/`.
+
+**Requirements (do NOT weaken tests):**
+- The `BSMInputDesign` keeps all 160 inputs (158 continuous + 2 binary); the study runs on all 160 (no 30-input subset).
+- `run_pipeline` delegates to `rfm_pipeline.run_production_recovery_pipeline(..., alpha=0.05, family_error_method="fwer_max_stat_exact")`; the residualized-product/quadratic-only reimplementation is removed. Screen uses q=0.05 and PCA the 90%-variance rule via the production specs.
+- `correlated_redundant` draws inputs with a documented, verifiable correlation/redundancy structure (e.g. a shared latent factor across a block of inputs); the driver records the realized correlation.
+- The truth ledger for each scenario includes EVERY planted term, including the out-of-library sine in `nonlinear_misspecified`; recovery denominators count it.
+- Train and eval responses share the fixed coefficients/loadings but use INDEPENDENT noise draws (no RNG reset reuse).
+- The oracle-OLS design is built from the full planted algebraic support (mains + planted interaction products + planted transforms), not raw mains only.
+- Comparators (oracle-OLS, a sparse/multitask linear method, a nonlinear surrogate) are fit on the SAME declared candidate library with training-only tuning and evaluated on identical eval data; add a row for the proposed selected-support workflow itself.
+- FWER is evaluated at α=0.05.
+
+**Acceptance criteria:**
+- [ ] `pixi run pytest tests/ --tb=short -q` passes.
+- [ ] `tests/test_bsm_recovery_fwer.py` asserts α=0.05 interaction-FWER control on the null scenarios and that the driver path calls `run_production_recovery_pipeline` (e.g. via a spy/monkeypatch or by asserting production-stage retained sets are present in the result).
+- [ ] `grep -n "run_production_recovery_pipeline" scripts/run_bsm_recovery_study.py` is non-empty; no residualized-product/quadratic-only reimplementation remains.
+- [ ] `grep` confirms the design still exposes 160 inputs and 2 binary names.
+
+### Slice R4B-S02: Execute replication loop, α=0.05 FWER with binomial CI, and clean reproduction log
+**Phase:** R4B
+**Depends on:** R4B-S01
+**Estimated size:** medium
+
+**Objective.** Close defects 4,9,12: run the declared replication loop with
+per-replicate records and Monte-Carlo uncertainty, report empirical interaction
+FWER at α=0.05 with a binomial (Wilson) CI under a prespecified calibration
+criterion, and emit clean-run reproduction evidence.
+
+**Files to modify:**
+- `scripts/run_bsm_recovery_study.py`
+- `tests/test_bsm_recovery_fwer.py` (add a replication/CI assertion if appropriate — do NOT weaken existing ones)
+
+**Requirements (do NOT weaken tests):**
+- Execute `alt_reps` alternative replicates per scenario and `fwer_reps` null replicates; write one machine-readable record per replicate to `artifacts/recovery_study/replicate_records.csv` (scenario, replicate index, seed, per-family selected/false counts, predictive metrics).
+- Aggregate with Monte-Carlo uncertainty; `fwer_calibration.csv` reports α=0.05, empirical FWER, Wilson CI, n_replicates, and a boolean `passes_calibration` per a PRESPECIFIED criterion (e.g. point estimate ≤ α + 3·SE); the driver does NOT claim control merely because a CI contains α.
+- `recovery_estimands.csv` aggregates precision/recall/FDP/exact-recovery/size per family across replicates (mean ± MC uncertainty), truth denominators including the out-of-library sine.
+- `comparator_metrics.csv` includes the proposed selected-support workflow row alongside oracle-OLS, sparse-linear, and nonlinear surrogate.
+- `reproduction_log.md` records: rfm-pipeline commit/pin, bsm-public-rf commit, exact `pixi run` command, `pixi run pytest tests/` gate result, master seed, per-artifact SHA-256 hashes, per-scenario replicate status (attempted/completed/failed), and the deliberate scale-reduction rationale.
+- `--quick` smoke mode keeps the gate fast; a full `--seed 42` run remains runnable locally in minutes.
+
+**Acceptance criteria:**
+- [ ] `pixi run pytest tests/ --tb=short -q` passes.
+- [ ] Running `--quick` writes `replicate_records.csv`, `fwer_calibration.csv` (with α=0.05 and `passes_calibration`), `recovery_estimands.csv`, `comparator_metrics.csv`, and a `reproduction_log.md` containing commit, command, gate result, and artifact hashes.
+- [ ] `fwer_calibration.csv` has more than one replicate per scenario (replication actually executed), and no code asserts control from CI coverage alone.
