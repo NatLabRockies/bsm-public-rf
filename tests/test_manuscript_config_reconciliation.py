@@ -16,6 +16,7 @@ import yaml
 REPO_ROOT = Path(__file__).resolve().parents[1]
 CONFIG = REPO_ROOT / "configs" / "manuscript_case_study.yml"
 FIGURES = REPO_ROOT / "figures"
+FIGURE_DATA = REPO_ROOT / "artifacts" / "figure_data"
 
 # Five figures referenced by the manuscript.
 MANUSCRIPT_FIGURES = [
@@ -87,3 +88,32 @@ def test_manuscript_figure_regenerated(name):
     path = FIGURES / name
     assert path.exists(), f"missing regenerated figure: {name}"
     assert path.stat().st_size > 1024, f"figure looks empty/truncated: {name}"
+
+
+def test_support_composition_figure_data_matches_canonical_counts(case_study):
+    """Support-composition figure data must break transforms out separately and
+    match the 123-feature canonical breakdown (regression for the 74/49/0 bug
+    where library transforms were folded into First Order)."""
+    import csv
+
+    fm = case_study["final_model"]
+    path = FIGURE_DATA / "figure_support_composition_data.csv"
+    assert path.exists(), "missing figure_support_composition_data.csv"
+    with path.open() as fh:
+        rows = {r["feature_type"]: int(r["n_features"]) for r in csv.DictReader(fh)}
+    assert rows.get("First Order") == fm["final_main_effect_count"] == 52
+    assert rows.get("Second Order") == fm["final_interaction_count"] == 49
+    assert rows.get("Non-Linear") == fm["final_transformation_count"] == 22
+    assert sum(rows.values()) == fm["final_predictor_count"] == 123
+
+
+def test_selected_by_module_figure_data_sums_to_final_support(case_study):
+    """Module-count figure data must sum to the final predictor count (123),
+    not the stale 132."""
+    import csv
+
+    path = FIGURE_DATA / "figure_selected_by_module_data.csv"
+    assert path.exists(), "missing figure_selected_by_module_data.csv"
+    with path.open() as fh:
+        total = sum(int(r["n_selected_inputs"]) for r in csv.DictReader(fh))
+    assert total == case_study["final_model"]["final_predictor_count"] == 123
