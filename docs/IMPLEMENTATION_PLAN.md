@@ -220,3 +220,13 @@ criterion, and emit clean-run reproduction evidence.
 - [ ] `pixi run pytest tests/ --tb=short -q` passes.
 - [ ] Running `--quick` writes `replicate_records.csv`, `fwer_calibration.csv` (with α=0.05 and `passes_calibration`), `recovery_estimands.csv`, `comparator_metrics.csv`, and a `reproduction_log.md` containing commit, command, gate result, and artifact hashes.
 - [ ] `fwer_calibration.csv` has more than one replicate per scenario (replication actually executed), and no code asserts control from CI coverage alone.
+
+### Pre-release follow-up (R4B)
+
+- `pixi.toml` resolves `rfm-pipeline` via a local editable path
+  (`{path = "../rfm-pipeline", editable = true}`) so the recovery study can use
+  the unpushed exact-maxT wiring (rfm-pipeline `8d18878`). Before any public
+  release, push that rfm-pipeline commit and repin `pixi.toml` to a fetchable
+  rev, then relock. The reproduction log records the current pin verbatim.
+- Full 30,000-run BSM production rerun with the exact interaction method
+  (to replace the main-result stand-in artifacts) remains TABLED (AUs).
