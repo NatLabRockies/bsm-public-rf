@@ -25,7 +25,7 @@ The BSM preprocessed simulation data required for full pipeline reproduction are
 
 A full reproduction requires these files **co-located in a single directory** with these **exact filenames** (the runner derives the data root from one file's parent and opens the rest by name):
 
-- `X.parquet` — input matrix (30 000 rows × 160 first-order BSM input columns)
+- `X.parquet` — input matrix (30 000 rows × 160 exogenous input columns: 158 continuous first-order features plus the two binary scenario switches `AFSC`/`UAEORO`, which define the four scenario strata and are excluded from the feature catalog)
 - `Y.parquet` — output matrix (30 000 rows × 23 495 scalar simulation outputs)
 - `all_input_metadata.parquet` — per-input column metadata (module, units, scenario flags)
 - `output_metadata.parquet` — per-output column metadata (module, derived quantity, units)
