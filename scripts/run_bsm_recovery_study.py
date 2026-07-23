@@ -2,12 +2,18 @@
 """BSM semi-synthetic recovery study.
 
 Prespecified ground-truth (semi-synthetic) study that validates the submitted
-interaction-discovery methodology on the **executed BSM input design**: the
-158-continuous + 2-binary, 160-column interface, with per-input empirical ranges
-taken from the published input metadata (Appendix A).  The estimands, empirical
-interaction-FWER, and comparator accounting are computed with the generic,
-case-study-agnostic ``rfm_pipeline.recovery_study`` API; only the input design,
-planted-truth construction, and scenario grid are BSM-specific and live here.
+interaction-discovery methodology on the **executed BSM first-order candidate
+design**: the 158 continuous inputs actually screened in production, with
+per-input empirical ranges taken from the published input metadata (Appendix A).
+The two binary scenario switches (AFSC/UAEORO) are part of the 160-input
+interface but are excluded from the first-order candidate set exactly as the
+production catalog excludes them (``generate_feature_catalog.py`` special
+columns); they are scenario/stratification variables, not predictor candidates,
+so the recovery study screens only the 158-continuous space production used.
+The estimands, empirical interaction-FWER, and comparator accounting are
+computed with the generic, case-study-agnostic ``rfm_pipeline.recovery_study``
+API; only the input design, planted-truth construction, and scenario grid are
+BSM-specific and live here.
 
 The candidate-family logic (marginal BH screening -> hierarchical residualized
 interaction scoring -> exact finite-permutation max-statistic FWER selection) is
@@ -19,12 +25,12 @@ Design notes
 ------------
 * Continuous inputs are resampled independently over their published
   ``[min_sample_value, max_sample_value]`` ranges, matching the executed BSM
-  Monte-Carlo sensitivity design (independent factor sampling).  The two binary
-  scenario switches are drawn Bernoulli(0.5).  This preserves the empirical
-  ranges and the 158-continuous + 2-binary structure without redistributing the
-  raw 30k-run design.
-* Planted signals cover continuous inputs, both binary inputs, binary-continuous
-  interactions, and the binary-binary interaction, per the method-evidence
+  Monte-Carlo sensitivity design (independent factor sampling).  This preserves
+  the empirical ranges and the 158-continuous first-order candidate structure
+  without redistributing the raw 30k-run design.  The binary scenario switches
+  are excluded from the candidate design (see module docstring).
+* Planted signals cover continuous main effects, continuous-continuous
+  interactions, and one-variable transformations, per the method-evidence
   requirement.  The planted support and coefficient-generation procedure are
   fixed before recovery results are examined.
 * Independent train/test responses are generated per replicate; all screening,
@@ -108,19 +114,22 @@ def load_bsm_input_design(metadata_path: Path | str = _DEFAULT_METADATA) -> BSMI
     )
 
 
-def _subset_design(design: BSMInputDesign, n_inputs: int) -> BSMInputDesign:
-    """Subset to *n_inputs* columns, always retaining the 2 binary switches."""
-    n_bin = len(design.binary_input_names)
-    n_cont = max(0, n_inputs - n_bin)
-    cont = design.continuous_input_names[:n_cont]
-    binary = list(design.binary_input_names)
-    names = cont + binary
+def first_order_candidate_design(design: BSMInputDesign) -> BSMInputDesign:
+    """Return the 158-continuous first-order candidate design.
+
+    The two binary scenario switches (AFSC/UAEORO) are excluded from the
+    first-order candidate set exactly as the production catalog excludes them
+    (``generate_feature_catalog.py`` drops them as special columns). They are
+    scenario/stratification variables, not predictor candidates, so the recovery
+    study screens only the continuous first-order space production actually used.
+    """
+    cont = list(design.continuous_input_names)
     return BSMInputDesign(
-        input_names=names,
+        input_names=cont,
         continuous_input_names=cont,
-        binary_input_names=binary,
-        lower={k: design.lower[k] for k in names},
-        upper={k: design.upper[k] for k in names},
+        binary_input_names=[],
+        lower={k: design.lower[k] for k in cont},
+        upper={k: design.upper[k] for k in cont},
     )
 
 
@@ -215,7 +224,7 @@ class BSMScenario:
     name: str
     description: str
     n_main: int
-    interaction_kinds: tuple[str, ...]  # each of "cc" (cont-cont), "cb", "bb"
+    interaction_kinds: tuple[str, ...]  # each of "cc" (continuous-continuous)
     n_nonlinear: int
     snr: float
     misspecified: bool = False
@@ -236,8 +245,8 @@ def prespecified_bsm_scenarios() -> list[BSMScenario]:
         BSMScenario(
             name="interaction_null",
             description=(
-                "Main effects (including both binary switches) and a nonlinear "
-                "main-effect transform, but no true interactions."
+                "Continuous main effects and a nonlinear main-effect transform, "
+                "but no true interactions."
             ),
             n_main=4,
             interaction_kinds=(),
@@ -247,11 +256,11 @@ def prespecified_bsm_scenarios() -> list[BSMScenario]:
         BSMScenario(
             name="sparse_strong_hierarchical",
             description=(
-                "Sparse strong-signal hierarchical model: main + continuous-continuous "
-                "and continuous-binary interactions + a transformation term."
+                "Sparse strong-signal hierarchical model: continuous main effects + "
+                "a continuous-continuous interaction + a transformation term."
             ),
             n_main=4,
-            interaction_kinds=("cc", "cb"),
+            interaction_kinds=("cc",),
             n_nonlinear=1,
             snr=12.0,
         ),
@@ -259,7 +268,7 @@ def prespecified_bsm_scenarios() -> list[BSMScenario]:
             name="weak_signal",
             description="Same hierarchical support as sparse_strong but low signal-to-noise.",
             n_main=4,
-            interaction_kinds=("cc", "cb"),
+            interaction_kinds=("cc",),
             n_nonlinear=1,
             snr=3.0,
         ),
@@ -270,18 +279,18 @@ def prespecified_bsm_scenarios() -> list[BSMScenario]:
                 "inactive predictors) stressing selection precision."
             ),
             n_main=8,
-            interaction_kinds=("cc", "cb"),
+            interaction_kinds=("cc",),
             n_nonlinear=0,
             snr=8.0,
         ),
         BSMScenario(
             name="pure_interaction",
             description=(
-                "Pure-interaction signals (continuous-continuous and binary-binary) "
-                "with negligible marginal main effects; a required screen stress test."
+                "Pure continuous-continuous interaction signal with negligible "
+                "marginal main effects; a required screen stress test."
             ),
             n_main=0,
-            interaction_kinds=("cc", "bb"),
+            interaction_kinds=("cc",),
             n_nonlinear=0,
             snr=10.0,
             marginal_main_scale=0.0,
@@ -310,29 +319,15 @@ def _planted_support(
     (e.g. the sine transform in nonlinear_misspecified).
     """
     cont = design.continuous_input_names
-    binr = design.binary_input_names
 
     main_names: list[str] = []
     if scenario.n_main > 0:
-        # Prefer at least one binary switch among the mains when available.
-        picks: list[str] = []
-        if scenario.name == "interaction_null" and len(binr) >= 2:
-            picks = [cont[0], cont[1], binr[0], binr[1]]
-        else:
-            n_cont_main = max(0, scenario.n_main - (1 if binr else 0))
-            picks = list(cont[:n_cont_main])
-            if binr:
-                picks.append(binr[0])
-        main_names = picks[: scenario.n_main]
+        main_names = list(cont[: scenario.n_main])
 
     interactions: list[tuple[str, str]] = []
     for kind in scenario.interaction_kinds:
         if kind == "cc" and len(cont) >= 2:
             interactions.append((cont[0], cont[1]))
-        elif kind == "cb" and cont and binr:
-            interactions.append((cont[2 % len(cont)], binr[0]))
-        elif kind == "bb" and len(binr) >= 2:
-            interactions.append((binr[0], binr[1]))
 
     nonlinear_names: list[str] = []
     if scenario.n_nonlinear > 0 and cont:
@@ -376,7 +371,7 @@ class StudyScale:
 
 
 _QUICK_SCALE = StudyScale(
-    n_inputs=160,
+    n_inputs=158,
     n_outputs=6,
     n_runs=300,
     B=19,
@@ -384,11 +379,11 @@ _QUICK_SCALE = StudyScale(
     fwer_reps=10,
     alt_reps=1,
     alpha=0.05,
-    description="quick-smoke (full 160-input design)",
+    description="quick-smoke (158-continuous first-order candidate design)",
 )
 
 _FULL_SCALE = StudyScale(
-    n_inputs=160,
+    n_inputs=158,
     n_outputs=40,
     n_runs=2000,
     B=199,
@@ -397,12 +392,13 @@ _FULL_SCALE = StudyScale(
     alt_reps=20,
     alpha=0.05,
     description=(
-        "reduced-local BSM design: full 160-input design (158-continuous + 2-binary), "
-        "n_outputs=40, n_runs=2000, B=199, B_screen=199, fwer_reps=100, alt_reps=20 — "
-        "deliberate reduction from the executed ~30 000-run / 23 495-output HPC scale. "
-        "Preserves empirical input ranges, the 158-continuous + 2-binary structure, "
-        "multivariate low-rank responses (PCA path), hierarchical residualized interaction "
-        "discovery, and train-only selection. Candidate-family logic (BH screening -> "
+        "reduced-local BSM design: 158-continuous first-order candidate design "
+        "(the 2 binary scenario switches are excluded from the candidate set, as in "
+        "production), n_outputs=40, n_runs=2000, B=199, B_screen=199, fwer_reps=100, "
+        "alt_reps=20 — deliberate reduction from the executed ~30 000-run / 23 495-output "
+        "HPC scale. Preserves empirical input ranges and the 158-continuous first-order "
+        "structure, multivariate low-rank responses (PCA path), hierarchical residualized "
+        "interaction discovery, and train-only selection. Candidate-family logic (BH screening -> "
         "fwer_max_stat_exact selection at α=0.05) unchanged."
     ),
 )
@@ -502,7 +498,8 @@ def generate_bsm_dataset(
     design: BSMInputDesign, scenario: BSMScenario, scale: StudyScale, seed: int
 ) -> GeneratedData:
     """Generate one semi-synthetic replicate (independent train/test)."""
-    # Defect 1 fix: use the full 160-input design (no subsetting).
+    # The design passed here is the 158-continuous first-order candidate design
+    # (binary scenario switches excluded, as in the production feature catalog).
     support, spec = _planted_support(scenario, design)
     rng = np.random.default_rng(seed)
 
@@ -722,7 +719,7 @@ def run_fwer_replicates(
     scenario: BSMScenario, scale: StudyScale, master_rng: np.random.Generator
 ) -> list[int]:
     """Run *scale.fwer_reps* replicates; return per-replicate false interaction counts."""
-    design = load_bsm_input_design()
+    design = first_order_candidate_design(load_bsm_input_design())
     flags: list[int] = []
     for _ in range(scale.fwer_reps):
         rep_seed = int(master_rng.integers(2**31))
@@ -913,6 +910,7 @@ def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
     scale = _QUICK_SCALE if args.quick else _FULL_SCALE
     design = load_bsm_input_design()
+    candidate_design = first_order_candidate_design(design)
     scenarios = prespecified_bsm_scenarios()
     out = args.output_dir
 
@@ -948,7 +946,7 @@ def main(argv: list[str] | None = None) -> int:
         
         if scenario.name in _NULL_INTERACTION_SCENARIOS:
             # Null scenarios: run fwer_reps replicates, collect FWER calibration.
-            reps, calib = _run_null_replicates(scenario, scale, master, design)
+            reps, calib = _run_null_replicates(scenario, scale, master, candidate_design)
             all_replicate_records.extend(reps)
             fwer_rows.append(calib)
             print(
@@ -959,13 +957,13 @@ def main(argv: list[str] | None = None) -> int:
             )
         else:
             # Alternative scenarios: run alt_reps replicates, aggregate estimands.
-            reps, agg_est = _run_alternative_replicates(scenario, scale, master, design)
+            reps, agg_est = _run_alternative_replicates(scenario, scale, master, candidate_design)
             all_replicate_records.extend(reps)
             estimand_rows.extend(agg_est)
             
             # Also collect a single representative replicate for comparators and retention.
             rep_seed = int(master.integers(2**31))
-            data = generate_bsm_dataset(design, scenario, scale, rep_seed)
+            data = generate_bsm_dataset(candidate_design, scenario, scale, rep_seed)
             result = run_pipeline(data, scale, np.random.default_rng(rep_seed))
             
             for stage, counts in result["stage_retention"].items():
@@ -995,6 +993,9 @@ def main(argv: list[str] | None = None) -> int:
         "master_seed": args.seed,
         "scale": scale.description,
         "n_inputs": scale.n_inputs,
+        "n_candidate_inputs": scale.n_inputs,
+        "n_interface_inputs": design.n_inputs,
+        "candidate_space": "158-continuous first-order (binary scenario switches excluded)",
         "n_outputs": scale.n_outputs,
         "n_runs": scale.n_runs,
         "B": scale.B,
@@ -1002,7 +1003,8 @@ def main(argv: list[str] | None = None) -> int:
         "fwer_reps": scale.fwer_reps,
         "alt_reps": scale.alt_reps,
         "alpha": scale.alpha,
-        "binary_input_names": design.binary_input_names,
+        "binary_scenario_switches": design.binary_input_names,
+        "binary_switches_in_candidate_set": False,
         "scenarios": [{"name": s.name, "description": s.description} for s in scenarios],
     }
     (out / "recovery_manifest.json").write_text(json.dumps(manifest, indent=2))
@@ -1178,12 +1180,18 @@ def _write_reproduction_log(
         f"({len(design.continuous_input_names)} continuous + "
         f"{len(design.binary_input_names)} binary scenario switches).",
         f"- Binary scenario switches: {', '.join(design.binary_input_names)}.",
+        "- First-order candidate design (screened by the recovery study): "
+        f"{len(design.continuous_input_names)} continuous inputs. The two binary "
+        "scenario switches are excluded from the candidate set exactly as the "
+        "production feature catalog excludes them (generate_feature_catalog.py "
+        "special columns); they are scenario/stratification variables, not "
+        "predictor candidates.",
         "- Continuous inputs resampled independently over their published "
         "[min_sample_value, max_sample_value] ranges (configs/"
-        "manuscript_input_metadata.yml); binary switches drawn Bernoulli(0.5). "
-        "This matches the executed independent-factor Monte-Carlo sensitivity "
-        "design and preserves the empirical ranges and 158+2 structure without "
-        "redistributing the raw run design.",
+        "manuscript_input_metadata.yml). This matches the executed independent-"
+        "factor Monte-Carlo sensitivity design and preserves the empirical ranges "
+        "and 158-continuous first-order structure without redistributing the raw "
+        "run design.",
         "",
         "## Candidate-family logic (unchanged from the submitted workflow)",
         "",

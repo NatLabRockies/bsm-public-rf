@@ -1,16 +1,20 @@
 """Keystone gate: the BSM semi-synthetic recovery study must control the
 interaction family-wise error rate under the null-interaction scenarios.
 
-The BSM design preserves the executed 158-continuous + 2-binary input structure.
-Scenarios ``global_null`` and ``interaction_null`` contain main effects (and, for
-``interaction_null``, nonlinear main-effect transforms) but **no true
-interactions**, so a faithful hierarchical interaction-discovery stage must
-control the interaction FWER at the configured ``alpha`` -- i.e. it must not let
-main-effect (or binary main-effect) signal leak into the interaction scores.
+The recovery study screens the 158-continuous first-order candidate design --
+the space production actually screened. The two binary scenario switches
+(AFSC/UAEORO) are part of the 160-input interface but are excluded from the
+first-order candidate set exactly as the production feature catalog excludes
+them; they are scenario/stratification variables, not predictor candidates.
+Scenarios ``global_null`` and ``interaction_null`` contain continuous main
+effects (and, for ``interaction_null``, a nonlinear main-effect transform) but
+**no true interactions**, so a faithful hierarchical interaction-discovery stage
+must control the interaction FWER at the configured ``alpha`` -- i.e. it must not
+let main-effect signal leak into the interaction scores.
 
-This mirrors the generic rfm-pipeline RS-S04 gate but on the BSM 160-column
-design, so the manuscript's method-evidence claim is validated on the actual
-case-study input structure.
+This mirrors the generic rfm-pipeline RS-S04 gate but on the BSM 158-continuous
+first-order candidate design, so the manuscript's method-evidence claim is
+validated on the actual case-study candidate structure.
 """
 
 from __future__ import annotations
@@ -46,7 +50,7 @@ def test_bsm_interaction_null_fwer_controlled(driver, scenario_name):
 
     alpha = 0.05
     scale = driver.StudyScale(
-        n_inputs=160,
+        n_inputs=158,
         n_outputs=12,
         n_runs=500,
         B=99,
@@ -68,7 +72,7 @@ def test_bsm_interaction_null_fwer_controlled(driver, scenario_name):
     assert stats["fwer_proportion"] <= alpha + 0.10, (
         f"{scenario_name}: empirical BSM interaction-FWER "
         f"{stats['fwer_proportion']:.3f} exceeds alpha={alpha} "
-        f"(main-effect / binary leakage into interaction scores?); flags={flags}"
+        f"(main-effect leakage into interaction scores?); flags={flags}"
     )
 
 
@@ -76,7 +80,7 @@ def test_bsm_replication_executed(driver, tmp_path):
     """Replication loops must execute alt_reps and fwer_reps, writing replicate records."""
     # Smoke-test: run a tiny scale with >1 replicate and verify records are written.
     scale = driver.StudyScale(
-        n_inputs=160, n_outputs=4, n_runs=100, B=9, B_screen=9,
+        n_inputs=158, n_outputs=4, n_runs=100, B=9, B_screen=9,
         fwer_reps=2, alt_reps=2, alpha=0.05, description="replication-smoke"
     )
     import sys
@@ -146,6 +150,16 @@ def test_bsm_design_has_two_binary_inputs(driver):
     assert len(design.continuous_input_names) == 158
 
 
+def test_first_order_candidate_design_excludes_binaries(driver):
+    """The first-order candidate design must be the 158 continuous inputs, no binaries."""
+    design = driver.load_bsm_input_design()
+    candidate = driver.first_order_candidate_design(design)
+    assert candidate.n_inputs == 158
+    assert candidate.binary_input_names == []
+    assert len(candidate.continuous_input_names) == 158
+    assert candidate.continuous_input_names == design.continuous_input_names
+
+
 def test_bsm_driver_uses_production_pipeline(driver):
     """The driver must call run_production_recovery_pipeline, not a substitute."""
     import inspect
@@ -157,11 +171,13 @@ def test_bsm_driver_uses_production_pipeline(driver):
     design = driver.load_bsm_input_design()
     scenario = driver.prespecified_bsm_scenarios()[0]
     scale = driver.StudyScale(
-        n_inputs=160, n_outputs=6, n_runs=100, B=9, B_screen=9,
+        n_inputs=158, n_outputs=6, n_runs=100, B=9, B_screen=9,
         fwer_reps=1, alt_reps=1, alpha=0.05, description="smoke"
     )
     import numpy as np
-    data = driver.generate_bsm_dataset(design, scenario, scale, seed=42)
+    data = driver.generate_bsm_dataset(
+        driver.first_order_candidate_design(design), scenario, scale, seed=42
+    )
     result = driver.run_pipeline(
         data, scale, np.random.default_rng(42), with_comparators=False
     )

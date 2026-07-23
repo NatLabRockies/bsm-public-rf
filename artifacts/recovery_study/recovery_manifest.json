@@ -1,8 +1,11 @@
 {
-  "generated": "2026-07-21T18:26:12.972241+00:00",
+  "generated": "2026-07-22T23:48:27.940633+00:00",
   "master_seed": 42,
-  "scale": "reduced-local BSM design: full 160-input design (158-continuous + 2-binary), n_outputs=40, n_runs=2000, B=199, B_screen=199, fwer_reps=100, alt_reps=20 \u2014 deliberate reduction from the executed ~30 000-run / 23 495-output HPC scale. Preserves empirical input ranges, the 158-continuous + 2-binary structure, multivariate low-rank responses (PCA path), hierarchical residualized interaction discovery, and train-only selection. Candidate-family logic (BH screening -> fwer_max_stat_exact selection at \u03b1=0.05) unchanged.",
-  "n_inputs": 160,
+  "scale": "reduced-local BSM design: 158-continuous first-order candidate design (the 2 binary scenario switches are excluded from the candidate set, as in production), n_outputs=40, n_runs=2000, B=199, B_screen=199, fwer_reps=100, alt_reps=20 \u2014 deliberate reduction from the executed ~30 000-run / 23 495-output HPC scale. Preserves empirical input ranges and the 158-continuous first-order structure, multivariate low-rank responses (PCA path), hierarchical residualized interaction discovery, and train-only selection. Candidate-family logic (BH screening -> fwer_max_stat_exact selection at \u03b1=0.05) unchanged.",
+  "n_inputs": 158,
+  "n_candidate_inputs": 158,
+  "n_interface_inputs": 160,
+  "candidate_space": "158-continuous first-order (binary scenario switches excluded)",
   "n_outputs": 40,
   "n_runs": 2000,
   "B": 199,
@@ -10,10 +13,11 @@
   "fwer_reps": 100,
   "alt_reps": 20,
   "alpha": 0.05,
-  "binary_input_names": [
+  "binary_scenario_switches": [
     "FM.Use Agnostic FS Conversion",
     "OI.Use AEO Reference Oil"
   ],
+  "binary_switches_in_candidate_set": false,
   "scenarios": [
     {
       "name": "global_null",
@@ -21,11 +25,11 @@
     },
     {
       "name": "interaction_null",
-      "description": "Main effects (including both binary switches) and a nonlinear main-effect transform, but no true interactions."
+      "description": "Continuous main effects and a nonlinear main-effect transform, but no true interactions."
     },
     {
       "name": "sparse_strong_hierarchical",
-      "description": "Sparse strong-signal hierarchical model: main + continuous-continuous and continuous-binary interactions + a transformation term."
+      "description": "Sparse strong-signal hierarchical model: continuous main effects + a continuous-continuous interaction + a transformation term."
     },
     {
       "name": "weak_signal",
@@ -37,7 +41,7 @@
     },
     {
       "name": "pure_interaction",
-      "description": "Pure-interaction signals (continuous-continuous and binary-binary) with negligible marginal main effects; a required screen stress test."
+      "description": "Pure continuous-continuous interaction signal with negligible marginal main effects; a required screen stress test."
     },
     {
       "name": "nonlinear_misspecified",

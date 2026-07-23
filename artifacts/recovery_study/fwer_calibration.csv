@@ -1,3 +1,3 @@
 scenario,alpha,fwer_proportion,wilson_ci_lower,wilson_ci_upper,n_replicates,n_false_pair_replicates,mean_false_pair_count,passes_calibration
-global_null,0.05,0.01,0.001767432064140647,0.054486196178705315,100,1,0.02,True
-interaction_null,0.05,0.03,0.010254524024038925,0.08451936429052762,100,3,0.03,True
+global_null,0.05,0.0,0.0,0.03699349820698568,100,0,0.0,True
+interaction_null,0.05,0.01,0.001767432064140647,0.054486196178705315,100,1,0.01,True
