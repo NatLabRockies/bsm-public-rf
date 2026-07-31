@@ -1,8 +1,8 @@
 """Reconciliation gate: case-study config and manuscript figures must match
-the corrected 123-feature canonical run.
+the corrected 245-feature canonical run.
 
 Written test-first for slice PA-S01. Fails until
-``configs/manuscript_case_study.yml`` is reconciled from the old 132-feature
+``configs/manuscript_case_study.yml`` is reconciled from the old 123-feature
 values and the manuscript figure PDFs are regenerated. Runs without HPC access
 or BSM input data.
 """
@@ -36,10 +36,10 @@ def case_study() -> dict:
 
 def test_final_model_counts(case_study):
     fm = case_study["final_model"]
-    assert fm["final_predictor_count"] == 123
-    assert fm["final_main_effect_count"] == 52
-    assert fm["final_interaction_count"] == 49
-    assert fm["final_transformation_count"] == 22
+    assert fm["final_predictor_count"] == 245
+    assert fm["final_main_effect_count"] == 63
+    assert fm["final_interaction_count"] == 159
+    assert fm["final_transformation_count"] == 23
     # Support composition must sum to the final predictor count.
     assert (
         fm["final_main_effect_count"]
@@ -51,10 +51,10 @@ def test_final_model_counts(case_study):
 
 def test_final_model_nrmse(case_study):
     fm = case_study["final_model"]
-    assert fm["intermediate_penalized_holdout_nrmse"] == pytest.approx(0.0706, abs=5e-5)
-    assert fm["final_ols_holdout_nrmse"] == pytest.approx(0.0714, abs=5e-5)
-    assert fm["final_ols_holdout_nrmse_ci_lower"] == pytest.approx(0.0699, abs=5e-5)
-    assert fm["final_ols_holdout_nrmse_ci_upper"] == pytest.approx(0.0724, abs=5e-5)
+    assert fm["intermediate_penalized_holdout_nrmse"] == pytest.approx(0.0682, abs=5e-5)
+    assert fm["final_ols_holdout_nrmse"] == pytest.approx(0.0679, abs=5e-5)
+    assert fm["final_ols_holdout_nrmse_ci_lower"] == pytest.approx(0.0663, abs=5e-5)
+    assert fm["final_ols_holdout_nrmse_ci_upper"] == pytest.approx(0.0690, abs=5e-5)
 
 
 def test_stage_counts(case_study):
@@ -63,17 +63,17 @@ def test_stage_counts(case_study):
         == 17
     )
     assert case_study["empirical_null_screen"]["retained_terms"] == 70
-    assert case_study["interaction_discovery"]["retained_pairs"] == 62
+    assert case_study["interaction_discovery"]["retained_pairs"] == 272
     assert case_study["nonlinear_discovery"]["identified_transformations"] == 25
-    assert case_study["nonlinear_discovery"]["final_support_transformations"] == 22
+    assert case_study["nonlinear_discovery"]["final_support_transformations"] == 23
     assert (
-        case_study["sparse_selection"]["source_selected_feature_count_reference"] == 157
+        case_study["sparse_selection"]["source_selected_feature_count_reference"] == 360
     )
 
 
 def test_no_stale_numbers(case_study):
     fm = case_study["final_model"]
-    stale = {132, 172, 54, 29}
+    stale = {132, 172, 123, 52, 49, 22, 157, 34, 54, 29}
     for key in (
         "final_predictor_count",
         "final_main_effect_count",
@@ -92,7 +92,7 @@ def test_manuscript_figure_regenerated(name):
 
 def test_support_composition_figure_data_matches_canonical_counts(case_study):
     """Support-composition figure data must break transforms out separately and
-    match the 123-feature canonical breakdown (regression for the 74/49/0 bug
+    match the 245-feature canonical breakdown (regression for the 74/49/0 bug
     where library transforms were folded into First Order)."""
     import csv
 
@@ -101,19 +101,19 @@ def test_support_composition_figure_data_matches_canonical_counts(case_study):
     assert path.exists(), "missing figure_support_composition_data.csv"
     with path.open() as fh:
         rows = {r["feature_type"]: int(r["n_features"]) for r in csv.DictReader(fh)}
-    assert rows.get("First Order") == fm["final_main_effect_count"] == 52
-    assert rows.get("Second Order") == fm["final_interaction_count"] == 49
-    assert rows.get("Non-Linear") == fm["final_transformation_count"] == 22
-    assert sum(rows.values()) == fm["final_predictor_count"] == 123
+    assert rows.get("First Order") == fm["final_main_effect_count"] == 63
+    assert rows.get("Second Order") == fm["final_interaction_count"] == 159
+    assert rows.get("Non-Linear") == fm["final_transformation_count"] == 23
+    assert sum(rows.values()) == fm["final_predictor_count"] == 245
 
 
 def test_selected_by_module_figure_data_sums_to_final_support(case_study):
-    """Module-count figure data must sum to the final predictor count (123),
-    not the stale 132."""
+    """Module-count figure data must sum to the final predictor count (245),
+    not the stale 123/132."""
     import csv
 
     path = FIGURE_DATA / "figure_selected_by_module_data.csv"
     assert path.exists(), "missing figure_selected_by_module_data.csv"
     with path.open() as fh:
         total = sum(int(r["n_selected_inputs"]) for r in csv.DictReader(fh))
-    assert total == case_study["final_model"]["final_predictor_count"] == 123
+    assert total == case_study["final_model"]["final_predictor_count"] == 245

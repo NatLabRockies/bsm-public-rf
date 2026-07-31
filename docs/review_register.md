@@ -4,6 +4,19 @@ Durable record of audit findings requiring follow-up. Newest first.
 
 ______________________________________________________________________
 
+## 2026-07-30 — Corrected 30k run promoted: canonical re-baseline 123 → 245
+
+- **Severity:** HIGH (headline scientific numbers). The corrected main-effect-conditioned interaction method (rfm-pipeline 0965994) 30k Kestrel run (`publication_full_dataset_distributed_20260723`) supersedes the prior 123-feature canonical run. Artifacts, canonical config, consistency tests, and the manuscript were re-baselined.
+- **Number changes (old 123-run → corrected 245-run):** final predictors 123→**245** (main 52→**63**, interaction 49→**159**, transformation 22→**23**); enriched candidate 157→**367** (70 first-order + 272 interactions + 25 transforms); stable/HC3-retained 157→**360**; delta-pruned 34→**115**; interaction pairs discovered 62→**272**; holdout NRMSE 0.0714→**0.0679** (CI [0.0699,0.0724]→**[0.0663,0.0690]**); penalized OLS 0.0706→**0.0682**. Unchanged: 23,495/9,954 outputs, 17 PCA comps, 70 screened terms, null 0.1653, main-effects/screened OLS 0.0812, seed 123.
+- **NARRATIVE CHANGE requiring author review:** old text claimed "the marginal-impact pruning step is the *only* stage that removes enriched terms." In the corrected run sparse selection + stability also removes 7 terms (367→360), so §Results and §Reduction-counts prose were rewritten to state both sparse-selection (7) and delta-pruning (115) remove terms while HC3 removes none. Interactions are now the majority of the support (159/245 = 65%). Author should confirm the reframing reads correctly.
+- **Tooling fix (`scripts/build_metadata.py`):** `_strip_transform` / `cross_reference_inputs` only handled prefix transform naming (`sqrt_x`); the pipeline emits suffixes (`x_sqrt/_sq/_log1p/_inv`), so 23/245 transform features were mislabeled `identity` and self-referenced their base input. Added suffix handling + focused tests (`tests/test_build_metadata_transforms.py`, 10 pass). Metadata regenerated: 0/245 unmatched.
+- **Stale artifact REMOVED:** `artifacts/final_model/feature_drop_noref_nrmse_impact_full30k.csv` (506 rows, prior 132-model) was an orphaned one-off diagnostic — the corrected pipeline does not emit it (Kestrel `feature_pruning` stage produces only `feature_pruning_impact.csv`), it is not manuscript-cited, not referenced by any test or reproduce script, and is not regenerable without a bespoke full-30k-data script. Removed from the release bundle (`git rm`) and dropped from the final_model README rather than ship stale/non-reproducible values.
+- **Config-echo correction:** `final_ols_summary.csv` carried pipeline-echoed `manuscript_*_reference` cells = 132/0.0721 (from a stale Kestrel case-study config, matching neither canonical). Corrected to 245/0.0679 to match the re-baselined manuscript; actual run outputs untouched.
+- **Validation:** full bsm-public-rf suite 53 pass (incl. re-baselined `test_artifact_bundle_consistency.py`, `test_manuscript_config_reconciliation.py`). Figures + metadata regenerated via `pixi run reproduce-artifacts` / `build_metadata.py`.
+- **Disposition:** artifacts + config + tests updated in bsm-public-rf; `manuscript.tex` updated in bsm-public-rf-manuscript. Both **local only, uncommitted** (advisory repo — awaiting owner approval to commit).
+
+______________________________________________________________________
+
 ## 2026-06-07 — Round 21: HPC reduce entrypoint imports absent tool module
 
 - **Severity:** HIGH (when invoked from a pip-installed rfm-pipeline). `pixi run rfm-hpc-reduce --help` failed at import time in both rfm-pipeline (source tree) and bsm-public-rf (pip install): pinned `rfm_pipeline.hpc_reduce` imports `tools.run_manuscript_pipeline`, but `tools/` is not part of the installed package.

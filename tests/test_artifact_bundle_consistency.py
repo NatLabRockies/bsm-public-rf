@@ -2,7 +2,7 @@
 
 These tests validate that the artifact bundle shipped in
 ``artifacts/`` is internally consistent and matches the values cited
-in the manuscript (corrected 123-feature canonical run). They run
+in the manuscript (corrected 245-feature canonical run). They run
 without HPC access or BSM input data and exist so reviewers can verify
 the release bundle before attempting a full reproduction run.
 
@@ -25,15 +25,15 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 ARTIFACTS = REPO_ROOT / "artifacts"
 
 # Manuscript (JDS submission) reference values — corrected 123-feature
-# canonical run (157 enriched -> 34 delta-pruned -> 123 final).
+# canonical run (360 stable-support -> 115 delta-pruned -> 245 final).
 MANUSCRIPT_TABLE2 = {
     "n_retained_outputs": 23495,
     "n_variance_filtered_outputs": 9954,
-    "n_prefilter_features": 157,
-    "n_final_features": 123,
-    "n_pruning_removed_features": 34,
+    "n_prefilter_features": 360,
+    "n_final_features": 245,
+    "n_pruning_removed_features": 115,
 }
-MANUSCRIPT_HOLDOUT_NRMSE = 0.0714
+MANUSCRIPT_HOLDOUT_NRMSE = 0.0679
 MANUSCRIPT_NULL_NRMSE = 0.1653
 
 
@@ -58,8 +58,8 @@ def test_final_ols_summary_matches_manuscript():
     assert row["null_mean_holdout_nrmse"] == pytest.approx(
         MANUSCRIPT_NULL_NRMSE, abs=5e-4
     )
-    assert row["manuscript_final_predictor_count_reference"] == 123
-    assert row["manuscript_final_ols_holdout_nrmse_reference"] == pytest.approx(0.0714)
+    assert row["manuscript_final_predictor_count_reference"] == 245
+    assert row["manuscript_final_ols_holdout_nrmse_reference"] == pytest.approx(0.0679)
 
 
 def test_ablation_table_matches_manuscript():
@@ -69,8 +69,8 @@ def test_ablation_table_matches_manuscript():
         "null_mean": 0.1653,
         "main_effects_ols": 0.0812,
         "screened_ols": 0.0812,
-        "penalized_ols": 0.0706,
-        "final_ols": 0.0714,
+        "penalized_ols": 0.0682,
+        "final_ols": 0.0679,
     }
     for model, target in expected.items():
         assert model in by_model, f"missing ablation model: {model}"
@@ -86,22 +86,22 @@ def test_workflow_stage_summary_matches_manuscript():
     assert int(rows[("output_conditioning", "retained_scalar_outputs")]) == 9954
     assert int(rows[("output_conditioning", "retained_pca_components")]) == 17
     assert int(rows[("empirical_null_screening", "retained_terms")]) == 70
-    assert int(rows[("interaction_discovery", "retained_pairs")]) == 62
+    assert int(rows[("interaction_discovery", "retained_pairs")]) == 272
     assert int(rows[("nonlinear_discovery", "retained_transformations")]) == 25
-    assert int(rows[("sparse_selection_and_stability", "final_stable_support_terms")]) == 157
-    assert int(rows[("final_inferential_filter", "hc3_retained_terms")]) == 157
-    assert int(rows[("feature_pruning", "removed_terms_after_hc3")]) == 34
-    assert float(rows[("final_ols", "holdout_nrmse")]) == pytest.approx(0.0714, abs=5e-4)
+    assert int(rows[("sparse_selection_and_stability", "final_stable_support_terms")]) == 360
+    assert int(rows[("final_inferential_filter", "hc3_retained_terms")]) == 360
+    assert int(rows[("feature_pruning", "removed_terms_after_hc3")]) == 115
+    assert float(rows[("final_ols", "holdout_nrmse")]) == pytest.approx(0.0679, abs=5e-4)
 
 
 def test_final_support_features_count():
     df = _read_csv("final_model/final_support_features.csv")
-    assert len(df) == 123, f"expected 123 final support features, got {len(df)}"
+    assert len(df) == 245, f"expected 245 final support features, got {len(df)}"
 
 
 def test_prefilter_support_features_count():
     df = _read_csv("final_model/prefilter_support_features.csv")
-    assert len(df) == 157, f"expected 157 enriched features, got {len(df)}"
+    assert len(df) == 360, f"expected 360 enriched features, got {len(df)}"
 
 
 def test_coefficient_matrix_shape():
@@ -109,7 +109,7 @@ def test_coefficient_matrix_shape():
     # Either 23495 rows × (123 + id col) or 123 rows × (23495 + id col)
     # depending on orientation. Accept both and just sanity-check.
     n_outputs = 23495
-    n_features = 123
+    n_features = 245
     rows, cols = df.shape
     feature_axis = cols - 1
     output_axis = rows
