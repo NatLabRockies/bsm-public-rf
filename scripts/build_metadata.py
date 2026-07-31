@@ -309,7 +309,7 @@ def load_coefficient_column_order() -> pd.DataFrame:
 
 
 def cross_reference_inputs(coef_features: pd.DataFrame, inputs: list[dict]) -> pd.DataFrame:
-    """Map each of the 132 coefficient columns back to its base input(s) + transformation."""
+    """Map each coefficient column back to its base input(s) + transformation."""
     input_by_name = {i["name"]: i for i in inputs}
     prefixes = (
         ("quadratic_", "quadratic"),
@@ -321,6 +321,11 @@ def cross_reference_inputs(coef_features: pd.DataFrame, inputs: list[dict]) -> p
     suffixes = (
         ("_squared", "quadratic"),
         ("_quadratic", "quadratic"),
+        ("_log1p", "log1p"),
+        ("_sqrt", "sqrt"),
+        ("_log", "log"),
+        ("_inv", "inverse"),
+        ("_sq", "quadratic"),
     )
     rows = []
     for _, r in coef_features.iterrows():
@@ -376,7 +381,7 @@ def _strip_transform(fname: str) -> str:
     for p in ("quadratic_", "log1p_", "log_", "inverse_", "sqrt_"):
         if fname.startswith(p):
             return fname[len(p) :]
-    for s in ("_squared", "_quadratic"):
+    for s in ("_squared", "_quadratic", "_log1p", "_sqrt", "_log", "_inv", "_sq"):
         if fname.endswith(s):
             return fname[: -len(s)]
     return fname

@@ -1,5 +1,5 @@
 # Formal feature-transformation definitions. Match the suffix convention used in final_support_features.csv.
-# Generated: 2026-06-10T18:08:40.305239+00:00
+# Generated: 2026-07-31T01:38:11.525196+00:00
 # Source: scripts/build_metadata.py (rfm-pipeline)
 #
 transformations:
