@@ -13,7 +13,7 @@
 schema_version: "1.0"
 frozen_date: "2026-08-09"
 gate: "G0"
-status: "READY_FOR_INDEPENDENT_REVIEW"  # set by implementer; reviewer sets PASS
+status: "PASS"  # P9-A-S2 independent reviewer; see independent_review section below
 
 # ---------------------------------------------------------------------------
 # 1. Finite-B global maxT equation (single authoritative definition)
@@ -249,3 +249,39 @@ evidence:
     fwer_max_stat_exact in test_RS_S01_exact_fwer.py,
     fwer_max_stat_exact in test_P9_A_S1_statistical_contract.py —
     all surfaces use "fwer_max_stat_exact" and the >= equation
+
+# ---------------------------------------------------------------------------
+# 13. Independent review — P9-A-S2 (distinct reviewer invocation)
+# ---------------------------------------------------------------------------
+independent_review:
+  reviewer_id: "Copilot P9-A-S2 (distinct invocation, read-only start)"
+  review_date: "2026-08-09"
+  decision: "PASS"
+
+  methodology:
+    - "Read live source rfm-pipeline/src/rfm_pipeline/manuscript_stages.py lines 576-629"
+    - "Confirmed >= tie convention at source line 628: exceedances = (max_null[:, None] >= observed_scores[None, :]).sum(axis=0)"
+    - "Adversarially recomputed tie boundary: obs=5.0, null=[[5.0],[3.0],[2.0]], B=3 → p=(1+1)/4=0.5 (>= counts tie; strict > would give 0.25)"
+    - "Verified min p-value at B=499: 1/(499+1)=0.002 ✓"
+    - "Ran pixi run pytest tests/alignment/test_P9_A_S1_statistical_contract.py -v: 10/10 PASSED"
+    - "Verified multiplicity_controlled_interaction_selection returns p_adj (maxT row-max values) for fwer_max_stat_exact branch, not per-pair p_values"
+    - "Confirmed calibration gate in run_bsm_recovery_study.py line 883: passes_calibration = stats['wilson_ci_upper'] <= scale.alpha + scale.calibration_tolerance"
+    - "Confirmed method name fwer_max_stat_exact in manuscript_case_study.yml line 85"
+    - "Confirmed author_facts: total_inputs=160, continuous=158, binary=2, eligible_outputs=9954"
+
+  findings:
+    defects_found: []
+    warnings:
+      - "Binary null/planted regimes (binary_main_null, binary_continuous_planted, binary_binary_planted) are prespecified_not_implemented; this is a documented gap for Gate B, not a G0 defect"
+      - "p_values computed at line 749 of multiplicity_controlled_interaction_selection is dead code for fwer_max_stat_exact branch (p_adj returned instead); no scientific impact"
+
+  criteria_checklist:
+    finite_B_equation_correct: true
+    ge_tie_convention_enforced: true
+    B_plus_1_denominator: true
+    calibration_gate_is_wilson_ci_upper: true
+    method_name_consistent_all_surfaces: true
+    author_facts_confirmed: true
+    all_10_tests_pass: true
+    no_manuscript_local_substitutes: true
+    no_hard_coded_hashes_or_counts: true
