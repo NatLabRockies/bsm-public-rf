@@ -133,6 +133,17 @@ def first_order_candidate_design(design: BSMInputDesign) -> BSMInputDesign:
     )
 
 
+def full_160_candidate_design(design: BSMInputDesign) -> BSMInputDesign:
+    """Return the full 160-input candidate design (158 continuous + 2 binary).
+
+    Used for binary-regime calibration scenarios where the two binary scenario
+    switches (AFSC/UAEORO) must be included as candidate predictors so that
+    binary main effects and binary-containing interaction kinds are exercised
+    through the actual production scorer and global reducer.
+    """
+    return design
+
+
 def _sample_inputs(
     design: BSMInputDesign, n_runs: int, rng: np.random.Generator, *, correlated: bool = False
 ) -> tuple[np.ndarray, dict]:
@@ -224,11 +235,14 @@ class BSMScenario:
     name: str
     description: str
     n_main: int
-    interaction_kinds: tuple[str, ...]  # each of "cc" (continuous-continuous)
+    interaction_kinds: tuple[str, ...]  # "cc" continuous-continuous, "bc" binary-continuous, "bb" binary-binary
     n_nonlinear: int
     snr: float
     misspecified: bool = False
     marginal_main_scale: float = 1.0  # 0.0 => pure-interaction (negligible marginal)
+    n_main_binary: int = 0  # number of binary main effects to plant
+    heteroscedastic_noise_scale: float = 0.0  # >0 adds noise proportional to first input
+    correlated_inputs: bool = False  # correlated input sampling (shared latent factor)
 
 
 def prespecified_bsm_scenarios() -> list[BSMScenario]:
@@ -307,6 +321,70 @@ def prespecified_bsm_scenarios() -> list[BSMScenario]:
             snr=10.0,
             misspecified=True,
         ),
+        # --- Binary regimes (Work Package B / P9-C-S1) ---
+        BSMScenario(
+            name="binary_main_null",
+            description=(
+                "Binary main effects only; no true interaction signal. "
+                "Tests FWER control when binary inputs are in the candidate set."
+            ),
+            n_main=0,
+            interaction_kinds=(),
+            n_nonlinear=0,
+            snr=10.0,
+            n_main_binary=2,
+        ),
+        BSMScenario(
+            name="binary_continuous_planted",
+            description=(
+                "Planted binary-continuous (bc) interaction: one binary × one "
+                "continuous interaction term plus binary and continuous main effects."
+            ),
+            n_main=2,
+            interaction_kinds=("bc",),
+            n_nonlinear=0,
+            snr=10.0,
+            n_main_binary=1,
+        ),
+        BSMScenario(
+            name="binary_binary_planted",
+            description=(
+                "Planted binary-binary (bb) interaction: both binary inputs crossed, "
+                "plus binary main effects; tests the bb interaction path."
+            ),
+            n_main=0,
+            interaction_kinds=("bb",),
+            n_nonlinear=0,
+            snr=10.0,
+            n_main_binary=2,
+        ),
+        # --- Calibration null regimes required by Work Package B / P9-C-S1 ---
+        BSMScenario(
+            name="correlated_null",
+            description=(
+                "Correlated continuous inputs (shared latent factor in first 6 inputs), "
+                "continuous main effects only, no true interaction. "
+                "Validates FWER control under input correlation."
+            ),
+            n_main=4,
+            interaction_kinds=(),
+            n_nonlinear=0,
+            snr=8.0,
+            correlated_inputs=True,
+        ),
+        BSMScenario(
+            name="heteroscedastic_null",
+            description=(
+                "Continuous main effects, heteroscedastic noise (scale proportional to "
+                "first input absolute value), no true interaction. "
+                "Validates FWER control under heteroscedasticity."
+            ),
+            n_main=4,
+            interaction_kinds=(),
+            n_nonlinear=0,
+            snr=8.0,
+            heteroscedastic_noise_scale=2.0,
+        ),
     ]
 
 
@@ -316,18 +394,32 @@ def _planted_support(
     """Build the fixed planted support (named) plus a truth spec for generation.
     
     The truth ledger includes EVERY planted term, including out-of-library forms
-    (e.g. the sine transform in nonlinear_misspecified).
+    (e.g. the sine transform in nonlinear_misspecified) and binary-containing
+    interactions (bc, bb kinds added for Work Package B / P9-C-S1).
     """
     cont = design.continuous_input_names
+    binaries = design.binary_input_names  # may be empty for 158-continuous design
 
+    # Continuous main effects.
     main_names: list[str] = []
     if scenario.n_main > 0:
         main_names = list(cont[: scenario.n_main])
+
+    # Binary main effects (only available when binaries are in the design).
+    binary_main_names: list[str] = []
+    if scenario.n_main_binary > 0 and binaries:
+        binary_main_names = list(binaries[: scenario.n_main_binary])
 
     interactions: list[tuple[str, str]] = []
     for kind in scenario.interaction_kinds:
         if kind == "cc" and len(cont) >= 2:
             interactions.append((cont[0], cont[1]))
+        elif kind == "bc" and binaries and cont:
+            # Binary-continuous: first binary × first continuous.
+            interactions.append((binaries[0], cont[0]))
+        elif kind == "bb" and len(binaries) >= 2:
+            # Binary-binary: first binary × second binary.
+            interactions.append((binaries[0], binaries[1]))
 
     nonlinear_names: list[str] = []
     if scenario.n_nonlinear > 0 and cont:
@@ -336,13 +428,14 @@ def _planted_support(
     if scenario.misspecified and len(cont) >= 2:
         nonlinear_names.append(cont[1])  # sine transform on this base
 
+    all_main_names = main_names + binary_main_names
     support = DGPTrueSupport(
-        true_active_inputs=frozenset(main_names),
+        true_active_inputs=frozenset(all_main_names),
         true_active_interactions=frozenset(tuple(sorted(p)) for p in interactions),
         true_active_nonlinear=frozenset(nonlinear_names),
     )
     spec = {
-        "main_names": main_names,
+        "main_names": all_main_names,
         "interactions": interactions,
         "nonlinear_names": nonlinear_names,
         "misspecified": scenario.misspecified,
@@ -390,7 +483,7 @@ class StudyScale:
     alt_reps: int
     alpha: float
     description: str
-    family_error_method: str = "fwer_max_stat_exact"
+    family_error_method: str = "fwer_max_stat"
     min_exact_permutation_draws: int = 199
     # Prespecified calibration gate parameters (G0 statistical contract).
     calibration_tolerance: float = 0.04   # delta; gate: wilson_ci_upper <= alpha + delta
@@ -406,9 +499,9 @@ _QUICK_SCALE = StudyScale(
     fwer_reps=10,
     alt_reps=1,
     alpha=0.05,
-    description="quick-smoke (158-continuous first-order candidate design)",
-    family_error_method="fwer_max_stat_exact",
-    min_exact_permutation_draws=19,  # minimum floor for B=19 at alpha=0.05 (smoke only)
+    description="quick-smoke (fwer_max_stat, 158-continuous first-order candidate design)",
+    family_error_method="fwer_max_stat",
+    min_exact_permutation_draws=199,  # floor required by InteractionDiscoverySpec
     calibration_tolerance=0.04,
     calibration_confidence=0.95,
 )
@@ -424,14 +517,18 @@ _FULL_SCALE = StudyScale(
     alpha=0.05,
     description=(
         "reduced-local BSM design: 158-continuous first-order candidate design "
-        "(the 2 binary scenario switches are excluded from the candidate set, as in "
-        "production), n_outputs=40, n_runs=2000, B=199, B_screen=199, fwer_reps=100, "
+        "for continuous-only scenarios; full 160-input design (adding 2 binary "
+        "scenario switches) for binary-regime scenarios (binary_main_null, "
+        "binary_continuous_planted, binary_binary_planted). "
+        "n_outputs=40, n_runs=2000, B=199, B_screen=199, fwer_reps=100, "
         "alt_reps=20 — deliberate reduction from the executed ~30 000-run / 23 495-output "
-        "HPC scale. Preserves empirical input ranges and the 158-continuous first-order "
-        "structure, multivariate low-rank responses (PCA path), hierarchical residualized "
-        "interaction discovery, and train-only selection. Candidate-family logic (BH screening -> "
-        "fwer_max_stat_exact selection at α=0.05) unchanged."
+        "HPC scale. Preserves empirical input ranges, multivariate low-rank responses "
+        "(PCA path), hierarchical residualized interaction discovery, and train-only selection. "
+        "Candidate-family logic (BH screening -> fwer_max_stat_exact at α=0.05) unchanged. "
+        "Null regimes: global_null, interaction_null, correlated_null, heteroscedastic_null, "
+        "binary_main_null."
     ),
+    family_error_method="fwer_max_stat_exact",
     min_exact_permutation_draws=199,
     calibration_tolerance=0.04,
     calibration_confidence=0.95,
@@ -539,7 +636,7 @@ def generate_bsm_dataset(
 
     n_train = scale.n_runs
     n_eval = max(64, scale.n_runs // 4)
-    corr_flag = scenario.name == "correlated_redundant"
+    corr_flag = scenario.name == "correlated_redundant" or scenario.correlated_inputs
     X_train, cor_rec_train = _sample_inputs(design, n_train, rng, correlated=corr_flag)
     X_eval, cor_rec_eval = _sample_inputs(design, n_eval, rng, correlated=corr_flag)
     coded_train = _coded_features(design, X_train)
@@ -567,6 +664,18 @@ def generate_bsm_dataset(
     Y_eval = _responses_from_truth(
         planted_eval, coeffs, loadings, scenario, scale.n_outputs, n_eval, noise_rng_eval
     )
+
+    # Heteroscedastic noise: add extra noise proportional to absolute value of
+    # the first continuous input (coded range ~[-1,1]).  Noise is additive on top
+    # of the homoscedastic component so the planted signal is not rescaled.
+    if scenario.heteroscedastic_noise_scale > 0.0 and design.continuous_input_names:
+        j0 = design.input_names.index(design.continuous_input_names[0])
+        het_rng_train = np.random.default_rng(seed + 777_777)
+        het_rng_eval = np.random.default_rng(seed + 888_888)
+        het_scale_tr = scenario.heteroscedastic_noise_scale * np.abs(coded_train[:, j0])
+        het_scale_ev = scenario.heteroscedastic_noise_scale * np.abs(coded_eval[:, j0])
+        Y_train = Y_train + het_rng_train.standard_normal(Y_train.shape) * het_scale_tr[:, None]
+        Y_eval = Y_eval + het_rng_eval.standard_normal(Y_eval.shape) * het_scale_ev[:, None]
 
     return GeneratedData(
         X_train=X_train,
@@ -754,7 +863,11 @@ def run_fwer_replicates(
     scenario: BSMScenario, scale: StudyScale, master_rng: np.random.Generator
 ) -> list[int]:
     """Run *scale.fwer_reps* replicates; return per-replicate false interaction counts."""
-    design = first_order_candidate_design(load_bsm_input_design())
+    full_design = load_bsm_input_design()
+    if scenario.name in _BINARY_CANDIDATE_SCENARIOS:
+        design = full_160_candidate_design(full_design)
+    else:
+        design = first_order_candidate_design(full_design)
     flags: list[int] = []
     for _ in range(scale.fwer_reps):
         rep_seed = int(master_rng.integers(2**31))
@@ -784,38 +897,63 @@ def _run_alternative_replicates(
     replicate_records = []
     estimand_lists = {fam: {k: [] for k in ["precision", "recall", "fdp", "exact_support_recovery", "selected_size"]} 
                       for fam in ["main", "interaction", "transformation", "whole"]}
-    
+    n_failed = 0
+
     for rep_idx in range(scale.alt_reps):
         rep_seed = int(master_rng.integers(2**31))
-        data = generate_bsm_dataset(design, scenario, scale, rep_seed)
-        result = run_pipeline(data, scale, np.random.default_rng(rep_seed), with_comparators=True)
-        
-        # Compute estimands for this replicate.
-        est = recovery_estimands(data.true_support, result["selected_support"])
-        
-        # Collect per-family metrics.
-        for family, metrics in est.items():
-            for k in estimand_lists[family]:
-                estimand_lists[family][k].append(metrics[k])
-        
-        # Build replicate record.
-        rec = {
-            "scenario": scenario.name,
-            "replicate": rep_idx,
-            "seed": rep_seed,
-            "n_selected_main": len(result["selected_support"].true_active_inputs),
-            "n_selected_interactions": len(result["selected_support"].true_active_interactions),
-            "n_selected_nonlinear": len(result["selected_support"].true_active_nonlinear),
-            "n_true_main": len(data.true_support.true_active_inputs),
-            "n_true_interactions": len(data.true_support.true_active_interactions),
-            "n_true_nonlinear": len(data.true_support.true_active_nonlinear),
-        }
-        
-        # Add comparator metrics if available.
-        if not result["comparator_df"].empty:
-            for _, row in result["comparator_df"].iterrows():
-                rec[f"eval_nrmse_{row['method']}"] = row["eval_nrmse"]
-        
+        try:
+            data = generate_bsm_dataset(design, scenario, scale, rep_seed)
+            result = run_pipeline(data, scale, np.random.default_rng(rep_seed), with_comparators=True)
+
+            # Compute estimands for this replicate.
+            est = recovery_estimands(data.true_support, result["selected_support"])
+
+            # Collect per-family metrics.
+            for family, metrics in est.items():
+                for k in estimand_lists[family]:
+                    estimand_lists[family][k].append(metrics[k])
+
+            # Build replicate record.
+            rec = {
+                "scenario": scenario.name,
+                "replicate": rep_idx,
+                "seed": rep_seed,
+                "status": "success",
+                "n_selected_main": len(result["selected_support"].true_active_inputs),
+                "n_selected_interactions": len(result["selected_support"].true_active_interactions),
+                "n_selected_nonlinear": len(result["selected_support"].true_active_nonlinear),
+                "n_true_main": len(data.true_support.true_active_inputs),
+                "n_true_interactions": len(data.true_support.true_active_interactions),
+                "n_true_nonlinear": len(data.true_support.true_active_nonlinear),
+                "failure_stage": None,
+                "failure_message": None,
+            }
+
+            # Add comparator metrics if available.
+            if not result["comparator_df"].empty:
+                for _, row in result["comparator_df"].iterrows():
+                    rec[f"eval_nrmse_{row['method']}"] = row["eval_nrmse"]
+        except Exception as exc:
+            n_failed += 1
+            rec = {
+                "scenario": scenario.name,
+                "replicate": rep_idx,
+                "seed": rep_seed,
+                "status": "FAILED",
+                "n_selected_main": None,
+                "n_selected_interactions": None,
+                "n_selected_nonlinear": None,
+                "n_true_main": None,
+                "n_true_interactions": None,
+                "n_true_nonlinear": None,
+                "failure_stage": "run_pipeline",
+                "failure_message": str(exc),
+            }
+            print(
+                f"[bsm_recovery] REPLICATE FAILED: scenario={scenario.name} "
+                f"rep={rep_idx} seed={rep_seed} exc={exc}"
+            )
+
         replicate_records.append(rec)
     
     # Aggregate estimands with Monte-Carlo uncertainty.
@@ -841,7 +979,13 @@ def _run_null_replicates(
     design: BSMInputDesign,
 ) -> tuple[list[dict], dict]:
     """Run fwer_reps null replicates; return records and FWER calibration row.
-    
+
+    Per the prespecified failure budget (method_contract.yaml), every planned
+    replicate must complete with a terminal success record.  A replicate that
+    raises an unhandled exception is recorded as FAILED and does NOT count
+    toward the FWER estimate.  If any replicate fails, the calibration_row
+    includes ``n_failed > 0`` so the caller can exit nonzero.
+
     Returns
     -------
     replicate_records
@@ -851,28 +995,51 @@ def _run_null_replicates(
     """
     replicate_records = []
     flags = []
-    
+    n_failed = 0
+
     for rep_idx in range(scale.fwer_reps):
         rep_seed = int(master_rng.integers(2**31))
-        data = generate_bsm_dataset(design, scenario, scale, rep_seed)
-        result = run_pipeline(data, scale, np.random.default_rng(rep_seed), with_comparators=False)
-        
-        n_false_interactions = len(result["selected_support"].true_active_interactions)
-        flags.append(n_false_interactions)
-        
-        rec = {
-            "scenario": scenario.name,
-            "replicate": rep_idx,
-            "seed": rep_seed,
-            "n_selected_main": len(result["selected_support"].true_active_inputs),
-            "n_selected_interactions": n_false_interactions,
-            "n_selected_nonlinear": len(result["selected_support"].true_active_nonlinear),
-            "n_true_main": len(data.true_support.true_active_inputs),
-            "n_true_interactions": 0,  # Null scenario
-            "n_true_nonlinear": len(data.true_support.true_active_nonlinear),
-        }
+        try:
+            data = generate_bsm_dataset(design, scenario, scale, rep_seed)
+            result = run_pipeline(data, scale, np.random.default_rng(rep_seed), with_comparators=False)
+            n_false_interactions = len(result["selected_support"].true_active_interactions)
+            flags.append(n_false_interactions)
+            rec = {
+                "scenario": scenario.name,
+                "replicate": rep_idx,
+                "seed": rep_seed,
+                "status": "success",
+                "n_selected_main": len(result["selected_support"].true_active_inputs),
+                "n_selected_interactions": n_false_interactions,
+                "n_selected_nonlinear": len(result["selected_support"].true_active_nonlinear),
+                "n_true_main": len(data.true_support.true_active_inputs),
+                "n_true_interactions": 0,  # Null scenario
+                "n_true_nonlinear": len(data.true_support.true_active_nonlinear),
+                "failure_stage": None,
+                "failure_message": None,
+            }
+        except Exception as exc:
+            n_failed += 1
+            rec = {
+                "scenario": scenario.name,
+                "replicate": rep_idx,
+                "seed": rep_seed,
+                "status": "FAILED",
+                "n_selected_main": None,
+                "n_selected_interactions": None,
+                "n_selected_nonlinear": None,
+                "n_true_main": None,
+                "n_true_interactions": None,
+                "n_true_nonlinear": None,
+                "failure_stage": "run_pipeline",
+                "failure_message": str(exc),
+            }
+            print(
+                f"[bsm_recovery] REPLICATE FAILED: scenario={scenario.name} "
+                f"rep={rep_idx} seed={rep_seed} exc={exc}"
+            )
         replicate_records.append(rec)
-    
+
     stats = empirical_interaction_fwer(flags, confidence=scale.calibration_confidence)
 
     # Prespecified calibration gate (G0 statistical contract):
@@ -880,8 +1047,12 @@ def _run_null_replicates(
     # where wilson_ci_upper is the one-sided scale.calibration_confidence Wilson
     # score CI upper bound on the empirical null-rejection rate.
     # Replaces the discarded "point estimate <= alpha + 3*SE" criterion.
-    passes_calibration = stats["wilson_ci_upper"] <= scale.alpha + scale.calibration_tolerance
-    
+    # A scenario with any failed replicates does NOT pass calibration.
+    passes_calibration = (
+        n_failed == 0
+        and stats["wilson_ci_upper"] <= scale.alpha + scale.calibration_tolerance
+    )
+
     calibration_row = {
         "scenario": scenario.name,
         "alpha": scale.alpha,
@@ -892,11 +1063,12 @@ def _run_null_replicates(
         "wilson_ci_lower": stats["wilson_ci_lower"],
         "wilson_ci_upper": stats["wilson_ci_upper"],
         "n_replicates": stats["n_replicates"],
+        "n_failed": n_failed,
         "n_false_pair_replicates": stats["n_false_pair_replicates"],
         "mean_false_pair_count": stats["mean_false_pair_count"],
         "passes_calibration": passes_calibration,
     }
-    
+
     return replicate_records, calibration_row
 
 
@@ -905,7 +1077,14 @@ def _write_csv(df: pd.DataFrame, path: Path) -> None:
     df.to_csv(path, index=False)
 
 
-_NULL_INTERACTION_SCENARIOS = {"global_null", "interaction_null"}
+_NULL_INTERACTION_SCENARIOS = {
+    "global_null",
+    "interaction_null",
+    "correlated_null",
+    "heteroscedastic_null",
+    "binary_main_null",
+}
+_BINARY_CANDIDATE_SCENARIOS = {"binary_main_null", "binary_continuous_planted", "binary_binary_planted"}
 
 
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:
@@ -984,10 +1163,18 @@ def main(argv: list[str] | None = None) -> int:
 
     for scenario in scenarios:
         print(f"[bsm_recovery]  scenario={scenario.name}")
+        # Use the full 160-input design for binary-regime scenarios so that
+        # binary main effects and binary-containing interactions are exercised
+        # through the actual production scorer and global reducer.
+        scenario_design = (
+            full_160_candidate_design(design)
+            if scenario.name in _BINARY_CANDIDATE_SCENARIOS
+            else candidate_design
+        )
         
         if scenario.name in _NULL_INTERACTION_SCENARIOS:
             # Null scenarios: run fwer_reps replicates, collect FWER calibration.
-            reps, calib = _run_null_replicates(scenario, scale, master, candidate_design)
+            reps, calib = _run_null_replicates(scenario, scale, master, scenario_design)
             all_replicate_records.extend(reps)
             fwer_rows.append(calib)
             print(
@@ -998,13 +1185,13 @@ def main(argv: list[str] | None = None) -> int:
             )
         else:
             # Alternative scenarios: run alt_reps replicates, aggregate estimands.
-            reps, agg_est = _run_alternative_replicates(scenario, scale, master, candidate_design)
+            reps, agg_est = _run_alternative_replicates(scenario, scale, master, scenario_design)
             all_replicate_records.extend(reps)
             estimand_rows.extend(agg_est)
             
             # Also collect a single representative replicate for comparators and retention.
             rep_seed = int(master.integers(2**31))
-            data = generate_bsm_dataset(candidate_design, scenario, scale, rep_seed)
+            data = generate_bsm_dataset(scenario_design, scenario, scale, rep_seed)
             result = run_pipeline(data, scale, np.random.default_rng(rep_seed))
             
             for stage, counts in result["stage_retention"].items():
@@ -1033,10 +1220,15 @@ def main(argv: list[str] | None = None) -> int:
         "generated": datetime.now(timezone.utc).isoformat(),
         "master_seed": args.seed,
         "scale": scale.description,
-        "n_inputs": scale.n_inputs,
-        "n_candidate_inputs": scale.n_inputs,
+        "n_inputs_continuous_scenarios": scale.n_inputs,
+        "n_inputs_binary_scenarios": design.n_inputs,
         "n_interface_inputs": design.n_inputs,
-        "candidate_space": "158-continuous first-order (binary scenario switches excluded)",
+        "candidate_space": (
+            "158-continuous first-order for continuous-only scenarios; "
+            "full 160-input (158 continuous + 2 binary) for binary-regime scenarios "
+            "(binary_main_null, binary_continuous_planted, binary_binary_planted)"
+        ),
+        "binary_candidate_scenarios": sorted(_BINARY_CANDIDATE_SCENARIOS),
         "n_outputs": scale.n_outputs,
         "n_runs": scale.n_runs,
         "B": scale.B,
@@ -1045,7 +1237,6 @@ def main(argv: list[str] | None = None) -> int:
         "alt_reps": scale.alt_reps,
         "alpha": scale.alpha,
         "binary_scenario_switches": design.binary_input_names,
-        "binary_switches_in_candidate_set": False,
         "scenarios": [{"name": s.name, "description": s.description} for s in scenarios],
     }
     (out / "recovery_manifest.json").write_text(json.dumps(manifest, indent=2))
@@ -1054,6 +1245,28 @@ def main(argv: list[str] | None = None) -> int:
         run_gate=args.run_gate, gate_summary=args.gate_summary,
     )
     print(f"[bsm_recovery] Done. Artifacts written to {out}")
+
+    # Exit nonzero if any null regime failed the prespecified calibration gate,
+    # or if any replicate (null or alternative) had an unhandled failure.
+    # (Gate B requirement: failed calibration blocks production; zero failed
+    # replicates are permitted per the prespecified failure budget.)
+    failed_calib = [r for r in fwer_rows if not r.get("passes_calibration", True)]
+    failed_reps = [r for r in all_replicate_records if r.get("status") == "FAILED"]
+    if failed_calib:
+        for r in failed_calib:
+            print(
+                f"[bsm_recovery] CALIBRATION FAIL: {r['scenario']} "
+                f"wilson_ci_upper={r['wilson_ci_upper']:.4f} > gate={r['gate_upper_bound']:.4f}"
+            )
+    if failed_reps:
+        for r in failed_reps:
+            print(
+                f"[bsm_recovery] REPLICATE FAIL: scenario={r['scenario']} "
+                f"rep={r.get('replicate')} stage={r.get('failure_stage')} "
+                f"msg={r.get('failure_message')}"
+            )
+    if failed_calib or failed_reps:
+        return 1
     return 0
 
 

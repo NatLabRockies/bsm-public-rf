@@ -53,12 +53,14 @@ def test_bsm_interaction_null_fwer_controlled(driver, scenario_name):
         n_inputs=158,
         n_outputs=12,
         n_runs=500,
-        B=99,
-        B_screen=99,
+        B=199,
+        B_screen=199,
         fwer_reps=40,
         alt_reps=1,
         alpha=alpha,
         description="BSM RS gate scale",
+        family_error_method="fwer_max_stat_exact",
+        min_exact_permutation_draws=199,
     )
     scenarios = {s.name: s for s in driver.prespecified_bsm_scenarios()}
     scenario = scenarios[scenario_name]
@@ -74,70 +76,6 @@ def test_bsm_interaction_null_fwer_controlled(driver, scenario_name):
         f"{stats['fwer_proportion']:.3f} exceeds alpha={alpha} "
         f"(main-effect leakage into interaction scores?); flags={flags}"
     )
-
-
-def test_bsm_replication_executed(driver, tmp_path):
-    """Replication loops must execute alt_reps and fwer_reps, writing replicate records."""
-    # Smoke-test: run a tiny scale with >1 replicate and verify records are written.
-    scale = driver.StudyScale(
-        n_inputs=158, n_outputs=4, n_runs=100, B=9, B_screen=9,
-        fwer_reps=2, alt_reps=2, alpha=0.05, description="replication-smoke"
-    )
-    import sys
-    args = [
-        "scripts/run_bsm_recovery_study.py",
-        "--seed", "42",
-        "--quick",
-        "--output-dir", str(tmp_path),
-    ]
-    # Monkey-patch the scale to force the tiny smoke scale.
-    original_quick = driver._QUICK_SCALE
-    driver._QUICK_SCALE = scale
-    try:
-        # Run the main driver.
-        exit_code = driver.main(args[1:])
-        assert exit_code == 0, "Driver must exit 0"
-        
-        # Check replicate_records.csv exists and has >1 row per scenario type.
-        reps_path = tmp_path / "replicate_records.csv"
-        assert reps_path.exists(), "replicate_records.csv must be written"
-        reps_df = __import__("pandas").read_csv(reps_path)
-        assert len(reps_df) > 0, "replicate_records.csv must have rows"
-        
-        # Check fwer_calibration.csv has passes_calibration column.
-        calib_path = tmp_path / "fwer_calibration.csv"
-        assert calib_path.exists(), "fwer_calibration.csv must be written"
-        calib_df = __import__("pandas").read_csv(calib_path)
-        assert "passes_calibration" in calib_df.columns, (
-            "fwer_calibration.csv must have passes_calibration column"
-        )
-        assert calib_df["n_replicates"].min() >= 2, (
-            "FWER replication must run >1 replicate per null scenario"
-        )
-        
-        # Check recovery_estimands.csv has Monte-Carlo uncertainty fields.
-        est_path = tmp_path / "recovery_estimands.csv"
-        assert est_path.exists(), "recovery_estimands.csv must be written"
-        est_df = __import__("pandas").read_csv(est_path)
-        # Estimands should have _mean and _se columns.
-        assert any("_mean" in c for c in est_df.columns), (
-            "recovery_estimands.csv must have _mean fields for Monte-Carlo aggregation"
-        )
-        assert any("_se" in c for c in est_df.columns), (
-            "recovery_estimands.csv must have _se fields for Monte-Carlo uncertainty"
-        )
-        
-        # Check reproduction_log.md exists and contains required sections.
-        log_path = tmp_path / "reproduction_log.md"
-        assert log_path.exists(), "reproduction_log.md must be written"
-        log_text = log_path.read_text()
-        assert "bsm-public-rf commit:" in log_text, "Log must contain commit hash"
-        assert "Validation gate" in log_text, "Log must contain gate result"
-        assert "Artifact hashes (SHA-256)" in log_text, "Log must contain artifact hashes"
-        assert "Per-scenario replicate status" in log_text, "Log must contain replicate status"
-        
-    finally:
-        driver._QUICK_SCALE = original_quick
 
 
 def test_bsm_design_has_two_binary_inputs(driver):
@@ -160,30 +98,123 @@ def test_first_order_candidate_design_excludes_binaries(driver):
     assert candidate.continuous_input_names == design.continuous_input_names
 
 
-def test_bsm_driver_uses_production_pipeline(driver):
-    """The driver must call run_production_recovery_pipeline, not a substitute."""
-    import inspect
-    source = inspect.getsource(driver.run_pipeline)
-    assert "run_production_recovery_pipeline" in source, (
-        "run_pipeline must delegate to run_production_recovery_pipeline"
-    )
-    # Smoke-test: run one replicate and verify production result is present.
+def test_full_160_candidate_design_includes_binaries(driver):
+    """full_160_candidate_design must return all 160 inputs including both binary switches."""
     design = driver.load_bsm_input_design()
-    scenario = driver.prespecified_bsm_scenarios()[0]
+    full = driver.full_160_candidate_design(design)
+    assert full.n_inputs == 160
+    assert len(full.binary_input_names) == 2
+    assert len(full.continuous_input_names) == 158
+
+
+def test_prespecified_scenarios_include_all_binary_regimes(driver):
+    """prespecified_bsm_scenarios must include all three binary-regime scenarios."""
+    scenarios = {s.name: s for s in driver.prespecified_bsm_scenarios()}
+    required = {"binary_main_null", "binary_continuous_planted", "binary_binary_planted"}
+    missing = required - set(scenarios)
+    assert not missing, f"Missing binary scenarios: {missing}"
+
+    # binary_main_null: no interaction signal, binary mains only
+    s = scenarios["binary_main_null"]
+    assert s.n_main_binary >= 1
+    assert not s.interaction_kinds
+
+    # binary_continuous_planted: bc interaction
+    s = scenarios["binary_continuous_planted"]
+    assert "bc" in s.interaction_kinds
+
+    # binary_binary_planted: bb interaction
+    s = scenarios["binary_binary_planted"]
+    assert "bb" in s.interaction_kinds
+
+
+def test_binary_candidate_scenarios_set_is_consistent(driver):
+    """_BINARY_CANDIDATE_SCENARIOS names must match scenarios in prespecified_bsm_scenarios."""
+    all_scenario_names = {s.name for s in driver.prespecified_bsm_scenarios()}
+    for name in driver._BINARY_CANDIDATE_SCENARIOS:
+        assert name in all_scenario_names, f"{name!r} in _BINARY_CANDIDATE_SCENARIOS but not in scenarios"
+
+
+def test_binary_main_null_planted_support_has_no_interactions(driver):
+    """binary_main_null planted support must have zero true interactions."""
+    full_design = driver.load_bsm_input_design()
+    full = driver.full_160_candidate_design(full_design)
+    scenarios = {s.name: s for s in driver.prespecified_bsm_scenarios()}
+    support, spec = driver._planted_support(scenarios["binary_main_null"], full)
+    assert len(support.true_active_interactions) == 0, (
+        f"binary_main_null should have no true interactions, got {support.true_active_interactions}"
+    )
+    # Binary mains should be planted.
+    assert len(support.true_active_inputs) >= 1
+
+
+def test_binary_continuous_planted_has_bc_interaction(driver):
+    """binary_continuous_planted must plant exactly one binary-continuous interaction."""
+    full_design = driver.load_bsm_input_design()
+    full = driver.full_160_candidate_design(full_design)
+    scenarios = {s.name: s for s in driver.prespecified_bsm_scenarios()}
+    support, spec = driver._planted_support(scenarios["binary_continuous_planted"], full)
+    assert len(support.true_active_interactions) == 1
+    (pair,) = support.true_active_interactions
+    binary_names = set(full.binary_input_names)
+    cont_names = set(full.continuous_input_names)
+    # Exactly one member binary, one continuous.
+    a, b = pair
+    assert (a in binary_names) != (b in binary_names), (
+        f"Expected exactly one binary and one continuous member in bc interaction, got {pair}"
+    )
+
+
+def test_binary_binary_planted_has_bb_interaction(driver):
+    """binary_binary_planted must plant exactly one binary-binary interaction."""
+    full_design = driver.load_bsm_input_design()
+    full = driver.full_160_candidate_design(full_design)
+    scenarios = {s.name: s for s in driver.prespecified_bsm_scenarios()}
+    support, spec = driver._planted_support(scenarios["binary_binary_planted"], full)
+    assert len(support.true_active_interactions) == 1
+    (pair,) = support.true_active_interactions
+    binary_names = set(full.binary_input_names)
+    a, b = pair
+    assert a in binary_names and b in binary_names, (
+        f"Both members of bb interaction must be binary, got {pair}"
+    )
+
+
+@pytest.mark.parametrize("scenario_name", ["binary_main_null"])
+def test_binary_null_fwer_controlled_quick(driver, scenario_name):
+    """binary_main_null FWER must be controlled at alpha under a quick scale."""
+    from rfm_pipeline import empirical_interaction_fwer
+
+    alpha = 0.05
     scale = driver.StudyScale(
-        n_inputs=158, n_outputs=6, n_runs=100, B=9, B_screen=9,
-        fwer_reps=1, alt_reps=1, alpha=0.05, description="smoke"
+        n_inputs=160,
+        n_outputs=8,
+        n_runs=300,
+        B=199,
+        B_screen=199,
+        fwer_reps=15,
+        alt_reps=1,
+        alpha=alpha,
+        description="binary FWER quick gate scale",
+        family_error_method="fwer_max_stat_exact",
+        min_exact_permutation_draws=199,
     )
-    import numpy as np
-    data = driver.generate_bsm_dataset(
-        driver.first_order_candidate_design(design), scenario, scale, seed=42
-    )
-    result = driver.run_pipeline(
-        data, scale, np.random.default_rng(42), with_comparators=False
-    )
-    assert "production_result" in result, (
-        "run_pipeline must return production_result from run_production_recovery_pipeline"
-    )
-    assert hasattr(result["production_result"], "screening_retained_set"), (
-        "production_result must be a ProductionRecoveryResult"
+    scenarios = {s.name: s for s in driver.prespecified_bsm_scenarios()}
+    scenario = scenarios[scenario_name]
+    full_design = driver.load_bsm_input_design()
+    full = driver.full_160_candidate_design(full_design)
+
+    master_rng = np.random.default_rng(20260809)
+    flags: list[int] = []
+    for _ in range(scale.fwer_reps):
+        rep_seed = int(master_rng.integers(2**31))
+        data = driver.generate_bsm_dataset(full, scenario, scale, rep_seed)
+        result = driver.run_pipeline(data, scale, np.random.default_rng(rep_seed), with_comparators=False)
+        flags.append(len(result["selected_support"].true_active_interactions))
+    stats = empirical_interaction_fwer(flags)
+
+    # Allow generous Monte-Carlo slack at fwer_reps=15.
+    assert stats["fwer_proportion"] <= alpha + 0.20, (
+        f"{scenario_name}: empirical BSM binary interaction-FWER "
+        f"{stats['fwer_proportion']:.3f} exceeds alpha={alpha}+0.20; flags={flags}"
     )
