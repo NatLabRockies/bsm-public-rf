@@ -483,11 +483,14 @@ class StudyScale:
     alt_reps: int
     alpha: float
     description: str
-    family_error_method: str = "fwer_max_stat"
+    family_error_method: str = "fwer_max_stat_exact"
     min_exact_permutation_draws: int = 199
     # Prespecified calibration gate parameters (G0 statistical contract).
     calibration_tolerance: float = 0.04   # delta; gate: wilson_ci_upper <= alpha + delta
     calibration_confidence: float = 0.95  # confidence level for the Wilson CI
+    # BH screening threshold: 0.20 for reduced (B_screen=199) to allow candidates through;
+    # production uses 0.05 with B_screen=999 where BH threshold exceeds min permutation p-value.
+    bh_q_screen: float = 0.20
 
 
 _QUICK_SCALE = StudyScale(
@@ -499,11 +502,12 @@ _QUICK_SCALE = StudyScale(
     fwer_reps=10,
     alt_reps=1,
     alpha=0.05,
-    description="quick-smoke (fwer_max_stat, 158-continuous first-order candidate design)",
-    family_error_method="fwer_max_stat",
+    description="quick-smoke (fwer_max_stat_exact, 158-continuous first-order candidate design)",
+    family_error_method="fwer_max_stat_exact",
     min_exact_permutation_draws=199,  # floor required by InteractionDiscoverySpec
     calibration_tolerance=0.04,
     calibration_confidence=0.95,
+    bh_q_screen=0.20,  # reduced B_screen=19; BH q=0.05 would require min_p < 0.05/158
 )
 
 _FULL_SCALE = StudyScale(
@@ -524,7 +528,10 @@ _FULL_SCALE = StudyScale(
         "alt_reps=20 — deliberate reduction from the executed ~30 000-run / 23 495-output "
         "HPC scale. Preserves empirical input ranges, multivariate low-rank responses "
         "(PCA path), hierarchical residualized interaction discovery, and train-only selection. "
-        "Candidate-family logic (BH screening -> fwer_max_stat_exact at α=0.05) unchanged. "
+        "Candidate-family logic (BH screening at q=0.20 for reduced B_screen=199 "
+        "-> fwer_max_stat_exact FWER selection at α=0.05) unchanged from production "
+        "except bh_q_screen: production uses q=0.05 at B_screen=999 where min p-value "
+        "(0.001) can meet the BH threshold; at B_screen=199 min p=0.005 requires q>=0.20. "
         "Null regimes: global_null, interaction_null, correlated_null, heteroscedastic_null, "
         "binary_main_null."
     ),
@@ -532,6 +539,7 @@ _FULL_SCALE = StudyScale(
     min_exact_permutation_draws=199,
     calibration_tolerance=0.04,
     calibration_confidence=0.95,
+    bh_q_screen=0.20,  # reduced study: q=0.20 with B_screen=199; production q=0.05 with B_screen=999
 )
 
 
@@ -768,6 +776,7 @@ def run_pipeline(
         alpha=scale.alpha,
         family_error_method=scale.family_error_method,
         min_exact_permutation_draws=scale.min_exact_permutation_draws,
+        bh_q_screen=scale.bh_q_screen,
         seed=int(rng.integers(2**31)),
     )
     
