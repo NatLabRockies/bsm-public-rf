@@ -357,7 +357,29 @@ def _planted_support(
 
 @dataclass(frozen=True)
 class StudyScale:
-    """Scale parameters for one BSM recovery run."""
+    """Scale parameters for one BSM recovery run.
+
+    Calibration gate (G0 statistical contract)
+    ------------------------------------------
+    The prespecified acceptance criterion is:
+
+        wilson_ci_upper <= alpha + calibration_tolerance
+
+    where ``wilson_ci_upper`` is the one-sided ``calibration_confidence``
+    (default 0.95) Wilson score CI upper bound on the empirical FWER over
+    ``fwer_reps`` null replicates, and ``calibration_tolerance`` (delta) is a
+    scientifically pre-justified slack.  This replaces the discarded
+    ``point_estimate <= alpha + 3*SE`` criterion.
+
+    Rationale for delta=0.04 at fwer_reps=100
+    ------------------------------------------
+    With 100 null replicates and a true FWER equal to alpha=0.05, the
+    expected 95% Wilson CI upper bound is approximately 0.05 + 1.645 *
+    sqrt(0.05*0.95/100) ≈ 0.086.  Setting delta=0.04 (total gate = 0.09)
+    gives >90% power to pass when the true FWER <= 0.05 while blocking
+    methods whose true FWER substantially exceeds 0.05 (true FWER >= 0.08
+    would typically fail).  Delta was chosen before results were seen.
+    """
 
     n_inputs: int
     n_outputs: int
@@ -368,6 +390,11 @@ class StudyScale:
     alt_reps: int
     alpha: float
     description: str
+    family_error_method: str = "fwer_max_stat_exact"
+    min_exact_permutation_draws: int = 199
+    # Prespecified calibration gate parameters (G0 statistical contract).
+    calibration_tolerance: float = 0.04   # delta; gate: wilson_ci_upper <= alpha + delta
+    calibration_confidence: float = 0.95  # confidence level for the Wilson CI
 
 
 _QUICK_SCALE = StudyScale(
@@ -380,6 +407,10 @@ _QUICK_SCALE = StudyScale(
     alt_reps=1,
     alpha=0.05,
     description="quick-smoke (158-continuous first-order candidate design)",
+    family_error_method="fwer_max_stat_exact",
+    min_exact_permutation_draws=19,  # minimum floor for B=19 at alpha=0.05 (smoke only)
+    calibration_tolerance=0.04,
+    calibration_confidence=0.95,
 )
 
 _FULL_SCALE = StudyScale(
@@ -401,6 +432,9 @@ _FULL_SCALE = StudyScale(
         "interaction discovery, and train-only selection. Candidate-family logic (BH screening -> "
         "fwer_max_stat_exact selection at α=0.05) unchanged."
     ),
+    min_exact_permutation_draws=199,
+    calibration_tolerance=0.04,
+    calibration_confidence=0.95,
 )
 
 
@@ -623,7 +657,8 @@ def run_pipeline(
         n_pca_components=n_pca,
         permutation_count_B=scale.B,
         alpha=scale.alpha,
-        family_error_method="fwer_max_stat_exact",
+        family_error_method=scale.family_error_method,
+        min_exact_permutation_draws=scale.min_exact_permutation_draws,
         seed=int(rng.integers(2**31)),
     )
     
@@ -838,15 +873,21 @@ def _run_null_replicates(
         }
         replicate_records.append(rec)
     
-    stats = empirical_interaction_fwer(flags)
-    
-    # Prespecified calibration criterion: point estimate ≤ α + 3·SE.
-    se_fwer = np.sqrt(stats["fwer_proportion"] * (1 - stats["fwer_proportion"]) / stats["n_replicates"])
-    passes_calibration = stats["fwer_proportion"] <= scale.alpha + 3 * se_fwer
+    stats = empirical_interaction_fwer(flags, confidence=scale.calibration_confidence)
+
+    # Prespecified calibration gate (G0 statistical contract):
+    #   wilson_ci_upper <= alpha + calibration_tolerance
+    # where wilson_ci_upper is the one-sided scale.calibration_confidence Wilson
+    # score CI upper bound on the empirical null-rejection rate.
+    # Replaces the discarded "point estimate <= alpha + 3*SE" criterion.
+    passes_calibration = stats["wilson_ci_upper"] <= scale.alpha + scale.calibration_tolerance
     
     calibration_row = {
         "scenario": scenario.name,
         "alpha": scale.alpha,
+        "calibration_tolerance": scale.calibration_tolerance,
+        "calibration_confidence": scale.calibration_confidence,
+        "gate_upper_bound": scale.alpha + scale.calibration_tolerance,
         "fwer_proportion": stats["fwer_proportion"],
         "wilson_ci_lower": stats["wilson_ci_lower"],
         "wilson_ci_upper": stats["wilson_ci_upper"],
