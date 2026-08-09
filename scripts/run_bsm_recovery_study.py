@@ -884,6 +884,8 @@ def _run_alternative_replicates(
     scale: StudyScale,
     master_rng: np.random.Generator,
     design: BSMInputDesign,
+    *,
+    with_comparators: bool = True,
 ) -> tuple[list[dict], list[dict]]:
     """Run alt_reps alternative replicates; return replicate records and aggregated estimands.
     
@@ -903,7 +905,7 @@ def _run_alternative_replicates(
         rep_seed = int(master_rng.integers(2**31))
         try:
             data = generate_bsm_dataset(design, scenario, scale, rep_seed)
-            result = run_pipeline(data, scale, np.random.default_rng(rep_seed), with_comparators=True)
+            result = run_pipeline(data, scale, np.random.default_rng(rep_seed), with_comparators=with_comparators)
 
             # Compute estimands for this replicate.
             est = recovery_estimands(data.true_support, result["selected_support"])
@@ -1122,6 +1124,16 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
             "--output-dir, without re-running the study."
         ),
     )
+    p.add_argument(
+        "--no-comparators",
+        action="store_true",
+        help=(
+            "Skip oracle-OLS/GBT/elastic-net comparators in alternative-scenario "
+            "replicates.  Preserves all FWER calibration and recovery estimands; "
+            "comparator_metrics.csv is not written.  Use for faster calibration runs "
+            "when comparator data is not required."
+        ),
+    )
     return p.parse_args(argv)
 
 
@@ -1135,7 +1147,6 @@ def main(argv: list[str] | None = None) -> int:
     out = args.output_dir
 
     if args.log_only:
-        # Regenerate only the reproduction log from existing artifacts.
         fwer_path = out / "fwer_calibration.csv"
         reps_path = out / "replicate_records.csv"
         fwer_rows = (
@@ -1153,7 +1164,7 @@ def main(argv: list[str] | None = None) -> int:
 
     print(f"[bsm_recovery] scale={scale.description[:60]}...")
     print(f"[bsm_recovery] output_dir={out}")
-
+    with_comparators = not getattr(args, "no_comparators", False)
     master = np.random.default_rng(args.seed)
     all_replicate_records: list[dict] = []
     fwer_rows: list[dict] = []
@@ -1185,14 +1196,16 @@ def main(argv: list[str] | None = None) -> int:
             )
         else:
             # Alternative scenarios: run alt_reps replicates, aggregate estimands.
-            reps, agg_est = _run_alternative_replicates(scenario, scale, master, scenario_design)
+            reps, agg_est = _run_alternative_replicates(
+                scenario, scale, master, scenario_design, with_comparators=with_comparators
+            )
             all_replicate_records.extend(reps)
             estimand_rows.extend(agg_est)
             
             # Also collect a single representative replicate for comparators and retention.
             rep_seed = int(master.integers(2**31))
             data = generate_bsm_dataset(scenario_design, scenario, scale, rep_seed)
-            result = run_pipeline(data, scale, np.random.default_rng(rep_seed))
+            result = run_pipeline(data, scale, np.random.default_rng(rep_seed), with_comparators=with_comparators)
             
             for stage, counts in result["stage_retention"].items():
                 retention_rows.append(
