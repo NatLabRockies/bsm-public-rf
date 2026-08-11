@@ -1,0 +1,48 @@
+{
+  "generation": 11,
+  "created": "2026-08-11",
+  "created_by": "G11-CTRL-S2-repair",
+  "milestone": "HPC_SUBMISSION_READY",
+  "dispatch_authorized": false,
+  "hpc_submission_authorized": false,
+  "control_files": {
+    "plan": {
+      "path": "docs/execution_control/generation11_control.md",
+      "sha256": "e48b30ed74c309d51403b1d8b14005bef29b7bd6e158764d92f8afcc413e68b5",
+      "also_at": "docs/AUTONOMOUS_ANALYSIS_PLAN_G11.md (manuscript, gitignored)"
+    },
+    "prompt": {
+      "path": "scripts/autonomous_slice_prompt_g11.md (manuscript)",
+      "sha256": "3b5a55958083c9dbf731ed7bcb4162e03090716bb98c7188b39fbce93042b506"
+    },
+    "validator": {
+      "path": "scripts/validate_autonomous_slice_g11.py (manuscript)",
+      "sha256": "ad4328c7091661d57f9842296a33c15845553727f4c2c4d06eb575d4a38afc9b"
+    },
+    "bundle": {
+      "path": "docs/g11_control_bundle.toml (manuscript)",
+      "sha256": "f057f3224b61b2e4a9ae98e4a2479cbb901d667439837ce74bb50039b77ea7cc"
+    }
+  },
+  "handoff": {
+    "path": "docs/ANALYSIS_HANDOFF.md (manuscript)",
+    "sha256": "c251d4d3532938ad5ce62d9d766c482b1b4bcbeb6ad622f04df1c8d92df8ac6a",
+    "date": "2026-08-10",
+    "authority": "direct author instruction \u2014 supersedes prior interpretations"
+  },
+  "gates": {
+    "G0": "OPEN",
+    "A": "OPEN",
+    "B": "OPEN",
+    "P": "OPEN",
+    "C": "OPEN",
+    "D": "OPEN",
+    "E": "OPEN",
+    "F_review": "OPEN",
+    "F_camera_ready": "OPEN"
+  },
+  "quarantine": {
+    "p9_and_g10_state": "All P9/G10 outputs, seeds, caches are quarantined",
+    "reason": "REVIEW-0025 and REVIEW-0026"
+  }
+}
