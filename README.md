@@ -2,6 +2,13 @@
 
 This repository contains the configuration, committed artifacts, and helper scripts needed to reproduce the published Biomass Scenario Model (BSM) reduced-form modeling results with `rfm-pipeline`.
 
+## G0/B recovery-study status
+
+The semi-synthetic recovery-study controls are pre-execution only: G0, A, and
+B are open. `scripts/run_bsm_recovery_study.py` verifies the tracked contract,
+seed ledger, and control snapshot; it does not start scientific execution.
+See `docs/execution_control/g0b_preexecution_control.md`.
+
 ## Prerequisites
 
 - Python >= 3.10
@@ -25,7 +32,7 @@ The BSM preprocessed simulation data required for full pipeline reproduction are
 
 A full reproduction requires these files **co-located in a single directory** with these **exact filenames** (the runner derives the data root from one file's parent and opens the rest by name):
 
-- `X.parquet` — input matrix (30 000 rows × 160 exogenous input columns: 158 continuous first-order features plus the two binary scenario switches `AFSC`/`UAEORO`, which define the four scenario strata and are excluded from the feature catalog)
+- `X.parquet` — input matrix (30 000 rows × 160 typed exogenous input columns: 158 continuous fields plus the two binary scenario switches `AFSC`/`UAEORO`; all 160 fields are preserved by the G0/B pre-execution candidate contract)
 - `Y.parquet` — output matrix (30 000 rows × 23 495 scalar simulation outputs)
 - `all_input_metadata.parquet` — per-input column metadata (module, units, scenario flags)
 - `output_metadata.parquet` — per-output column metadata (module, derived quantity, units)
@@ -171,4 +178,3 @@ results to within numerical precision under identical software versions and rand
 
 <!-- TODO: replace with final citation when DOI is assigned -->
 Citation information will be added here upon manuscript acceptance.
-

@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "control_snapshot": "g0b_preexecution_control.md",
+  "control_snapshot_sha256": "e507146d736faec3dcbf728dc2abfc8620d8a98e5d43f4e29f4660315f2f022f",
+  "source_document": "ANALYSIS_HANDOFF.md",
+  "source_sections": [
+    "G0 amendment — minimum complete contract",
+    "Gate B implementation requirements",
+    "Preflight implementation record — 2026-08-10",
+    "Mandatory clean restart",
+    "Clean-restart implementation response — 2026-08-10"
+  ],
+  "gates": {
+    "G0": "OPEN",
+    "A": "OPEN",
+    "B": "OPEN"
+  },
+  "phase": "development",
+  "execution_permitted": false
+}

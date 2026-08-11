@@ -1,0 +1,30 @@
+# Development-only seed ledger.  Numeric replicate and stage seeds are derived
+# by the driver from the bound contract identity and these stable keys.
+schema_version: 1
+phase: development
+contract_sha256: 3be1ff1800719e10155bf26f7ccb229f02d0b86f98d8a997a544062287925f53
+entries:
+  - {phase: development, scenario: global_null, replicate_index: 0}
+  - {phase: development, scenario: global_null, replicate_index: 1}
+  - {phase: development, scenario: interaction_null, replicate_index: 0}
+  - {phase: development, scenario: interaction_null, replicate_index: 1}
+  - {phase: development, scenario: correlated_interaction_null, replicate_index: 0}
+  - {phase: development, scenario: correlated_interaction_null, replicate_index: 1}
+  - {phase: development, scenario: heteroscedastic_interaction_null, replicate_index: 0}
+  - {phase: development, scenario: heteroscedastic_interaction_null, replicate_index: 1}
+  - {phase: development, scenario: binary_main_interaction_null, replicate_index: 0}
+  - {phase: development, scenario: binary_main_interaction_null, replicate_index: 1}
+  - {phase: development, scenario: sparse_strong_hierarchical, replicate_index: 0}
+  - {phase: development, scenario: sparse_strong_hierarchical, replicate_index: 1}
+  - {phase: development, scenario: binary_continuous_strong, replicate_index: 0}
+  - {phase: development, scenario: binary_continuous_strong, replicate_index: 1}
+  - {phase: development, scenario: binary_binary_strong, replicate_index: 0}
+  - {phase: development, scenario: binary_binary_strong, replicate_index: 1}
+  - {phase: development, scenario: weak_signal, replicate_index: 0}
+  - {phase: development, scenario: weak_signal, replicate_index: 1}
+  - {phase: development, scenario: correlated_redundant, replicate_index: 0}
+  - {phase: development, scenario: correlated_redundant, replicate_index: 1}
+  - {phase: development, scenario: pure_interaction, replicate_index: 0}
+  - {phase: development, scenario: pure_interaction, replicate_index: 1}
+  - {phase: development, scenario: nonlinear_misspecified, replicate_index: 0}
+  - {phase: development, scenario: nonlinear_misspecified, replicate_index: 1}

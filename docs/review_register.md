@@ -2,6 +2,49 @@
 
 Durable record of audit findings requiring follow-up. Newest first.
 
+## 2026-08-11 — G11 integration reconciliation remains blocked
+
+- **Severity:** BLOCKER (integration/review sequencing). Isolated worktree
+  `/Users/dhetting/src/bsm-public-rf-g11-integration` was created at required
+  G10 base `47849a518fa7a90dc29ec5bff41d86774768beac`; its existing G10 repair
+  diff is preserved there without changing the source worktree.
+- **Retained:** compatible G11-G0 config from `c2d6731`,
+  `configs/g11_campaign_contract.toml`. It is `OPEN`, uses
+  `max_stat_adjusted_p_mc`, `B_screen=3199`, `B_interaction=999`, and all
+  scenarios retain 158 continuous plus two binary inputs. It has no scheduler
+  command or result claim.
+- **Rejected:** control commits `5e5bfcc` and `fee4368` conflict with the
+  newer uncommitted G10 control snapshot/dispatch bundle. The latter must remain
+  authoritative because it preserves the G10 no-results/no-PASS controls.
+  `c347370` is also rejected: its HPC manifest pins displaced commit identities
+  and embeds `sbatch`, so it would be stale and cannot satisfy no-submit
+  readiness in this integration worktree.
+- **Validation:** G11 config static assertions passed; `tests/test_bsm_recovery_fwer.py`
+  passed (18). The combined targeted run had 24 passing tests and five
+  failures solely for absent regenerated PDF figures. Figures/results were not
+  regenerated or restored because they are quarantined, and full gates are red.
+  No commit, push, scheduler submission, manuscript-result edit, or PASS claim.
+
+______________________________________________________________________
+
+## 2026-08-10 — G0/B pre-execution control repair
+
+- **Severity:** BLOCKER (scientific execution). The recovery-study controls were
+  rebuilt from the current handoff in a fresh worktree. G0, A, and B remain
+  **OPEN**.
+- **Implemented:** tracked control snapshot + checksum manifest; strict
+  canonical contract; scenario-keyed development seed ledger; typed 160-field
+  DGP; four binary-cell validation in both splits; bounded row-level
+  heteroscedasticity; typed truth; canonical pair construction; fail-closed
+  terminal-ledger validation; null aggregation that retains empty-family
+  records and permits one-pair families; status-only manifests.
+- **Quarantine:** unsupported recovery-study CSV/JSON/log outputs were removed
+  rather than relabeled as evidence. No calibration, scheduler, HPC,
+  production, holdout, or result-generation task was run.
+- **Remaining blockers:** the paired generic production adapter/reducer must
+  reach its pinned clean commit and receive independent G0/A review before any
+  development execution or later gate is considered.
+
 ______________________________________________________________________
 
 ## 2026-07-30 — Corrected 30k run promoted: canonical re-baseline 123 → 245
