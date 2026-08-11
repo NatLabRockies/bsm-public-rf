@@ -1,40 +1,29 @@
-"""Keystone gate: the BSM semi-synthetic recovery study must control the
-interaction family-wise error rate under the null-interaction scenarios.
+"""Pre-execution G0/B controls for the BSM recovery-study driver.
 
-The recovery study screens the 158-continuous first-order candidate design --
-the space production actually screened. The two binary scenario switches
-(AFSC/UAEORO) are part of the 160-input interface but are excluded from the
-first-order candidate set exactly as the production feature catalog excludes
-them; they are scenario/stratification variables, not predictor candidates.
-Scenarios ``global_null`` and ``interaction_null`` contain continuous main
-effects (and, for ``interaction_null``, a nonlinear main-effect transform) but
-**no true interactions**, so a faithful hierarchical interaction-discovery stage
-must control the interaction FWER at the configured ``alpha`` -- i.e. it must not
-let main-effect signal leak into the interaction scores.
-
-This mirrors the generic rfm-pipeline RS-S04 gate but on the BSM 158-continuous
-first-order candidate design, so the manuscript's method-evidence claim is
-validated on the actual case-study candidate structure.
+These tests intentionally exercise only deterministic contract, DGP, ledger,
+and manifest behavior.  They do not start calibration, HPC, or production work.
 """
 
 from __future__ import annotations
 
 import importlib.util
+import inspect
 import sys
+from dataclasses import replace
 from pathlib import Path
 
 import numpy as np
 import pytest
 
-_DRIVER = (
-    Path(__file__).resolve().parents[1] / "scripts" / "run_bsm_recovery_study.py"
-)
+_ROOT = Path(__file__).resolve().parents[1]
+_DRIVER = _ROOT / "scripts" / "run_bsm_recovery_study.py"
 
 
 def _load_driver():
-    spec = importlib.util.spec_from_file_location("_bsm_rrs_driver", _DRIVER)
+    spec = importlib.util.spec_from_file_location("_bsm_g0b_driver", _DRIVER)
     mod = importlib.util.module_from_spec(spec)
-    sys.modules["_bsm_rrs_driver"] = mod
+    sys.modules["_bsm_g0b_driver"] = mod
+    assert spec.loader is not None
     spec.loader.exec_module(mod)
     return mod
 
@@ -44,146 +33,394 @@ def driver():
     return _load_driver()
 
 
-@pytest.mark.parametrize("scenario_name", ["global_null", "interaction_null"])
-def test_bsm_interaction_null_fwer_controlled(driver, scenario_name):
-    from rfm_pipeline import empirical_interaction_fwer
+@pytest.fixture(scope="module")
+def contract(driver):
+    return driver.load_execution_contract()
 
-    alpha = 0.05
-    scale = driver.StudyScale(
-        n_inputs=158,
-        n_outputs=12,
-        n_runs=500,
-        B=99,
-        B_screen=99,
-        fwer_reps=40,
-        alt_reps=1,
-        alpha=alpha,
-        description="BSM RS gate scale",
-    )
-    scenarios = {s.name: s for s in driver.prespecified_bsm_scenarios()}
-    scenario = scenarios[scenario_name]
 
-    master_rng = np.random.default_rng(20240711)
-    flags = driver.run_fwer_replicates(scenario, scale, master_rng)
-    stats = empirical_interaction_fwer(flags)
+@pytest.fixture(scope="module")
+def design(driver):
+    return driver.load_bsm_input_design()
 
-    # FWER must be controlled at alpha (allow Monte-Carlo slack: at fwer_reps=40
-    # and alpha=0.05 the binomial SE is ~0.034, so alpha + ~3 SE ~= 0.15).
-    assert stats["fwer_proportion"] <= alpha + 0.10, (
-        f"{scenario_name}: empirical BSM interaction-FWER "
-        f"{stats['fwer_proportion']:.3f} exceeds alpha={alpha} "
-        f"(main-effect leakage into interaction scores?); flags={flags}"
+
+def _entry_for(ledger, scenario_name: str, replicate_index: int = 0):
+    return next(
+        entry
+        for entry in ledger.entries
+        if entry.scenario == scenario_name and entry.replicate_index == replicate_index
     )
 
 
-def test_bsm_replication_executed(driver, tmp_path):
-    """Replication loops must execute alt_reps and fwer_reps, writing replicate records."""
-    # Smoke-test: run a tiny scale with >1 replicate and verify records are written.
-    scale = driver.StudyScale(
-        n_inputs=158, n_outputs=4, n_runs=100, B=9, B_screen=9,
-        fwer_reps=2, alt_reps=2, alpha=0.05, description="replication-smoke"
+def _terminal_record(
+    driver,
+    contract,
+    entry,
+    *,
+    outcome: str,
+    pair_family_count: int,
+    false_pair_count: int,
+):
+    return driver.TerminalRecord(
+        phase=entry.phase,
+        scenario=entry.scenario,
+        replicate_index=entry.replicate_index,
+        attempt=0,
+        status="ANALYSIS_COMPLETE",
+        terminal_outcome=outcome,
+        terminal_stage="interaction_reduction",
+        contract_sha256=contract.contract_sha256,
+        control_snapshot_sha256=contract.control_snapshot_sha256,
+        seed=entry.seed,
+        schedule_sha256="schedule-fixture",
+        screened_count=2,
+        pair_family_count=pair_family_count,
+        truth_interaction_ids=(),
+        retained_interaction_ids=(),
+        false_pair_count=false_pair_count,
+        exception=None,
+        runtime_seconds=0.01,
+        max_rss_bytes=1024,
     )
-    import sys
-    args = [
-        "scripts/run_bsm_recovery_study.py",
-        "--seed", "42",
-        "--quick",
-        "--output-dir", str(tmp_path),
-    ]
-    # Monkey-patch the scale to force the tiny smoke scale.
-    original_quick = driver._QUICK_SCALE
-    driver._QUICK_SCALE = scale
-    try:
-        # Run the main driver.
-        exit_code = driver.main(args[1:])
-        assert exit_code == 0, "Driver must exit 0"
-        
-        # Check replicate_records.csv exists and has >1 row per scenario type.
-        reps_path = tmp_path / "replicate_records.csv"
-        assert reps_path.exists(), "replicate_records.csv must be written"
-        reps_df = __import__("pandas").read_csv(reps_path)
-        assert len(reps_df) > 0, "replicate_records.csv must have rows"
-        
-        # Check fwer_calibration.csv has passes_calibration column.
-        calib_path = tmp_path / "fwer_calibration.csv"
-        assert calib_path.exists(), "fwer_calibration.csv must be written"
-        calib_df = __import__("pandas").read_csv(calib_path)
-        assert "passes_calibration" in calib_df.columns, (
-            "fwer_calibration.csv must have passes_calibration column"
-        )
-        assert calib_df["n_replicates"].min() >= 2, (
-            "FWER replication must run >1 replicate per null scenario"
-        )
-        
-        # Check recovery_estimands.csv has Monte-Carlo uncertainty fields.
-        est_path = tmp_path / "recovery_estimands.csv"
-        assert est_path.exists(), "recovery_estimands.csv must be written"
-        est_df = __import__("pandas").read_csv(est_path)
-        # Estimands should have _mean and _se columns.
-        assert any("_mean" in c for c in est_df.columns), (
-            "recovery_estimands.csv must have _mean fields for Monte-Carlo aggregation"
-        )
-        assert any("_se" in c for c in est_df.columns), (
-            "recovery_estimands.csv must have _se fields for Monte-Carlo uncertainty"
-        )
-        
-        # Check reproduction_log.md exists and contains required sections.
-        log_path = tmp_path / "reproduction_log.md"
-        assert log_path.exists(), "reproduction_log.md must be written"
-        log_text = log_path.read_text()
-        assert "bsm-public-rf commit:" in log_text, "Log must contain commit hash"
-        assert "Validation gate" in log_text, "Log must contain gate result"
-        assert "Artifact hashes (SHA-256)" in log_text, "Log must contain artifact hashes"
-        assert "Per-scenario replicate status" in log_text, "Log must contain replicate status"
-        
-    finally:
-        driver._QUICK_SCALE = original_quick
 
 
-def test_bsm_design_has_two_binary_inputs(driver):
-    """The BSM semi-synthetic design must expose exactly the 2 binary scenario inputs."""
-    design = driver.load_bsm_input_design()
-    assert design.n_inputs == 160
-    assert len(design.binary_input_names) == 2, (
-        f"expected 2 binary scenario inputs, got {design.binary_input_names}"
-    )
+def test_pinned_control_snapshot_reconciles_with_contract(driver, contract):
+    snapshot = driver.verify_pinned_control_snapshot(contract)
+
+    assert snapshot.snapshot_sha256 == contract.control_snapshot_sha256
+    assert snapshot.gates == {"G0": "OPEN", "A": "OPEN", "B": "OPEN"}
+    assert snapshot.path.name == "g0b_preexecution_control.md"
+
+
+def test_control_snapshot_hash_mismatch_fails_closed(driver, contract):
+    with pytest.raises(driver.ContractError, match="checksum"):
+        driver.verify_pinned_control_snapshot(
+            replace(contract, control_snapshot_sha256="0" * 64)
+        )
+
+
+def test_contract_is_typed_open_and_has_no_duplicate_scientific_defaults(driver, contract):
+    assert contract.phase == "development"
+    assert contract.status == "OPEN"
+    assert contract.input_schema.n_inputs == 160
+    assert contract.input_schema.continuous_inputs == 158
+    assert contract.input_schema.binary_inputs == 2
+    assert contract.screening.bh_q == pytest.approx(0.05)
+    assert contract.screening.permutation_count_B >= 3199
+    assert contract.interaction.permutation_count_B >= 999
+    assert contract.interaction.selection_method == "max_stat_adjusted_p_mc"
+    assert contract.interaction.alpha == pytest.approx(0.05)
+    assert contract.calibration.one_sided_confidence == pytest.approx(0.95)
+    assert contract.calibration.tolerance == pytest.approx(0.04)
+    assert len(contract.generic_lockfile_sha256) == 64
+
+    with pytest.raises(driver.ContractError, match="duplicate"):
+        driver.load_execution_contract_text(
+            """
+schema_version: 1
+schema_version: 2
+"""
+        )
+
+
+def test_full_160_input_design_is_the_only_candidate_schema(driver, contract, design):
+    assert design.n_inputs == contract.input_schema.n_inputs == 160
     assert len(design.continuous_input_names) == 158
-
-
-def test_first_order_candidate_design_excludes_binaries(driver):
-    """The first-order candidate design must be the 158 continuous inputs, no binaries."""
-    design = driver.load_bsm_input_design()
-    candidate = driver.first_order_candidate_design(design)
-    assert candidate.n_inputs == 158
-    assert candidate.binary_input_names == []
-    assert len(candidate.continuous_input_names) == 158
-    assert candidate.continuous_input_names == design.continuous_input_names
-
-
-def test_bsm_driver_uses_production_pipeline(driver):
-    """The driver must call run_production_recovery_pipeline, not a substitute."""
-    import inspect
-    source = inspect.getsource(driver.run_pipeline)
-    assert "run_production_recovery_pipeline" in source, (
-        "run_pipeline must delegate to run_production_recovery_pipeline"
+    assert tuple(design.binary_input_names) == contract.input_schema.binary_input_names
+    assert set(design.input_names) == set(design.continuous_input_names) | set(
+        design.binary_input_names
     )
-    # Smoke-test: run one replicate and verify production result is present.
-    design = driver.load_bsm_input_design()
-    scenario = driver.prespecified_bsm_scenarios()[0]
-    scale = driver.StudyScale(
-        n_inputs=158, n_outputs=6, n_runs=100, B=9, B_screen=9,
-        fwer_reps=1, alt_reps=1, alpha=0.05, description="smoke"
-    )
-    import numpy as np
+
+    source = _DRIVER.read_text(encoding="utf-8")
+    assert "first" + "_order_candidate_design" not in source
+    assert "158" + "-continuous" not in source
+
+
+def test_every_dgp_has_all_binary_cells_and_row_level_heteroscedasticity(
+    driver, contract, design
+):
+    ledger = driver.load_seed_ledger(contract)
+    scenario = contract.scenario("heteroscedastic_interaction_null")
     data = driver.generate_bsm_dataset(
-        driver.first_order_candidate_design(design), scenario, scale, seed=42
+        contract,
+        design,
+        scenario,
+        _entry_for(ledger, scenario.name),
     )
-    result = driver.run_pipeline(
-        data, scale, np.random.default_rng(42), with_comparators=False
+
+    assert data.X_train.shape[1] == 160
+    assert data.X_eval.shape[1] == 160
+    binary_indices = [data.feature_names.index(name) for name in design.binary_input_names]
+    expected_cells = {(0, 0), (0, 1), (1, 0), (1, 1)}
+    train_cells = {tuple(row.astype(int)) for row in data.X_train[:, binary_indices]}
+    eval_cells = {tuple(row.astype(int)) for row in data.X_eval[:, binary_indices]}
+    assert train_cells == expected_cells
+    assert eval_cells == expected_cells
+    assert set(data.binary_cell_counts_train) == expected_cells
+    assert set(data.binary_cell_counts_eval) == expected_cells
+
+    assert data.row_noise_scale_train.max() / data.row_noise_scale_train.min() > 1.10
+    assert data.row_noise_scale_eval.max() / data.row_noise_scale_eval.min() > 1.10
+    assert data.realized_heteroscedasticity_ratio_train > 1.10
+    assert data.realized_heteroscedasticity_ratio_eval > 1.10
+
+
+def test_every_prespecified_regime_uses_the_same_full_binary_schema(driver, contract, design):
+    ledger = driver.load_seed_ledger(contract)
+    expected_cells = {(0, 0), (0, 1), (1, 0), (1, 1)}
+    for scenario in contract.scenarios:
+        data = driver.generate_bsm_dataset(
+            contract,
+            design,
+            scenario,
+            _entry_for(ledger, scenario.name),
+        )
+        assert data.X_train.shape[1] == 160
+        assert set(data.binary_cell_counts_train) == expected_cells
+        assert set(data.binary_cell_counts_eval) == expected_cells
+        if scenario.correlated_inputs:
+            assert data.correlation_record["train"]["mean_pairwise_rank_correlation"] > 0.50
+
+
+def test_typed_truth_uses_one_surface_for_train_and_evaluation(driver, contract, design):
+    ledger = driver.load_seed_ledger(contract)
+    scenario = contract.scenario("binary_continuous_strong")
+    data = driver.generate_bsm_dataset(
+        contract,
+        design,
+        scenario,
+        _entry_for(ledger, scenario.name),
     )
-    assert "production_result" in result, (
-        "run_pipeline must return production_result from run_production_recovery_pipeline"
+
+    np.testing.assert_allclose(
+        data.noiseless_train,
+        data.truth.evaluate(design, data.X_train),
+        atol=1e-12,
     )
-    assert hasattr(result["production_result"], "screening_retained_set"), (
-        "production_result must be a ProductionRecoveryResult"
+    np.testing.assert_allclose(
+        data.noiseless_eval,
+        data.truth.evaluate(design, data.X_eval),
+        atol=1e-12,
     )
+    assert not np.array_equal(data.Y_train[: data.Y_eval.shape[0]], data.Y_eval)
+    assert data.truth.surface_sha256 == data.surface_sha256
+    assert any(
+        term.term_id.kind == "binary_continuous_interaction"
+        for term in data.truth.terms
+    )
+
+
+def test_scenario_grid_has_required_binary_and_misspecified_truth(driver, contract, design):
+    scenario_names = {scenario.name for scenario in contract.scenarios}
+    assert {
+        "global_null",
+        "interaction_null",
+        "correlated_interaction_null",
+        "heteroscedastic_interaction_null",
+        "binary_main_interaction_null",
+        "sparse_strong_hierarchical",
+        "binary_continuous_strong",
+        "binary_binary_strong",
+        "weak_signal",
+        "correlated_redundant",
+        "pure_interaction",
+        "nonlinear_misspecified",
+    }.issubset(scenario_names)
+
+    ledger = driver.load_seed_ledger(contract)
+    misspecified = contract.scenario("nonlinear_misspecified")
+    data = driver.generate_bsm_dataset(
+        contract,
+        design,
+        misspecified,
+        _entry_for(ledger, misspecified.name),
+    )
+    sine_terms = [term for term in data.truth.terms if term.term_id.transform == "sine"]
+    assert len(sine_terms) == 1
+    assert sine_terms[0].in_library is False
+
+
+def test_seed_ledger_is_scenario_keyed_and_order_independent(driver, contract):
+    ledger = driver.load_seed_ledger(contract)
+
+    assert ledger.contract_sha256 == contract.contract_sha256
+    assert len(ledger.entries) == len(set(entry.key for entry in ledger.entries))
+    assert all(entry.phase == "development" for entry in ledger.entries)
+    for entry in ledger.entries:
+        assert entry.seed == driver.derive_replicate_seed(
+            contract.contract_sha256,
+            entry.phase,
+            entry.scenario,
+            entry.replicate_index,
+        )
+        assert entry.stage_seeds == {
+            stage: driver.derive_stage_seed(
+                contract.contract_sha256,
+                entry.phase,
+                entry.scenario,
+                entry.replicate_index,
+                stage,
+            )
+            for stage in driver.STAGE_NAMES
+        }
+
+    reversed_entries = tuple(reversed(ledger.entries))
+    assert {
+        entry.key: entry.stage_seeds for entry in reversed_entries
+    } == {entry.key: entry.stage_seeds for entry in ledger.entries}
+
+
+def test_seed_ledger_hash_mismatch_fails_before_dgp_generation(driver, contract):
+    with pytest.raises(driver.ContractError, match="checksum"):
+        driver.load_seed_ledger(replace(contract, seed_ledger_sha256="0" * 64))
+
+
+def test_empty_and_one_pair_records_are_counted_without_silent_failure(driver, contract):
+    ledger = driver.load_seed_ledger(contract)
+    entries = [
+        _entry_for(ledger, "interaction_null", 0),
+        _entry_for(ledger, "interaction_null", 1),
+    ]
+    records = [
+        _terminal_record(
+            driver,
+            contract,
+            entries[0],
+            outcome="NO_INTERACTION_CANDIDATES",
+            pair_family_count=0,
+            false_pair_count=0,
+        ),
+        _terminal_record(
+            driver,
+            contract,
+            entries[1],
+            outcome="COMPLETED",
+            pair_family_count=1,
+            false_pair_count=0,
+        ),
+    ]
+
+    summary = driver.aggregate_null_terminal_records(contract, records)
+    assert summary["denominator"] == 2
+    assert summary["n_empty_family"] == 1
+    assert summary["n_one_pair_family"] == 1
+    assert summary["n_false_pair_replicates"] == 0
+    assert summary["fwer_proportion"] == pytest.approx(0.0)
+    assert summary["nondegenerate_rate"] == pytest.approx(0.0)
+
+    assert driver.one_sided_wilson_upper(0, 1000, 0.95) == pytest.approx(
+        0.002697, abs=0.00001
+    )
+    assert driver.largest_passing_event_count(contract.calibration, 1000) == 75
+
+
+def test_canonical_pair_family_is_ordered_and_one_pair_is_valid(driver):
+    assert driver.canonical_pair_family(("b", "a", "c")) == (
+        "a:b",
+        "a:c",
+        "b:c",
+    )
+    assert driver.canonical_pair_family(("only_a", "only_b")) == ("only_a:only_b",)
+    assert driver.canonical_pair_family(("only",)) == ()
+    with pytest.raises(driver.ContractError, match="duplicate"):
+        driver.canonical_pair_family(("a", "a"))
+
+
+def test_terminal_ledger_fails_closed_on_failed_duplicate_or_missing_records(
+    driver, contract
+):
+    ledger = driver.load_seed_ledger(contract)
+    entries = [
+        _entry_for(ledger, "global_null", 0),
+        _entry_for(ledger, "global_null", 1),
+    ]
+    complete = _terminal_record(
+        driver,
+        contract,
+        entries[0],
+        outcome="NO_INTERACTION_CANDIDATES",
+        pair_family_count=0,
+        false_pair_count=0,
+    )
+    failed = driver.TerminalRecord(
+        **{
+            **complete.to_dict(),
+            "status": "FAILED",
+            "terminal_outcome": "FAILED",
+            "exception": "fixture failure",
+        }
+    )
+
+    with pytest.raises(driver.TerminalLedgerError, match="missing"):
+        driver.validate_terminal_ledger(contract, ledger, [complete])
+    with pytest.raises(driver.TerminalLedgerError, match="duplicate"):
+        driver.validate_terminal_ledger(contract, ledger, [complete, complete])
+    with pytest.raises(driver.TerminalLedgerError, match="failed"):
+        driver.validate_terminal_ledger(contract, ledger, [complete, failed])
+
+
+def test_null_aggregation_rejects_duplicate_records(driver, contract):
+    ledger = driver.load_seed_ledger(contract)
+    record = _terminal_record(
+        driver,
+        contract,
+        _entry_for(ledger, "global_null", 0),
+        outcome="NO_INTERACTION_CANDIDATES",
+        pair_family_count=0,
+        false_pair_count=0,
+    )
+    with pytest.raises(driver.TerminalLedgerError, match="duplicate"):
+        driver.aggregate_null_terminal_records(contract, [record, record])
+
+
+def test_manifest_is_truthful_preexecution_control_not_result_claim(driver, contract, design):
+    ledger = driver.load_seed_ledger(contract)
+    manifest = driver.build_preexecution_manifest(contract, design, ledger)
+
+    assert manifest["execution_status"] == "NOT_EXECUTED"
+    assert manifest["phase"] == "development"
+    assert manifest["input_schema"]["n_inputs"] == 160
+    assert manifest["candidate_schema"]["binary_inputs_included"] is True
+    assert manifest["calibration_status"] == "NOT_RUN"
+    assert manifest["terminal_records_status"] == "NOT_GENERATED"
+    assert "fwer_proportion" not in manifest
+    assert "representative" not in str(manifest).lower()
+
+
+def test_open_controls_block_scientific_execution(driver):
+    with pytest.raises(driver.PreexecutionBlockedError, match="not authorized"):
+        driver.main(["--execute-development"])
+
+
+def test_future_production_adapter_is_explicit_and_has_no_local_fallback(driver):
+    source = inspect.getsource(driver.run_pipeline)
+    assert "run_production_recovery_pipeline" in source
+    assert "execution_controls" in source
+    assert "except" not in source
+
+
+def test_runtime_surfaces_have_no_legacy_158_exact_or_free_text_gate_claims(driver):
+    runtime_paths = [
+        _ROOT / "scripts" / "run_bsm_recovery_study.py",
+        _ROOT / "configs" / "method_contract.yaml",
+        _ROOT / "configs" / "manuscript_case_study.yml",
+    ]
+    forbidden = (
+        "_".join(("fwer", "max", "stat", "exact")),
+        "_".join(("min", "exact", "permutation", "draws")),
+        "158" + "-continuous",
+        "--" + "gate-summary",
+        "--" + "log-only",
+        "representative" + " replicate",
+    )
+    runtime_text = "\n".join(path.read_text(encoding="utf-8") for path in runtime_paths).lower()
+    for phrase in forbidden:
+        assert phrase.lower() not in runtime_text
+
+    recovery_dir = _ROOT / "artifacts" / "recovery_study"
+    stale_outputs = [
+        path.name
+        for path in recovery_dir.iterdir()
+        if path.name != "README.md" and not path.name.startswith(".")
+    ]
+    assert stale_outputs == []
+    assert "representative" not in inspect.getsource(driver).lower()

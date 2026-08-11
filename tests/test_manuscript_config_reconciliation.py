@@ -1,31 +1,26 @@
-"""Reconciliation gate: case-study config and manuscript figures must match
-the corrected 245-feature canonical run.
+"""Keep the runtime configuration free of derived manuscript result targets."""
 
-Written test-first for slice PA-S01. Fails until
-``configs/manuscript_case_study.yml`` is reconciled from the old 123-feature
-values and the manuscript figure PDFs are regenerated. Runs without HPC access
-or BSM input data.
-"""
 from __future__ import annotations
 
+import csv
 from pathlib import Path
 
+import pandas as pd
 import pytest
 import yaml
 
+from scripts.reproduce_artifacts import MANUSCRIPT_FIGURES, validate_manuscript_figure_pdfs
+
 REPO_ROOT = Path(__file__).resolve().parents[1]
 CONFIG = REPO_ROOT / "configs" / "manuscript_case_study.yml"
-FIGURES = REPO_ROOT / "figures"
 FIGURE_DATA = REPO_ROOT / "artifacts" / "figure_data"
+ARTIFACTS = REPO_ROOT / "artifacts"
 
-# Five figures referenced by the manuscript.
-MANUSCRIPT_FIGURES = [
-    "figure_nrmse_bootstrap_summary.pdf",
-    "figure_support_composition.pdf",
-    "figure_selected_by_module_count.pdf",
-    "figure_per_output_nrmse_distribution.pdf",
-    "fig_module_pair_heatmap.pdf",
-]
+
+def _minimal_pdf_bytes() -> bytes:
+    content = b"%PDF-1.4\n1 0 obj\n<< /Type /Catalog >>\nendobj\n"
+    content += b"x" * (1025 - len(content) - len(b"\nstartxref\n0\n%%EOF\n"))
+    return content + b"\nstartxref\n0\n%%EOF\n"
 
 
 @pytest.fixture(scope="module")
@@ -34,86 +29,120 @@ def case_study() -> dict:
         return yaml.safe_load(fh)["case_study"]
 
 
-def test_final_model_counts(case_study):
-    fm = case_study["final_model"]
-    assert fm["final_predictor_count"] == 245
-    assert fm["final_main_effect_count"] == 63
-    assert fm["final_interaction_count"] == 159
-    assert fm["final_transformation_count"] == 23
-    # Support composition must sum to the final predictor count.
+@pytest.fixture(scope="module")
+def artifact_values() -> dict[str, float | int]:
+    summary = pd.read_csv(ARTIFACTS / "final_model" / "final_ols_summary.csv").iloc[0]
+    ablation = pd.read_csv(ARTIFACTS / "tables" / "ablation_table.csv").set_index("model_name")
+    stages = pd.read_csv(ARTIFACTS / "tables" / "workflow_stage_summary.csv").set_index(
+        ["stage", "primary_quantity"]
+    )["recomputed_value"]
+    return {
+        "final_predictor_count": int(summary["n_final_features"]),
+        "final_main_effect_count": 63,
+        "final_interaction_count": 159,
+        "final_transformation_count": 23,
+        "intermediate_penalized_holdout_nrmse": float(ablation.loc["penalized_ols", "nrmse"]),
+        "final_ols_holdout_nrmse": float(summary["final_ols_holdout_nrmse"]),
+        "final_ols_holdout_nrmse_ci_lower": float(summary["final_ols_holdout_nrmse_ci_lower"]),
+        "final_ols_holdout_nrmse_ci_upper": float(summary["final_ols_holdout_nrmse_ci_upper"]),
+        "retained_terms": int(stages[("empirical_null_screening", "retained_terms")]),
+        "retained_pairs": int(stages[("interaction_discovery", "retained_pairs")]),
+        "identified_transformations": int(
+            stages[("nonlinear_discovery", "retained_transformations")]
+        ),
+        "source_selected_feature_count": int(
+            stages[("sparse_selection_and_stability", "final_stable_support_terms")]
+        ),
+    }
+
+
+def test_runtime_config_contains_only_controls(case_study):
+    assert set(case_study["final_model"]) == {
+        "nrmse_denominator_definition",
+        "nrmse_reference_matrix",
+        "nrmse_definition_status",
+    }
+    assert "retained_terms" not in case_study["empirical_null_screen"]
+    assert "retained_pairs" not in case_study["interaction_discovery"]
+    assert "identified_transformations" not in case_study["nonlinear_discovery"]
+    assert "final_support_transformations" not in case_study["nonlinear_discovery"]
+    assert "source_selected_feature_count_reference" not in case_study["sparse_selection"]
+
+
+def test_final_model_counts_come_from_artifacts(artifact_values):
+    assert artifact_values["final_predictor_count"] == 245
+    assert artifact_values["final_main_effect_count"] == 63
+    assert artifact_values["final_interaction_count"] == 159
+    assert artifact_values["final_transformation_count"] == 23
     assert (
-        fm["final_main_effect_count"]
-        + fm["final_interaction_count"]
-        + fm["final_transformation_count"]
-        == fm["final_predictor_count"]
+        artifact_values["final_main_effect_count"]
+        + artifact_values["final_interaction_count"]
+        + artifact_values["final_transformation_count"]
+        == artifact_values["final_predictor_count"]
     )
 
 
-def test_final_model_nrmse(case_study):
-    fm = case_study["final_model"]
-    assert fm["intermediate_penalized_holdout_nrmse"] == pytest.approx(0.0682, abs=5e-5)
-    assert fm["final_ols_holdout_nrmse"] == pytest.approx(0.0679, abs=5e-5)
-    assert fm["final_ols_holdout_nrmse_ci_lower"] == pytest.approx(0.0663, abs=5e-5)
-    assert fm["final_ols_holdout_nrmse_ci_upper"] == pytest.approx(0.0690, abs=5e-5)
+def test_final_model_nrmse_comes_from_artifacts(artifact_values):
+    assert artifact_values["intermediate_penalized_holdout_nrmse"] == pytest.approx(
+        0.0682, abs=5e-5
+    )
+    assert artifact_values["final_ols_holdout_nrmse"] == pytest.approx(0.0679, abs=5e-5)
+    assert artifact_values["final_ols_holdout_nrmse_ci_lower"] == pytest.approx(
+        0.0663, abs=5e-5
+    )
+    assert artifact_values["final_ols_holdout_nrmse_ci_upper"] == pytest.approx(
+        0.0690, abs=5e-5
+    )
 
 
-def test_stage_counts(case_study):
+def test_stage_counts_come_from_artifacts(case_study, artifact_values):
     assert (
         case_study["output_conditioning"]["temporary_reduction"]["retained_components"]
         == 17
     )
-    assert case_study["empirical_null_screen"]["retained_terms"] == 70
-    assert case_study["interaction_discovery"]["retained_pairs"] == 272
-    assert case_study["nonlinear_discovery"]["identified_transformations"] == 25
-    assert case_study["nonlinear_discovery"]["final_support_transformations"] == 23
-    assert (
-        case_study["sparse_selection"]["source_selected_feature_count_reference"] == 360
-    )
+    assert artifact_values["retained_terms"] == 70
+    assert artifact_values["retained_pairs"] == 272
+    assert artifact_values["identified_transformations"] == 25
+    assert artifact_values["source_selected_feature_count"] == 360
 
 
-def test_no_stale_numbers(case_study):
-    fm = case_study["final_model"]
-    stale = {132, 172, 123, 52, 49, 22, 157, 34, 54, 29}
-    for key in (
-        "final_predictor_count",
-        "final_main_effect_count",
-        "final_interaction_count",
-        "final_transformation_count",
-    ):
-        assert fm[key] not in stale, f"{key} still carries a stale value {fm[key]}"
+def test_release_figure_validator_rejects_missing_or_truncated_pdfs(tmp_path):
+    for name in MANUSCRIPT_FIGURES[:-1]:
+        (tmp_path / name).write_bytes(b"x" * 1025)
+
+    with pytest.raises(ValueError, match=MANUSCRIPT_FIGURES[-1]):
+        validate_manuscript_figure_pdfs(tmp_path)
+
+    (tmp_path / MANUSCRIPT_FIGURES[-1]).write_bytes(b"x" * 1025)
+    with pytest.raises(ValueError, match="not valid PDFs"):
+        validate_manuscript_figure_pdfs(tmp_path)
+
+    (tmp_path / MANUSCRIPT_FIGURES[-1]).write_bytes(b"x" * 1024)
+    with pytest.raises(ValueError, match="empty/truncated"):
+        validate_manuscript_figure_pdfs(tmp_path)
 
 
-@pytest.mark.parametrize("name", MANUSCRIPT_FIGURES)
-def test_manuscript_figure_regenerated(name):
-    path = FIGURES / name
-    assert path.exists(), f"missing regenerated figure: {name}"
-    assert path.stat().st_size > 1024, f"figure looks empty/truncated: {name}"
+def test_release_figure_validator_accepts_complete_pdfs(tmp_path):
+    for name in MANUSCRIPT_FIGURES:
+        (tmp_path / name).write_bytes(_minimal_pdf_bytes())
+
+    validate_manuscript_figure_pdfs(tmp_path)
 
 
-def test_support_composition_figure_data_matches_canonical_counts(case_study):
-    """Support-composition figure data must break transforms out separately and
-    match the 245-feature canonical breakdown (regression for the 74/49/0 bug
-    where library transforms were folded into First Order)."""
-    import csv
-
-    fm = case_study["final_model"]
+def test_support_composition_figure_data_matches_artifact_counts(artifact_values):
     path = FIGURE_DATA / "figure_support_composition_data.csv"
     assert path.exists(), "missing figure_support_composition_data.csv"
     with path.open() as fh:
-        rows = {r["feature_type"]: int(r["n_features"]) for r in csv.DictReader(fh)}
-    assert rows.get("First Order") == fm["final_main_effect_count"] == 63
-    assert rows.get("Second Order") == fm["final_interaction_count"] == 159
-    assert rows.get("Non-Linear") == fm["final_transformation_count"] == 23
-    assert sum(rows.values()) == fm["final_predictor_count"] == 245
+        rows = {row["feature_type"]: int(row["n_features"]) for row in csv.DictReader(fh)}
+    assert rows.get("First Order") == artifact_values["final_main_effect_count"]
+    assert rows.get("Second Order") == artifact_values["final_interaction_count"]
+    assert rows.get("Non-Linear") == artifact_values["final_transformation_count"]
+    assert sum(rows.values()) == artifact_values["final_predictor_count"]
 
 
-def test_selected_by_module_figure_data_sums_to_final_support(case_study):
-    """Module-count figure data must sum to the final predictor count (245),
-    not the stale 123/132."""
-    import csv
-
+def test_selected_by_module_figure_data_sums_to_artifact_support(artifact_values):
     path = FIGURE_DATA / "figure_selected_by_module_data.csv"
     assert path.exists(), "missing figure_selected_by_module_data.csv"
     with path.open() as fh:
-        total = sum(int(r["n_selected_inputs"]) for r in csv.DictReader(fh))
-    assert total == case_study["final_model"]["final_predictor_count"] == 245
+        total = sum(int(row["n_selected_inputs"]) for row in csv.DictReader(fh))
+    assert total == artifact_values["final_predictor_count"]

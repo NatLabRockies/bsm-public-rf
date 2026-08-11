@@ -28,8 +28,8 @@ case_study:
     source_of_truth: released_feature_catalog
     exact_catalog_row_count: 26560
     source_of_truth_status: frozen_repo_decision
-    first_order_rule: 158 continuously sampled inputs in external interface order (the two binary scenario switches are design/stratification variables, not first-order predictor candidates)
-    interaction_rule: released_feature_catalog is authoritative for exact interaction membership
+    first_order_rule: all 160 typed inputs in external interface order, including both binary scenario fields as first-order predictor candidates
+    interaction_rule: released_feature_catalog is authoritative for declared interaction membership
     nonlinear_library:
       families:
         - quadratic
@@ -62,10 +62,9 @@ case_study:
     source_script_equivalence_status: not_yet_validated
     permutation_count_B: 200
     permutation_count_status: frozen_source_derived_repo_decision
-    # Implementation uses B+1=201 permutations (one observed statistic + 200 null draws)
-    # for exact Monte Carlo p-value computation; the manuscript reports B=200.
+    # Implementation uses one observed statistic plus B null draws for its
+    # finite Monte Carlo adjusted-p calculation; the manuscript reports B=200.
     bh_q_screen: 0.05
-    retained_terms: 70
 
   interaction_discovery:
     method: tree_shap_interaction_values
@@ -76,15 +75,13 @@ case_study:
     source_workflow_reference: private_tree_shap_interaction_workflow
     source_workflow_equivalence_status: manuscript_aligned_via_shap_gradient_boosting
     null_threshold_quantile: 0.995
-    retained_pairs: 272
-    # --- Path A run-of-record FWER settings (ANALYSIS_HANDOFF Gate B) ---
-    # Exact max-statistic FWER (not interpolated) at alpha=0.05 with >=999 null
-    # draws so exact Monte Carlo p-values are resolvable. Enforced by the pipeline
-    # InteractionDiscoverySpec draw-adequacy guard (rfm-pipeline PA-B).
-    family_error_method: fwer_max_stat_exact
+    # --- G0/B pre-execution interaction settings ---
+    # The neutral adjusted-p selector and its draw floor are bound by
+    # configs/method_contract.yaml before any later execution gate.
+    family_error_method: max_stat_adjusted_p_mc
     family_error_alpha: 0.05
     permutation_count_B: 999
-    min_exact_permutation_draws: 999
+    minimum_selection_draws: 999
 
   nonlinear_discovery:
     method: gam_plus_restricted_parametric_replacement
@@ -98,8 +95,6 @@ case_study:
     public_implementation_status: manuscript_aligned
     source_workflow_reference: private_gam_nonlinear_discovery_workflow
     source_workflow_equivalence_status: manuscript_aligned_via_scipy_smoothing_spline
-    identified_transformations: 25
-    final_support_transformations: 23
 
   sparse_selection:
     model_class: l1_penalized_linear_model_per_retained_component
@@ -111,7 +106,6 @@ case_study:
     source_workflow_reference: notebook_pca_debiased_lasso
     source_artifact: LASSO_to_OLS_v9.ipynb
     source_workflow_equivalence_status: not_yet_validated
-    source_selected_feature_count_reference: 360
 
   stability:
     resampling_scheme: 50_subsamples_of_80_percent_rows_without_replacement_seed_123
@@ -127,22 +121,12 @@ case_study:
     feature_pruning:
       error_scale_quantile: 0.95
       # delta_threshold_override: retain only features whose individual removal
-      # improves macro nRMSE by less than this value. 0.002 is the manuscript
-      # baseline; it prunes 115 of the 360 stable-support features to yield the 245
-      # final features reported in Table 1 of the JDS manuscript.
+      # improves macro nRMSE by less than this value. Derived support counts are
+      # recorded only in generated artifacts.
       delta_threshold_override: 0.002
 
   final_model:
-    final_predictor_count: 245
-    final_main_effect_count: 63
-    final_interaction_count: 159
-    final_transformation_count: 23
-    intermediate_penalized_holdout_nrmse: 0.0682
-    final_ols_holdout_nrmse: 0.0679
-    final_ols_holdout_nrmse_ci_lower: 0.0663
-    final_ols_holdout_nrmse_ci_upper: 0.0690
     nrmse_denominator_definition: macro_average_rmse_divided_by_training_response_range
-    nrmse_min_range: 1.0e-6
     nrmse_reference_matrix: Y_train
     nrmse_definition_status: frozen_repo_decision_matching_live_code
 

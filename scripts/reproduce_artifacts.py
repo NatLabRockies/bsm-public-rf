@@ -7,7 +7,8 @@ No raw BSM data or HPC infrastructure required.
 Usage
 -----
     pixi run reproduce-artifacts
-    python scripts/reproduce_artifacts.py [--output-dir figures/]
+    pixi run reproduce-artifacts -- --validate-only
+    python scripts/reproduce_artifacts.py [--output-dir figures/] [--validate-only]
 """
 from __future__ import annotations
 
@@ -21,6 +22,45 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 FIGURE_DATA_DIR = REPO_ROOT / "artifacts" / "figure_data"
 TABLES_DIR = REPO_ROOT / "artifacts" / "tables"
+MANUSCRIPT_FIGURES = (
+    "figure_nrmse_bootstrap_summary.pdf",
+    "figure_support_composition.pdf",
+    "figure_selected_by_module_count.pdf",
+    "figure_per_output_nrmse_distribution.pdf",
+    "fig_module_pair_heatmap.pdf",
+)
+
+
+def validate_manuscript_figure_pdfs(figures_dir: Path) -> None:
+    """Fail unless all manuscript figure PDFs are nontrivial PDF documents."""
+    missing = [name for name in MANUSCRIPT_FIGURES if not (figures_dir / name).exists()]
+    if missing:
+        raise ValueError(f"missing regenerated manuscript figure PDF(s): {', '.join(missing)}")
+    truncated = [
+        name for name in MANUSCRIPT_FIGURES if (figures_dir / name).stat().st_size <= 1024
+    ]
+    if truncated:
+        raise ValueError(
+            f"regenerated manuscript figure PDF(s) look empty/truncated: {', '.join(truncated)}"
+        )
+    invalid = [
+        name
+        for name in MANUSCRIPT_FIGURES
+        if not _has_pdf_structure((figures_dir / name).read_bytes())
+    ]
+    if invalid:
+        raise ValueError(
+            f"regenerated manuscript figure PDF(s) are not valid PDFs: {', '.join(invalid)}"
+        )
+
+
+def _has_pdf_structure(contents: bytes) -> bool:
+    """Check the portable PDF envelope without introducing a parser dependency."""
+    return (
+        contents.startswith(b"%PDF-")
+        and b"startxref" in contents
+        and contents.rstrip().endswith(b"%%EOF")
+    )
 
 
 def _save_pdf(svg_path: Path) -> bool:
@@ -79,9 +119,22 @@ def main() -> None:
     parser.add_argument(
         "--output-dir", default=None, help="Output directory (default: figures/)"
     )
+    parser.add_argument(
+        "--validate-only",
+        action="store_true",
+        help="Validate required release-figure PDFs without regenerating them.",
+    )
     args = parser.parse_args()
 
     output_dir = Path(args.output_dir) if args.output_dir else REPO_ROOT / "figures"
+    if args.validate_only:
+        try:
+            validate_manuscript_figure_pdfs(output_dir)
+        except ValueError as exc:
+            print(f"ERROR: {exc}", file=sys.stderr)
+            sys.exit(1)
+        print(f"Validated {len(MANUSCRIPT_FIGURES)} manuscript figure PDFs in {output_dir}/")
+        return
 
     from rfm_pipeline import regenerate_figures_from_committed_data
 
