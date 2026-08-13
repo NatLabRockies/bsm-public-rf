@@ -60,10 +60,11 @@ case_study:
     public_implementation_status: source_backed_public_surrogate
     source_script_reference: private_delta_null_screening_script
     source_script_equivalence_status: not_yet_validated
-    permutation_count_B: 200
-    permutation_count_status: frozen_source_derived_repo_decision
-    # Implementation uses one observed statistic plus B null draws for its
-    # finite Monte Carlo adjusted-p calculation; the manuscript reports B=200.
+    permutation_count_B: 3199
+    permutation_count_status: frozen_g11_contract
+    permutation_count_source: g11_campaign_contract
+    # One observed statistic plus the G11 contract's 3,199 null draws gives a
+    # sufficiently fine finite Monte Carlo grid for the 160-test BH screen.
     bh_q_screen: 0.05
 
   interaction_discovery:
@@ -82,6 +83,7 @@ case_study:
     family_error_alpha: 0.05
     permutation_count_B: 999
     minimum_selection_draws: 999
+    permutation_count_source: g11_campaign_contract
 
   nonlinear_discovery:
     method: gam_plus_restricted_parametric_replacement

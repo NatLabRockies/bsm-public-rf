@@ -12,6 +12,7 @@ Prerequisites (see README.md for full details):
   - BSM dataset files at: ${SCRATCH_DIR}/bsm/bsm-public-rf/artifacts/preprocessed_real_data_30k/
   - configs/manuscript_paths.yml configured (copy from configs/manuscript_paths_template.yml)
 """
+
 from __future__ import annotations
 
 import argparse
@@ -73,7 +74,11 @@ def _check_prerequisites() -> None:
             unedited = [
                 key
                 for key, value in paths_data.items()
-                if isinstance(value, str) and (value.startswith("/path/to/") or value.startswith("/scratch/dhetting/"))
+                if isinstance(value, str)
+                and (
+                    value.startswith("/path/to/")
+                    or value.startswith("/scratch/dhetting/")
+                )
             ]
             if unedited:
                 errors.append(
@@ -83,14 +88,18 @@ def _check_prerequisites() -> None:
                     f"    → See configs/manuscript_paths_template.yml for the expected schema"
                 )
         except Exception as exc:  # noqa: BLE001 — surfaced verbatim to user
-            errors.append(
-                f"  configs/manuscript_paths.yml failed to parse: {exc}"
-            )
+            errors.append(f"  configs/manuscript_paths.yml failed to parse: {exc}")
 
     # Validate dataset directory when SCRATCH_DIR is resolvable
     scratch_dir = os.environ.get("SCRATCH_DIR", "")
     if scratch_dir:
-        dataset_dir = Path(scratch_dir) / "bsm" / "bsm-public-rf" / "artifacts" / "preprocessed_real_data_30k"
+        dataset_dir = (
+            Path(scratch_dir)
+            / "bsm"
+            / "bsm-public-rf"
+            / "artifacts"
+            / "preprocessed_real_data_30k"
+        )
         if not dataset_dir.exists():
             errors.append(
                 f"  BSM dataset directory not found: {dataset_dir}\n"
@@ -99,25 +108,33 @@ def _check_prerequisites() -> None:
             )
 
     if errors:
-        print("ERROR: Prerequisites not met for reproduce-full. See README.md for setup.\n")
+        print(
+            "ERROR: Prerequisites not met for reproduce-full. See README.md for setup.\n"
+        )
         for e in errors:
             print(e)
         sys.exit(1)
 
 
 def main() -> None:
-    argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter).parse_args()
+    argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    ).parse_args()
+    raise SystemExit(
+        "RETIRED: use the content-addressed G11 campaign package; "
+        "the legacy full-dataset runner is non-executable."
+    )
     _check_prerequisites()
 
     cfg = load_config(str(CONFIG_PATH))
     artifact_dir = cfg.output.artifact_dir
     if "${" in artifact_dir:
         print(f"WARNING: artifact_dir contains unexpanded variable: {artifact_dir!r}")
-        print(f"  Make sure SCRATCH_DIR and other referenced env vars are exported.")
+        print("  Make sure SCRATCH_DIR and other referenced env vars are exported.")
 
     print(f"Config loaded: dataset={cfg.dataset.type}")
     print(f"Artifact dir:  {artifact_dir}")
-    print(f"Launching full pipeline runner via subprocess...")
+    print("Launching full pipeline runner via subprocess...")
 
     if not RUNNER_PATH.is_file():
         raise FileNotFoundError(f"Pipeline runner not found: {RUNNER_PATH}")

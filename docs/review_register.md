@@ -354,3 +354,27 @@ ______________________________________________________________________
     via a `declare -n` loop (bash 4.3+, Kestrel default).
 - **Tests:** 26 pass; bash syntax checks pass on all four
   modified scripts.
+
+## REVIEW-0013 — G11 BSM integration and legacy-route retirement
+
+- Date: 2026-08-12
+- Severity: P0 / scientific-execution integrity
+- Status: fixed in the current uncommitted integration branch
+- Evidence: the prior public entrypoints could still select superseded
+  screening/interaction/bootstrap controls; the full 160-input, sealed-holdout,
+  terminal-support recovery, fixed-family calibration, comparator, and applied
+  bootstrap route was not one executable manifest-bound adapter.
+- Resolution: added the content-hashed G11 adapter and DGP contract, exact
+  campaign contract, deterministic sealed applied-data preparation, terminal
+  recovery/comparator flow, Gate-B/Gate-C reducers, applied stage handlers, and
+  fail-closed guards on the legacy publication submission routes. The old
+  method contract is audit history under `configs/rejected_history/`, not a
+  compatibility fallback.
+- Validation: `75 passed`; Ruff format/check passes on G11 implementation
+  surfaces; guarded shell scripts pass `bash -n`; `git diff --check` passes.
+- Remaining blockers: the integration diff must be committed and installed at
+  exact clean Kestrel SHAs; the real applied dataset must be prepared and its
+  manifest hash frozen; live quota/storage/inode and `sbatch --test-only`
+  evidence are unavailable locally. No scheduler submission is authorized.
+- Blocks merge/submission: merge no after review/commit; HPC submission yes
+  until every remaining blocker is satisfied.

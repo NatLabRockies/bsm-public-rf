@@ -9,6 +9,9 @@
 
 set -euo pipefail
 
+echo "RETIRED: use the content-addressed G11 campaign package; this legacy workflow is non-executable." >&2
+exit 64
+
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$REPO_ROOT"
 

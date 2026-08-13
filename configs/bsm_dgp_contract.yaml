@@ -1,24 +1,10 @@
-# BSM G0/B pre-execution contract.
+# BSM-only typed data-generating-process contract for Generation 11.
 #
-# This file is the sole scientific-settings source for the recovery driver.
-# It intentionally describes a development-only control state: no calibration,
-# scheduler, HPC, production, holdout, or result generation is authorized.
+# Scientific method controls, sample sizes, replicate counts, seeds, and
+# scheduler work units are deliberately absent.  They come exclusively from
+# configs/g11_campaign_contract.toml, loaded and verified by rfm-pipeline.
 
-schema_version: 2
-gate: G0
-status: OPEN
-phase: development
-
-control_snapshot:
-  path: docs/execution_control/g0b_preexecution_control.md
-  sha256: e507146d736faec3dcbf728dc2abfc8620d8a98e5d43f4e29f4660315f2f022f
-
-pinned_generic_source:
-  repository: rfm-pipeline
-  commit: 628fdce60bed184337f7a43cc263919a49335e7a
-  require_clean_checkout: true
-  lockfile: pixi.lock
-  lockfile_sha256: 0c778fb4d947b62ab7cee8f965f1a4d102dfe3046c5ecea78a64add0d17c5e44
+schema_version: 1
 
 input_schema:
   n_inputs: 160
@@ -29,37 +15,6 @@ input_schema:
     - OI.Use AEO Reference Oil
   metadata_path: configs/manuscript_input_metadata.yml
   all_binary_cells_required: true
-
-screening:
-  statistic: coefficient_row_l2_norm
-  bh_q: 0.05
-  permutation_count_B: 3199
-
-interaction:
-  selection_method: max_stat_adjusted_p_mc
-  alpha: 0.05
-  permutation_count_B: 999
-  minimum_selection_draws: 999
-  tie_convention: ">="
-  candidate_pair_order: lexicographic_feature_name
-  shared_response_row_schedule: true
-
-calibration:
-  one_sided_confidence: 0.95
-  tolerance: 0.04
-  gate_upper_bound: 0.09
-  null_replicates_confirmatory: 1000
-  operating_characteristic_rates: [0.05, 0.075, 0.09, 0.10]
-  statement: passed_prespecified_empirical_calibration_tolerance_only
-
-development:
-  replicates_per_scenario: 2
-  n_train: 160
-  n_eval: 80
-  n_outputs: 4
-  retry_policy:
-    max_attempts: 1
-    retryable_statuses: []
 
 dgp:
   continuous_distribution: uniform_published_range
@@ -79,38 +34,6 @@ dgp:
     noise_weight: 0.30
   strong_effect_floor: 0.75
   transform_library: [quadratic, logarithm, inverse, square_root]
-
-nondegeneracy:
-  minimum_pair_family_size: 2
-  required_rate: 0.90
-  global_null_empty_family_allowed: true
-  fixed_family_sizes: [10, 100, 1000]
-
-terminal_records:
-  required_fields:
-    - phase
-    - scenario
-    - replicate_index
-    - attempt
-    - status
-    - terminal_outcome
-    - terminal_stage
-    - contract_sha256
-    - control_snapshot_sha256
-    - seed
-    - schedule_sha256
-    - screened_count
-    - pair_family_count
-    - truth_interaction_ids
-    - retained_interaction_ids
-    - false_pair_count
-    - exception
-    - runtime_seconds
-    - max_rss_bytes
-  empty_family_outcome: NO_INTERACTION_CANDIDATES
-  completed_status: ANALYSIS_COMPLETE
-  failed_status: FAILED
-  failure_action: exit_nonzero
 
 scenarios:
   - name: global_null
@@ -221,8 +144,3 @@ scenarios:
     snr: 10.0
     correlated_inputs: false
     heteroscedastic: false
-
-seed_ledger:
-  path: configs/g0_seed_ledger.yaml
-  sha256: "26c20243a1c36378ca59133e4a1a8f5dccbc2a0bc1274f0287822049362bf7bb"
-  derivation: sha256_contract_phase_scenario_replicate_stage

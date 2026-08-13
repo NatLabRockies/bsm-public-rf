@@ -1,3 +1,5 @@
+# RETIRED/NON-EXECUTABLE: preserved only as historical configuration.
+# Use the content-addressed G11 campaign package and its phase authorizations.
 # Publication-Ready Full-Dataset Study — Orchestration Configuration
 # Specifies HPC cluster, execution strategy, and dataset sync for publication-grade run
 #
