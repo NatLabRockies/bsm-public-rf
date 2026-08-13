@@ -16,7 +16,7 @@ import importlib.util
 import json
 import math
 import subprocess
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, replace
 from pathlib import Path
 from statistics import NormalDist
 from typing import Any, Iterable, Mapping
@@ -25,7 +25,10 @@ import numpy as np
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
-_CONTRACT_PATH = ROOT / "configs" / "method_contract.yaml"
+_CONTRACT_PATH = (
+    ROOT / "configs" / "rejected_history" / "method_contract_g0_development.yaml"
+)
+_DGP_CONTRACT_PATH = ROOT / "configs" / "bsm_dgp_contract.yaml"
 _CONTROL_MANIFEST_PATH = ROOT / "docs" / "execution_control" / "control_manifest.json"
 
 STAGE_NAMES = (
@@ -37,6 +40,21 @@ STAGE_NAMES = (
     "nonlinear",
     "selection",
 )
+
+_CAMPAIGN_TO_BSM_SCENARIO = {
+    "global_null": "global_null",
+    "interaction_null_continuous": "interaction_null",
+    "interaction_null_correlated": "correlated_interaction_null",
+    "interaction_null_heteroscedastic": "heteroscedastic_interaction_null",
+    "interaction_null_binary_main": "binary_main_interaction_null",
+    "strong_cc": "sparse_strong_hierarchical",
+    "strong_bc": "binary_continuous_strong",
+    "strong_bb": "binary_binary_strong",
+    "weak_signal": "weak_signal",
+    "correlated_redundant": "correlated_redundant",
+    "pure_interaction": "pure_interaction",
+    "nonlinear_misspecified": "nonlinear_misspecified",
+}
 
 
 class ContractError(ValueError):
@@ -189,6 +207,19 @@ class DevelopmentControls:
 
 
 @dataclass(frozen=True)
+class DatasetScale:
+    """Explicit row/output scale for one campaign scenario."""
+
+    n_train: int
+    n_eval: int
+    n_outputs: int
+
+    def __post_init__(self) -> None:
+        if self.n_train < 4 or self.n_eval < 4 or self.n_outputs < 1:
+            raise ValueError("dataset scale requires positive nontrivial dimensions")
+
+
+@dataclass(frozen=True)
 class DGPControls:
     continuous_distribution: str
     binary_distribution: str
@@ -300,6 +331,24 @@ class ExecutionContract:
         }
 
 
+@dataclass(frozen=True)
+class BSMDGPContract:
+    """BSM-only DGP controls; contains no method, scale, seed, or scheduler settings."""
+
+    path: Path
+    source_sha256: str
+    input_schema: InputSchema
+    dgp: DGPControls
+    scenarios: tuple[ScenarioDefinition, ...]
+    phase: str = "campaign"
+
+    def scenario(self, name: str) -> ScenarioDefinition:
+        for scenario in self.scenarios:
+            if scenario.name == name:
+                return scenario
+        raise ContractError(f"unknown BSM DGP scenario {name!r}")
+
+
 def _parse_input_schema(payload: Mapping[str, Any]) -> InputSchema:
     _require_keys(
         payload,
@@ -324,7 +373,11 @@ def _parse_input_schema(payload: Mapping[str, Any]) -> InputSchema:
     )
     if result.n_inputs != result.continuous_inputs + result.binary_inputs:
         raise ContractError("input_schema counts do not sum to n_inputs")
-    if result.n_inputs != 160 or result.continuous_inputs != 158 or result.binary_inputs != 2:
+    if (
+        result.n_inputs != 160
+        or result.continuous_inputs != 158
+        or result.binary_inputs != 2
+    ):
         raise ContractError("the G0/B contract requires the typed 160-column interface")
     if len(result.binary_input_names) != result.binary_inputs:
         raise ContractError("input_schema binary names do not match binary_inputs")
@@ -348,7 +401,11 @@ def _parse_scenarios(raw_scenarios: Any) -> tuple[ScenarioDefinition, ...]:
     scenarios: list[ScenarioDefinition] = []
     for raw in raw_scenarios:
         value = _require_mapping(raw, "scenario")
-        _require_keys(value, context=f"scenario {value.get('name', '<unknown>')!r}", required=required)
+        _require_keys(
+            value,
+            context=f"scenario {value.get('name', '<unknown>')!r}",
+            required=required,
+        )
         scenario = ScenarioDefinition(
             name=str(value["name"]),
             role=str(value["role"]),
@@ -368,9 +425,13 @@ def _parse_scenarios(raw_scenarios: Any) -> tuple[ScenarioDefinition, ...]:
             "binary_continuous",
             "binary_binary",
         }:
-            raise ContractError(f"scenario {scenario.name!r} has an invalid interaction kind")
+            raise ContractError(
+                f"scenario {scenario.name!r} has an invalid interaction kind"
+            )
         if scenario.nonlinear_kind not in {"none", "quadratic", "sine"}:
-            raise ContractError(f"scenario {scenario.name!r} has an invalid nonlinear kind")
+            raise ContractError(
+                f"scenario {scenario.name!r} has an invalid nonlinear kind"
+            )
         if scenario.snr <= 0.0:
             raise ContractError(f"scenario {scenario.name!r} must have positive SNR")
         scenarios.append(scenario)
@@ -392,7 +453,115 @@ def _parse_scenarios(raw_scenarios: Any) -> tuple[ScenarioDefinition, ...]:
     return tuple(scenarios)
 
 
-def load_execution_contract_text(text: str, *, contract_path: Path = _CONTRACT_PATH) -> ExecutionContract:
+def _parse_dgp_payload(dgp_raw: Mapping[str, Any]) -> DGPControls:
+    _require_keys(
+        dgp_raw,
+        context="dgp",
+        required={
+            "continuous_distribution",
+            "binary_distribution",
+            "coded_continuous_range",
+            "binary_coding",
+            "intercept",
+            "noise_base_sd",
+            "row_heteroscedasticity",
+            "correlated_block",
+            "strong_effect_floor",
+            "transform_library",
+        },
+    )
+    hetero = _require_mapping(
+        dgp_raw["row_heteroscedasticity"], "dgp.row_heteroscedasticity"
+    )
+    _require_keys(
+        hetero,
+        context="dgp.row_heteroscedasticity",
+        required={
+            "driver_input_position",
+            "minimum_multiplier",
+            "maximum_multiplier",
+            "function",
+        },
+    )
+    correlated = _require_mapping(dgp_raw["correlated_block"], "dgp.correlated_block")
+    _require_keys(
+        correlated,
+        context="dgp.correlated_block",
+        required={"size", "latent_weight", "noise_weight"},
+    )
+    result = DGPControls(
+        continuous_distribution=str(dgp_raw["continuous_distribution"]),
+        binary_distribution=str(dgp_raw["binary_distribution"]),
+        coded_continuous_range=tuple(
+            float(v) for v in dgp_raw["coded_continuous_range"]
+        ),
+        binary_coding=tuple(float(v) for v in dgp_raw["binary_coding"]),
+        intercept=float(dgp_raw["intercept"]),
+        noise_base_sd=float(dgp_raw["noise_base_sd"]),
+        heteroscedastic_driver_input_position=int(hetero["driver_input_position"]),
+        heteroscedastic_minimum_multiplier=float(hetero["minimum_multiplier"]),
+        heteroscedastic_maximum_multiplier=float(hetero["maximum_multiplier"]),
+        heteroscedastic_function=str(hetero["function"]),
+        correlated_block_size=int(correlated["size"]),
+        correlated_latent_weight=float(correlated["latent_weight"]),
+        correlated_noise_weight=float(correlated["noise_weight"]),
+        strong_effect_floor=float(dgp_raw["strong_effect_floor"]),
+        transform_library=tuple(str(value) for value in dgp_raw["transform_library"]),
+    )
+    if (
+        result.continuous_distribution != "uniform_published_range"
+        or result.binary_distribution != "balanced_four_cell"
+        or result.coded_continuous_range != (-1.0, 1.0)
+        or result.binary_coding != (-1.0, 1.0)
+        or result.noise_base_sd <= 0.0
+        or result.heteroscedastic_minimum_multiplier <= 0.0
+        or result.heteroscedastic_maximum_multiplier
+        <= result.heteroscedastic_minimum_multiplier
+        or result.strong_effect_floor <= 0.0
+    ):
+        raise ContractError("DGP controls are not valid for the frozen typed design")
+    return result
+
+
+def load_bsm_dgp_contract(path: Path | str = _DGP_CONTRACT_PATH) -> BSMDGPContract:
+    """Load the production BSM DGP-only contract and reject scientific duplicates."""
+    resolved = Path(path)
+    if not resolved.is_file():
+        raise ContractError(f"BSM DGP contract does not exist: {resolved}")
+    text = resolved.read_text(encoding="utf-8")
+    raw = _require_mapping(_load_yaml_text(text), "BSM DGP contract")
+    _require_keys(
+        raw,
+        context="BSM DGP contract",
+        required={"schema_version", "input_schema", "dgp", "scenarios"},
+    )
+    if int(raw["schema_version"]) != 1:
+        raise ContractError("unsupported BSM DGP contract schema_version")
+    forbidden = {
+        "screening",
+        "interaction",
+        "calibration",
+        "development",
+        "seed_ledger",
+        "scheduler",
+        "replicates",
+    }
+    if forbidden.intersection(raw):
+        raise ContractError("BSM DGP contract contains duplicated campaign controls")
+    return BSMDGPContract(
+        path=resolved,
+        source_sha256=_sha256_bytes(text.encode("utf-8")),
+        input_schema=_parse_input_schema(
+            _require_mapping(raw["input_schema"], "input_schema")
+        ),
+        dgp=_parse_dgp_payload(_require_mapping(raw["dgp"], "dgp")),
+        scenarios=_parse_scenarios(raw["scenarios"]),
+    )
+
+
+def load_execution_contract_text(
+    text: str, *, contract_path: Path = _CONTRACT_PATH
+) -> ExecutionContract:
     """Parse one canonical contract without defaults or duplicate keys."""
     root = _require_mapping(_load_yaml_text(text), "contract")
     _require_keys(
@@ -419,7 +588,11 @@ def load_execution_contract_text(text: str, *, contract_path: Path = _CONTRACT_P
     )
     if int(root["schema_version"]) != 2:
         raise ContractError("unsupported contract schema_version")
-    if root["gate"] != "G0" or root["status"] != "OPEN" or root["phase"] != "development":
+    if (
+        root["gate"] != "G0"
+        or root["status"] != "OPEN"
+        or root["phase"] != "development"
+    ):
         raise ContractError("only the G0 OPEN development contract may be loaded")
 
     control = _require_mapping(root["control_snapshot"], "control_snapshot")
@@ -440,16 +613,25 @@ def load_execution_contract_text(text: str, *, contract_path: Path = _CONTRACT_P
         },
     )
     generic_commit = str(generic["commit"])
-    if len(generic_commit) != 40 or any(char not in "0123456789abcdef" for char in generic_commit):
+    if len(generic_commit) != 40 or any(
+        char not in "0123456789abcdef" for char in generic_commit
+    ):
         raise ContractError("pinned_generic_source.commit must be a full Git SHA")
     generic_lockfile = str(generic["lockfile"])
-    generic_lockfile_path = _repo_path(generic_lockfile, "pinned_generic_source.lockfile")
+    generic_lockfile_path = _repo_path(
+        generic_lockfile, "pinned_generic_source.lockfile"
+    )
     generic_lockfile_sha256 = _require_hex(
         generic["lockfile_sha256"],
         "pinned_generic_source.lockfile_sha256",
     )
-    if not generic_lockfile_path.is_file() or _sha256_path(generic_lockfile_path) != generic_lockfile_sha256:
-        raise ContractError("pinned_generic_source lockfile checksum differs from the contract")
+    if (
+        not generic_lockfile_path.is_file()
+        or _sha256_path(generic_lockfile_path) != generic_lockfile_sha256
+    ):
+        raise ContractError(
+            "pinned_generic_source lockfile checksum differs from the contract"
+        )
 
     screening_raw = _require_mapping(root["screening"], "screening")
     _require_keys(
@@ -463,7 +645,9 @@ def load_execution_contract_text(text: str, *, contract_path: Path = _CONTRACT_P
         permutation_count_B=int(screening_raw["permutation_count_B"]),
     )
     if screening.statistic != "coefficient_row_l2_norm" or screening.bh_q != 0.05:
-        raise ContractError("screening controls must use the frozen statistic and q=0.05")
+        raise ContractError(
+            "screening controls must use the frozen statistic and q=0.05"
+        )
     if screening.permutation_count_B < 3199:
         raise ContractError("screening permutation_count_B must be at least 3199")
 
@@ -488,20 +672,30 @@ def load_execution_contract_text(text: str, *, contract_path: Path = _CONTRACT_P
         minimum_selection_draws=int(interaction_raw["minimum_selection_draws"]),
         tie_convention=str(interaction_raw["tie_convention"]),
         candidate_pair_order=str(interaction_raw["candidate_pair_order"]),
-        shared_response_row_schedule=bool(interaction_raw["shared_response_row_schedule"]),
+        shared_response_row_schedule=bool(
+            interaction_raw["shared_response_row_schedule"]
+        ),
     )
     if interaction.selection_method != "max_stat_adjusted_p_mc":
-        raise ContractError("interaction selection_method must use the neutral canonical label")
+        raise ContractError(
+            "interaction selection_method must use the neutral canonical label"
+        )
     if interaction.alpha != 0.05 or interaction.tie_convention != ">=":
-        raise ContractError("interaction alpha or tie convention differs from the G0 contract")
+        raise ContractError(
+            "interaction alpha or tie convention differs from the G0 contract"
+        )
     if interaction.permutation_count_B < interaction.minimum_selection_draws:
         raise ContractError("interaction draw count is below its declared minimum")
     if interaction.permutation_count_B < 999:
         raise ContractError("interaction permutation_count_B must be at least 999")
     if 1.0 / (interaction.permutation_count_B + 1) > interaction.alpha:
-        raise ContractError("interaction draw count cannot resolve the configured alpha")
+        raise ContractError(
+            "interaction draw count cannot resolve the configured alpha"
+        )
     if not interaction.shared_response_row_schedule:
-        raise ContractError("interaction schedule must be shared across the candidate family")
+        raise ContractError(
+            "interaction schedule must be shared across the candidate family"
+        )
 
     calibration_raw = _require_mapping(root["calibration"], "calibration")
     _require_keys(
@@ -520,7 +714,9 @@ def load_execution_contract_text(text: str, *, contract_path: Path = _CONTRACT_P
         one_sided_confidence=float(calibration_raw["one_sided_confidence"]),
         tolerance=float(calibration_raw["tolerance"]),
         gate_upper_bound=float(calibration_raw["gate_upper_bound"]),
-        null_replicates_confirmatory=int(calibration_raw["null_replicates_confirmatory"]),
+        null_replicates_confirmatory=int(
+            calibration_raw["null_replicates_confirmatory"]
+        ),
         operating_characteristic_rates=tuple(
             float(rate) for rate in calibration_raw["operating_characteristic_rates"]
         ),
@@ -529,18 +725,34 @@ def load_execution_contract_text(text: str, *, contract_path: Path = _CONTRACT_P
     if calibration.one_sided_confidence != 0.95:
         raise ContractError("calibration must use a one-sided 95% Wilson bound")
     if calibration.gate_upper_bound != interaction.alpha + calibration.tolerance:
-        raise ContractError("calibration gate_upper_bound must equal alpha plus tolerance")
+        raise ContractError(
+            "calibration gate_upper_bound must equal alpha plus tolerance"
+        )
     if calibration.null_replicates_confirmatory < 1000:
-        raise ContractError("confirmatory null ledger must contain at least 1000 replicates")
+        raise ContractError(
+            "confirmatory null ledger must contain at least 1000 replicates"
+        )
 
     development_raw = _require_mapping(root["development"], "development")
     _require_keys(
         development_raw,
         context="development",
-        required={"replicates_per_scenario", "n_train", "n_eval", "n_outputs", "retry_policy"},
+        required={
+            "replicates_per_scenario",
+            "n_train",
+            "n_eval",
+            "n_outputs",
+            "retry_policy",
+        },
     )
-    retry = _require_mapping(development_raw["retry_policy"], "development.retry_policy")
-    _require_keys(retry, context="development.retry_policy", required={"max_attempts", "retryable_statuses"})
+    retry = _require_mapping(
+        development_raw["retry_policy"], "development.retry_policy"
+    )
+    _require_keys(
+        retry,
+        context="development.retry_policy",
+        required={"max_attempts", "retryable_statuses"},
+    )
     development = DevelopmentControls(
         replicates_per_scenario=int(development_raw["replicates_per_scenario"]),
         n_train=int(development_raw["n_train"]),
@@ -576,11 +788,18 @@ def load_execution_contract_text(text: str, *, contract_path: Path = _CONTRACT_P
             "transform_library",
         },
     )
-    hetero = _require_mapping(dgp_raw["row_heteroscedasticity"], "dgp.row_heteroscedasticity")
+    hetero = _require_mapping(
+        dgp_raw["row_heteroscedasticity"], "dgp.row_heteroscedasticity"
+    )
     _require_keys(
         hetero,
         context="dgp.row_heteroscedasticity",
-        required={"driver_input_position", "minimum_multiplier", "maximum_multiplier", "function"},
+        required={
+            "driver_input_position",
+            "minimum_multiplier",
+            "maximum_multiplier",
+            "function",
+        },
     )
     correlated = _require_mapping(dgp_raw["correlated_block"], "dgp.correlated_block")
     _require_keys(
@@ -591,7 +810,9 @@ def load_execution_contract_text(text: str, *, contract_path: Path = _CONTRACT_P
     dgp = DGPControls(
         continuous_distribution=str(dgp_raw["continuous_distribution"]),
         binary_distribution=str(dgp_raw["binary_distribution"]),
-        coded_continuous_range=tuple(float(v) for v in dgp_raw["coded_continuous_range"]),
+        coded_continuous_range=tuple(
+            float(v) for v in dgp_raw["coded_continuous_range"]
+        ),
         binary_coding=tuple(float(v) for v in dgp_raw["binary_coding"]),
         intercept=float(dgp_raw["intercept"]),
         noise_base_sd=float(dgp_raw["noise_base_sd"]),
@@ -632,8 +853,12 @@ def load_execution_contract_text(text: str, *, contract_path: Path = _CONTRACT_P
     nondegeneracy = NondegeneracyControls(
         minimum_pair_family_size=int(nondegeneracy_raw["minimum_pair_family_size"]),
         required_rate=float(nondegeneracy_raw["required_rate"]),
-        global_null_empty_family_allowed=bool(nondegeneracy_raw["global_null_empty_family_allowed"]),
-        fixed_family_sizes=tuple(int(value) for value in nondegeneracy_raw["fixed_family_sizes"]),
+        global_null_empty_family_allowed=bool(
+            nondegeneracy_raw["global_null_empty_family_allowed"]
+        ),
+        fixed_family_sizes=tuple(
+            int(value) for value in nondegeneracy_raw["fixed_family_sizes"]
+        ),
     )
     if (
         nondegeneracy.minimum_pair_family_size != 2
@@ -670,14 +895,18 @@ def load_execution_contract_text(text: str, *, contract_path: Path = _CONTRACT_P
         raise ContractError("terminal-record controls differ from the G0/B contract")
 
     seed_raw = _require_mapping(root["seed_ledger"], "seed_ledger")
-    _require_keys(seed_raw, context="seed_ledger", required={"path", "sha256", "derivation"})
+    _require_keys(
+        seed_raw, context="seed_ledger", required={"path", "sha256", "derivation"}
+    )
     seed_ledger_path = _repo_path(str(seed_raw["path"]), "seed_ledger.path")
     seed_ledger_sha256 = _require_hex(seed_raw["sha256"], "seed_ledger.sha256")
     seed_derivation = str(seed_raw["derivation"])
     if seed_derivation != "sha256_contract_phase_scenario_replicate_stage":
         raise ContractError("seed ledger uses an unrecognized derivation")
 
-    identity_payload = {key: value for key, value in root.items() if key != "seed_ledger"}
+    identity_payload = {
+        key: value for key, value in root.items() if key != "seed_ledger"
+    }
     identity_payload["seed_ledger"] = {
         "path": str(seed_raw["path"]),
         "derivation": str(seed_raw["derivation"]),
@@ -697,7 +926,9 @@ def load_execution_contract_text(text: str, *, contract_path: Path = _CONTRACT_P
         generic_require_clean_checkout=bool(generic["require_clean_checkout"]),
         generic_lockfile=generic_lockfile,
         generic_lockfile_sha256=generic_lockfile_sha256,
-        input_schema=_parse_input_schema(_require_mapping(root["input_schema"], "input_schema")),
+        input_schema=_parse_input_schema(
+            _require_mapping(root["input_schema"], "input_schema")
+        ),
         screening=screening,
         interaction=interaction,
         calibration=calibration,
@@ -717,15 +948,21 @@ def load_execution_contract(path: Path | str = _CONTRACT_PATH) -> ExecutionContr
     contract_path = Path(path)
     if not contract_path.is_file():
         raise ContractError(f"contract file does not exist: {contract_path}")
-    return load_execution_contract_text(contract_path.read_text(encoding="utf-8"), contract_path=contract_path)
+    return load_execution_contract_text(
+        contract_path.read_text(encoding="utf-8"), contract_path=contract_path
+    )
 
 
-def verify_pinned_control_snapshot(contract: ExecutionContract) -> ControlSnapshotRecord:
+def verify_pinned_control_snapshot(
+    contract: ExecutionContract,
+) -> ControlSnapshotRecord:
     """Verify the tracked control snapshot and manifest before any DGP work."""
     if not contract.control_snapshot_path.is_file():
         raise ContractError("pinned control snapshot is absent")
     if _sha256_path(contract.control_snapshot_path) != contract.control_snapshot_sha256:
-        raise ContractError("pinned control snapshot checksum differs from the contract")
+        raise ContractError(
+            "pinned control snapshot checksum differs from the contract"
+        )
     if not _CONTROL_MANIFEST_PATH.is_file():
         raise ContractError("control manifest is absent")
     payload = json.loads(_CONTROL_MANIFEST_PATH.read_text(encoding="utf-8"))
@@ -744,13 +981,18 @@ def verify_pinned_control_snapshot(contract: ExecutionContract) -> ControlSnapsh
     manifest_path = _CONTROL_MANIFEST_PATH.parent / str(payload["control_snapshot"])
     if manifest_path.resolve() != contract.control_snapshot_path.resolve():
         raise ContractError("control manifest points to a different snapshot")
-    manifest_sha = _require_hex(payload["control_snapshot_sha256"], "control manifest snapshot")
+    manifest_sha = _require_hex(
+        payload["control_snapshot_sha256"], "control manifest snapshot"
+    )
     if manifest_sha != contract.control_snapshot_sha256:
         raise ContractError("control manifest and contract snapshot hashes differ")
     gates = payload["gates"]
     if gates != {"G0": "OPEN", "A": "OPEN", "B": "OPEN"}:
         raise ContractError("control manifest must keep G0, A, and B open")
-    if payload["phase"] != contract.phase or payload["execution_permitted"] is not False:
+    if (
+        payload["phase"] != contract.phase
+        or payload["execution_permitted"] is not False
+    ):
         raise ContractError("control manifest permits an unapproved execution phase")
     return ControlSnapshotRecord(
         path=contract.control_snapshot_path,
@@ -783,7 +1025,9 @@ class SeedLedger:
 
 
 def _seed_from_parts(*parts: object) -> int:
-    digest = hashlib.sha256("\x1f".join(str(part) for part in parts).encode("utf-8")).digest()
+    digest = hashlib.sha256(
+        "\x1f".join(str(part) for part in parts).encode("utf-8")
+    ).digest()
     return int.from_bytes(digest[:8], byteorder="big", signed=False) % (2**31 - 1) + 1
 
 
@@ -794,7 +1038,9 @@ def derive_replicate_seed(
     replicate_index: int,
 ) -> int:
     """Derive a scenario-keyed seed without iteration-order dependence."""
-    return _seed_from_parts(contract_sha256, phase, scenario, replicate_index, "replicate")
+    return _seed_from_parts(
+        contract_sha256, phase, scenario, replicate_index, "replicate"
+    )
 
 
 def derive_stage_seed(
@@ -818,7 +1064,9 @@ def load_seed_ledger(contract: ExecutionContract) -> SeedLedger:
     actual_sha = _sha256_path(path)
     if actual_sha != contract.seed_ledger_sha256:
         raise ContractError("seed ledger checksum differs from the contract")
-    raw = _require_mapping(_load_yaml_text(path.read_text(encoding="utf-8")), "seed ledger")
+    raw = _require_mapping(
+        _load_yaml_text(path.read_text(encoding="utf-8")), "seed ledger"
+    )
     _require_keys(
         raw,
         context="seed ledger",
@@ -880,7 +1128,10 @@ def load_seed_ledger(contract: ExecutionContract) -> SeedLedger:
     if actual != expected:
         missing = sorted(expected.difference(actual))
         extra = sorted(actual.difference(expected))
-        raise ContractError(f"seed ledger does not match planned replicates; missing={missing}; extra={extra}")
+        raise ContractError(
+            "seed ledger does not match planned replicates; "
+            f"missing={missing}; extra={extra}"
+        )
     return SeedLedger(
         path=path,
         sha256=actual_sha,
@@ -929,11 +1180,15 @@ def load_bsm_input_design(
     path = (
         Path(metadata_path)
         if metadata_path is not None
-        else _repo_path(contract.input_schema.metadata_path, "input_schema.metadata_path")
+        else _repo_path(
+            contract.input_schema.metadata_path, "input_schema.metadata_path"
+        )
     )
     if not path.is_file():
         raise ContractError(f"input metadata does not exist: {path}")
-    meta = _require_mapping(_load_yaml_text(path.read_text(encoding="utf-8")), "input metadata")
+    meta = _require_mapping(
+        _load_yaml_text(path.read_text(encoding="utf-8")), "input metadata"
+    )
     entries = meta.get("inputs")
     if not isinstance(entries, list):
         raise ContractError("input metadata must contain an inputs list")
@@ -970,7 +1225,9 @@ def load_bsm_input_design(
         or len(design.continuous_input_names) != contract.input_schema.continuous_inputs
         or design.binary_input_names != contract.input_schema.binary_input_names
     ):
-        raise ContractError("published metadata does not reconcile with the typed contract schema")
+        raise ContractError(
+            "published metadata does not reconcile with the typed contract schema"
+        )
     return design
 
 
@@ -1018,7 +1275,8 @@ def _sample_inputs(
         for position, name in enumerate(continuous[:block_size]):
             raw = (
                 contract.dgp.correlated_latent_weight * latent
-                + contract.dgp.correlated_noise_weight * rng.uniform(-1.0, 1.0, size=n_rows)
+                + contract.dgp.correlated_noise_weight
+                * rng.uniform(-1.0, 1.0, size=n_rows)
             )
             X[:, index[name]] = design.lower[name] + (raw + 1.0) * 0.5 * (
                 design.upper[name] - design.lower[name]
@@ -1027,7 +1285,9 @@ def _sample_inputs(
     else:
         block_size = 0
     for name in continuous[block_size:]:
-        X[:, index[name]] = rng.uniform(design.lower[name], design.upper[name], size=n_rows)
+        X[:, index[name]] = rng.uniform(
+            design.lower[name], design.upper[name], size=n_rows
+        )
     counts = {
         cell: int(np.sum(np.all(binary_cells == np.array(cell, dtype=float), axis=1)))
         for cell in ((0, 0), (0, 1), (1, 0), (1, 1))
@@ -1099,7 +1359,9 @@ class DGPTruth:
     terms: tuple[TruthTerm, ...]
     surface_sha256: str
 
-    def _term_column(self, design: BSMInputDesign, coded: np.ndarray, term: TruthTerm) -> np.ndarray:
+    def _term_column(
+        self, design: BSMInputDesign, coded: np.ndarray, term: TruthTerm
+    ) -> np.ndarray:
         index = {name: position for position, name in enumerate(design.input_names)}
         values = [coded[:, index[name]] for name in term.term_id.inputs]
         if term.term_id.kind == "main":
@@ -1115,11 +1377,15 @@ class DGPTruth:
                 return values[0] ** 2
             if term.term_id.transform == "sine":
                 return np.sin(3.0 * values[0])
-        raise DGPValidationError(f"unsupported typed truth term {term.term_id.canonical_id!r}")
+        raise DGPValidationError(
+            f"unsupported typed truth term {term.term_id.canonical_id!r}"
+        )
 
     def evaluate(self, design: BSMInputDesign, X: np.ndarray) -> np.ndarray:
         if design.schema_sha256 != self.input_schema_sha256:
-            raise DGPValidationError("truth ledger was bound to a different input schema")
+            raise DGPValidationError(
+                "truth ledger was bound to a different input schema"
+            )
         coded = _coded_features(design, X)
         response = np.tile(np.asarray(self.intercept, dtype=float), (X.shape[0], 1))
         for term in self.terms:
@@ -1140,6 +1406,18 @@ class DGPTruth:
             for term in self.terms
             if term.term_id.kind.endswith("_interaction")
         )
+
+    def in_library_design(self, design: BSMInputDesign, X: np.ndarray) -> np.ndarray:
+        """Return the exact planted in-library columns for the oracle OLS comparator."""
+        coded = _coded_features(design, X)
+        columns = [
+            self._term_column(design, coded, term)
+            for term in self.terms
+            if term.in_library
+        ]
+        if not columns:
+            return np.empty((X.shape[0], 0), dtype=float)
+        return np.column_stack(columns).astype(float, copy=False)
 
 
 def _loadings(n_outputs: int, *, sign: float = 1.0) -> tuple[float, ...]:
@@ -1168,9 +1446,13 @@ def _build_truth(
     design: BSMInputDesign,
     scenario: ScenarioDefinition,
     entry: SeedLedgerEntry,
+    *,
+    n_outputs: int,
 ) -> DGPTruth:
     """Build a deterministic typed basis before sampling response noise."""
-    del entry  # Identity remains represented by the ledger; coefficients are contract-fixed.
+    del (
+        entry
+    )  # Identity remains represented by the ledger; coefficients are contract-fixed.
     terms: list[TruthTerm] = []
     continuous = design.continuous_input_names
     binary = design.binary_input_names
@@ -1180,7 +1462,7 @@ def _build_truth(
                 "main",
                 (name,),
                 coefficient=contract.dgp.strong_effect_floor,
-                n_outputs=contract.development.n_outputs,
+                n_outputs=n_outputs,
             )
         )
     for name in binary[: scenario.n_binary_main]:
@@ -1189,7 +1471,7 @@ def _build_truth(
                 "main",
                 (name,),
                 coefficient=contract.dgp.strong_effect_floor,
-                n_outputs=contract.development.n_outputs,
+                n_outputs=n_outputs,
             )
         )
     if scenario.interaction_kind == "continuous_continuous":
@@ -1206,7 +1488,7 @@ def _build_truth(
                 f"{scenario.interaction_kind}_interaction",
                 inputs,
                 coefficient=contract.dgp.strong_effect_floor + 0.25,
-                n_outputs=contract.development.n_outputs,
+                n_outputs=n_outputs,
             )
         )
     if scenario.nonlinear_kind != "none":
@@ -1215,12 +1497,12 @@ def _build_truth(
                 "transformation",
                 (continuous[0],),
                 coefficient=contract.dgp.strong_effect_floor,
-                n_outputs=contract.development.n_outputs,
+                n_outputs=n_outputs,
                 transform=scenario.nonlinear_kind,
                 in_library=scenario.nonlinear_kind in contract.dgp.transform_library,
             )
         )
-    intercept = tuple(float(contract.dgp.intercept) for _ in range(contract.development.n_outputs))
+    intercept = tuple(float(contract.dgp.intercept) for _ in range(n_outputs))
     identity = {
         "input_schema_sha256": design.schema_sha256,
         "intercept": intercept,
@@ -1272,6 +1554,8 @@ class GeneratedData:
     noiseless_eval: np.ndarray
     row_noise_scale_train: np.ndarray
     row_noise_scale_eval: np.ndarray
+    noise_standard_deviation_train: np.ndarray
+    noise_standard_deviation_eval: np.ndarray
     feature_names: tuple[str, ...]
     truth: DGPTruth
     surface_sha256: str
@@ -1290,14 +1574,18 @@ class GeneratedData:
         return self.truth.to_records()
 
 
-def _realized_ranges(design: BSMInputDesign, X: np.ndarray) -> dict[str, tuple[float, float]]:
+def _realized_ranges(
+    design: BSMInputDesign, X: np.ndarray
+) -> dict[str, tuple[float, float]]:
     return {
         name: (float(X[:, position].min()), float(X[:, position].max()))
         for position, name in enumerate(design.input_names)
     }
 
 
-def _realized_snr(noiseless: np.ndarray, response: np.ndarray, intercept: tuple[float, ...]) -> tuple[float, ...]:
+def _realized_snr(
+    noiseless: np.ndarray, response: np.ndarray, intercept: tuple[float, ...]
+) -> tuple[float, ...]:
     signal = noiseless - np.asarray(intercept, dtype=float)[None, :]
     noise = response - noiseless
     signal_var = signal.var(axis=0, ddof=1)
@@ -1325,7 +1613,9 @@ def _validate_generated_data(
     if any(not np.isfinite(matrix).all() for matrix in matrices):
         raise DGPValidationError("generated DGP contains a non-finite matrix")
     if data.feature_names != design.input_names:
-        raise DGPValidationError("generated data does not preserve the typed input order")
+        raise DGPValidationError(
+            "generated data does not preserve the typed input order"
+        )
     required_cells = {(0, 0), (0, 1), (1, 0), (1, 1)}
     if contract.input_schema.all_binary_cells_required and (
         set(data.binary_cell_counts_train) != required_cells
@@ -1339,8 +1629,13 @@ def _validate_generated_data(
             if name in design.binary_input_names:
                 if not set(np.unique(X[:, position])).issubset({0.0, 1.0}):
                     raise DGPValidationError(f"binary input {name!r} is not binary")
-            elif X[:, position].min() < design.lower[name] or X[:, position].max() > design.upper[name]:
-                raise DGPValidationError(f"continuous input {name!r} leaves its published range")
+            elif (
+                X[:, position].min() < design.lower[name]
+                or X[:, position].max() > design.upper[name]
+            ):
+                raise DGPValidationError(
+                    f"continuous input {name!r} leaves its published range"
+                )
     if scenario.heteroscedastic:
         if (
             data.realized_heteroscedasticity_ratio_train <= 1.10
@@ -1348,11 +1643,21 @@ def _validate_generated_data(
         ):
             raise DGPValidationError("row-level heteroscedasticity was not realized")
     if data.surface_sha256 != data.truth.surface_sha256:
-        raise DGPValidationError("generated surface identity differs from the typed truth ledger")
-    if not np.allclose(data.noiseless_train, data.truth.evaluate(design, data.X_train), atol=1e-12):
-        raise DGPValidationError("train response surface does not match the typed truth")
-    if not np.allclose(data.noiseless_eval, data.truth.evaluate(design, data.X_eval), atol=1e-12):
-        raise DGPValidationError("evaluation response surface does not match the typed truth")
+        raise DGPValidationError(
+            "generated surface identity differs from the typed truth ledger"
+        )
+    if not np.allclose(
+        data.noiseless_train, data.truth.evaluate(design, data.X_train), atol=1e-12
+    ):
+        raise DGPValidationError(
+            "train response surface does not match the typed truth"
+        )
+    if not np.allclose(
+        data.noiseless_eval, data.truth.evaluate(design, data.X_eval), atol=1e-12
+    ):
+        raise DGPValidationError(
+            "evaluation response surface does not match the typed truth"
+        )
 
 
 def generate_bsm_dataset(
@@ -1360,26 +1665,41 @@ def generate_bsm_dataset(
     design: BSMInputDesign,
     scenario: ScenarioDefinition,
     entry: SeedLedgerEntry,
+    *,
+    scale: DatasetScale | None = None,
 ) -> GeneratedData:
     """Generate one validated 160-input replicate from the frozen typed DGP."""
     if entry.phase != contract.phase or entry.scenario != scenario.name:
-        raise DGPValidationError("seed ledger entry does not match the requested scenario")
+        raise DGPValidationError(
+            "seed ledger entry does not match the requested scenario"
+        )
+    resolved_scale = scale or DatasetScale(
+        n_train=contract.development.n_train,
+        n_eval=contract.development.n_eval,
+        n_outputs=contract.development.n_outputs,
+    )
     rng = np.random.default_rng(entry.stage_seeds["dgp"])
     X_train, train_cells, train_correlation = _sample_inputs(
         design,
-        contract.development.n_train,
+        resolved_scale.n_train,
         rng,
         correlated=scenario.correlated_inputs,
         contract=contract,
     )
     X_eval, eval_cells, eval_correlation = _sample_inputs(
         design,
-        contract.development.n_eval,
+        resolved_scale.n_eval,
         rng,
         correlated=scenario.correlated_inputs,
         contract=contract,
     )
-    truth = _build_truth(contract, design, scenario, entry)
+    truth = _build_truth(
+        contract,
+        design,
+        scenario,
+        entry,
+        n_outputs=resolved_scale.n_outputs,
+    )
     noiseless_train = truth.evaluate(design, X_train)
     noiseless_eval = truth.evaluate(design, X_eval)
     row_scale_train = _row_noise_scale(contract, design, X_train, scenario)
@@ -1390,17 +1710,14 @@ def generate_bsm_dataset(
         scenario.snr,
         contract.dgp.noise_base_sd,
     )
-    eval_sd = _noise_standard_deviation(
-        noiseless_eval,
-        truth.intercept,
-        scenario.snr,
-        contract.dgp.noise_base_sd,
-    )
+    # The evaluation distribution uses the training-frozen noise scale.  It is
+    # never recalibrated from evaluation outcomes or evaluation signal bytes.
+    eval_sd = train_sd.copy()
     train_noise_rng = np.random.default_rng(entry.stage_seeds["noise_train"])
     eval_noise_rng = np.random.default_rng(entry.stage_seeds["noise_eval"])
-    Y_train = noiseless_train + train_noise_rng.standard_normal(noiseless_train.shape) * (
-        row_scale_train[:, None] * train_sd[None, :]
-    )
+    Y_train = noiseless_train + train_noise_rng.standard_normal(
+        noiseless_train.shape
+    ) * (row_scale_train[:, None] * train_sd[None, :])
     Y_eval = noiseless_eval + eval_noise_rng.standard_normal(noiseless_eval.shape) * (
         row_scale_eval[:, None] * eval_sd[None, :]
     )
@@ -1413,6 +1730,8 @@ def generate_bsm_dataset(
         noiseless_eval=noiseless_eval,
         row_noise_scale_train=row_scale_train,
         row_noise_scale_eval=row_scale_eval,
+        noise_standard_deviation_train=train_sd,
+        noise_standard_deviation_eval=eval_sd,
         feature_names=design.input_names,
         truth=truth,
         surface_sha256=truth.surface_sha256,
@@ -1465,18 +1784,34 @@ class TerminalRecord:
         if self.status not in {"ANALYSIS_COMPLETE", "FAILED"}:
             raise TerminalLedgerError("terminal record has an invalid status")
         if self.attempt != 0:
-            raise TerminalLedgerError("the frozen retry policy permits only attempt zero")
+            raise TerminalLedgerError(
+                "the frozen retry policy permits only attempt zero"
+            )
         if self.pair_family_count < 0 or self.false_pair_count < 0:
             raise TerminalLedgerError("terminal record counts must be non-negative")
         if self.status == "ANALYSIS_COMPLETE":
             if self.terminal_outcome == "FAILED":
-                raise TerminalLedgerError("analysis-complete record cannot carry FAILED outcome")
-            if self.pair_family_count == 0 and self.terminal_outcome != "NO_INTERACTION_CANDIDATES":
-                raise TerminalLedgerError("empty family must use NO_INTERACTION_CANDIDATES")
-            if self.pair_family_count > 0 and self.terminal_outcome == "NO_INTERACTION_CANDIDATES":
-                raise TerminalLedgerError("non-empty family cannot use NO_INTERACTION_CANDIDATES")
+                raise TerminalLedgerError(
+                    "analysis-complete record cannot carry FAILED outcome"
+                )
+            if (
+                self.pair_family_count == 0
+                and self.terminal_outcome != "NO_INTERACTION_CANDIDATES"
+            ):
+                raise TerminalLedgerError(
+                    "empty family must use NO_INTERACTION_CANDIDATES"
+                )
+            if (
+                self.pair_family_count > 0
+                and self.terminal_outcome == "NO_INTERACTION_CANDIDATES"
+            ):
+                raise TerminalLedgerError(
+                    "non-empty family cannot use NO_INTERACTION_CANDIDATES"
+                )
             if self.pair_family_count == 0 and self.false_pair_count != 0:
-                raise TerminalLedgerError("empty family cannot have false retained pairs")
+                raise TerminalLedgerError(
+                    "empty family cannot have false retained pairs"
+                )
         elif self.terminal_outcome != "FAILED" or not self.exception:
             raise TerminalLedgerError("FAILED record must carry an exception")
 
@@ -1497,7 +1832,9 @@ def validate_terminal_ledger(
     rows = tuple(records)
     for row in rows:
         if row.status == contract.terminal.failed_status:
-            raise TerminalLedgerError(f"failed terminal record for {row.key}: {row.exception}")
+            raise TerminalLedgerError(
+                f"failed terminal record for {row.key}: {row.exception}"
+            )
     keys = [row.key for row in rows]
     if len(keys) != len(set(keys)):
         raise TerminalLedgerError("duplicate terminal record")
@@ -1506,7 +1843,9 @@ def validate_terminal_ledger(
     if expected != actual:
         missing = sorted(expected.difference(actual))
         extra = sorted(actual.difference(expected))
-        raise TerminalLedgerError(f"missing terminal record(s)={missing}; unplanned={extra}")
+        raise TerminalLedgerError(
+            f"missing terminal record(s)={missing}; unplanned={extra}"
+        )
     by_key = {entry.key: entry for entry in ledger.entries}
     for row in rows:
         entry = by_key[row.key]
@@ -1515,13 +1854,27 @@ def validate_terminal_ledger(
             or row.control_snapshot_sha256 != contract.control_snapshot_sha256
             or row.seed != entry.seed
         ):
-            raise TerminalLedgerError(f"terminal record identity mismatch for {row.key}")
+            raise TerminalLedgerError(
+                f"terminal record identity mismatch for {row.key}"
+            )
         if row.status != contract.terminal.completed_status:
-            raise TerminalLedgerError(f"terminal record is not analysis-complete for {row.key}")
-        if row.phase != contract.phase or row.scenario not in {s.name for s in contract.scenarios}:
-            raise TerminalLedgerError(f"terminal record has an unplanned phase or scenario: {row.key}")
-        if not math.isfinite(row.runtime_seconds) or row.runtime_seconds < 0.0 or row.max_rss_bytes < 0:
-            raise TerminalLedgerError(f"terminal record has invalid resource fields for {row.key}")
+            raise TerminalLedgerError(
+                f"terminal record is not analysis-complete for {row.key}"
+            )
+        if row.phase != contract.phase or row.scenario not in {
+            s.name for s in contract.scenarios
+        }:
+            raise TerminalLedgerError(
+                f"terminal record has an unplanned phase or scenario: {row.key}"
+            )
+        if (
+            not math.isfinite(row.runtime_seconds)
+            or row.runtime_seconds < 0.0
+            or row.max_rss_bytes < 0
+        ):
+            raise TerminalLedgerError(
+                f"terminal record has invalid resource fields for {row.key}"
+            )
     return rows
 
 
@@ -1534,11 +1887,15 @@ def one_sided_wilson_upper(events: int, denominator: int, confidence: float) -> 
     z = NormalDist().inv_cdf(confidence)
     denominator_with_z = denominator + z**2
     center = (events + z**2 / 2.0) / denominator_with_z
-    half_width = z * math.sqrt(events * (denominator - events) / denominator + z**2 / 4.0)
+    half_width = z * math.sqrt(
+        events * (denominator - events) / denominator + z**2 / 4.0
+    )
     return min(1.0, center + half_width / denominator_with_z)
 
 
-def largest_passing_event_count(calibration: CalibrationControls, denominator: int) -> int:
+def largest_passing_event_count(
+    calibration: CalibrationControls, denominator: int
+) -> int:
     """Derive, rather than hard-code, the largest event count passing the gate."""
     passing = [
         events
@@ -1577,7 +1934,9 @@ def aggregate_null_terminal_records(
     """Aggregate a null regime without dropping empty valid candidate families."""
     rows = tuple(records)
     if not rows:
-        raise TerminalLedgerError("null aggregation requires at least one terminal record")
+        raise TerminalLedgerError(
+            "null aggregation requires at least one terminal record"
+        )
     scenarios = {row.scenario for row in rows}
     if len(scenarios) != 1:
         raise TerminalLedgerError("null aggregation must not pool scenarios")
@@ -1586,18 +1945,25 @@ def aggregate_null_terminal_records(
         raise TerminalLedgerError("null aggregation contains duplicate terminal record")
     scenario = contract.scenario(next(iter(scenarios)))
     if not scenario.is_null:
-        raise TerminalLedgerError("only a contract null regime may enter null aggregation")
+        raise TerminalLedgerError(
+            "only a contract null regime may enter null aggregation"
+        )
     for row in rows:
         if row.status != contract.terminal.completed_status:
-            raise TerminalLedgerError("null aggregation encountered a non-complete record")
+            raise TerminalLedgerError(
+                "null aggregation encountered a non-complete record"
+            )
         if row.contract_sha256 != contract.contract_sha256:
             raise TerminalLedgerError("null aggregation contract mismatch")
     denominator = len(rows)
     false_pair_replicates = sum(row.false_pair_count > 0 for row in rows)
-    n_empty = sum(row.terminal_outcome == contract.terminal.empty_family_outcome for row in rows)
+    n_empty = sum(
+        row.terminal_outcome == contract.terminal.empty_family_outcome for row in rows
+    )
     n_one_pair = sum(row.pair_family_count == 1 for row in rows)
     n_nondegenerate = sum(
-        row.pair_family_count >= contract.nondegeneracy.minimum_pair_family_size for row in rows
+        row.pair_family_count >= contract.nondegeneracy.minimum_pair_family_size
+        for row in rows
     )
     fwer_proportion = false_pair_replicates / denominator
     upper = one_sided_wilson_upper(
@@ -1666,10 +2032,17 @@ def write_preexecution_manifest(
 ) -> None:
     """Write one new status-only manifest; never overwrite a prior root."""
     if output_path.exists():
-        raise PreexecutionBlockedError(f"refusing to overwrite existing output: {output_path}")
+        raise PreexecutionBlockedError(
+            f"refusing to overwrite existing output: {output_path}"
+        )
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(
-        json.dumps(build_preexecution_manifest(contract, design, ledger), indent=2, sort_keys=True) + "\n",
+        json.dumps(
+            build_preexecution_manifest(contract, design, ledger),
+            indent=2,
+            sort_keys=True,
+        )
+        + "\n",
         encoding="utf-8",
     )
 
@@ -1685,18 +2058,24 @@ def _verify_pinned_generic_source(contract: ExecutionContract) -> None:
             candidate
             for candidate in (package_path.parent, *package_path.parents)
             if (candidate / ".git").exists()
+            and (candidate / "src" / "rfm_pipeline").resolve() == package_path.parent
+            and (candidate / "pixi.lock").is_file()
         ),
         None,
     )
     if repository is None:
-        raise PreexecutionBlockedError("rfm-pipeline source is not a pinned Git checkout")
+        raise PreexecutionBlockedError(
+            "rfm-pipeline source is not a pinned Git checkout"
+        )
     commit = subprocess.check_output(
         ["git", "rev-parse", "HEAD"],
         cwd=repository,
         text=True,
     ).strip()
     if commit != contract.generic_commit:
-        raise PreexecutionBlockedError("rfm-pipeline commit differs from the BSM contract pin")
+        raise PreexecutionBlockedError(
+            "rfm-pipeline commit differs from the BSM contract pin"
+        )
     if contract.generic_require_clean_checkout:
         dirty = subprocess.check_output(
             ["git", "status", "--porcelain"],
@@ -1707,33 +2086,267 @@ def _verify_pinned_generic_source(contract: ExecutionContract) -> None:
             raise PreexecutionBlockedError("rfm-pipeline checkout is dirty")
 
 
-def run_pipeline(data: GeneratedData, contract: ExecutionContract) -> Any:
+def campaign_seed_entry(
+    *,
+    campaign_contract: Any,
+    scenario_id: str,
+    replicate_index: int,
+    bsm_scenario_name: str,
+) -> SeedLedgerEntry:
+    """Derive one BSM stage ledger from the canonical campaign identity."""
+    from rfm_pipeline.campaign_contract import compute_contract_hash, derive_seed
+
+    contract_hash = compute_contract_hash(campaign_contract)
+    seed = derive_seed(contract_hash, scenario_id, replicate_index)
+    return SeedLedgerEntry(
+        phase="campaign",
+        scenario=bsm_scenario_name,
+        replicate_index=replicate_index,
+        seed=seed,
+        stage_seeds={
+            stage: derive_seed(contract_hash, f"{scenario_id}:{stage}", replicate_index)
+            for stage in STAGE_NAMES
+        },
+    )
+
+
+def generate_campaign_dataset(
+    *,
+    campaign_contract: Any,
+    bsm_contract: ExecutionContract,
+    design: BSMInputDesign,
+    scenario_id: str,
+    replicate_index: int,
+    scale: DatasetScale | None = None,
+) -> GeneratedData:
+    """Generate one exact campaign row using RFM dimensions and seed identity."""
+    scenario_spec = next(
+        (
+            scenario
+            for scenario in campaign_contract.scenarios
+            if scenario.id == scenario_id
+        ),
+        None,
+    )
+    if scenario_spec is None or scenario_spec.kind == "dev":
+        raise ContractError(
+            f"unknown non-development campaign scenario {scenario_id!r}"
+        )
+    if (
+        scenario_spec.n_predictor_continuous
+        != bsm_contract.input_schema.continuous_inputs
+        or scenario_spec.n_predictor_binary != bsm_contract.input_schema.binary_inputs
+    ):
+        raise ContractError(
+            "campaign scenario differs from the typed BSM input contract"
+        )
+    try:
+        bsm_scenario_name = _CAMPAIGN_TO_BSM_SCENARIO[scenario_id]
+    except KeyError as exc:
+        raise ContractError(
+            f"campaign scenario {scenario_id!r} has no BSM DGP mapping"
+        ) from exc
+    bsm_scenario = bsm_contract.scenario(bsm_scenario_name)
+    entry = campaign_seed_entry(
+        campaign_contract=campaign_contract,
+        scenario_id=scenario_id,
+        replicate_index=replicate_index,
+        bsm_scenario_name=bsm_scenario_name,
+    )
+    # The legacy contract phase is irrelevant to campaign identity; generation
+    # checks only that the entry and selected BSM DGP scenario agree.
+    entry = replace(entry, phase=bsm_contract.phase)
+    return generate_bsm_dataset(
+        bsm_contract,
+        design,
+        bsm_scenario,
+        entry,
+        scale=(
+            scale
+            if scale is not None
+            else DatasetScale(
+                n_train=scenario_spec.n_train,
+                n_eval=scenario_spec.n_eval,
+                n_outputs=scenario_spec.n_response,
+            )
+        ),
+    )
+
+
+def _verify_execution_authorization(
+    path: Path,
+    *,
+    contract_hash: str,
+    phase: str,
+    expected_identity: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    if not path.is_file():
+        raise PreexecutionBlockedError("campaign execution authorization is absent")
+    payload = _require_mapping(
+        json.loads(path.read_text(encoding="utf-8")), "authorization"
+    )
+    required = {
+        "schema_version",
+        "status",
+        "phase",
+        "run_id",
+        "contract_hash",
+        "source_hash",
+        "lock_hash",
+        "campaign_inventory_hash",
+        "preflight_sha256",
+        "prerequisite_sha256",
+        "execution_permitted",
+        "resource_freeze_sha256",
+        "authorization_sha256",
+    }
+    if set(payload) != required:
+        raise PreexecutionBlockedError("campaign execution authorization fields differ")
+    identity = {
+        key: value for key, value in payload.items() if key != "authorization_sha256"
+    }
+    if payload["authorization_sha256"] != _sha256_bytes(_canonical_json(identity)):
+        raise PreexecutionBlockedError("campaign execution authorization hash differs")
+    if (
+        int(payload["schema_version"]) != 2
+        or payload["status"] != "ACCEPTED"
+        or payload["phase"] != phase
+        or payload["contract_hash"] != contract_hash
+        or payload["execution_permitted"] is not True
+    ):
+        raise PreexecutionBlockedError(
+            "campaign execution authorization is not valid for this phase"
+        )
+    if expected_identity is not None:
+        for field in ("run_id", "source_hash", "lock_hash"):
+            if payload.get(field) != expected_identity.get(field):
+                raise PreexecutionBlockedError(
+                    f"campaign execution authorization has stale {field}"
+                )
+    if not str(payload["run_id"]).strip():
+        raise PreexecutionBlockedError("campaign execution authorization has no run ID")
+    for field in (
+        "source_hash",
+        "lock_hash",
+        "campaign_inventory_hash",
+        "preflight_sha256",
+    ):
+        _require_hex(payload[field], f"execution authorization {field}")
+    prerequisite_sha256 = payload["prerequisite_sha256"]
+    expected_prerequisites = {
+        "development": set(),
+        "gate_b": {"resolution"},
+        "gate_p": {"gate_b", "fixed_family_supplement"},
+        "gate_c": {"gate_b", "fixed_family_supplement", "applied_bootstrap"},
+    }[phase]
+    if not isinstance(prerequisite_sha256, dict) or set(prerequisite_sha256) != (
+        expected_prerequisites
+    ):
+        raise PreexecutionBlockedError(
+            "campaign execution authorization prerequisite identities differ"
+        )
+    for operation, digest in prerequisite_sha256.items():
+        _require_hex(digest, f"execution authorization prerequisite {operation}")
+    _require_hex(payload["resource_freeze_sha256"], "resource freeze authorization")
+    return payload
+
+
+def run_pipeline(
+    data: GeneratedData,
+    contract: BSMDGPContract,
+    *,
+    campaign_contract_path: Path = ROOT / "configs" / "g11_campaign_contract.toml",
+    artifact_dir: Path,
+    authorization_manifest: Path,
+    phase: str,
+    seed: int = 0,
+    include_recovery_comparators: bool = True,
+) -> Any:
     """Invoke the future pinned production adapter with no local fallback.
 
     The current G0/A/B state deliberately blocks this path before scoring.  A
     future approved contract must carry the same resolved controls into the
     pinned generic runner; this driver never reconstructs or substitutes them.
     """
-    if contract.status != "READY_FOR_EXECUTION":
-        raise PreexecutionBlockedError(
-            "scientific execution is blocked while G0, A, and B are OPEN; "
-            "run_pipeline cannot score a replicate"
-        )
-    _verify_pinned_generic_source(contract)
     import pandas as pd
     from rfm_pipeline import run_production_recovery_pipeline
+    from rfm_pipeline.campaign_contract import load_contract
+    from rfm_pipeline.manuscript_stages import build_manuscript_feature_design
+    from rfm_pipeline.recovery_study import (
+        run_recovery_comparators,
+        write_recovery_comparator_result,
+    )
 
-    return run_production_recovery_pipeline(
+    execution_contract, _ = load_contract(campaign_contract_path)
+    from rfm_pipeline.campaign_contract import compute_contract_hash
+
+    contract_hash = compute_contract_hash(execution_contract)
+    _verify_execution_authorization(
+        authorization_manifest,
+        contract_hash=contract_hash,
+        phase=phase,
+    )
+    design = load_bsm_input_design(contract=contract)
+    if design.input_names != data.feature_names:
+        raise DGPValidationError(
+            "campaign data feature order differs from the BSM DGP contract"
+        )
+
+    result = run_production_recovery_pipeline(
         pd.DataFrame(data.X_train, columns=data.feature_names),
         data.Y_train,
         pd.DataFrame(data.X_eval, columns=data.feature_names),
         data.Y_eval,
-        execution_controls=contract.production_controls(),
+        execution_contract=execution_contract,
+        artifact_dir=artifact_dir,
+        seed=seed,
+    )
+    if not include_recovery_comparators:
+        return result
+    if result.algebraic_candidate_names:
+        train_inputs = pd.DataFrame(data.X_train, columns=data.feature_names)
+        train_inputs.insert(0, "sample_id", np.arange(data.X_train.shape[0]))
+        eval_inputs = pd.DataFrame(data.X_eval, columns=data.feature_names)
+        eval_inputs.insert(0, "sample_id", np.arange(data.X_eval.shape[0]))
+        catalog = pd.DataFrame({"feature_name": list(result.algebraic_candidate_names)})
+        algebraic_train = (
+            build_manuscript_feature_design(train_inputs, catalog)
+            .drop(columns=["sample_id"])
+            .to_numpy(dtype=float)
+        )
+        algebraic_eval = (
+            build_manuscript_feature_design(eval_inputs, catalog)
+            .drop(columns=["sample_id"])
+            .to_numpy(dtype=float)
+        )
+    else:
+        algebraic_train = np.zeros((data.X_train.shape[0], 1), dtype=float)
+        algebraic_eval = np.zeros((data.X_eval.shape[0], 1), dtype=float)
+    comparators = run_recovery_comparators(
+        X_train=data.X_train,
+        Y_train=data.Y_train,
+        X_eval=data.X_eval,
+        oracle_train_design=data.truth.in_library_design(design, data.X_train),
+        oracle_eval_design=data.truth.in_library_design(design, data.X_eval),
+        algebraic_train_design=algebraic_train,
+        algebraic_eval_design=algebraic_eval,
+        proposed_predictions=result.eval_predictions,
+        execution_contract=execution_contract,
+        seed=seed,
+    )
+    write_recovery_comparator_result(comparators, artifact_dir / "comparators")
+    return replace(
+        result,
+        comparator_predictions=comparators.predictions,
+        comparator_schedule_sha256=comparators.schedule_sha256,
+        comparator_hyperparameters=comparators.selected_hyperparameters,
     )
 
 
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Verify BSM G0/B pre-execution controls.")
+    parser = argparse.ArgumentParser(
+        description="Verify BSM G0/B pre-execution controls."
+    )
     parser.add_argument("--contract", type=Path, default=_CONTRACT_PATH)
     parser.add_argument(
         "--write-preexecution-manifest",
@@ -1761,10 +2374,13 @@ def main(argv: list[str] | None = None) -> int:
             "development execution is not authorized by the OPEN G0/A/B control state"
         )
     if args.write_preexecution_manifest:
-        write_preexecution_manifest(args.write_preexecution_manifest, contract, design, ledger)
+        write_preexecution_manifest(
+            args.write_preexecution_manifest, contract, design, ledger
+        )
     print(
         "[bsm_g0b] verified OPEN development controls "
-        f"(contract={contract.contract_sha256}, planned_replicates={len(ledger.entries)})"
+        f"(contract={contract.contract_sha256}, "
+        f"planned_replicates={len(ledger.entries)})"
     )
     return 0
 

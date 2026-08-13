@@ -1,8 +1,8 @@
-schema_version = "g11_campaign_contract_v1"
+schema_version = "g11_campaign_contract_v9"
 generation = 11
 gate = "G0"
-status = "OPEN"
-contract_hash = "912108b2bd8948ba10c7b24f9c98d0166642bb918b5d89fc546d7a9690f9e7df"
+status = "FROZEN"
+contract_hash = "676b591d7ee54e8b5022df6e42a82df778df6dab9709bf22e85313afc0cc221c"
 method_name = "max_stat_adjusted_p_mc"
 B_screen = 3199
 B_interaction = 999
@@ -11,10 +11,33 @@ q_screen = 0.05
 calibration_tolerance = 0.04
 calibration_confidence = 0.95
 gate_value = 0.09
-retry_limit = 0
+retry_limit = 1
 resolution_schedules = 10
+resolution_base_draws = 999
+resolution_max_multiplier = 4
+resolution_family_size = 100
+resolution_boundary_interval = [0.04, 0.06]
+resolution_decision_sha256 = "PENDING"
 fixed_family_sizes = [10, 100, 1000]
-artifact_schema_version = 1
+fixed_family_replicates = 1000
+fixed_family_pair_order_sha256 = "9383871bf59236509a45a91d4e1d7984ab6a1c263ec36d648f3553b1c13f4ad6"
+bootstrap_draws = 2000
+n_tree_estimators = 250
+n_stability_subsamples = 50
+stability_jaccard_threshold = 0.75
+stability_spearman_threshold = 0.9
+power_gate_lower_bound = 0.8
+pilot_repetitions = 3
+retryable_scheduler_states = ["BOOT_FAIL", "NODE_FAIL", "PREEMPTED"]
+recovery_comparators = ["proposed_terminal_workflow", "oracle_ols", "elastic_net_algebraic_library", "raw_input_boosted_tree"]
+comparator_cv_folds = 3
+elastic_net_alpha_grid = [0.0001, 0.001, 0.01, 0.1, 1.0]
+elastic_net_l1_ratio_grid = [0.1, 0.5, 0.9]
+boosted_tree_candidate_grid = [[100, 2, 0.05], [250, 3, 0.05]]
+boosted_tree_response_components = 4
+comparator_tuning_metric = "training_cv_macro_nrmse"
+comparator_failure_action = "terminal_failure_no_retry"
+artifact_schema_version = 2
 
 [[terminal_row_schema]]
 name = "scenario"
@@ -87,7 +110,7 @@ n_replicates = 1000
 n_predictor_continuous = 158
 n_predictor_binary = 2
 n_response = 4
-n_train = 320
+n_train = 160
 n_eval = 80
 description = "No signal of any kind."
 
@@ -98,7 +121,7 @@ n_replicates = 1000
 n_predictor_continuous = 158
 n_predictor_binary = 2
 n_response = 4
-n_train = 320
+n_train = 160
 n_eval = 80
 description = "Continuous and nonlinear main effects without interactions."
 
@@ -109,7 +132,7 @@ n_replicates = 1000
 n_predictor_continuous = 158
 n_predictor_binary = 2
 n_response = 4
-n_train = 320
+n_train = 160
 n_eval = 80
 description = "Correlated-input structure without interactions."
 
@@ -120,7 +143,7 @@ n_replicates = 1000
 n_predictor_continuous = 158
 n_predictor_binary = 2
 n_response = 4
-n_train = 320
+n_train = 160
 n_eval = 80
 description = "Frozen heteroscedastic variance function without interactions."
 
@@ -131,7 +154,7 @@ n_replicates = 1000
 n_predictor_continuous = 158
 n_predictor_binary = 2
 n_response = 4
-n_train = 320
+n_train = 160
 n_eval = 80
 description = "Binary main effects only; designed for >=90% nondegenerate families."
 
@@ -141,9 +164,9 @@ kind = "strong"
 n_replicates = 200
 n_predictor_continuous = 158
 n_predictor_binary = 2
-n_response = 4
-n_train = 320
-n_eval = 80
+n_response = 40
+n_train = 2000
+n_eval = 500
 description = "Strong continuous-continuous planted interaction."
 
 [[scenarios]]
@@ -152,9 +175,9 @@ kind = "strong"
 n_replicates = 200
 n_predictor_continuous = 158
 n_predictor_binary = 2
-n_response = 4
-n_train = 320
-n_eval = 80
+n_response = 40
+n_train = 2000
+n_eval = 500
 description = "Strong binary-continuous planted interaction."
 
 [[scenarios]]
@@ -163,9 +186,9 @@ kind = "strong"
 n_replicates = 200
 n_predictor_continuous = 158
 n_predictor_binary = 2
-n_response = 4
-n_train = 320
-n_eval = 80
+n_response = 40
+n_train = 2000
+n_eval = 500
 description = "Strong binary-binary planted interaction."
 
 [[scenarios]]
@@ -174,9 +197,9 @@ kind = "stress"
 n_replicates = 200
 n_predictor_continuous = 158
 n_predictor_binary = 2
-n_response = 4
-n_train = 320
-n_eval = 80
+n_response = 40
+n_train = 2000
+n_eval = 500
 description = "Same hierarchical support as strong_cc with low SNR."
 
 [[scenarios]]
@@ -185,9 +208,9 @@ kind = "stress"
 n_replicates = 200
 n_predictor_continuous = 158
 n_predictor_binary = 2
-n_response = 4
-n_train = 320
-n_eval = 80
+n_response = 40
+n_train = 2000
+n_eval = 500
 description = "Dense active set with redundant correlated predictors."
 
 [[scenarios]]
@@ -196,9 +219,9 @@ kind = "stress"
 n_replicates = 200
 n_predictor_continuous = 158
 n_predictor_binary = 2
-n_response = 4
-n_train = 320
-n_eval = 80
+n_response = 40
+n_train = 2000
+n_eval = 500
 description = "Pure continuous-continuous interaction with negligible mains."
 
 [[scenarios]]
@@ -207,9 +230,9 @@ kind = "stress"
 n_replicates = 200
 n_predictor_continuous = 158
 n_predictor_binary = 2
-n_response = 4
-n_train = 320
-n_eval = 80
+n_response = 40
+n_train = 2000
+n_eval = 500
 description = "Nonlinear transform plus one out-of-library misspecification."
 
 [[scenarios]]
@@ -219,6 +242,6 @@ n_replicates = 20
 n_predictor_continuous = 158
 n_predictor_binary = 2
 n_response = 4
-n_train = 320
+n_train = 160
 n_eval = 80
 description = "Development-only B versus 2B resolution fixture."

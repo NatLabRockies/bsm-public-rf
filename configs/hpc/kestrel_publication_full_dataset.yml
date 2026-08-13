@@ -1,3 +1,5 @@
+# RETIRED/NON-EXECUTABLE: preserved only as historical configuration.
+# Use the content-addressed G11 campaign package and its phase authorizations.
 # BSM Manuscript Pipeline — Publication-grade Full-Dataset Configuration
 # This is the main production run targeting publication-ready results.
 # Quality-first approach: conservative hyperparameters optimized for result defensibility.

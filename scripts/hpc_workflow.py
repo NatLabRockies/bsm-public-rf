@@ -179,7 +179,9 @@ def _resolve_dataset_sync_specs(
             continue
 
         if rel_dataset_path is not None:
-            remote_dataset_root = f"{remote_repo_root.rstrip('/')}/{rel_dataset_path.as_posix()}"
+            remote_dataset_root = (
+                f"{remote_repo_root.rstrip('/')}/{rel_dataset_path.as_posix()}"
+            )
         else:
             remote_dataset_root = (
                 f"{remote_repo_root.rstrip('/')}/artifacts/{local_dataset_root.name}"
@@ -190,7 +192,11 @@ def _resolve_dataset_sync_specs(
         artifact_dir_value = str(output.get("artifact_dir", "./artifacts"))
         remote_artifact_dir = _remote_from_config_path(artifact_dir_value).rstrip("/")
 
-        for dataset_file in ("X.parquet", "Y.parquet", "fixed_holdout_assignments.parquet"):
+        for dataset_file in (
+            "X.parquet",
+            "Y.parquet",
+            "fixed_holdout_assignments.parquet",
+        ):
             _add_spec(
                 local_dataset_root / dataset_file,
                 f"{remote_artifact_dir}/{dataset_file}",
@@ -200,7 +206,9 @@ def _resolve_dataset_sync_specs(
             local_dataset_root / "manuscript_feature_catalog.parquet",
             REPO_ROOT / "artifacts" / "manuscript_feature_catalog.parquet",
         ]
-        catalog_source = next((p for p in catalog_candidates if p.exists()), catalog_candidates[-1])
+        catalog_source = next(
+            (p for p in catalog_candidates if p.exists()), catalog_candidates[-1]
+        )
         _add_spec(
             catalog_source,
             f"{remote_artifact_dir}/manuscript_feature_catalog.parquet",
@@ -285,6 +293,11 @@ def _sync_remote_repo_via_git(
 
 def main() -> int:
     args = parse_args()
+    if Path(args.config).name == "kestrel_publication_orchestration.yml":
+        raise SystemExit(
+            "RETIRED: use the content-addressed G11 campaign package; "
+            "the legacy publication orchestration is non-executable."
+        )
     config = load_hpc_workflow_config(args.config)
 
     local_env = os.environ.copy()
@@ -343,11 +356,7 @@ def main() -> int:
                 # stage and we actually submitted (not dry-run, not
                 # generate-only) — otherwise no real job id exists to
                 # chain.
-                capture = (
-                    stage_name is not None
-                    and should_submit
-                    and not args.dry_run
-                )
+                capture = stage_name is not None and should_submit and not args.dry_run
                 # When the user asked for --dry-run + --generate-only
                 # together they want a fully local validation: no SSH,
                 # no remote rfm-hpc-submit. Skip the remote shell

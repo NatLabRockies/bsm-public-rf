@@ -1,3 +1,5 @@
+# RETIRED/NON-EXECUTABLE: preserved only as historical configuration.
+# Use the content-addressed G11 campaign package and its phase authorizations.
 # Publication-grade full-dataset baseline for staged distributed HPC execution.
 # CONFIGURE: set SCRATCH_DIR to your cluster scratch root.
 # Example: export SCRATCH_DIR=/path/to/scratch/${USER}
