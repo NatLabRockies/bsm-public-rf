@@ -134,7 +134,13 @@ def prepare_applied_data_layout(
     if assignments.column_names != ["sample_id", "split"]:
         raise ValueError("holdout assignments must contain exactly sample_id and split")
     ids = assignments["sample_id"].to_pylist()
-    splits = [str(value).strip().lower() for value in assignments["split"].to_pylist()]
+    source_splits = [
+        str(value).strip().lower() for value in assignments["split"].to_pylist()
+    ]
+    split_aliases = {"train": "train", "test": "holdout"}
+    if any(value not in split_aliases for value in source_splits):
+        raise ValueError("holdout assignments contain an unknown split label")
+    splits = [split_aliases[value] for value in source_splits]
     if len(ids) != len(set(ids)) or set(splits) != {"train", "holdout"}:
         raise ValueError(
             "holdout assignments are duplicate or do not define both splits"
@@ -300,6 +306,7 @@ def prepare_applied_data_layout(
             },
             "binary_input_names": list(BINARY_INPUT_NAMES),
             "source_binary_input_names": list(SOURCE_BINARY_INPUT_NAMES),
+            "source_split_labels": {"train": "train", "test": "holdout"},
             "excluded_structural_input_columns": list(STRUCTURAL_INPUT_COLUMNS),
             "generated_sha256": {
                 str(path.relative_to(output_root)): _sha256(path) for path in generated
