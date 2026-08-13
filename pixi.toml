@@ -14,7 +14,7 @@ tqdm = ">=4.0"
 pytest = ">=7.0"
 
 [pypi-dependencies]
-rfm-pipeline = {git = "https://github.com/NatLabRockies/rfm-pipeline.git", rev = "2925243703af0cfdda559090bb9b74713981c318"}
+rfm-pipeline = {git = "https://github.com/NatLabRockies/rfm-pipeline.git", rev = "72558d0b5026cff46e8b04f19ba958dc134c184e"}
 
 [tasks]
 reproduce-full = "python scripts/reproduce_full_dataset_run.py"
