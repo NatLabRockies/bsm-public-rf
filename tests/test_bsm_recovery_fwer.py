@@ -749,7 +749,7 @@ def test_applied_data_preparer_physically_separates_and_seals_holdout(tmp_path: 
         {"sample_id": ids, "y0": np.arange(8.0), "y1": np.arange(8.0) + 1.0}
     )
     assignments = pd.DataFrame(
-        {"sample_id": ids, "split": ["train"] * 4 + ["holdout"] * 4}
+        {"sample_id": ids, "split": ["train"] * 4 + ["test"] * 4}
     )
     catalog = pd.DataFrame(
         {
@@ -774,6 +774,7 @@ def test_applied_data_preparer_physically_separates_and_seals_holdout(tmp_path: 
     )
 
     assert manifest["status"] == "PREPARED_HOLDOUT_SEALED"
+    assert manifest["source_split_labels"] == {"train": "train", "test": "holdout"}
     assert manifest["preparer_sha256"] == preparer._sha256(_APPLIED_PREPARER)
     assert (target / "adaptive_train" / "Y.parquet").is_file()
     assert (target / "sealed_holdout" / "Y.parquet").stat().st_mode & 0o777 == 0
@@ -815,9 +816,9 @@ def test_applied_data_preparer_rejects_nonbinary_scenario_values(tmp_path: Path)
     pd.DataFrame(
         {"sample_id": ids, "y0": np.arange(8.0), "y1": np.arange(8.0) + 1.0}
     ).to_parquet(source / "Y.parquet", index=False)
-    pd.DataFrame(
-        {"sample_id": ids, "split": ["train"] * 4 + ["holdout"] * 4}
-    ).to_parquet(source / "holdout_assignments.parquet", index=False)
+    pd.DataFrame({"sample_id": ids, "split": ["train"] * 4 + ["test"] * 4}).to_parquet(
+        source / "holdout_assignments.parquet", index=False
+    )
     pd.DataFrame(
         {
             "feature_name": ["x000", *preparer.SOURCE_BINARY_INPUT_NAMES],
@@ -862,9 +863,9 @@ def test_applied_data_preparer_rejects_misaligned_x_y_row_order(tmp_path: Path):
             "y1": np.arange(8.0) + 1.0,
         }
     ).to_parquet(source / "Y.parquet", index=False)
-    pd.DataFrame(
-        {"sample_id": ids, "split": ["train"] * 4 + ["holdout"] * 4}
-    ).to_parquet(source / "holdout_assignments.parquet", index=False)
+    pd.DataFrame({"sample_id": ids, "split": ["train"] * 4 + ["test"] * 4}).to_parquet(
+        source / "holdout_assignments.parquet", index=False
+    )
     pd.DataFrame(
         {
             "feature_name": ["x000", *preparer.SOURCE_BINARY_INPUT_NAMES],
