@@ -18,10 +18,10 @@ control_snapshot:
 
 pinned_generic_source:
   repository: rfm-pipeline
-  commit: 72558d0b5026cff46e8b04f19ba958dc134c184e
+  commit: e3c6f89807e178520063d91dd76051d3a983ab8e
   require_clean_checkout: true
   lockfile: pixi.lock
-  lockfile_sha256: cf2f076becfafe26ae4c26bea2b141ff970d68e0f495b1109158bc970da0bad5
+  lockfile_sha256: c5fe6ca99644394e416f5146250b863d7d281bdb85027a74afc0f45bd55947fe
 
 input_schema:
   n_inputs: 160
@@ -227,5 +227,5 @@ scenarios:
 
 seed_ledger:
   path: configs/g0_seed_ledger.yaml
-  sha256: "c214d21d6b8d73ad5db881b758d300c7dcbfeeb90c11743c89b4fed01f3817de"
+  sha256: "3165a4033ec9208bbd096e006fbdb6b791d0bad9d18bdd69888628dff3715028"
   derivation: sha256_contract_phase_scenario_replicate_stage

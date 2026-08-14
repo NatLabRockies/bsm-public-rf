@@ -2,7 +2,7 @@
 # by the driver from the bound contract identity and these stable keys.
 schema_version: 1
 phase: development
-contract_sha256: 08e1ad686b38fb075a30788a8d11e96ab2c5d7007b68eac39f83418f48f00040
+contract_sha256: 9ce1c2658c025b808244d687b2d18b70b68ef7b2d63fae888e6381641412900a
 entries:
   - {phase: development, scenario: global_null, replicate_index: 0}
   - {phase: development, scenario: global_null, replicate_index: 1}
