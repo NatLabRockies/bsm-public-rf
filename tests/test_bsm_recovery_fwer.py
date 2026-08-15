@@ -713,6 +713,41 @@ def test_campaign_adapter_reduces_resolution_with_exact_coverage(tmp_path: Path)
     assert (tmp_path / "reduced" / "resolution_decision.json").is_file()
 
 
+def test_fixed_family_supplement_has_exactly_200_precommitted_records(
+    tmp_path: Path,
+):
+    adapter = _load_adapter()
+    from rfm_pipeline.campaign_contract import load_contract
+
+    contract, _ = load_contract(_ROOT / "configs" / "g11_campaign_contract.toml")
+    assert contract.fixed_family_replicates == 200
+    assert {
+        scenario.n_replicates
+        for scenario in contract.scenarios
+        if scenario.kind == "null"
+    } == {1000}
+    records = [
+        _adapter_reduction_record(
+            tmp_path,
+            index=index,
+            operation="fixed_family_supplement",
+            terminal={
+                "operation": "fixed_family_supplement",
+                "status": "completed",
+                "global_null_replicate_index": index,
+                "selected_pairs": {"10": [], "100": [], "1000": []},
+            },
+        )
+        for index in range(200)
+    ]
+
+    result = adapter.reduce_scientific_stage(records, tmp_path / "reduced-fixed")
+
+    assert result["terminal_record_count"] == 200
+    assert {row["denominator"] for row in result["families"].values()} == {200}
+    assert all(row["passes_calibration"] for row in result["families"].values())
+
+
 def test_campaign_adapter_reduction_rejects_missing_terminal_record(tmp_path: Path):
     adapter = _load_adapter()
     records = _adapter_reduction_record(
