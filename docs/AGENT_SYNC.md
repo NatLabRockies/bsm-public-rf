@@ -87,7 +87,7 @@
 - Before confirmatory execution, one hashed amendment changes only
   `fixed_family_replicates` from 1,000 to 200. The five primary null regimes
   remain at 1,000 each. The 10/100/1,000-pair nested supplement uses all 200
-  precommitted identities, one-sided 95% Wilson upper-bound <=0.09, and largest
+  precommitted identities, one-sided 95% Wilson upper-bound \<=0.09, and largest
   passing event count 11. No interim test, optional stopping, or incremental
   standby extension is permitted.
 - The final package and budget certificate bind the amendment hash. Package
@@ -132,8 +132,7 @@
   surfaces until the confirmatory campaign completes.
 - The local reproduction layer now applies two tested text-only corrections
   after the pilot-bound RFM renderer returns: the per-output CDF uses a compact
-  in-frame maximum annotation, and the module heatmap is titled `Interaction
-  endpoint counts`. Plot geometry and scientific values are unchanged, and no
+  in-frame maximum annotation, and the module heatmap is titled `Interaction endpoint counts`. Plot geometry and scientific values are unchanged, and no
   RFM source/pin used by the active pilot was modified.
 - A true local release rehearsal also passes using a production-sized synthetic
   23,495-output bundle and the real compiler, figure renderer, independent
@@ -217,27 +216,40 @@
   The complete G11 HPC package test file, focused BSM controller tests, Ruff,
   and diff checks pass; a new immutable root and same-day replay are required.
 
-## SESSION STATE — 2026-08-15 — final scientific campaign submitted
+## SESSION STATE — 2026-08-15 — corrected final scientific campaign submitted
 
-- Fresh immutable run `g11-final-manuscript-20260815h` binds scientific RFM
+- Runs `g11-final-manuscript-20260815h` and `...j` are rejected diagnostics,
+  not scientific evidence. Run `h` exposed a wrong manifest authorization
+  path; run `j` exposed the BSM verifier's stale exact authorization schema.
+  Both failed before scientific computation. Their immutable evidence records
+  0.09161324786324784 and 0.036458333333333336 AU, respectively, bringing
+  cumulative rejected-attempt usage to 192.6780715811966 AUs. All unfinished
+  work and dependencies were canceled; no failed-run telemetry is eligible for
+  resource selection.
+- RFM `7cc6f09` generates the canonical phase authorization path and BSM
+  `b3b2377` checks every manifest path before submission and uses canonical
+  Slurm array task identifiers. BSM `d7d5f32` requires and validates the
+  plan-bound authorization field that failed run `j`; RFM `7bc07b1` pins that
+  exact BSM scientific checkout and driver digest. The complete BSM suite
+  passes (115), the complete G11 RFM package test passes, and the failed live
+  authorization replays successfully through the corrected verifier on
+  Kestrel.
+- Fresh immutable run `g11-final-manuscript-20260815k` binds scientific RFM
   `fd12fd579d8743bdc4acd00e1dac217cbfc56e84`, controller RFM
-  `77a8e809ecb9162019c560619be3731206522c72`, and BSM controller/publication
-  runtime `f9493c76310ea9556a4ab1bca6051802b25756d4`; all deployed checkouts were
-  clean. The base config's BSM scientific checkout remains clean `1762c6b`,
-  whose five referenced scientific files are byte-identical to the newer
-  controller checkout.
-- Exact-commit no-submit audit `95765dae4cbabbf16c3507354387397089667213b5f1221de20ef2466d457f02`
-  admitted B=999 at a 24,929.819551282053-AU hard maximum, rejected B=1,998 at
-  49,127.8 AUs, confirmed fixed-family 200 and five primary null regimes of
-  1,000, and passed `sbatch --test-only` for all 46 unique confirmatory scripts
-  with an empty queue.
-- Same-day development preflight and authorization were independently
-  recomputed (`bdaaa415d4c82a67446828a385e1e801e32cb0502c57990a080386bdaf71c7a3`).
-  Resolution worker array `16275637`, audit `16275638`, and reducer `16275639`
-  were submitted with the reviewed `afterany`/`afterok` dependencies. The
-  fsynced journal and self-hashed submission record agree; no abort record
-  exists.
-- Lightweight controller PID 830817 monitors at 300-second cadence and may
-  advance only through exact completion evidence, scientific gates, same-day
-  preflights, and rolling allocation guards. Scientific failures are never
-  retried automatically. A 30-minute heartbeat monitors the run.
+  `7bc07b1f1f848b2eb8ab4ad429d79909f85aeb0e`, and BSM scientific/controller
+  runtime `d7d5f32b586a5b9d06182666aee24d0e94160ffd`; all deployed checkouts are
+  clean.
+- No-submit audit `8f64b94be45ed57651a4b149a54096b6db12aa9e5de8f4585a48722d166f3ecd`
+  validates all 6,689 manifest records, passes `sbatch --test-only` for all 49
+  development and confirmatory scripts, admits B=999 at a
+  24,929.94762286325-AU hard maximum, rejects B=1,998, and preserves
+  fixed-family 200 plus five primary null regimes of 1,000. The exact live
+  development authorization then passed all 20 scientific-verifier replays
+  before submission; audit SHA-256
+  `90763ffdff43f2091520232115b89fd5f864dd8d5148fad5b22b55b78a8a2634`.
+- Development worker array `16278789`, audit `16278790`, and reducer `16278791`
+  are submitted with reviewed `afterany`/`afterok` dependencies. Lightweight
+  controller PID 1133692 monitors at 300-second cadence and may advance only
+  through exact completion evidence, scientific gates, same-day preflights,
+  and rolling allocation guards. Scientific failures are never retried
+  automatically; a 30-minute heartbeat monitors the campaign.
