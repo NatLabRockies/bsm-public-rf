@@ -34,6 +34,7 @@ from scripts.g11_campaign_workflow import (
     _sha256_path,
     _stable_hash,
     _remaining_confirmatory_estimated_au,
+    _sacct_array_command,
     _scheduler_environment,
     _validate_development_completion,
     _write_new_json,
@@ -222,7 +223,7 @@ def inspect_submitted_phase(
             "active": str(queued.stdout).strip().splitlines(),
         }
     accounting = run_command(
-        ["sacct", "-j", joined, "-nP", "--format=JobIDRaw,State,ExitCode"],
+        _sacct_array_command(job_ids, fields=("JobID", "State", "ExitCode")),
         check=True,
         capture_output=True,
         text=True,
@@ -899,13 +900,7 @@ def _verify_publication_job(root: Path) -> dict[str, Any]:
         str(key): str(value) for key, value in submission["submission_job_ids"].items()
     }
     completed = subprocess.run(
-        [
-            "sacct",
-            "-j",
-            ",".join(job_ids.values()),
-            "-nP",
-            "--format=JobIDRaw,State,ExitCode",
-        ],
+        _sacct_array_command(job_ids, fields=("JobID", "State", "ExitCode")),
         check=True,
         capture_output=True,
         text=True,

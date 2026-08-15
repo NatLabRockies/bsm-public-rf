@@ -12,7 +12,9 @@ import pytest
 
 from scripts.g11_campaign_workflow import (
     _reconcile_accepted_resource_freeze,
+    _sacct_array_command,
     _stable_hash,
+    _validate_phase_manifest_authorization_paths,
     augment_resource_freeze_accounting,
     build_campaign_budget_certificate,
     build_development_admission_guard,
@@ -26,6 +28,62 @@ from scripts.g11_campaign_workflow import (
     validate_scheduler_completion,
     validate_scheduler_completion_accounting,
 )
+
+
+def test_sacct_array_command_requests_canonical_array_task_ids() -> None:
+    assert _sacct_array_command(
+        {"worker": "101", "audit": "102"},
+        fields=("JobID", "State", "ExitCode", "ElapsedRaw", "AllocNodes"),
+    ) == [
+        "sacct",
+        "--array",
+        "-j",
+        "101,102",
+        "-nP",
+        "--format=JobID,State,ExitCode,ElapsedRaw,AllocNodes",
+    ]
+
+
+def test_phase_preflight_rejects_manifest_authorization_path_drift(
+    tmp_path: Path,
+) -> None:
+    manifest = tmp_path / "manifest.jsonl"
+    manifest.write_text(
+        json.dumps(
+            {
+                "phase": "development",
+                "execution_authorization_path": str(
+                    tmp_path / "g11-final" / "development.json"
+                ),
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    dag = SimpleNamespace(stages=(SimpleNamespace(manifest_path=manifest),))
+    expected = tmp_path / "g11-final" / "development" / "authorization.json"
+
+    with pytest.raises(ValueError, match="authorization path differs"):
+        _validate_phase_manifest_authorization_paths(
+            dag, phase="development", authorization_path=expected
+        )
+
+    manifest.write_text(
+        json.dumps(
+            {
+                "phase": "development",
+                "execution_authorization_path": str(expected),
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    assert (
+        _validate_phase_manifest_authorization_paths(
+            dag, phase="development", authorization_path=expected
+        )
+        == 1
+    )
 
 
 def test_accepted_freeze_reconciliation_allows_only_accounting_rule_text() -> None:
