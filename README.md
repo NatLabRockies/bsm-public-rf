@@ -2,6 +2,9 @@
 
 This repository contains the configuration, committed artifacts, and helper scripts needed to reproduce the published Biomass Scenario Model (BSM) reduced-form modeling results with `rfm-pipeline`.
 
+The fail-closed final Kestrel campaign and local JDS release workflow is in
+[`docs/G11_FINAL_EXECUTION.md`](docs/G11_FINAL_EXECUTION.md).
+
 ## G0/B recovery-study status
 
 The semi-synthetic recovery-study controls are pre-execution only: G0, A, and
