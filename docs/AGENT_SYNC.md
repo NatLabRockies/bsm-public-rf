@@ -119,7 +119,7 @@
   `JDS_RELEASE_BUILD_PASS`.
 - Full operator commands, acceptance criteria, transfer instructions, and the
   zero-AU local finish are recorded in `docs/G11_FINAL_EXECUTION.md`.
-- Validation currently passes: all 104 BSM repository tests, scoped Ruff
+- Validation currently passes: all 105 BSM repository tests, scoped Ruff
   lint/format, direct CLI entry-point smoke checks, all 266 manuscript
   repository tests, and successful 21-page manuscript plus one-page cover
   compilation with no unresolved citations or references.
@@ -141,9 +141,23 @@
   one-page cover, and internally valid source/supplement ZIPs. The supplement
   now carries its own reproduction guide and license so it remains usable when
   separated from this repository.
-- Live no-submit initialization exposed and closed one environment hazard:
-  the older BSM Pixi environment could import a stale installed RFM package.
-  The final controller now refuses any interpreter whose campaign module does
-  not resolve from the accepted pilot's frozen RFM checkout, and the runbook
-  invokes that checkout's Pixi interpreter explicitly. No scheduler job was
-  submitted by the rejected initialization.
+- Live no-submit initialization exposed and closed two related environment
+  hazards: the older BSM Pixi environment imported a stale installed RFM
+  package, while the accepted scientific checkout intentionally predates the
+  non-scientific pilot-accounting schedule-hash repair. The final controller
+  now binds and hashes a separate `ac87f4c` controller checkout while package
+  source hashing and worker execution remain bound to the accepted `fd12fd5`
+  scientific checkout. The runbook supplies that separation explicitly and
+  the controller rejects a changed or wrongly imported controller module. The
+  controller import path changes only in-process; every real Slurm submission
+  strips `PYTHONPATH`/`PYTHONHOME`, so workers remain bound to the accepted
+  scientific checkout. The manifest records clean Git revisions and complete
+  RFM-controller/BSM-script tree hashes, and the recomputed pilot freeze must
+  equal the already accepted freeze byte for byte. The publication job uses
+  the scientific RFM Python environment rather than the stale BSM environment.
+  A partial multi-`sbatch` failure cancels every returned job ID and writes a
+  self-hashed abort record. Because `nationalpfa` is valid in Slurm but omitted
+  from `aus_report` for this non-lead user, live smoke uses the configured
+  25,000 ceiling while the separate campaign certificate and rolling guards
+  subtract all sunk and observed AUs. No scheduler job was submitted by either
+  rejected initialization.

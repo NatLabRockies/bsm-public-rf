@@ -24,6 +24,15 @@ from typing import Any
 PUBLICATION_FIXED_FAMILY_REPLICATES = 200
 
 
+def _scheduler_environment() -> dict[str, str]:
+    """Return an import-clean environment for every real Slurm submission."""
+    environment = os.environ.copy()
+    environment.pop("PYTHONPATH", None)
+    environment.pop("PYTHONHOME", None)
+    environment["PYTHONNOUSERSITE"] = "1"
+    return environment
+
+
 def _stable_hash(payload: Any) -> str:
     canonical = json.dumps(
         payload, sort_keys=True, separators=(",", ":"), ensure_ascii=True
@@ -560,6 +569,7 @@ def close_completed_pilot(
     *,
     dag: Any,
     submission_record_path: Path,
+    accepted_resource_freeze_path: Path | None = None,
     accounting_output_dir: Path,
     resource_freeze_path: Path,
     prior_sunk_au: float,
@@ -603,6 +613,14 @@ def close_completed_pilot(
         pilot_accounting=accounting,
         prior_sunk_au=prior_sunk_au,
     )
+    if accepted_resource_freeze_path is not None:
+        accepted = json.loads(
+            accepted_resource_freeze_path.resolve().read_text(encoding="utf-8")
+        )
+        if freeze != accepted:
+            raise ValueError(
+                "recomputed pilot resource freeze differs from accepted evidence"
+            )
     _write_new_json(resource_freeze_path, freeze)
     return accounting, freeze
 
@@ -964,9 +982,10 @@ def submit_authorized_phase(
     preflight = json.loads(preflight_path.read_text(encoding="utf-8"))
     authorization = json.loads(authorization_path.read_text(encoding="utf-8"))
     journal_path = submission_record_path.with_suffix(".submission_journal.jsonl")
-    if journal_path.exists():
+    abort_path = submission_record_path.with_suffix(".submission_abort.json")
+    if journal_path.exists() or abort_path.exists():
         raise ValueError(
-            "phase submission journal already exists; refusing to risk duplicate jobs"
+            "phase submission evidence already exists; refusing to risk duplicate jobs"
         )
     journal_path.parent.mkdir(parents=True, exist_ok=True)
     submitted_index = 0
@@ -979,7 +998,13 @@ def submit_authorized_phase(
                 "phase submitter issued more scheduler calls than plan steps"
             )
         step_id = str(steps[submitted_index]["step_id"])
-        completed = subprocess.run(command, capture_output=True, text=True, check=False)
+        completed = subprocess.run(
+            command,
+            capture_output=True,
+            text=True,
+            check=False,
+            env=_scheduler_environment(),
+        )
         raw = str(completed.stdout).strip()
         job_id = raw.split(";", maxsplit=1)[0] if raw else None
         entry = {
@@ -998,17 +1023,64 @@ def submit_authorized_phase(
         submitted_index += 1
         return completed
 
-    job_ids = execute_campaign_phase_plan(
-        plan,
-        run_command=_run,
-        authorize=True,
-        preflight=preflight,
-        phase_authorization=authorization,
-    )
-    if submitted_index != len(plan["steps"]):
-        raise RuntimeError(
-            "phase submitter did not execute exactly one call per plan step"
+    try:
+        job_ids = execute_campaign_phase_plan(
+            plan,
+            run_command=_run,
+            authorize=True,
+            preflight=preflight,
+            phase_authorization=authorization,
         )
+        if submitted_index != len(plan["steps"]):
+            raise RuntimeError(
+                "phase submitter did not execute exactly one call per plan step"
+            )
+    except Exception as exc:
+        submitted_job_ids: list[str] = []
+        if journal_path.is_file():
+            for line in journal_path.read_text(encoding="utf-8").splitlines():
+                row = json.loads(line)
+                job_id = row.get("job_id")
+                if isinstance(job_id, str) and re.fullmatch(r"[0-9]+", job_id):
+                    submitted_job_ids.append(job_id)
+        cancellation = None
+        if submitted_job_ids:
+            cancellation = subprocess.run(
+                ["scancel", "--quiet", *submitted_job_ids],
+                capture_output=True,
+                text=True,
+                check=False,
+                env=_scheduler_environment(),
+            )
+        abort_identity = {
+            "schema_version": 1,
+            "status": "SUBMISSION_ABORTED",
+            "phase": phase,
+            "submitted_job_ids": submitted_job_ids,
+            "cancellation_returncode": (
+                int(cancellation.returncode) if cancellation is not None else None
+            ),
+            "cancellation_stdout": (
+                str(cancellation.stdout) if cancellation is not None else ""
+            ),
+            "cancellation_stderr": (
+                str(cancellation.stderr) if cancellation is not None else ""
+            ),
+            "error_type": type(exc).__name__,
+            "error_message": str(exc),
+        }
+        _write_new_json(
+            abort_path,
+            {
+                **abort_identity,
+                "submission_abort_sha256": _stable_hash(abort_identity),
+            },
+        )
+        if cancellation is not None and cancellation.returncode != 0:
+            raise RuntimeError(
+                "phase submission failed and submitted-job cancellation also failed"
+            ) from exc
+        raise
     identity = {
         "schema_version": 1,
         "status": "SUBMITTED",
