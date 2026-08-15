@@ -67,21 +67,22 @@ unexecuted confirmatory work.
   is 40,415.19636752113 AUs and its shared-reserve request is 48,499 AUs. That
   branch cannot fit the allocation even before adding resolution AUs.
 
-As a nonbinding feasibility check, the accepted interaction-score pilot used
-6,342 seconds for 636,000 pair-draw units. The resolution worker workload is
-399,600 pair-draw units per schedule, giving a throughput-scaled forecast of
-about 221.4 worker AUs across 20 schedules (about 223 AUs including the small
-audit/reducer allowance). This is below the 411.08-AU ceiling; the budget
-certificate nevertheless uses the eventual exact `sacct` charge, not this
-forecast.
+The 20 resolution workers retain the pilot-sized 65 CPUs, 6 GiB, and 2:43:33
+walltime but use Kestrel's 104-core `shared` nodes. Including the shared
+audit/reducer requests, their complete scheduler-walltime charge is at most
+340.9001068376069 AUs. The corresponding whole-campaign maximum is
+24,929.81955128205 AUs, leaving 70.18044871795064 AUs of hard headroom even if
+every resolution job consumes its full request. The budget certificate later
+replaces this maximum with the exact `sacct` charge.
 
-The controller derives these quantities from the generated package rather than
-hard-coding them. It writes a budget certificate only if the selected branch
-and actual development charge fit. Otherwise it stops before every confirmatory
-submission. Thus the campaign remains below 25,000 AUs, but completion of the
-article is conditional on the prespecified resolution selecting B=999 and the
-development charge remaining within its 411.0805555555562-AU ceiling. The
-scientific resolution rule is not weakened to force the affordable branch.
+The development guard checks the generated resolution package against the
+reviewed B=999 confirmatory reserve. After resolution, the controller derives
+the exact selected-branch quantities from the generated confirmatory package
+and writes a budget certificate only if the selected branch and actual
+development charge fit. Otherwise it stops before every confirmatory
+submission. Completion of the article therefore remains conditional on the
+prespecified resolution selecting B=999; the scientific resolution rule is not
+weakened to force the affordable branch.
 
 Before each confirmatory phase, a separate immutable `budget_guard.json`
 replaces earlier-phase estimates with their newly observed AUs and recomputes
@@ -101,7 +102,7 @@ private copy of the reviewed config.
 ```bash
 BSM_RUNTIME=/scratch/dhetting/bsm_runtime/software/bsm-public-rf
 RFM_SCIENTIFIC=/scratch/dhetting/bsm_runtime/software/rfm-pipeline
-RFM_CONTROLLER=/scratch/dhetting/bsm_runtime/software/rfm-controller-a1bbe91
+RFM_CONTROLLER=/scratch/dhetting/bsm_runtime/software/rfm-controller-03635da
 PILOT_ID=g11-pilot-final-sizing-20260814f
 FINAL_ID=g11-final-manuscript-YYYYMMDDa
 CONTROL=/projects/bsm/g11_authorizations/${FINAL_ID}
@@ -132,11 +133,12 @@ cd "${BSM_RUNTIME}"
 `RFM_SCIENTIFIC` must be a clean detached checkout at
 `fd12fd579d8743bdc4acd00e1dac217cbfc56e84`, the source identity measured by
 the accepted pilot. `RFM_CONTROLLER` must be a separate clean detached
-checkout at `a1bbe91397b2e22e519d4595b13eed377c8cbff1`. Its changes from
+checkout at `03635da30a50de56eb94c7534cc9b89e1be3bf21`. Its changes from
 `fd12fd5` are limited to reviewed campaign-control behavior: the
 pilot-accounting schedule-hash repair, resolution-only development packaging,
 package-local Slurm logs, clean compute-node imports, and exact
-script/plan/accounting bindings. The
+script/plan/accounting bindings, and partial-node placement for the
+resolution-only development stage. The
 controller prepends that code to its own in-process import path; it never
 exports the controller checkout through `PYTHONPATH`. Real `sbatch` calls
 strip Python import overrides, and generated workers continue to execute from
