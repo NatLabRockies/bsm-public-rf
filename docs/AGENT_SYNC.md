@@ -152,8 +152,11 @@
   controller import path changes only in-process; every real Slurm submission
   strips `PYTHONPATH`/`PYTHONHOME`, so workers remain bound to the accepted
   scientific checkout. The manifest records clean Git revisions and complete
-  RFM-controller/BSM-script tree hashes, and the recomputed pilot freeze must
-  equal the already accepted freeze byte for byte. The publication job uses
+  RFM-controller/BSM-script tree hashes. Recomputed pilot evidence must match
+  the accepted freeze in every scientific and numeric field; the sole
+  permitted difference is newer explanatory `accounting_rule` prose, in which
+  case the accepted self-hashed freeze bytes remain authoritative. The
+  publication job uses
   the scientific RFM Python environment rather than the stale BSM environment.
   A partial multi-`sbatch` failure cancels every returned job ID and writes a
   self-hashed abort record. Because `nationalpfa` is valid in Slurm but omitted
