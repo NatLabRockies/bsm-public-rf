@@ -100,7 +100,7 @@ is exactly `COMPLETED/0:0`. Use a new run ID and a new, empty control root.
 private copy of the reviewed config.
 
 ```bash
-BSM_RUNTIME=/scratch/dhetting/bsm_runtime/software/bsm-public-rf
+BSM_RUNTIME=/scratch/dhetting/bsm_runtime/software/bsm-public-rf-f9493c7
 RFM_SCIENTIFIC=/scratch/dhetting/bsm_runtime/software/rfm-pipeline
 RFM_CONTROLLER=/scratch/dhetting/bsm_runtime/software/rfm-controller-77a8e80
 PILOT_ID=g11-pilot-final-sizing-20260814f
@@ -153,6 +153,14 @@ The controller itself may be launched with `PYTHONNOUSERSITE=1`. Live smoke
 removes that variable only from NREL's external `aus_report` subprocess because
 the site utility loads its own `jwt` dependency from the login user's site
 packages. Scientific imports and all Slurm workers remain isolated.
+
+The immutable base config retains the clean scientific BSM checkout at
+`1762c6bad2342dfa7e5fff632623449979963282`; same-day preflight records that
+revision and verifies every referenced scientific file. The separate
+`BSM_RUNTIME` checkout is controller/publication code at
+`f9493c76310ea9556a4ab1bca6051802b25756d4`. The scientific adapter, recovery
+driver, data preparer, DGP contract, and applied config have byte-identical
+SHA-256 values in both checkouts.
 
 Before adding `--execute`, run transitions without it and inspect the created
 `control_manifest.json`, private `final_campaign.yml`, resource freeze, and

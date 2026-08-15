@@ -17,6 +17,9 @@ Durable record of audit findings requiring follow-up. Newest first.
   hash same-day allocation output, verify the `nationalpfa` association, pass
   exact-script `sbatch --test-only`, issue phase authorization without a job,
   and remain queue/journal empty until that evidence is independently checked.
+- **Disposition:** closed by run `g11-final-manuscript-20260815h`; independent
+  preflight audit SHA-256
+  `bdaaa415d4c82a67446828a385e1e801e32cb0502c57990a080386bdaf71c7a3`.
 
 ______________________________________________________________________
 
@@ -41,6 +44,10 @@ ______________________________________________________________________
   25,000 AUs, (3) reject B=1,998 above 25,000 AUs, (4) pass `sbatch --test-only` for every unique production script, and (5) leave `squeue` and
   the submission journal empty until a fresh same-day authorization is
   independently verified.
+- **Disposition:** closed by exact-commit audit SHA-256
+  `95765dae4cbabbf16c3507354387397089667213b5f1221de20ef2466d457f02`;
+  B=999 admitted at 24,929.819551282053 AUs, B=1,998 rejected at 49,127.8
+  AUs, and all 46 confirmatory scripts passed Kestrel `sbatch --test-only`.
 
 ______________________________________________________________________
 
