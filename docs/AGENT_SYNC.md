@@ -146,7 +146,7 @@
   hazards: the older BSM Pixi environment imported a stale installed RFM
   package, while the accepted scientific checkout intentionally predates the
   non-scientific pilot-accounting schedule-hash repair. The final controller
-  now binds and hashes a separate `5d1ff14` controller checkout while package
+  now binds and hashes a separate `77a8e80` controller checkout while package
   source hashing and worker execution remain bound to the accepted `fd12fd5`
   scientific checkout. The runbook supplies that separation explicitly and
   the controller rejects a changed or wrongly imported controller module. The
@@ -194,8 +194,8 @@
 - Focused controller tests pass (28), the complete BSM suite passes (112), and
   all 112 tests also pass under the scientific RFM Pixi interpreter with
   `PYTHONPATH`/`PYTHONHOME` removed and user-site imports disabled. The complete
-  RFM repository gate also passes; fresh Kestrel replay remains required before
-  submission.
+  RFM repository gate passed immediately before the later isolated site-utility
+  environment repair; fresh Kestrel replay remains required before submission.
 - A prospective B=999 confirmatory-package audit then exposed a blocking
   mismatch between the generic package gate and the later exact budget
   certificate: the generic gate re-reserved estimates for already completed
@@ -208,3 +208,11 @@
   resource freeze and retained accounting. Full validation plus fresh B=999
   acceptance, B=1,998 rejection, and every-script Kestrel `sbatch --test-only`
   remain mandatory before the execution flag may be used.
+- The first same-day preflight with the isolated scientific interpreter then
+  exposed an environment boundary in NREL's `aus_report`: inherited
+  `PYTHONNOUSERSITE=1` hid the site utility's own user-site `jwt` dependency.
+  No phase authorization, submission record, journal, or scheduler job was
+  created. RFM controller `77a8e80` removes that variable only for the external
+  allocation probe; every scientific worker retains clean import isolation.
+  The complete G11 HPC package test file, focused BSM controller tests, Ruff,
+  and diff checks pass; a new immutable root and same-day replay are required.
