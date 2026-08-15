@@ -52,9 +52,11 @@ decisions and the applied-bootstrap summary are present and identity-bound.
 ## Fixed 25,000-AU branch envelope
 
 The retained no-submit projection from accepted pilot telemetry is conditional
-on the development resolution result. Completed work is charged at exact
-top-level `sacct` AUs; the shared 20% reserve is applied only to unexecuted
-confirmatory work.
+on the development resolution result. Completed non-array work is charged from
+its exact top-level `sacct` row; array work is charged from every expected
+array-task row, with exact task coverage required even when Slurm omits the
+synthetic array-parent row. The shared 20% reserve is applied only to
+unexecuted confirmatory work.
 
 - At selected interaction schedule B=999, the remaining confirmatory estimate
   is 20,250.751923076525 AUs and its shared-reserve request is 24,301 AUs.
@@ -99,7 +101,7 @@ private copy of the reviewed config.
 ```bash
 BSM_RUNTIME=/scratch/dhetting/bsm_runtime/software/bsm-public-rf
 RFM_SCIENTIFIC=/scratch/dhetting/bsm_runtime/software/rfm-pipeline
-RFM_CONTROLLER=/scratch/dhetting/bsm_runtime/software/rfm-controller-ac87f4c
+RFM_CONTROLLER=/scratch/dhetting/bsm_runtime/software/rfm-controller-a1bbe91
 PILOT_ID=g11-pilot-final-sizing-20260814f
 FINAL_ID=g11-final-manuscript-YYYYMMDDa
 CONTROL=/projects/bsm/g11_authorizations/${FINAL_ID}
@@ -130,8 +132,11 @@ cd "${BSM_RUNTIME}"
 `RFM_SCIENTIFIC` must be a clean detached checkout at
 `fd12fd579d8743bdc4acd00e1dac217cbfc56e84`, the source identity measured by
 the accepted pilot. `RFM_CONTROLLER` must be a separate clean detached
-checkout at `ac87f4cfc5da50aaa1424537d00328ebdcbe6627`, whose only source change
-from `fd12fd5` is the reviewed pilot-accounting schedule-hash repair. The
+checkout at `a1bbe91397b2e22e519d4595b13eed377c8cbff1`. Its changes from
+`fd12fd5` are limited to reviewed campaign-control behavior: the
+pilot-accounting schedule-hash repair, resolution-only development packaging,
+package-local Slurm logs, clean compute-node imports, and exact
+script/plan/accounting bindings. The
 controller prepends that code to its own in-process import path; it never
 exports the controller checkout through `PYTHONPATH`. Real `sbatch` calls
 strip Python import overrides, and generated workers continue to execute from
@@ -195,9 +200,9 @@ The campaign is complete only when all of the following exist and validate:
   must bind the amendment, replace completed pilot/resolution estimates with
   exact observed AUs, reserve 20% only on unexecuted confirmatory work, and
   count prior rejected attempts plus the 5-AU publication reserve;
-- Gate B, Gate P, and Gate C submission records, exact top-level
-  `COMPLETED/0:0` coverage, reducer hashes, phase-specific budget guards, and
-  phase completion records;
+- Gate B, Gate P, and Gate C submission records, exact `COMPLETED/0:0`
+  coverage for every non-array job and every expected array task, reducer
+  hashes, phase-specific budget guards, and phase completion records;
 - Gate-B and fixed-family PASS decisions;
 - applied-bootstrap completed summary and Gate-C
   `READY_FOR_INDEPENDENT_REVIEW` ledger;

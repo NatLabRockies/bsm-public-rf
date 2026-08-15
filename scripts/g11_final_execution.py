@@ -19,6 +19,7 @@ import shlex
 import subprocess
 import sys
 import time
+from datetime import date
 from pathlib import Path
 from typing import Any, Callable
 
@@ -37,6 +38,7 @@ from scripts.g11_campaign_workflow import (
     _validate_development_completion,
     _write_new_json,
     build_campaign_budget_certificate,
+    build_development_admission_guard,
     close_completed_pilot,
     load_packaged_dag,
     preflight_and_authorize_phase,
@@ -197,6 +199,7 @@ def _load_submission(path: Path) -> dict[str, Any]:
 def inspect_submitted_phase(
     submission_record_path: str | Path,
     *,
+    expected_array_task_counts: dict[str, int] | None = None,
     run_command: Runner = subprocess.run,
 ) -> dict[str, Any]:
     """Classify a submitted phase without creating premature completion evidence."""
@@ -225,34 +228,60 @@ def inspect_submitted_phase(
         text=True,
     )
     raw = str(accounting.stdout)
-    top_level: dict[str, tuple[str, str]] = {}
+    rows: dict[str, tuple[str, str]] = {}
     expected = set(job_ids.values())
     for line in raw.splitlines():
         values = line.split("|")
-        if len(values) != 3 or values[0] not in expected:
+        if len(values) != 3:
             continue
-        if values[0] in top_level:
-            raise RuntimeError(f"sacct duplicated top-level job {values[0]}")
-        top_level[values[0]] = (values[1], values[2])
-    if set(top_level) != expected:
-        return {
-            "status": "WAITING_FOR_SACCT",
-            "phase": submission.get("phase"),
-            "job_count": len(job_ids),
-            "observed_job_count": len(top_level),
-        }
-    failures = [
-        f"{job_id}:{state}/{exit_code}"
-        for job_id, (state, exit_code) in sorted(
-            top_level.items(), key=lambda row: int(row[0])
+        row_id = values[0]
+        relevant = row_id in expected or any(
+            re.fullmatch(rf"{re.escape(parent)}_[0-9]+", row_id) for parent in expected
         )
-        if state != "COMPLETED" or exit_code != "0:0"
-    ]
+        if not relevant:
+            continue
+        if row_id in rows:
+            raise RuntimeError(f"sacct duplicated allocation job {row_id}")
+        rows[row_id] = (values[1], values[2])
+    task_counts = (
+        {step_id: 0 for step_id in job_ids}
+        if expected_array_task_counts is None
+        else expected_array_task_counts
+    )
+    if set(task_counts) != set(job_ids) or any(
+        not isinstance(value, int) or value < 0 for value in task_counts.values()
+    ):
+        raise ValueError("phase probe array-task metadata differs from submission")
+    missing = []
+    failures = []
+    for step_id, job_id in job_ids.items():
+        task_count = task_counts[step_id]
+        expected_rows = (
+            {f"{job_id}_{index}" for index in range(task_count)}
+            if task_count
+            else {job_id}
+        )
+        missing.extend(sorted(expected_rows - set(rows)))
+        for row_id in sorted(expected_rows & set(rows)):
+            state, exit_code = rows[row_id]
+            if state != "COMPLETED" or exit_code != "0:0":
+                failures.append(f"{row_id}:{state}/{exit_code}")
+        if task_count and job_id in rows:
+            state, exit_code = rows[job_id]
+            if state != "COMPLETED" or exit_code != "0:0":
+                failures.append(f"{job_id}:{state}/{exit_code}")
     if failures:
         raise RuntimeError(
             "terminal scheduler failure; downstream locked: " + ", ".join(failures)
         )
-    validate_scheduler_completion(job_ids, raw)
+    if missing:
+        return {
+            "status": "WAITING_FOR_SACCT",
+            "phase": submission.get("phase"),
+            "job_count": len(job_ids),
+            "observed_job_count": len(rows),
+            "missing_allocation_rows": missing,
+        }
     return {
         "status": "READY_TO_VERIFY",
         "phase": submission.get("phase"),
@@ -508,7 +537,16 @@ def _advance_phase(
         )
         return {"status": "PHASE_SUBMITTED", "phase": phase}
     if not paths["completion"].is_file():
-        probe = inspect_submitted_phase(paths["submission"])
+        from rfm_pipeline.hpc_campaign_package import build_campaign_phase_plan
+
+        plan = build_campaign_phase_plan(dag, phase=phase)
+        probe = inspect_submitted_phase(
+            paths["submission"],
+            expected_array_task_counts={
+                str(step["step_id"]): int(step["array_task_count"])
+                for step in plan["steps"]
+            },
+        )
         if probe["status"] != "READY_TO_VERIFY":
             return probe
         verify_phase_completion(
@@ -628,6 +666,19 @@ def _confirmatory_phase_budget_guard(
     )
 
 
+def _development_phase_budget_guard(
+    *, dag: Any, resource_freeze_path: Path, control: dict[str, Any]
+) -> dict[str, Any]:
+    """Require the complete resolution request to preserve the B=999 branch."""
+    freeze = json.loads(resource_freeze_path.read_text(encoding="utf-8"))
+    return build_development_admission_guard(
+        stage_allocations=dag.campaign_envelope.stage_allocations,
+        resource_freeze=freeze,
+        postprocessing_reserved_au=float(control["postprocessing_reserved_au"]),
+        allocation_quota_au=float(control["allocation_quota_au"]),
+    )
+
+
 def _prepare_artifact_job(
     *, root: Path, dag: Any, bsm_runtime_root: Path
 ) -> dict[str, Any]:
@@ -720,17 +771,71 @@ def _load_artifact_inputs(path: Path) -> dict[str, Any]:
     return payload
 
 
+def _load_artifact_submission_preflight(
+    path: Path, *, inputs: dict[str, Any]
+) -> dict[str, Any]:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    identity = {
+        key: value
+        for key, value in payload.items()
+        if key != "submission_preflight_sha256"
+    }
+    if (
+        payload.get("submission_preflight_sha256") != _stable_hash(identity)
+        or payload.get("status") != "SBATCH_TEST_ONLY_PASSED"
+        or payload.get("script_sha256") != inputs.get("script_sha256")
+        or int(payload.get("returncode", -1)) != 0
+    ):
+        raise ValueError("publication submission preflight is stale or invalid")
+    return payload
+
+
 def _submit_artifact_job(root: Path) -> dict[str, Any]:
     job_root = root / "publication_job"
     inputs = _load_artifact_inputs(job_root / "artifact_job_inputs.json")
     script = Path(str(inputs["script_path"]))
     if _sha256_path(script) != inputs.get("script_sha256"):
         raise ValueError("publication job script changed after preparation")
+    preflight_path = job_root / "submission_preflight.json"
     journal_path = job_root / "submission_journal.jsonl"
-    if journal_path.exists():
+    if preflight_path.exists() or journal_path.exists():
         raise ValueError(
-            "publication submission journal already exists; refusing to risk a "
-            "duplicate job"
+            "publication preflight or submission journal already exists; refusing "
+            "to risk stale evidence or a duplicate job"
+        )
+    preflight_command = ["sbatch", "--test-only", str(script)]
+    preflight_result = subprocess.run(
+        preflight_command,
+        check=False,
+        capture_output=True,
+        text=True,
+        env=_scheduler_environment(),
+    )
+    preflight_identity = {
+        "schema_version": 1,
+        "status": (
+            "SBATCH_TEST_ONLY_PASSED"
+            if preflight_result.returncode == 0
+            else "SBATCH_TEST_ONLY_FAILED"
+        ),
+        "observed_date": date.today().isoformat(),
+        "script_sha256": inputs["script_sha256"],
+        "command": preflight_command,
+        "returncode": int(preflight_result.returncode),
+        "stdout": str(preflight_result.stdout),
+        "stderr": str(preflight_result.stderr),
+    }
+    preflight = {
+        **preflight_identity,
+        "submission_preflight_sha256": _stable_hash(preflight_identity),
+    }
+    _write_new_json(preflight_path, preflight)
+    if preflight_result.returncode != 0:
+        raise subprocess.CalledProcessError(
+            preflight_result.returncode,
+            preflight_command,
+            output=preflight_result.stdout,
+            stderr=preflight_result.stderr,
         )
     command = ["sbatch", "--parsable", str(script)]
     completed = subprocess.run(
@@ -769,6 +874,7 @@ def _submit_artifact_job(root: Path) -> dict[str, Any]:
         "phase": "publication_artifacts",
         "run_id": inputs["run_id"],
         "artifact_job_inputs_sha256": inputs["artifact_job_inputs_sha256"],
+        "submission_preflight_sha256": preflight["submission_preflight_sha256"],
         "submission_journal_sha256": _sha256_path(journal_path),
         "submission_job_ids": {"publication-artifacts": job_id},
     }
@@ -780,8 +886,15 @@ def _submit_artifact_job(root: Path) -> dict[str, Any]:
 def _verify_publication_job(root: Path) -> dict[str, Any]:
     job_root = root / "publication_job"
     inputs = _load_artifact_inputs(job_root / "artifact_job_inputs.json")
+    preflight = _load_artifact_submission_preflight(
+        job_root / "submission_preflight.json", inputs=inputs
+    )
     submission_path = job_root / "submission.json"
     submission = _load_submission(submission_path)
+    if submission.get("submission_preflight_sha256") != preflight.get(
+        "submission_preflight_sha256"
+    ):
+        raise ValueError("publication submission does not bind its preflight")
     job_ids = {
         str(key): str(value) for key, value in submission["submission_job_ids"].items()
     }
@@ -832,6 +945,14 @@ def _verify_publication_job(root: Path) -> dict[str, Any]:
 def _validate_publication_completion(root: Path) -> dict[str, Any]:
     job_root = root / "publication_job"
     inputs = _load_artifact_inputs(job_root / "artifact_job_inputs.json")
+    preflight = _load_artifact_submission_preflight(
+        job_root / "submission_preflight.json", inputs=inputs
+    )
+    submission = _load_submission(job_root / "submission.json")
+    if submission.get("submission_preflight_sha256") != preflight.get(
+        "submission_preflight_sha256"
+    ):
+        raise ValueError("publication submission does not bind its preflight")
     completion_path = job_root / "completion.json"
     payload = json.loads(completion_path.read_text(encoding="utf-8"))
     identity = {
@@ -847,6 +968,8 @@ def _validate_publication_completion(root: Path) -> dict[str, Any]:
         or payload.get("run_id") != inputs.get("run_id")
         or payload.get("artifact_job_inputs_sha256")
         != inputs.get("artifact_job_inputs_sha256")
+        or payload.get("submission_record_sha256")
+        != submission.get("submission_record_sha256")
         or payload.get("publication_manifest_sha256") != _sha256_path(manifest_path)
     ):
         raise ValueError("publication completion record is stale or differs")
@@ -909,6 +1032,20 @@ def advance_campaign(
     development = load_packaged_dag(
         package_root=development_package, config_path=config, repo_root=repo
     )
+    development_paths = _phase_paths(root, "development")
+    development_guard = _development_phase_budget_guard(
+        dag=development,
+        resource_freeze_path=freeze,
+        control=control,
+    )
+    if development_paths["budget_guard"].is_file():
+        recorded_guard = json.loads(
+            development_paths["budget_guard"].read_text(encoding="utf-8")
+        )
+        if recorded_guard != development_guard:
+            raise ValueError("development budget guard is stale or differs")
+    else:
+        _write_new_json(development_paths["budget_guard"], development_guard)
     development_result = _advance_phase(
         dag=development,
         phase="development",

@@ -70,8 +70,9 @@
   integer continues the same immutable campaign without resubmitting work.
 - Phase submission writes and fsyncs an append-only scheduler journal after
   every `sbatch` response so a partial submission cannot lose returned job IDs
-  or silently resubmit. Exact terminal acceptance remains
-  `COMPLETED/0:0` for every top-level job.
+  or silently resubmit. Exact terminal acceptance requires `COMPLETED/0:0` for
+  every non-array job and every expected array task; an optional synthetic
+  array-parent row may not substitute for task coverage.
 - Whole-campaign accounting now reserves 5 AUs for a final one-CPU,
   30-minute, 8-GB `shared` publication-compilation job. That job creates the
   compact publication bundle on Kestrel while all immutable package/result
@@ -145,7 +146,7 @@
   hazards: the older BSM Pixi environment imported a stale installed RFM
   package, while the accepted scientific checkout intentionally predates the
   non-scientific pilot-accounting schedule-hash repair. The final controller
-  now binds and hashes a separate `ac87f4c` controller checkout while package
+  now binds and hashes a separate `a1bbe91` controller checkout while package
   source hashing and worker execution remain bound to the accepted `fd12fd5`
   scientific checkout. The runbook supplies that separation explicitly and
   the controller rejects a changed or wrongly imported controller module. The
@@ -164,3 +165,29 @@
   25,000 ceiling while the separate campaign certificate and rolling guards
   subtract all sunk and observed AUs. No scheduler job was submitted by either
   rejected initialization.
+
+## SESSION STATE — 2026-08-15 — final-submission adversarial hardening
+
+- Scientific submission remains frozen while the exact final controller bytes
+  complete local and Kestrel no-submit validation. No final scientific job was
+  submitted by this review.
+- Development package generation is now structurally resolution-only. Its
+  immutable admission guard requires the complete resolution walltime request,
+  the accepted pilot, all rejected attempts, the 5-AU publication reserve, and
+  the full B=999 confirmatory reserve to fit below 25,000 AUs before resolution
+  can be authorized.
+- Generated worker/audit/reducer scripts use package-local precreated Slurm log
+  directories, clear Python import overrides, and bind their SHA-256 values in
+  the submission plan. Same-day preflight and authorization bind the exact plan
+  hash, and the submitter rehashes every script before its first `sbatch`.
+- Post-pilot arrays are accepted and charged from every expected task row;
+  missing, extra, failed, or nonzero-exit tasks stop downstream work. Shared
+  jobs use their request-bound node-equivalent fraction rather than charging a
+  full node solely because `AllocNodes` reports one.
+- The publication compiler has its own same-day `sbatch --test-only` evidence,
+  binds that evidence into its submission record, journals the returned job ID,
+  and refuses stale or partial evidence on restart.
+- Focused controller tests pass (28), the complete BSM suite passes (112), and
+  all 112 tests also pass under the scientific RFM Pixi interpreter with
+  `PYTHONPATH`/`PYTHONHOME` removed and user-site imports disabled. The full RFM
+  repository gate and fresh Kestrel replay remain required before submission.
