@@ -319,13 +319,12 @@ def augment_resource_freeze_accounting(
 def _reconcile_accepted_resource_freeze(
     observed: dict[str, Any], accepted: dict[str, Any]
 ) -> dict[str, Any]:
-    """Preserve accepted pilot bytes when only accounting prose was revised.
+    """Preserve accepted pilot science while advancing cumulative sunk AUs.
 
     The resource selections and allocation values are scientific evidence.  A
-    later controller may improve the human-readable accounting-rule text, but
-    it must not silently replace the already accepted resource freeze.  Both
-    inputs therefore have to be valid self-hashed records, and substituting the
-    accepted rule text into the recomputation must make the records identical.
+    later controller may add post-pilot rejected-attempt charges and improve
+    the human-readable accounting-rule text, but it must not replace any pilot
+    identity, telemetry, resource selection, or observed pilot charge.
     """
 
     for label, payload in (("recomputed", observed), ("accepted", accepted)):
@@ -342,21 +341,74 @@ def _reconcile_accepted_resource_freeze(
         ):
             raise TypeError(f"{label} pilot resource freeze lacks an accounting rule")
 
+    observed_science = {
+        key: value
+        for key, value in observed.items()
+        if key not in {"resource_freeze_sha256", "allocation_accounting"}
+    }
+    accepted_science = {
+        key: value
+        for key, value in accepted.items()
+        if key not in {"resource_freeze_sha256", "allocation_accounting"}
+    }
+    if observed_science != accepted_science:
+        raise ValueError(
+            "recomputed pilot resource freeze differs from accepted evidence"
+        )
+
+    observed_accounting = observed["allocation_accounting"]
+    accepted_accounting = accepted["allocation_accounting"]
+    mutable_fields = {
+        "prior_rejected_attempt_au",
+        "spent_through_pilot_au",
+        "accounting_rule",
+    }
+    if set(observed_accounting) != set(accepted_accounting) or any(
+        observed_accounting[field] != accepted_accounting[field]
+        for field in set(accepted_accounting) - mutable_fields
+    ):
+        raise ValueError(
+            "recomputed pilot resource freeze differs from accepted evidence"
+        )
+    accepted_pilot_au = float(accepted_accounting["accepted_pilot_observed_au"])
+    observed_pilot_au = float(observed_accounting["accepted_pilot_observed_au"])
+    accepted_rejected_au = float(accepted_accounting["prior_rejected_attempt_au"])
+    observed_rejected_au = float(observed_accounting["prior_rejected_attempt_au"])
+    values = (
+        accepted_pilot_au,
+        observed_pilot_au,
+        accepted_rejected_au,
+        observed_rejected_au,
+    )
+    if not all(math.isfinite(value) and value >= 0 for value in values):
+        raise ValueError("pilot resource-freeze allocation values are invalid")
+    if observed_pilot_au != accepted_pilot_au:
+        raise ValueError(
+            "recomputed pilot resource freeze differs from accepted evidence"
+        )
+    if observed_rejected_au < accepted_rejected_au:
+        raise ValueError("cumulative rejected-attempt AUs cannot decrease")
+    for label, accounting, rejected_au in (
+        ("recomputed", observed_accounting, observed_rejected_au),
+        ("accepted", accepted_accounting, accepted_rejected_au),
+    ):
+        spent = float(accounting["spent_through_pilot_au"])
+        if not math.isfinite(spent) or not math.isclose(
+            spent, accepted_pilot_au + rejected_au, rel_tol=0.0, abs_tol=1e-12
+        ):
+            raise ValueError(f"{label} pilot cumulative allocation differs")
+
     normalized = deepcopy(observed)
-    normalized["allocation_accounting"]["accounting_rule"] = accepted[
-        "allocation_accounting"
-    ]["accounting_rule"]
+    normalized["allocation_accounting"]["accounting_rule"] = accepted_accounting[
+        "accounting_rule"
+    ]
     normalized_identity = {
         key: value
         for key, value in normalized.items()
         if key != "resource_freeze_sha256"
     }
     normalized["resource_freeze_sha256"] = _stable_hash(normalized_identity)
-    if normalized != accepted:
-        raise ValueError(
-            "recomputed pilot resource freeze differs from accepted evidence"
-        )
-    return deepcopy(accepted)
+    return normalized
 
 
 def build_publication_contract_amendment(
