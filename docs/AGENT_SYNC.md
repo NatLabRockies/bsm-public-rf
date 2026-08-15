@@ -146,7 +146,7 @@
   hazards: the older BSM Pixi environment imported a stale installed RFM
   package, while the accepted scientific checkout intentionally predates the
   non-scientific pilot-accounting schedule-hash repair. The final controller
-  now binds and hashes a separate `a1bbe91` controller checkout while package
+  now binds and hashes a separate `03635da` controller checkout while package
   source hashing and worker execution remain bound to the accepted `fd12fd5`
   scientific checkout. The runbook supplies that separation explicitly and
   the controller rejects a changed or wrongly imported controller module. The
@@ -176,6 +176,10 @@
   the accepted pilot, all rejected attempts, the 5-AU publication reserve, and
   the full B=999 confirmatory reserve to fit below 25,000 AUs before resolution
   can be authorized.
+- The 65-CPU, 6-GiB resolution workers retain their pilot-sized 2:43:33
+  walltime but use Kestrel's 104-core `shared` nodes. This removes billing for
+  the unused 39 cores and makes the full resolution walltime request fit while
+  leaving the scientific computation and resource envelope unchanged.
 - Generated worker/audit/reducer scripts use package-local precreated Slurm log
   directories, clear Python import overrides, and bind their SHA-256 values in
   the submission plan. Same-day preflight and authorization bind the exact plan
