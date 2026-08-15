@@ -49,6 +49,48 @@ from scripts.g11_campaign_workflow import (
 
 Runner = Callable[..., subprocess.CompletedProcess[str]]
 
+_REQUIRED_RFM_RUNTIME_APIS = {
+    "collect_pilot_accounting",
+    "generate_campaign_package",
+    "select_pilot_resources",
+}
+
+
+def _validate_rfm_runtime_binding(
+    rfm_repo_root: str | Path,
+    *,
+    module_path: str | Path | None = None,
+    available_names: set[str] | None = None,
+) -> Path:
+    """Require imports to resolve from the accepted pilot's RFM checkout."""
+    expected = (
+        Path(rfm_repo_root).resolve()
+        / "src"
+        / "rfm_pipeline"
+        / "hpc_campaign_package.py"
+    )
+    if module_path is None or available_names is None:
+        import rfm_pipeline.hpc_campaign_package as hpc_campaign_package
+
+        module_path = Path(str(hpc_campaign_package.__file__))
+        available_names = {
+            name
+            for name in _REQUIRED_RFM_RUNTIME_APIS
+            if hasattr(hpc_campaign_package, name)
+        }
+    observed = Path(module_path).resolve()
+    if observed != expected:
+        raise RuntimeError(
+            "final controller must run with the frozen RFM runtime: "
+            f"expected {expected}, imported {observed}"
+        )
+    missing = sorted(_REQUIRED_RFM_RUNTIME_APIS - set(available_names))
+    if missing:
+        raise RuntimeError(
+            "frozen RFM runtime lacks required campaign API(s): " + ", ".join(missing)
+        )
+    return observed
+
 
 def render_final_campaign_config(
     *, base_config_path: str | Path, output_path: str | Path, run_id: str
@@ -914,6 +956,15 @@ def main(argv: list[str] | None = None) -> int:
     watch.add_argument("--execute", action="store_true")
 
     args = parser.parse_args(argv)
+    if args.command == "initialize":
+        rfm_repo_root = Path(args.rfm_repo_root)
+    else:
+        raw_control = json.loads(
+            Path(args.control_manifest).read_text(encoding="utf-8")
+        )
+        rfm_repo_root = Path(str(raw_control.get("rfm_repo_root", "")))
+    _validate_rfm_runtime_binding(rfm_repo_root)
+
     if args.command == "initialize":
         result = initialize_campaign(
             campaign_root=args.campaign_root,
