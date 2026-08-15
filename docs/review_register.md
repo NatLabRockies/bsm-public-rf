@@ -2,6 +2,55 @@
 
 Durable record of audit findings requiring follow-up. Newest first.
 
+## 2026-08-15 — Scientific verifier rejected the plan-bound authorization schema
+
+- **Severity:** BLOCKER (live development workers, closed before scientific
+  computation). Run `g11-final-manuscript-20260815j` submitted resolution
+  array `16277744`, but the first six allocated tasks stopped during
+  pre-execution authorization verification. The RFM schema correctly included
+  `submission_plan_sha256`; the BSM driver's exact-field set omitted it.
+  Unstarted tasks and both dependent jobs were canceled immediately. Retained
+  accounting records 0.036458333333333336 AU for the attempt and
+  192.6780715811966 cumulative rejected-attempt AUs.
+- **Root-cause correction:** BSM `d7d5f32` requires and validates the
+  64-character `submission_plan_sha256`; RFM `7bc07b1` pins that exact BSM
+  scientific checkout and driver digest in the Kestrel config. The regression
+  test first reproduced the live rejection, then the complete BSM suite passed
+  (115), the complete G11 RFM package test passed, and the exact failed
+  authorization replayed successfully through the corrected scientific
+  verifier on Kestrel.
+- **Acceptance criteria:** a new isolated campaign must bind every manifest
+  record to BSM `d7d5f32`, pass all-script `sbatch --test-only`, perform the
+  same-day development preflight without submitting, and replay the exact live
+  authorization through every resolution record before `sbatch` is permitted.
+- **Disposition:** closed by `g11-final-manuscript-20260815k`; no-submit audit
+  SHA-256 `8f64b94be45ed57651a4b149a54096b6db12aa9e5de8f4585a48722d166f3ecd`
+  and authorized-no-submit replay SHA-256
+  `90763ffdff43f2091520232115b89fd5f864dd8d5148fad5b22b55b78a8a2634`.
+
+______________________________________________________________________
+
+## 2026-08-15 — Generated workers referenced the wrong authorization path
+
+- **Severity:** BLOCKER (live development workers, closed before scientific
+  computation). Run `g11-final-manuscript-20260815h` wrote the accepted
+  authorization at `development/authorization.json`, while its manifest rows
+  referenced `development.json`. All 20 workers failed closed before science;
+  retained accounting records 0.09161324786324784 AU for the attempt.
+- **Root-cause correction:** RFM `7cc6f09` generates the canonical
+  `<run>/<phase>/authorization.json` path. BSM `b3b2377` independently checks
+  every target-phase manifest path before live smoke or submission and uses
+  canonical Slurm `JobID` rows for array accounting.
+- **Acceptance criteria:** all development and confirmatory records must bind
+  their exact phase authorization target; Kestrel replay must identify every
+  array task from canonical `JobID`; a new isolated run and fresh preflight are
+  required.
+- **Disposition:** closed by regression tests and exact Kestrel replay. Failed
+  run evidence remains immutable under its control root and is excluded from
+  scientific resource selection.
+
+______________________________________________________________________
+
 ## 2026-08-15 — Isolated controller environment broke `aus_report`
 
 - **Severity:** BLOCKER (live preflight, closed before submission). The first
@@ -115,6 +164,7 @@ ______________________________________________________________________
 - **Round-21 partial fix (rfm-pipeline 7eea471):** corrected `REPO_ROOT = Path(__file__).resolve().parent.parent.parent` (was `.parent.parent`, which only added `src/` to sys.path). Now `rfm-hpc-reduce --help` works from a source-tree checkout. Verified locally.
 - **CLOSED (round 22, rfm-pipeline 6826edd, bsm-public-rf 18b4555):** helpers moved into `src/rfm_pipeline/manuscript_pipeline_helpers.py` (installable package). `hpc_reduce.py` now imports cleanly without sys.path hacks. `pixi run rfm-hpc-reduce --help` verified in install mode under bsm-public-rf. Smoke tests added in rfm `tests/test_docs_snippets_smoke.py` to guard the regression.
 - **Further cleanup (rfm-pipeline e53f9c0):** duplicate helper bodies removed from `tools/run_manuscript_pipeline.py`; that script now imports from the package (-370 LoC, single source of truth).
+
 ______________________________________________________________________
 
 ## 2026-06-07 — Round 20: pullback bundle helper missing
@@ -148,8 +198,7 @@ ______________________________________________________________________
   always executing the submit SSH call; the safety comes from the
   remote command's own `--dry-run` flag (commit pending in bsm).
   Cascade + dry-run propagation guarded by new tests
-  `tests/test_hpc_workflow_orchestration.py::
-  test_submit_commands_cascade_over_stages_list` and
+  `tests/test_hpc_workflow_orchestration.py:: test_submit_commands_cascade_over_stages_list` and
   `test_submit_commands_dry_run_propagates_to_rfm_hpc_submit`.
 
 ______________________________________________________________________
@@ -288,12 +337,10 @@ ______________________________________________________________________
     `hpc_shards` fallback; log glob accepts both `rfm_*` and
     `bsm_*`.
   - rfm `pixi.toml` `hpc-small-test` task removed; doc snippet
-    replaced with an equivalent `hpc-workflow --generate-only
-    --dry-run` invocation.
+    replaced with an equivalent `hpc-workflow --generate-only --dry-run` invocation.
   - bsm orchestrator: deleted local parser; imports shared helpers;
     raises `CascadeChainError` on missing marker; honors
-    `--dry-run --generate-only` by skipping SSH (`>>> [skip ssh:
-    ...]` log line so the operator can still review the commands).
+    `--dry-run --generate-only` by skipping SSH (`>>> [skip ssh: ...]` log line so the operator can still review the commands).
   - bsm pullback + 04-collect: two parallel lists distinguish HPC
     stage names (for shard dirs / SLURM logs) from canonical
     artifact dir names (for `${run_dir}/${artifact_dir}` copy and
