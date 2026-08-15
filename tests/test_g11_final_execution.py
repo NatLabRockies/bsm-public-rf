@@ -13,6 +13,7 @@ from types import SimpleNamespace
 import pytest
 
 from scripts.g11_final_execution import (
+    _development_phase_budget_guard,
     _prepare_artifact_job,
     _submit_artifact_job,
     _validate_rfm_runtime_binding,
@@ -20,6 +21,7 @@ from scripts.g11_final_execution import (
     inspect_submitted_phase,
     render_final_campaign_config,
 )
+from scripts.g11_campaign_workflow import _stable_hash
 
 
 def test_final_controller_direct_cli_entry_point_loads() -> None:
@@ -229,6 +231,33 @@ def test_phase_probe_marks_only_exact_completion_ready_for_verification(
     assert observed["job_count"] == 2
 
 
+def test_phase_probe_accepts_exact_array_tasks_without_a_parent_sacct_row(
+    tmp_path: Path,
+) -> None:
+    submission = tmp_path / "submission.json"
+    _submission(submission)
+    calls = iter(
+        [
+            _completed(""),
+            _completed(
+                "101_0|COMPLETED|0:0\n"
+                "101_0.batch|COMPLETED|0:0\n"
+                "101_1|COMPLETED|0:0\n"
+                "102|COMPLETED|0:0\n"
+            ),
+        ]
+    )
+
+    observed = inspect_submitted_phase(
+        submission,
+        expected_array_task_counts={"gate_b-worker": 2, "gate_b-reducer": 0},
+        run_command=lambda *_a, **_k: next(calls),
+    )
+
+    assert observed["status"] == "READY_TO_VERIFY"
+    assert observed["job_count"] == 2
+
+
 def test_advance_uses_fresh_per_invocation_remaining_au(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -265,6 +294,13 @@ def test_advance_uses_fresh_per_invocation_remaining_au(
     monkeypatch.setattr(
         "scripts.g11_final_execution._advance_phase", fake_advance_phase
     )
+    monkeypatch.setattr(
+        "scripts.g11_final_execution._development_phase_budget_guard",
+        lambda **_kwargs: {
+            "status": "DEVELOPMENT_WITHIN_ALLOCATION",
+            "development_admission_sha256": "a" * 64,
+        },
+    )
 
     result = advance_campaign(
         tmp_path / "control_manifest.json",
@@ -284,6 +320,37 @@ def test_advance_uses_fresh_per_invocation_remaining_au(
             execute=True,
             remaining_au=0,
         )
+
+
+def test_development_phase_has_a_whole_campaign_admission_guard(tmp_path: Path) -> None:
+    freeze_identity = {
+        "allocation_accounting": {
+            "accepted_pilot_observed_au": 90.36944444444445,
+            "prior_rejected_attempt_au": 192.55,
+        }
+    }
+    freeze = {
+        **freeze_identity,
+        "resource_freeze_sha256": _stable_hash(freeze_identity),
+    }
+    freeze_path = tmp_path / "resource_freeze.json"
+    freeze_path.write_text(json.dumps(freeze), encoding="utf-8")
+    dag = SimpleNamespace(
+        campaign_envelope=SimpleNamespace(
+            stage_allocations=(
+                SimpleNamespace(stage_name="resolution", requested_au=300.0),
+            )
+        )
+    )
+
+    guard = _development_phase_budget_guard(
+        dag=dag,
+        resource_freeze_path=freeze_path,
+        control={"postprocessing_reserved_au": 5.0, "allocation_quota_au": 25_000.0},
+    )
+
+    assert guard["status"] == "DEVELOPMENT_WITHIN_ALLOCATION"
+    assert guard["development_requested_au"] == 300.0
 
 
 def test_controller_never_crosses_a_phase_or_publication_gate_out_of_order(
@@ -398,6 +465,13 @@ def test_controller_never_crosses_a_phase_or_publication_gate_out_of_order(
         },
     )
     monkeypatch.setattr(
+        "scripts.g11_final_execution._development_phase_budget_guard",
+        lambda **_kwargs: {
+            "status": "DEVELOPMENT_WITHIN_ALLOCATION",
+            "development_admission_sha256": "b" * 64,
+        },
+    )
+    monkeypatch.setattr(
         "scripts.g11_final_execution._prepare_artifact_job", fake_prepare_artifact
     )
     monkeypatch.setattr("scripts.g11_final_execution._submit_artifact_job", fake_submit)
@@ -506,9 +580,17 @@ def test_publication_submission_journals_returned_job_id_before_final_record(
     _prepare_artifact_job(root=root, dag=dag, bsm_runtime_root=bsm_runtime)
     monkeypatch.setenv("PYTHONPATH", "/tmp/wrong-rfm")
     observed: dict[str, object] = {}
+    commands: list[list[str]] = []
 
-    def fake_run(*_args: object, **kwargs: object) -> subprocess.CompletedProcess[str]:
+    def fake_run(
+        command: list[str], **kwargs: object
+    ) -> subprocess.CompletedProcess[str]:
         observed.update(kwargs)
+        commands.append(command)
+        if "--test-only" in command:
+            return subprocess.CompletedProcess(
+                [], 0, stdout="test accepted\n", stderr=""
+            )
         return subprocess.CompletedProcess([], 0, stdout="12345;cluster\n", stderr="")
 
     monkeypatch.setattr(
@@ -518,6 +600,14 @@ def test_publication_submission_journals_returned_job_id_before_final_record(
 
     submission = _submit_artifact_job(root)
 
+    assert commands[0][0:2] == ["sbatch", "--test-only"]
+    assert commands[1][0:2] == ["sbatch", "--parsable"]
+    preflight = json.loads(
+        (root / "publication_job" / "submission_preflight.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert preflight["status"] == "SBATCH_TEST_ONLY_PASSED"
     journal = root / "publication_job" / "submission_journal.jsonl"
     assert journal.is_file()
     with journal.open(encoding="utf-8") as handle:
@@ -526,4 +616,37 @@ def test_publication_submission_journals_returned_job_id_before_final_record(
     assert entry["job_id"] == "12345"
     assert entry["returncode"] == 0
     assert submission["submission_journal_sha256"] == _sha256_path(journal)
+    assert (
+        submission["submission_preflight_sha256"]
+        == preflight["submission_preflight_sha256"]
+    )
     assert "PYTHONPATH" not in observed["env"]
+
+
+def test_publication_submission_stops_when_sbatch_test_only_fails(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    root, dag, bsm_runtime = _artifact_job_fixture(tmp_path)
+    _prepare_artifact_job(root=root, dag=dag, bsm_runtime_root=bsm_runtime)
+    calls: list[list[str]] = []
+
+    def fake_run(
+        command: list[str], **_kwargs: object
+    ) -> subprocess.CompletedProcess[str]:
+        calls.append(command)
+        return subprocess.CompletedProcess([], 1, stdout="", stderr="invalid account")
+
+    monkeypatch.setattr("scripts.g11_final_execution.subprocess.run", fake_run)
+
+    with pytest.raises(subprocess.CalledProcessError):
+        _submit_artifact_job(root)
+
+    assert len(calls) == 1
+    assert calls[0][1] == "--test-only"
+    assert not (root / "publication_job" / "submission_journal.jsonl").exists()
+    preflight = json.loads(
+        (root / "publication_job" / "submission_preflight.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert preflight["status"] == "SBATCH_TEST_ONLY_FAILED"

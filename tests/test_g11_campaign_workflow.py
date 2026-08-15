@@ -15,8 +15,10 @@ from scripts.g11_campaign_workflow import (
     _stable_hash,
     augment_resource_freeze_accounting,
     build_campaign_budget_certificate,
+    build_development_admission_guard,
     build_publication_contract_amendment,
     main,
+    prepare_development_package,
     prepare_final_package,
     submit_authorized_phase,
     validate_completed_submission_record,
@@ -243,6 +245,41 @@ def test_budget_certificate_exposes_and_enforces_resolution_au_ceiling() -> None
         )
 
 
+def test_development_admission_guard_preserves_the_affordable_final_branch() -> None:
+    freeze_identity = {
+        "allocation_accounting": {
+            "accepted_pilot_observed_au": 90.36944444444445,
+            "prior_rejected_attempt_au": 192.55,
+        },
+    }
+    freeze = {
+        **freeze_identity,
+        "resource_freeze_sha256": _stable_hash(freeze_identity),
+    }
+    stage_allocations = [SimpleNamespace(stage_name="resolution", requested_au=300.0)]
+
+    guard = build_development_admission_guard(
+        stage_allocations=stage_allocations,
+        resource_freeze=freeze,
+        postprocessing_reserved_au=5.0,
+        allocation_quota_au=25_000.0,
+    )
+
+    assert guard["status"] == "DEVELOPMENT_WITHIN_ALLOCATION"
+    assert guard["development_requested_au"] == 300.0
+    assert guard["b999_confirmatory_requested_au_with_shared_reserve"] == 24_301
+    assert guard["whole_campaign_maximum_au"] == pytest.approx(24_888.919444444444)
+
+    stage_allocations[0] = SimpleNamespace(stage_name="resolution", requested_au=500.0)
+    with pytest.raises(ValueError, match="affordable B=999 branch"):
+        build_development_admission_guard(
+            stage_allocations=stage_allocations,
+            resource_freeze=freeze,
+            postprocessing_reserved_au=5.0,
+            allocation_quota_au=25_000.0,
+        )
+
+
 def test_budget_cli_replaces_completed_stage_estimates_with_actual_au(
     tmp_path: Path,
 ) -> None:
@@ -402,6 +439,36 @@ def test_publication_amendment_changes_only_fixed_family_replicates() -> None:
         "or later incremental expansion"
     )
     assert len(amendment["contract_amendment_sha256"]) == 64
+
+
+def test_development_package_requests_resolution_only_mode(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import rfm_pipeline.hpc_campaign_package as hpc
+
+    freeze_path = tmp_path / "resource_freeze.json"
+    freeze_path.write_text(
+        json.dumps({"status": "ACCEPTED", "allocation_accounting": {"spent_au": 1.0}}),
+        encoding="utf-8",
+    )
+    observed: dict[str, object] = {}
+    sentinel = SimpleNamespace(name="development")
+
+    def fake_generate(**kwargs: object) -> SimpleNamespace:
+        observed.update(kwargs)
+        return sentinel
+
+    monkeypatch.setattr(hpc, "generate_campaign_package", fake_generate)
+
+    result = prepare_development_package(
+        output_dir=tmp_path / "development",
+        resource_freeze_path=freeze_path,
+        repo_root=tmp_path / "rfm",
+        config_path=tmp_path / "campaign.yml",
+    )
+
+    assert result is sentinel
+    assert observed["package_mode"] == "development"
 
 
 def test_final_package_uses_amended_contract_but_preserves_pilot_freeze_basis(
@@ -578,6 +645,50 @@ def test_scheduler_completion_accounting_uses_exact_top_level_elapsed_nodes() ->
             "101|COMPLETED|0:0|-1|1\n",
             cpu_charge_factor=10.0,
             qos_factor=1.0,
+        )
+
+
+def test_scheduler_completion_accounting_sums_every_array_task_and_shared_fraction() -> (
+    None
+):
+    observed, total_au = validate_scheduler_completion_accounting(
+        {"exclusive-array": "101", "shared-array": "102"},
+        "101_0|COMPLETED|0:0|3600|1\n"
+        "101_0.batch|COMPLETED|0:0|3600|1\n"
+        "101_1|COMPLETED|0:0|1800|1\n"
+        "102_0|COMPLETED|0:0|3600|1\n"
+        "102_1|COMPLETED|0:0|3600|1\n",
+        cpu_charge_factor=10.0,
+        qos_factor=1.0,
+        step_accounting={
+            "exclusive-array": {
+                "array_task_count": 2,
+                "shared_node_equivalent": None,
+            },
+            "shared-array": {
+                "array_task_count": 2,
+                "shared_node_equivalent": 0.25,
+            },
+        },
+    )
+
+    assert observed["exclusive-array"]["accounted_task_count"] == 2
+    assert observed["shared-array"]["accounted_task_count"] == 2
+    assert observed["shared-array"]["observed_au"] == pytest.approx(5.0)
+    assert total_au == pytest.approx(20.0)
+
+    with pytest.raises(ValueError, match="array-task coverage"):
+        validate_scheduler_completion_accounting(
+            {"exclusive-array": "101"},
+            "101_0|COMPLETED|0:0|3600|1\n",
+            cpu_charge_factor=10.0,
+            qos_factor=1.0,
+            step_accounting={
+                "exclusive-array": {
+                    "array_task_count": 2,
+                    "shared_node_equivalent": None,
+                }
+            },
         )
 
 

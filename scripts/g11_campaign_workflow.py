@@ -21,6 +21,10 @@ from pathlib import Path
 from typing import Any
 
 PUBLICATION_FIXED_FAMILY_REPLICATES = 200
+PUBLICATION_B999_CONFIRMATORY_ESTIMATED_AU = 20_250.751923076525
+PUBLICATION_B999_CONFIRMATORY_REQUESTED_AU = math.ceil(
+    PUBLICATION_B999_CONFIRMATORY_ESTIMATED_AU * 1.20
+)
 
 
 def _scheduler_environment() -> dict[str, str]:
@@ -122,8 +126,9 @@ def validate_scheduler_completion_accounting(
     *,
     cpu_charge_factor: float,
     qos_factor: float,
+    step_accounting: dict[str, dict[str, Any]] | None = None,
 ) -> tuple[dict[str, dict[str, Any]], float]:
-    """Validate terminal jobs and calculate AUs from exact top-level Slurm rows."""
+    """Validate terminal jobs and sum every billed allocation, including arrays."""
     if cpu_charge_factor <= 0 or qos_factor <= 0:
         raise ValueError("scheduler accounting charge factors must be positive")
     by_job_id = {
@@ -131,7 +136,7 @@ def validate_scheduler_completion_accounting(
     }
     if len(by_job_id) != len(submission_job_ids):
         raise ValueError("phase submission reuses a scheduler job ID")
-    top_level: dict[str, tuple[str, str, int, int]] = {}
+    rows: dict[str, tuple[str, str, int, int]] = {}
     for line in raw_sacct.splitlines():
         if not line.strip():
             continue
@@ -142,11 +147,14 @@ def validate_scheduler_completion_accounting(
                 "JobIDRaw/State/ExitCode/ElapsedRaw/AllocNodes"
             )
         job_id, state, exit_code, raw_elapsed, raw_nodes = values
-        if job_id not in by_job_id:
+        relevant = job_id in by_job_id or any(
+            re.fullmatch(rf"{re.escape(parent)}_[0-9]+", job_id) for parent in by_job_id
+        )
+        if not relevant:
             continue
-        if job_id in top_level:
+        if job_id in rows:
             raise ValueError(
-                f"phase sacct accounting duplicates top-level job {job_id}"
+                f"phase sacct accounting duplicates allocation job {job_id}"
             )
         try:
             elapsed = int(raw_elapsed)
@@ -155,29 +163,102 @@ def validate_scheduler_completion_accounting(
             raise ValueError(
                 f"phase accounting row is nonnumeric for job {job_id}"
             ) from exc
-        if elapsed < 0 or nodes <= 0:
+        if elapsed < 0 or nodes < 0:
             raise ValueError(f"phase accounting row is invalid for job {job_id}")
-        top_level[job_id] = (state, exit_code, elapsed, nodes)
-    if set(top_level) != set(by_job_id):
+        rows[job_id] = (state, exit_code, elapsed, nodes)
+    normalized_accounting = (
+        {
+            step_id: {"array_task_count": 0, "shared_node_equivalent": None}
+            for step_id in submission_job_ids
+        }
+        if step_accounting is None
+        else step_accounting
+    )
+    if set(normalized_accounting) != set(submission_job_ids):
         raise ValueError(
-            "phase sacct accounting lacks exact top-level submitted-job coverage"
+            "phase accounting metadata lacks exact submitted-step coverage"
         )
     observed: dict[str, dict[str, Any]] = {}
     total_au = 0.0
     for job_id, step_id in by_job_id.items():
-        state, exit_code, elapsed, nodes = top_level[job_id]
-        if state != "COMPLETED" or exit_code != "0:0":
-            raise ValueError(
-                f"phase step {step_id} is not exactly COMPLETED/0:0: "
-                f"{state}/{exit_code}"
+        metadata = normalized_accounting[step_id]
+        array_task_count = int(metadata.get("array_task_count", 0))
+        shared_node_equivalent = metadata.get("shared_node_equivalent")
+        if array_task_count < 0:
+            raise ValueError("phase accounting array task count is invalid")
+        if shared_node_equivalent is not None:
+            shared_node_equivalent = float(shared_node_equivalent)
+            if not math.isfinite(shared_node_equivalent) or not (
+                0 < shared_node_equivalent <= 1
+            ):
+                raise ValueError("phase shared-node accounting fraction is invalid")
+        if array_task_count:
+            parent_row = rows.get(job_id)
+            if parent_row is not None:
+                state, exit_code, _, _ = parent_row
+                if state != "COMPLETED" or exit_code != "0:0":
+                    raise ValueError(
+                        f"phase step {step_id} is not exactly COMPLETED/0:0: "
+                        f"{state}/{exit_code}"
+                    )
+            else:
+                # Slurm installations may omit the synthetic array-parent row.
+                # Exact terminal acceptance and charging are therefore based on
+                # the complete, explicitly enumerated set of array-task rows.
+                state, exit_code = "COMPLETED", "0:0"
+            expected_task_ids = {
+                f"{job_id}_{index}" for index in range(array_task_count)
+            }
+            observed_task_ids = {
+                row_id
+                for row_id in rows
+                if re.fullmatch(rf"{re.escape(job_id)}_[0-9]+", row_id)
+            }
+            if observed_task_ids != expected_task_ids:
+                raise ValueError(
+                    f"phase array-task coverage differs for step {step_id}"
+                )
+            allocation_rows = [rows[row_id] for row_id in sorted(expected_task_ids)]
+        else:
+            if job_id not in rows:
+                raise ValueError(
+                    "phase sacct accounting lacks exact top-level "
+                    "submitted-job coverage"
+                )
+            state, exit_code, parent_elapsed, parent_nodes = rows[job_id]
+            if state != "COMPLETED" or exit_code != "0:0":
+                raise ValueError(
+                    f"phase step {step_id} is not exactly COMPLETED/0:0: "
+                    f"{state}/{exit_code}"
+                )
+            allocation_rows = [(state, exit_code, parent_elapsed, parent_nodes)]
+        elapsed = 0
+        nodes = 0
+        observed_au = 0.0
+        for task_state, task_exit, task_elapsed, task_nodes in allocation_rows:
+            if task_state != "COMPLETED" or task_exit != "0:0" or task_nodes <= 0:
+                raise ValueError(
+                    f"phase step {step_id} has an invalid allocation row: "
+                    f"{task_state}/{task_exit}/{task_nodes} nodes"
+                )
+            elapsed += task_elapsed
+            nodes += task_nodes
+            charged_nodes = (
+                shared_node_equivalent
+                if shared_node_equivalent is not None
+                else float(task_nodes)
             )
-        observed_au = elapsed / 3600.0 * nodes * cpu_charge_factor * qos_factor
+            observed_au += (
+                task_elapsed / 3600.0 * charged_nodes * cpu_charge_factor * qos_factor
+            )
         observed[step_id] = {
             "job_id": job_id,
             "state": state,
             "exit_code": exit_code,
             "elapsed_seconds": elapsed,
             "allocated_nodes": nodes,
+            "accounted_task_count": len(allocation_rows),
+            "shared_node_equivalent": shared_node_equivalent,
             "observed_au": observed_au,
         }
         total_au += observed_au
@@ -342,6 +423,83 @@ def build_publication_contract_amendment(
         **identity,
         "contract_amendment_sha256": _stable_hash(identity),
     }
+
+
+def build_development_admission_guard(
+    *,
+    stage_allocations: Any,
+    resource_freeze: dict[str, Any],
+    postprocessing_reserved_au: float,
+    allocation_quota_au: float,
+) -> dict[str, Any]:
+    """Admit resolution only when its full request preserves the B=999 branch."""
+    freeze_identity = {
+        key: value
+        for key, value in resource_freeze.items()
+        if key != "resource_freeze_sha256"
+    }
+    if resource_freeze.get("resource_freeze_sha256") != _stable_hash(freeze_identity):
+        raise ValueError("development admission requires a valid resource freeze")
+    allocation = resource_freeze.get("allocation_accounting")
+    if not isinstance(allocation, dict):
+        raise TypeError("development admission lacks pilot allocation accounting")
+    stages = list(stage_allocations)
+    if len(stages) != 1:
+        raise ValueError("development admission requires exactly one resolution stage")
+    stage = stages[0]
+    stage_name = str(
+        stage["stage_name"] if isinstance(stage, dict) else stage.stage_name
+    )
+    requested_au = float(
+        stage["requested_au"] if isinstance(stage, dict) else stage.requested_au
+    )
+    if (
+        stage_name != "resolution"
+        or not math.isfinite(requested_au)
+        or requested_au < 0
+    ):
+        raise ValueError(
+            "development admission requires one valid resolution allocation"
+        )
+    prior_au = float(allocation.get("prior_rejected_attempt_au", -1.0))
+    pilot_au = float(allocation.get("accepted_pilot_observed_au", -1.0))
+    values = (
+        prior_au,
+        pilot_au,
+        float(postprocessing_reserved_au),
+        float(allocation_quota_au),
+    )
+    if any(not math.isfinite(value) or value < 0 for value in values):
+        raise ValueError("development admission allocation values are invalid")
+    whole_campaign_maximum_au = (
+        prior_au
+        + pilot_au
+        + requested_au
+        + PUBLICATION_B999_CONFIRMATORY_REQUESTED_AU
+        + float(postprocessing_reserved_au)
+    )
+    if whole_campaign_maximum_au > float(allocation_quota_au) + 1.0e-9:
+        raise ValueError(
+            "development request would eliminate the affordable B=999 branch: "
+            f"{whole_campaign_maximum_au:.6f} > {float(allocation_quota_au):.6f}"
+        )
+    identity = {
+        "schema_version": 1,
+        "status": "DEVELOPMENT_WITHIN_ALLOCATION",
+        "resource_freeze_sha256": resource_freeze["resource_freeze_sha256"],
+        "prior_rejected_attempt_au": prior_au,
+        "accepted_pilot_observed_au": pilot_au,
+        "development_requested_au": requested_au,
+        "b999_confirmatory_estimated_au": (PUBLICATION_B999_CONFIRMATORY_ESTIMATED_AU),
+        "b999_confirmatory_requested_au_with_shared_reserve": (
+            PUBLICATION_B999_CONFIRMATORY_REQUESTED_AU
+        ),
+        "postprocessing_reserved_au": float(postprocessing_reserved_au),
+        "whole_campaign_maximum_au": whole_campaign_maximum_au,
+        "allocation_quota_au": float(allocation_quota_au),
+        "headroom_au": float(allocation_quota_au) - whole_campaign_maximum_au,
+    }
+    return {**identity, "development_admission_sha256": _stable_hash(identity)}
 
 
 def build_campaign_budget_certificate(
@@ -830,7 +988,7 @@ def prepare_development_package(
         repo_root=repo_root,
         config_path=config_path,
         resource_freeze=freeze,
-        package_mode="full",
+        package_mode="development",
     )
 
 
@@ -1204,6 +1362,13 @@ def verify_phase_completion(
         raw_sacct,
         cpu_charge_factor=float(dag.cluster.cpu_charge_factor),
         qos_factor=float(dag.cluster.qos_factor),
+        step_accounting={
+            str(step["step_id"]): {
+                "array_task_count": int(step["array_task_count"]),
+                "shared_node_equivalent": step["shared_node_equivalent"],
+            }
+            for step in plan["steps"]
+        },
     )
 
     stages_by_name = {stage.name: stage for stage in dag.stages}
