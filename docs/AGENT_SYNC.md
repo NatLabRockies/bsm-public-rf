@@ -216,3 +216,28 @@
   allocation probe; every scientific worker retains clean import isolation.
   The complete G11 HPC package test file, focused BSM controller tests, Ruff,
   and diff checks pass; a new immutable root and same-day replay are required.
+
+## SESSION STATE — 2026-08-15 — final scientific campaign submitted
+
+- Fresh immutable run `g11-final-manuscript-20260815h` binds scientific RFM
+  `fd12fd579d8743bdc4acd00e1dac217cbfc56e84`, controller RFM
+  `77a8e809ecb9162019c560619be3731206522c72`, and BSM controller/publication
+  runtime `f9493c76310ea9556a4ab1bca6051802b25756d4`; all deployed checkouts were
+  clean. The base config's BSM scientific checkout remains clean `1762c6b`,
+  whose five referenced scientific files are byte-identical to the newer
+  controller checkout.
+- Exact-commit no-submit audit `95765dae4cbabbf16c3507354387397089667213b5f1221de20ef2466d457f02`
+  admitted B=999 at a 24,929.819551282053-AU hard maximum, rejected B=1,998 at
+  49,127.8 AUs, confirmed fixed-family 200 and five primary null regimes of
+  1,000, and passed `sbatch --test-only` for all 46 unique confirmatory scripts
+  with an empty queue.
+- Same-day development preflight and authorization were independently
+  recomputed (`bdaaa415d4c82a67446828a385e1e801e32cb0502c57990a080386bdaf71c7a3`).
+  Resolution worker array `16275637`, audit `16275638`, and reducer `16275639`
+  were submitted with the reviewed `afterany`/`afterok` dependencies. The
+  fsynced journal and self-hashed submission record agree; no abort record
+  exists.
+- Lightweight controller PID 830817 monitors at 300-second cadence and may
+  advance only through exact completion evidence, scientific gates, same-day
+  preflights, and rolling allocation guards. Scientific failures are never
+  retried automatically. A 30-minute heartbeat monitors the run.
