@@ -91,8 +91,10 @@ def test_accepted_freeze_reconciliation_allows_only_accounting_rule_text() -> No
         "status": "ACCEPTED",
         "source_hash": "a" * 64,
         "allocation_accounting": {
+            "pilot_accounting_sha256": "b" * 64,
             "accepted_pilot_observed_au": 90.0,
             "prior_rejected_attempt_au": 192.55,
+            "spent_through_pilot_au": 282.55,
             "accounting_rule": "accepted wording",
         },
     }
@@ -108,11 +110,43 @@ def test_accepted_freeze_reconciliation_allows_only_accounting_rule_text() -> No
     }
 
     assert _reconcile_accepted_resource_freeze(observed, accepted) == accepted
+    observed_identity["allocation_accounting"]["prior_rejected_attempt_au"] = 192.75
+    observed_identity["allocation_accounting"]["spent_through_pilot_au"] = 282.75
+    observed_identity["allocation_accounting"]["accounting_rule"] = "new wording"
+    observed = {
+        **observed_identity,
+        "resource_freeze_sha256": _stable_hash(observed_identity),
+    }
+    reconciled = _reconcile_accepted_resource_freeze(observed, accepted)
+    assert reconciled["allocation_accounting"] == {
+        **accepted["allocation_accounting"],
+        "prior_rejected_attempt_au": 192.75,
+        "spent_through_pilot_au": 282.75,
+    }
+    assert reconciled["resource_freeze_sha256"] == _stable_hash(
+        {
+            key: value
+            for key, value in reconciled.items()
+            if key != "resource_freeze_sha256"
+        }
+    )
+
+    observed_identity["allocation_accounting"]["prior_rejected_attempt_au"] = 192.0
+    observed_identity["allocation_accounting"]["spent_through_pilot_au"] = 282.0
+    observed = {
+        **observed_identity,
+        "resource_freeze_sha256": _stable_hash(observed_identity),
+    }
+    with pytest.raises(ValueError, match="cannot decrease"):
+        _reconcile_accepted_resource_freeze(observed, accepted)
+
+    observed_identity["allocation_accounting"]["prior_rejected_attempt_au"] = 192.55
+    observed_identity["allocation_accounting"]["spent_through_pilot_au"] = 282.55
     observed["allocation_accounting"]["accepted_pilot_observed_au"] = 91.0
-    observed_identity = {
+    changed_identity = {
         key: value for key, value in observed.items() if key != "resource_freeze_sha256"
     }
-    observed["resource_freeze_sha256"] = _stable_hash(observed_identity)
+    observed["resource_freeze_sha256"] = _stable_hash(changed_identity)
     with pytest.raises(ValueError, match="differs from accepted evidence"):
         _reconcile_accepted_resource_freeze(observed, accepted)
 
