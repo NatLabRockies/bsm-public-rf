@@ -102,7 +102,7 @@ private copy of the reviewed config.
 ```bash
 BSM_RUNTIME=/scratch/dhetting/bsm_runtime/software/bsm-public-rf
 RFM_SCIENTIFIC=/scratch/dhetting/bsm_runtime/software/rfm-pipeline
-RFM_CONTROLLER=/scratch/dhetting/bsm_runtime/software/rfm-controller-5d1ff14
+RFM_CONTROLLER=/scratch/dhetting/bsm_runtime/software/rfm-controller-77a8e80
 PILOT_ID=g11-pilot-final-sizing-20260814f
 FINAL_ID=g11-final-manuscript-YYYYMMDDa
 CONTROL=/projects/bsm/g11_authorizations/${FINAL_ID}
@@ -133,7 +133,7 @@ cd "${BSM_RUNTIME}"
 `RFM_SCIENTIFIC` must be a clean detached checkout at
 `fd12fd579d8743bdc4acd00e1dac217cbfc56e84`, the source identity measured by
 the accepted pilot. `RFM_CONTROLLER` must be a separate clean detached
-checkout at `5d1ff14fe0d6dd568f57a35e965457be764727e0`. Its changes from
+checkout at `77a8e809ecb9162019c560619be3731206522c72`. Its changes from
 `fd12fd5` are limited to reviewed campaign-control behavior: the
 pilot-accounting schedule-hash repair, resolution-only development packaging,
 package-local Slurm logs, clean compute-node imports, and exact
@@ -148,6 +148,11 @@ strip Python import overrides, and generated workers continue to execute from
 `RFM_SCIENTIFIC`. The control manifest records all three Git revisions, hashes
 the complete RFM controller and BSM script trees, and refuses any later byte
 or revision change.
+
+The controller itself may be launched with `PYTHONNOUSERSITE=1`. Live smoke
+removes that variable only from NREL's external `aus_report` subprocess because
+the site utility loads its own `jwt` dependency from the login user's site
+packages. Scientific imports and all Slurm workers remain isolated.
 
 Before adding `--execute`, run transitions without it and inspect the created
 `control_manifest.json`, private `final_campaign.yml`, resource freeze, and

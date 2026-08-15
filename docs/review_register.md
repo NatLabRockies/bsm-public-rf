@@ -2,6 +2,24 @@
 
 Durable record of audit findings requiring follow-up. Newest first.
 
+## 2026-08-15 — Isolated controller environment broke `aus_report`
+
+- **Severity:** BLOCKER (live preflight, closed before submission). The first
+  exact preflight inherited `PYTHONNOUSERSITE=1` into NREL's external
+  `aus_report` utility, which then could not import its user-site `jwt`
+  dependency. No authorization, submission record, journal, or scheduler job
+  was created.
+- **Root-cause correction:** RFM controller `77a8e80` removes
+  `PYTHONNOUSERSITE` only for the `aus_report` subprocess. Controller and worker
+  Python isolation is unchanged, including explicit worker removal of
+  `PYTHONPATH`/`PYTHONHOME` and continued `PYTHONNOUSERSITE=1`.
+- **Acceptance criteria:** a new content-addressed control root must obtain and
+  hash same-day allocation output, verify the `nationalpfa` association, pass
+  exact-script `sbatch --test-only`, issue phase authorization without a job,
+  and remain queue/journal empty until that evidence is independently checked.
+
+______________________________________________________________________
+
 ## 2026-08-15 — Final-package admission double-counted completed work
 
 - **Severity:** BLOCKER (scientific execution, closed before submission).
