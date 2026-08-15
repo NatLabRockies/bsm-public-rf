@@ -2,6 +2,30 @@
 
 Durable record of audit findings requiring follow-up. Newest first.
 
+## 2026-08-15 — Final-package admission double-counted completed work
+
+- **Severity:** BLOCKER (scientific execution, closed before submission).
+  A prospective B=999 confirmatory-package build stopped at 25,215 AUs even
+  though the independently computed whole-campaign maximum was 24,929.82 AUs.
+  The generic package gate was reserving pilot and development estimates after
+  those phases had completed, so the exact post-resolution budget certificate
+  could not be reached. No scheduler job was submitted by the failed
+  diagnostic.
+- **Root-cause correction:** confirmatory package generation now accepts the
+  observed allocation for completed work and the separately bounded
+  postprocessing reserve. Its admission total is completed observed AUs plus a
+  20% reserve on unexecuted confirmatory stages plus the postprocessing reserve.
+  Legacy development/full-package admission is unchanged. The BSM controller
+  supplies accepted-pilot, rejected-attempt, and observed development AUs from
+  immutable evidence rather than estimates.
+- **Acceptance criteria:** the exact deployed commits must (1) pass focused and
+  repository validation, (2) generate the prospective B=999 package below
+  25,000 AUs, (3) reject B=1,998 above 25,000 AUs, (4) pass `sbatch --test-only` for every unique production script, and (5) leave `squeue` and
+  the submission journal empty until a fresh same-day authorization is
+  independently verified.
+
+______________________________________________________________________
+
 ## 2026-08-11 — G11 integration reconciliation remains blocked
 
 - **Severity:** BLOCKER (integration/review sequencing). Isolated worktree

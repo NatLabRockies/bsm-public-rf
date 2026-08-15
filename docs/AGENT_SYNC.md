@@ -146,7 +146,7 @@
   hazards: the older BSM Pixi environment imported a stale installed RFM
   package, while the accepted scientific checkout intentionally predates the
   non-scientific pilot-accounting schedule-hash repair. The final controller
-  now binds and hashes a separate `03635da` controller checkout while package
+  now binds and hashes a separate `5d1ff14` controller checkout while package
   source hashing and worker execution remain bound to the accepted `fd12fd5`
   scientific checkout. The runbook supplies that separation explicitly and
   the controller rejects a changed or wrongly imported controller module. The
@@ -193,5 +193,18 @@
   and refuses stale or partial evidence on restart.
 - Focused controller tests pass (28), the complete BSM suite passes (112), and
   all 112 tests also pass under the scientific RFM Pixi interpreter with
-  `PYTHONPATH`/`PYTHONHOME` removed and user-site imports disabled. The full RFM
-  repository gate and fresh Kestrel replay remain required before submission.
+  `PYTHONPATH`/`PYTHONHOME` removed and user-site imports disabled. The complete
+  RFM repository gate also passes; fresh Kestrel replay remains required before
+  submission.
+- A prospective B=999 confirmatory-package audit then exposed a blocking
+  mismatch between the generic package gate and the later exact budget
+  certificate: the generic gate re-reserved estimates for already completed
+  pilot and resolution work and rejected a 25,215-AU aggregate before the
+  24,929.82-AU exact certificate could be built. No scheduler job was
+  submitted. Confirmatory admission now uses immutable observed AUs for
+  completed work, reserves 20% only on unexecuted confirmatory stages, and
+  counts the separate 5-AU postprocessing reserve. The controller supplies the
+  accepted-pilot, rejected-attempt, and observed-development charges from the
+  resource freeze and retained accounting. Full validation plus fresh B=999
+  acceptance, B=1,998 rejection, and every-script Kestrel `sbatch --test-only`
+  remain mandatory before the execution flag may be used.
