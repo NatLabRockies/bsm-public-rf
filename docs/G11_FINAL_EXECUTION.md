@@ -98,28 +98,46 @@ private copy of the reviewed config.
 
 ```bash
 BSM_RUNTIME=/scratch/dhetting/bsm_runtime/software/bsm-public-rf
-RFM_RUNTIME=/scratch/dhetting/bsm_runtime/software/rfm-pipeline
+RFM_SCIENTIFIC=/scratch/dhetting/bsm_runtime/software/rfm-pipeline
+RFM_CONTROLLER=/scratch/dhetting/bsm_runtime/software/rfm-controller-ac87f4c
 PILOT_ID=g11-pilot-final-sizing-20260814f
 FINAL_ID=g11-final-manuscript-YYYYMMDDa
 CONTROL=/projects/bsm/g11_authorizations/${FINAL_ID}
-# Replace with the exact integer remaining-AU value in the current aus_report.
-REMAINING_AU=REPLACE_WITH_CURRENT_INTEGER
+# nationalpfa is a valid Slurm association but is not listed by aus_report for
+# this non-lead user. The live-smoke contract therefore requires the configured
+# allocation ceiling; rejected/accepted pilot AUs are subtracted separately by
+# the immutable whole-campaign budget certificate and rolling guards.
+REMAINING_AU=25000
 
 cd "${BSM_RUNTIME}"
-"${RFM_RUNTIME}/.pixi/envs/default/bin/python" \
+"${RFM_SCIENTIFIC}/.pixi/envs/default/bin/python" \
   scripts/g11_final_execution.py initialize \
   --campaign-root "${CONTROL}" \
   --run-id "${FINAL_ID}" \
-  --base-config "${RFM_RUNTIME}/configs/hpc/g11_kestrel_campaign.yml" \
+  --base-config "${RFM_SCIENTIFIC}/configs/hpc/g11_kestrel_campaign.yml" \
   --pilot-package-root "/kfs3/scratch/dhetting/bsm_runs/${PILOT_ID}-package" \
   --pilot-submission-record "/projects/bsm/g11_authorizations/${PILOT_ID}/submission_job_ids.json" \
-  --rfm-repo-root "${RFM_RUNTIME}" \
+  --pilot-resource-freeze "/projects/bsm/g11_authorizations/${PILOT_ID}/resource_freeze.json" \
+  --rfm-repo-root "${RFM_SCIENTIFIC}" \
+  --rfm-controller-root "${RFM_CONTROLLER}" \
   --bsm-runtime-root "${BSM_RUNTIME}" \
   --prior-sunk-au 192.55 \
   --remaining-au "${REMAINING_AU}" \
   --allocation-quota-au 25000 \
   --postprocessing-reserved-au 5
 ```
+
+`RFM_SCIENTIFIC` must be a clean detached checkout at
+`fd12fd579d8743bdc4acd00e1dac217cbfc56e84`, the source identity measured by
+the accepted pilot. `RFM_CONTROLLER` must be a separate clean detached
+checkout at `ac87f4cfc5da50aaa1424537d00328ebdcbe6627`, whose only source change
+from `fd12fd5` is the reviewed pilot-accounting schedule-hash repair. The
+controller prepends that code to its own in-process import path; it never
+exports the controller checkout through `PYTHONPATH`. Real `sbatch` calls
+strip Python import overrides, and generated workers continue to execute from
+`RFM_SCIENTIFIC`. The control manifest records all three Git revisions, hashes
+the complete RFM controller and BSM script trees, and refuses any later byte
+or revision change.
 
 Before adding `--execute`, run transitions without it and inspect the created
 `control_manifest.json`, private `final_campaign.yml`, resource freeze, and
@@ -129,7 +147,7 @@ while awaiting manual inspection. Inspect the confirmatory package and budget
 certificate when the controller creates them after the resolution phase.
 
 ```bash
-"${RFM_RUNTIME}/.pixi/envs/default/bin/python" \
+"${RFM_SCIENTIFIC}/.pixi/envs/default/bin/python" \
   scripts/g11_final_execution.py advance \
   --control-manifest "${CONTROL}/control_manifest.json"
 ```
@@ -139,14 +157,16 @@ certificate when the controller creates them after the resolution phase.
 After the NO-SUBMIT inspection passes, the lightweight login-node controller
 may be run at a five-minute cadence. It only invokes filesystem validation,
 `squeue`, `sacct`, and `sbatch`; scientific work runs on compute nodes.
-Refresh `REMAINING_AU` from `aus_report` immediately before starting or
-restarting the controller. The invocation-level value overrides the
-initialization snapshot for every same-day live preflight. If the allocation
-report changes before a later phase, the preflight stops; refresh the value and
+Run `aus_report` immediately before starting or restarting the controller. If
+it still omits `nationalpfa`, retain the required configured ceiling value
+`25000`; if it begins reporting that account, use its exact current integer.
+The invocation-level value overrides the initialization snapshot for every
+same-day live preflight. A stale date or a visible allocation value that does
+not match the supplied integer stops before submission; refresh the value and
 restart the same controller rather than creating or resubmitting a campaign.
 
 ```bash
-nohup "${RFM_RUNTIME}/.pixi/envs/default/bin/python" \
+nohup "${RFM_SCIENTIFIC}/.pixi/envs/default/bin/python" \
   "${BSM_RUNTIME}/scripts/g11_final_execution.py" watch \
   --control-manifest "${CONTROL}/control_manifest.json" \
   --remaining-au "${REMAINING_AU}" \

@@ -10,6 +10,7 @@ literal ``--execute`` flag.
 from __future__ import annotations
 
 import argparse
+import importlib
 import json
 import math
 import os
@@ -32,6 +33,7 @@ from scripts.g11_campaign_workflow import (
     _sha256_path,
     _stable_hash,
     _remaining_confirmatory_estimated_au,
+    _scheduler_environment,
     _validate_development_completion,
     _write_new_json,
     build_campaign_budget_certificate,
@@ -57,14 +59,14 @@ _REQUIRED_RFM_RUNTIME_APIS = {
 
 
 def _validate_rfm_runtime_binding(
-    rfm_repo_root: str | Path,
+    rfm_controller_root: str | Path,
     *,
     module_path: str | Path | None = None,
     available_names: set[str] | None = None,
 ) -> Path:
-    """Require imports to resolve from the accepted pilot's RFM checkout."""
+    """Require imports to resolve from the pinned RFM controller checkout."""
     expected = (
-        Path(rfm_repo_root).resolve()
+        Path(rfm_controller_root).resolve()
         / "src"
         / "rfm_pipeline"
         / "hpc_campaign_package.py"
@@ -81,15 +83,67 @@ def _validate_rfm_runtime_binding(
     observed = Path(module_path).resolve()
     if observed != expected:
         raise RuntimeError(
-            "final controller must run with the frozen RFM runtime: "
+            "final controller must run with the pinned RFM controller runtime: "
             f"expected {expected}, imported {observed}"
         )
     missing = sorted(_REQUIRED_RFM_RUNTIME_APIS - set(available_names))
     if missing:
         raise RuntimeError(
-            "frozen RFM runtime lacks required campaign API(s): " + ", ".join(missing)
+            "pinned RFM controller lacks required campaign API(s): "
+            + ", ".join(missing)
         )
     return observed
+
+
+def _activate_rfm_controller(rfm_controller_root: str | Path) -> Path:
+    """Prepend controller code in-process without exporting it to Slurm jobs."""
+    controller_src = Path(rfm_controller_root).resolve() / "src"
+    expected_package = controller_src / "rfm_pipeline"
+    loaded = [
+        Path(str(module.__file__)).resolve()
+        for name, module in sys.modules.items()
+        if (name == "rfm_pipeline" or name.startswith("rfm_pipeline."))
+        and getattr(module, "__file__", None)
+    ]
+    if any(expected_package not in path.parents for path in loaded):
+        raise RuntimeError(
+            "rfm_pipeline was imported before the pinned controller was activated"
+        )
+    controller_src_text = str(controller_src)
+    if controller_src_text not in sys.path:
+        sys.path.insert(0, controller_src_text)
+    importlib.invalidate_caches()
+    return _validate_rfm_runtime_binding(rfm_controller_root)
+
+
+def _python_tree_sha256(root: str | Path) -> str:
+    source_root = Path(root).resolve()
+    files = sorted(path for path in source_root.rglob("*.py") if path.is_file())
+    if not files:
+        raise ValueError(f"Python source tree is empty: {source_root}")
+    inventory = {
+        str(path.relative_to(source_root)): _sha256_path(path) for path in files
+    }
+    return _stable_hash(inventory)
+
+
+def _clean_git_commit(root: str | Path) -> str:
+    repository = Path(root).resolve()
+    status = subprocess.run(
+        ["git", "-C", str(repository), "status", "--porcelain"],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    commit = subprocess.run(
+        ["git", "-C", str(repository), "rev-parse", "HEAD"],
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+    if status.stdout.strip() or re.fullmatch(r"[0-9a-f]{40}", commit) is None:
+        raise ValueError(f"runtime repository is not clean and pinned: {repository}")
+    return commit
 
 
 def render_final_campaign_config(
@@ -213,7 +267,9 @@ def initialize_campaign(
     base_config_path: str | Path,
     pilot_package_root: str | Path,
     pilot_submission_record: str | Path,
+    pilot_resource_freeze: str | Path,
     rfm_repo_root: str | Path,
+    rfm_controller_root: str | Path,
     bsm_runtime_root: str | Path,
     prior_sunk_au: float,
     remaining_au: int,
@@ -233,7 +289,9 @@ def initialize_campaign(
     paths = {
         "pilot_package_root": Path(pilot_package_root).resolve(),
         "pilot_submission_record": Path(pilot_submission_record).resolve(),
+        "pilot_resource_freeze": Path(pilot_resource_freeze).resolve(),
         "rfm_repo_root": Path(rfm_repo_root).resolve(),
+        "rfm_controller_root": Path(rfm_controller_root).resolve(),
         "bsm_runtime_root": Path(bsm_runtime_root).resolve(),
     }
     missing = [str(path) for path in paths.values() if not path.exists()]
@@ -243,6 +301,19 @@ def initialize_campaign(
         raise ValueError("campaign allocation inputs must be positive/nonnegative")
     if postprocessing_reserved_au < 5.0:
         raise ValueError("postprocessing AU reserve must cover the bounded 5-AU job")
+    controller_module = (
+        paths["rfm_controller_root"]
+        / "src"
+        / "rfm_pipeline"
+        / "hpc_campaign_package.py"
+    )
+    if not controller_module.is_file():
+        raise ValueError(f"RFM controller module is missing: {controller_module}")
+    runtime_commits = {
+        "rfm_scientific_git_commit": _clean_git_commit(paths["rfm_repo_root"]),
+        "rfm_controller_git_commit": _clean_git_commit(paths["rfm_controller_root"]),
+        "bsm_runtime_git_commit": _clean_git_commit(paths["bsm_runtime_root"]),
+    }
     identity = {
         "schema_version": 1,
         "status": "INITIALIZED_NO_SUBMIT",
@@ -251,6 +322,14 @@ def initialize_campaign(
         "final_config_path": str(config),
         "final_config_sha256": _sha256_path(config),
         **{name: str(path) for name, path in paths.items()},
+        **runtime_commits,
+        "rfm_controller_module_sha256": _sha256_path(controller_module),
+        "rfm_controller_source_sha256": _python_tree_sha256(
+            paths["rfm_controller_root"] / "src" / "rfm_pipeline"
+        ),
+        "bsm_scripts_source_sha256": _python_tree_sha256(
+            paths["bsm_runtime_root"] / "scripts"
+        ),
         "prior_sunk_au": float(prior_sunk_au),
         "remaining_au_for_live_preflight": int(remaining_au),
         "allocation_quota_au": float(allocation_quota_au),
@@ -273,6 +352,29 @@ def _load_control(path: str | Path) -> dict[str, Any]:
     config = Path(str(payload["final_config_path"]))
     if _sha256_path(config) != payload.get("final_config_sha256"):
         raise ValueError("final campaign config changed after initialization")
+    controller_module = (
+        Path(str(payload["rfm_controller_root"]))
+        / "src"
+        / "rfm_pipeline"
+        / "hpc_campaign_package.py"
+    )
+    if _sha256_path(controller_module) != payload.get("rfm_controller_module_sha256"):
+        raise ValueError("RFM controller module changed after initialization")
+    for field, root_field in (
+        ("rfm_scientific_git_commit", "rfm_repo_root"),
+        ("rfm_controller_git_commit", "rfm_controller_root"),
+        ("bsm_runtime_git_commit", "bsm_runtime_root"),
+    ):
+        if _clean_git_commit(payload[root_field]) != payload.get(field):
+            raise ValueError(f"{field} changed after initialization")
+    if _python_tree_sha256(
+        Path(str(payload["rfm_controller_root"])) / "src" / "rfm_pipeline"
+    ) != payload.get("rfm_controller_source_sha256"):
+        raise ValueError("RFM controller source changed after initialization")
+    if _python_tree_sha256(
+        Path(str(payload["bsm_runtime_root"])) / "scripts"
+    ) != payload.get("bsm_scripts_source_sha256"):
+        raise ValueError("BSM controller source changed after initialization")
     return payload
 
 
@@ -539,11 +641,11 @@ def _prepare_artifact_job(
     output = results / "publication_artifacts"
     if output.exists() and any(output.iterdir()):
         raise ValueError("publication artifact output already contains files")
-    python = bsm_runtime_root / ".pixi" / "envs" / "default" / "bin" / "python"
+    python = Path(dag.repo_root) / ".pixi" / "envs" / "default" / "bin" / "python"
     builder = bsm_runtime_root / "scripts" / "build_g11_publication_artifacts.py"
     if not python.is_file() or not builder.is_file():
         raise ValueError(
-            "immutable BSM runtime lacks the publication compiler or Python"
+            "immutable runtimes lack the publication compiler or scientific Python"
         )
     command = " ".join(
         shlex.quote(str(value))
@@ -569,6 +671,8 @@ def _prepare_artifact_job(
         f"#SBATCH --output={job_root / 'slurm-%j.out'}",
         f"#SBATCH --error={job_root / 'slurm-%j.err'}",
         "set -euo pipefail",
+        "unset PYTHONPATH PYTHONHOME",
+        "export PYTHONNOUSERSITE=1",
         command,
     ]
     script.write_text("\n".join(lines) + "\n", encoding="utf-8")
@@ -580,6 +684,8 @@ def _prepare_artifact_job(
         "campaign_inventory_hash": dag.campaign_inventory_hash,
         "results_root": str(results),
         "publication_root": str(output),
+        "scientific_python_path": str(python),
+        "scientific_python_sha256": _sha256_path(python),
         "builder_path": str(builder),
         "builder_sha256": _sha256_path(builder),
         "script_path": str(script),
@@ -606,7 +712,7 @@ def _load_artifact_inputs(path: Path) -> dict[str, Any]:
     }
     if payload.get("artifact_job_inputs_sha256") != _stable_hash(identity):
         raise ValueError("publication job inputs self-hash differs")
-    for field in ("builder_path", "script_path"):
+    for field in ("scientific_python_path", "builder_path", "script_path"):
         source = Path(str(payload[field]))
         hash_field = field.replace("_path", "_sha256")
         if not source.is_file() or _sha256_path(source) != payload.get(hash_field):
@@ -632,6 +738,7 @@ def _submit_artifact_job(root: Path) -> dict[str, Any]:
         check=False,
         capture_output=True,
         text=True,
+        env=_scheduler_environment(),
     )
     job_id = str(completed.stdout).strip().split(";", maxsplit=1)[0]
     entry = {
@@ -783,6 +890,7 @@ def advance_campaign(
         close_completed_pilot(
             dag=pilot,
             submission_record_path=Path(str(control["pilot_submission_record"])),
+            accepted_resource_freeze_path=Path(str(control["pilot_resource_freeze"])),
             accounting_output_dir=root / "pilot_accounting",
             resource_freeze_path=freeze,
             prior_sunk_au=float(control["prior_sunk_au"]),
@@ -929,7 +1037,9 @@ def main(argv: list[str] | None = None) -> int:
     initialize.add_argument("--base-config", required=True)
     initialize.add_argument("--pilot-package-root", required=True)
     initialize.add_argument("--pilot-submission-record", required=True)
+    initialize.add_argument("--pilot-resource-freeze", required=True)
     initialize.add_argument("--rfm-repo-root", required=True)
+    initialize.add_argument("--rfm-controller-root", required=True)
     initialize.add_argument("--bsm-runtime-root", required=True)
     initialize.add_argument("--prior-sunk-au", required=True, type=float)
     initialize.add_argument("--remaining-au", required=True, type=int)
@@ -957,13 +1067,13 @@ def main(argv: list[str] | None = None) -> int:
 
     args = parser.parse_args(argv)
     if args.command == "initialize":
-        rfm_repo_root = Path(args.rfm_repo_root)
+        rfm_controller_root = Path(args.rfm_controller_root)
     else:
         raw_control = json.loads(
             Path(args.control_manifest).read_text(encoding="utf-8")
         )
-        rfm_repo_root = Path(str(raw_control.get("rfm_repo_root", "")))
-    _validate_rfm_runtime_binding(rfm_repo_root)
+        rfm_controller_root = Path(str(raw_control.get("rfm_controller_root", "")))
+    _activate_rfm_controller(rfm_controller_root)
 
     if args.command == "initialize":
         result = initialize_campaign(
@@ -972,7 +1082,9 @@ def main(argv: list[str] | None = None) -> int:
             base_config_path=args.base_config,
             pilot_package_root=args.pilot_package_root,
             pilot_submission_record=args.pilot_submission_record,
+            pilot_resource_freeze=args.pilot_resource_freeze,
             rfm_repo_root=args.rfm_repo_root,
+            rfm_controller_root=args.rfm_controller_root,
             bsm_runtime_root=args.bsm_runtime_root,
             prior_sunk_au=args.prior_sunk_au,
             remaining_au=args.remaining_au,

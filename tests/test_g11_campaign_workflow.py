@@ -571,9 +571,17 @@ def test_phase_submission_journals_each_job_id_before_later_sbatch_failure(
         [
             subprocess.CompletedProcess([], 0, stdout="101\n", stderr=""),
             subprocess.CompletedProcess([], 1, stdout="", stderr="denied"),
+            subprocess.CompletedProcess([], 0, stdout="", stderr=""),
         ]
     )
-    monkeypatch.setattr(subprocess, "run", lambda *_a, **_k: next(calls))
+    monkeypatch.setenv("PYTHONPATH", "/tmp/wrong-rfm")
+    scheduler_environments: list[dict[str, str]] = []
+
+    def fake_run(*_args: object, **kwargs: object) -> subprocess.CompletedProcess[str]:
+        scheduler_environments.append(kwargs["env"])
+        return next(calls)
+
+    monkeypatch.setattr(subprocess, "run", fake_run)
     preflight = tmp_path / "preflight.json"
     authorization = tmp_path / "authorization.json"
     preflight.write_text(json.dumps({"preflight_sha256": "2" * 64}), encoding="utf-8")
@@ -607,3 +615,10 @@ def test_phase_submission_journals_each_job_id_before_later_sbatch_failure(
     assert rows[1]["step_id"] == "two"
     assert rows[1]["returncode"] == 1
     assert not record.exists()
+    assert all("PYTHONPATH" not in env for env in scheduler_environments)
+    abort = json.loads(
+        record.with_suffix(".submission_abort.json").read_text(encoding="utf-8")
+    )
+    assert abort["status"] == "SUBMISSION_ABORTED"
+    assert abort["submitted_job_ids"] == ["101"]
+    assert abort["cancellation_returncode"] == 0

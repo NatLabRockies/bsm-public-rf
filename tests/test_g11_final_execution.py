@@ -49,10 +49,29 @@ def test_final_controller_direct_cli_entry_point_loads() -> None:
     assert advance_help.returncode == 0, advance_help.stderr
     assert "--remaining-au" in advance_help.stdout
 
+    initialize_help = subprocess.run(
+        [
+            sys.executable,
+            str(repo / "scripts" / "g11_final_execution.py"),
+            "initialize",
+            "--help",
+        ],
+        cwd=repo,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert initialize_help.returncode == 0, initialize_help.stderr
+    assert "--rfm-controller-root" in initialize_help.stdout
+    assert "--pilot-resource-freeze" in initialize_help.stdout
 
-def test_final_controller_requires_the_frozen_rfm_runtime(tmp_path: Path) -> None:
-    rfm_root = tmp_path / "rfm"
-    expected = rfm_root / "src" / "rfm_pipeline" / "hpc_campaign_package.py"
+    runbook = (repo / "docs" / "G11_FINAL_EXECUTION.md").read_text(encoding="utf-8")
+    assert "PYTHONPATH=" not in runbook
+
+
+def test_final_controller_requires_the_pinned_rfm_controller(tmp_path: Path) -> None:
+    controller_root = tmp_path / "rfm-controller"
+    expected = controller_root / "src" / "rfm_pipeline" / "hpc_campaign_package.py"
     expected.parent.mkdir(parents=True)
     expected.write_text("# frozen runtime marker\n", encoding="utf-8")
     required = {
@@ -63,21 +82,21 @@ def test_final_controller_requires_the_frozen_rfm_runtime(tmp_path: Path) -> Non
 
     assert (
         _validate_rfm_runtime_binding(
-            rfm_root,
+            controller_root,
             module_path=expected,
             available_names=required,
         )
         == expected.resolve()
     )
-    with pytest.raises(RuntimeError, match="frozen RFM runtime"):
+    with pytest.raises(RuntimeError, match="pinned RFM controller runtime"):
         _validate_rfm_runtime_binding(
-            rfm_root,
+            controller_root,
             module_path=tmp_path / "site-packages" / "hpc_campaign_package.py",
             available_names=required,
         )
     with pytest.raises(RuntimeError, match="collect_pilot_accounting"):
         _validate_rfm_runtime_binding(
-            rfm_root,
+            controller_root,
             module_path=expected,
             available_names=required - {"collect_pilot_accounting"},
         )
@@ -278,9 +297,11 @@ def test_controller_never_crosses_a_phase_or_publication_gate_out_of_order(
     bsm = tmp_path / "bsm"
     pilot_package = tmp_path / "pilot-package"
     pilot_submission = tmp_path / "pilot-submission.json"
+    pilot_resource_freeze = tmp_path / "pilot-resource-freeze.json"
     for directory in (rfm, bsm, pilot_package):
         directory.mkdir()
     pilot_submission.write_text("{}", encoding="utf-8")
+    pilot_resource_freeze.write_text("{}", encoding="utf-8")
     control = {
         "campaign_root": str(root),
         "final_config_path": str(config),
@@ -288,6 +309,7 @@ def test_controller_never_crosses_a_phase_or_publication_gate_out_of_order(
         "bsm_runtime_root": str(bsm),
         "pilot_package_root": str(pilot_package),
         "pilot_submission_record": str(pilot_submission),
+        "pilot_resource_freeze": str(pilot_resource_freeze),
         "prior_sunk_au": 114.63055555555556,
         "remaining_au_for_live_preflight": 25_000,
         "allocation_quota_au": 25_000.0,
@@ -438,7 +460,8 @@ def _artifact_job_fixture(tmp_path: Path) -> tuple[Path, SimpleNamespace, Path]:
     reducer.mkdir(parents=True)
     package_root.mkdir()
     bsm_runtime = tmp_path / "bsm-runtime"
-    python = bsm_runtime / ".pixi" / "envs" / "default" / "bin" / "python"
+    scientific_runtime = tmp_path / "rfm-scientific"
+    python = scientific_runtime / ".pixi" / "envs" / "default" / "bin" / "python"
     builder = bsm_runtime / "scripts" / "build_g11_publication_artifacts.py"
     python.parent.mkdir(parents=True)
     builder.parent.mkdir(parents=True)
@@ -447,6 +470,7 @@ def _artifact_job_fixture(tmp_path: Path) -> tuple[Path, SimpleNamespace, Path]:
     dag = SimpleNamespace(
         run_id="g11-final-20260815a",
         output_dir=package_root,
+        repo_root=scientific_runtime,
         campaign_inventory_hash="a" * 64,
         stages=(SimpleNamespace(reducer_output_dir=reducer),),
     )
@@ -469,6 +493,7 @@ def test_publication_job_script_has_exactly_one_value_for_each_cli_option(
     assert command.count("--package-root") == 1
     assert command.count("--results-root") == 1
     assert command.count("--output-root") == 1
+    assert command[0] == str(dag.repo_root / ".pixi/envs/default/bin/python")
     assert command[command.index("--results-root") + 1] == str(tmp_path / "results")
 
 
@@ -479,11 +504,16 @@ def test_publication_submission_journals_returned_job_id_before_final_record(
 
     root, dag, bsm_runtime = _artifact_job_fixture(tmp_path)
     _prepare_artifact_job(root=root, dag=dag, bsm_runtime_root=bsm_runtime)
+    monkeypatch.setenv("PYTHONPATH", "/tmp/wrong-rfm")
+    observed: dict[str, object] = {}
+
+    def fake_run(*_args: object, **kwargs: object) -> subprocess.CompletedProcess[str]:
+        observed.update(kwargs)
+        return subprocess.CompletedProcess([], 0, stdout="12345;cluster\n", stderr="")
+
     monkeypatch.setattr(
         "scripts.g11_final_execution.subprocess.run",
-        lambda *_a, **_k: subprocess.CompletedProcess(
-            [], 0, stdout="12345;cluster\n", stderr=""
-        ),
+        fake_run,
     )
 
     submission = _submit_artifact_job(root)
@@ -496,3 +526,4 @@ def test_publication_submission_journals_returned_job_id_before_final_record(
     assert entry["job_id"] == "12345"
     assert entry["returncode"] == 0
     assert submission["submission_journal_sha256"] == _sha256_path(journal)
+    assert "PYTHONPATH" not in observed["env"]
