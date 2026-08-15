@@ -20,7 +20,6 @@ from dataclasses import asdict, replace
 from pathlib import Path
 from typing import Any
 
-
 PUBLICATION_FIXED_FAMILY_REPLICATES = 200
 
 
@@ -217,6 +216,49 @@ def augment_resource_freeze_accounting(
     }
     augmented["resource_freeze_sha256"] = _stable_hash(augmented)
     return augmented
+
+
+def _reconcile_accepted_resource_freeze(
+    observed: dict[str, Any], accepted: dict[str, Any]
+) -> dict[str, Any]:
+    """Preserve accepted pilot bytes when only accounting prose was revised.
+
+    The resource selections and allocation values are scientific evidence.  A
+    later controller may improve the human-readable accounting-rule text, but
+    it must not silently replace the already accepted resource freeze.  Both
+    inputs therefore have to be valid self-hashed records, and substituting the
+    accepted rule text into the recomputation must make the records identical.
+    """
+
+    for label, payload in (("recomputed", observed), ("accepted", accepted)):
+        identity = {
+            key: value
+            for key, value in payload.items()
+            if key != "resource_freeze_sha256"
+        }
+        if payload.get("resource_freeze_sha256") != _stable_hash(identity):
+            raise ValueError(f"{label} pilot resource freeze self-hash differs")
+        allocation = payload.get("allocation_accounting")
+        if not isinstance(allocation, dict) or not isinstance(
+            allocation.get("accounting_rule"), str
+        ):
+            raise TypeError(f"{label} pilot resource freeze lacks an accounting rule")
+
+    normalized = deepcopy(observed)
+    normalized["allocation_accounting"]["accounting_rule"] = accepted[
+        "allocation_accounting"
+    ]["accounting_rule"]
+    normalized_identity = {
+        key: value
+        for key, value in normalized.items()
+        if key != "resource_freeze_sha256"
+    }
+    normalized["resource_freeze_sha256"] = _stable_hash(normalized_identity)
+    if normalized != accepted:
+        raise ValueError(
+            "recomputed pilot resource freeze differs from accepted evidence"
+        )
+    return deepcopy(accepted)
 
 
 def build_publication_contract_amendment(
@@ -617,10 +659,7 @@ def close_completed_pilot(
         accepted = json.loads(
             accepted_resource_freeze_path.resolve().read_text(encoding="utf-8")
         )
-        if freeze != accepted:
-            raise ValueError(
-                "recomputed pilot resource freeze differs from accepted evidence"
-            )
+        freeze = _reconcile_accepted_resource_freeze(freeze, accepted)
     _write_new_json(resource_freeze_path, freeze)
     return accounting, freeze
 
@@ -821,7 +860,7 @@ def prepare_final_package(
     _validate_resource_freeze(freeze)
     allocation = freeze.get("allocation_accounting")
     if not isinstance(allocation, dict):
-        raise ValueError("resource freeze lacks allocation accounting")
+        raise TypeError("resource freeze lacks allocation accounting")
     resolved_repo = repo_root.resolve()
     pilot_base_hash = compute_contract_hash(G11_CONTRACT)
     if (

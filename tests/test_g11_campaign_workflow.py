@@ -5,16 +5,17 @@ from __future__ import annotations
 import json
 import subprocess
 from dataclasses import asdict
-from types import SimpleNamespace
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
 from scripts.g11_campaign_workflow import (
+    _reconcile_accepted_resource_freeze,
     _stable_hash,
     augment_resource_freeze_accounting,
-    build_publication_contract_amendment,
     build_campaign_budget_certificate,
+    build_publication_contract_amendment,
     main,
     prepare_final_package,
     submit_authorized_phase,
@@ -23,6 +24,37 @@ from scripts.g11_campaign_workflow import (
     validate_scheduler_completion,
     validate_scheduler_completion_accounting,
 )
+
+
+def test_accepted_freeze_reconciliation_allows_only_accounting_rule_text() -> None:
+    accepted_identity = {
+        "status": "ACCEPTED",
+        "source_hash": "a" * 64,
+        "allocation_accounting": {
+            "accepted_pilot_observed_au": 90.0,
+            "prior_rejected_attempt_au": 192.55,
+            "accounting_rule": "accepted wording",
+        },
+    }
+    accepted = {
+        **accepted_identity,
+        "resource_freeze_sha256": _stable_hash(accepted_identity),
+    }
+    observed_identity = json.loads(json.dumps(accepted_identity))
+    observed_identity["allocation_accounting"]["accounting_rule"] = "new wording"
+    observed = {
+        **observed_identity,
+        "resource_freeze_sha256": _stable_hash(observed_identity),
+    }
+
+    assert _reconcile_accepted_resource_freeze(observed, accepted) == accepted
+    observed["allocation_accounting"]["accepted_pilot_observed_au"] = 91.0
+    observed_identity = {
+        key: value for key, value in observed.items() if key != "resource_freeze_sha256"
+    }
+    observed["resource_freeze_sha256"] = _stable_hash(observed_identity)
+    with pytest.raises(ValueError, match="differs from accepted evidence"):
+        _reconcile_accepted_resource_freeze(observed, accepted)
 
 
 def test_completed_submission_record_requires_exact_successful_step_coverage(
