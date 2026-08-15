@@ -106,7 +106,7 @@ CONTROL=/projects/bsm/g11_authorizations/${FINAL_ID}
 REMAINING_AU=REPLACE_WITH_CURRENT_INTEGER
 
 cd "${BSM_RUNTIME}"
-"${BSM_RUNTIME}/.pixi/envs/default/bin/python" \
+"${RFM_RUNTIME}/.pixi/envs/default/bin/python" \
   scripts/g11_final_execution.py initialize \
   --campaign-root "${CONTROL}" \
   --run-id "${FINAL_ID}" \
@@ -129,7 +129,7 @@ while awaiting manual inspection. Inspect the confirmatory package and budget
 certificate when the controller creates them after the resolution phase.
 
 ```bash
-"${BSM_RUNTIME}/.pixi/envs/default/bin/python" \
+"${RFM_RUNTIME}/.pixi/envs/default/bin/python" \
   scripts/g11_final_execution.py advance \
   --control-manifest "${CONTROL}/control_manifest.json"
 ```
@@ -146,7 +146,7 @@ report changes before a later phase, the preflight stops; refresh the value and
 restart the same controller rather than creating or resubmitting a campaign.
 
 ```bash
-nohup "${BSM_RUNTIME}/.pixi/envs/default/bin/python" \
+nohup "${RFM_RUNTIME}/.pixi/envs/default/bin/python" \
   "${BSM_RUNTIME}/scripts/g11_final_execution.py" watch \
   --control-manifest "${CONTROL}/control_manifest.json" \
   --remaining-au "${REMAINING_AU}" \

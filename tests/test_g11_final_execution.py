@@ -15,6 +15,7 @@ import pytest
 from scripts.g11_final_execution import (
     _prepare_artifact_job,
     _submit_artifact_job,
+    _validate_rfm_runtime_binding,
     advance_campaign,
     inspect_submitted_phase,
     render_final_campaign_config,
@@ -47,6 +48,39 @@ def test_final_controller_direct_cli_entry_point_loads() -> None:
     )
     assert advance_help.returncode == 0, advance_help.stderr
     assert "--remaining-au" in advance_help.stdout
+
+
+def test_final_controller_requires_the_frozen_rfm_runtime(tmp_path: Path) -> None:
+    rfm_root = tmp_path / "rfm"
+    expected = rfm_root / "src" / "rfm_pipeline" / "hpc_campaign_package.py"
+    expected.parent.mkdir(parents=True)
+    expected.write_text("# frozen runtime marker\n", encoding="utf-8")
+    required = {
+        "collect_pilot_accounting",
+        "generate_campaign_package",
+        "select_pilot_resources",
+    }
+
+    assert (
+        _validate_rfm_runtime_binding(
+            rfm_root,
+            module_path=expected,
+            available_names=required,
+        )
+        == expected.resolve()
+    )
+    with pytest.raises(RuntimeError, match="frozen RFM runtime"):
+        _validate_rfm_runtime_binding(
+            rfm_root,
+            module_path=tmp_path / "site-packages" / "hpc_campaign_package.py",
+            available_names=required,
+        )
+    with pytest.raises(RuntimeError, match="collect_pilot_accounting"):
+        _validate_rfm_runtime_binding(
+            rfm_root,
+            module_path=expected,
+            available_names=required - {"collect_pilot_accounting"},
+        )
 
 
 def _completed(stdout: str) -> subprocess.CompletedProcess[str]:

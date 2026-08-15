@@ -141,3 +141,9 @@
   one-page cover, and internally valid source/supplement ZIPs. The supplement
   now carries its own reproduction guide and license so it remains usable when
   separated from this repository.
+- Live no-submit initialization exposed and closed one environment hazard:
+  the older BSM Pixi environment could import a stale installed RFM package.
+  The final controller now refuses any interpreter whose campaign module does
+  not resolve from the accepted pilot's frozen RFM checkout, and the runbook
+  invokes that checkout's Pixi interpreter explicitly. No scheduler job was
+  submitted by the rejected initialization.
