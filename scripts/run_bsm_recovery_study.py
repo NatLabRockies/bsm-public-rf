@@ -2195,6 +2195,7 @@ def _verify_execution_authorization(
         "lock_hash",
         "campaign_inventory_hash",
         "preflight_sha256",
+        "submission_plan_sha256",
         "prerequisite_sha256",
         "execution_permitted",
         "resource_freeze_sha256",
@@ -2230,6 +2231,7 @@ def _verify_execution_authorization(
         "lock_hash",
         "campaign_inventory_hash",
         "preflight_sha256",
+        "submission_plan_sha256",
     ):
         _require_hex(payload[field], f"execution authorization {field}")
     prerequisite_sha256 = payload["prerequisite_sha256"]
