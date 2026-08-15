@@ -247,15 +247,24 @@ def test_phase_probe_accepts_exact_array_tasks_without_a_parent_sacct_row(
             ),
         ]
     )
+    commands: list[list[str]] = []
+
+    def run_command(
+        command: list[str], **_kwargs: object
+    ) -> subprocess.CompletedProcess[str]:
+        commands.append(command)
+        return next(calls)
 
     observed = inspect_submitted_phase(
         submission,
         expected_array_task_counts={"gate_b-worker": 2, "gate_b-reducer": 0},
-        run_command=lambda *_a, **_k: next(calls),
+        run_command=run_command,
     )
 
     assert observed["status"] == "READY_TO_VERIFY"
     assert observed["job_count"] == 2
+    assert "--array" in commands[1]
+    assert "--format=JobID,State,ExitCode" in commands[1]
 
 
 def test_advance_uses_fresh_per_invocation_remaining_au(

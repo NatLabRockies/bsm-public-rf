@@ -36,6 +36,25 @@ def _scheduler_environment() -> dict[str, str]:
     return environment
 
 
+def _sacct_array_command(
+    submission_job_ids: dict[str, str], *, fields: tuple[str, ...]
+) -> list[str]:
+    """Request canonical array identities from Slurm accounting."""
+    if not submission_job_ids or not fields:
+        raise ValueError("sacct command requires job IDs and fields")
+    job_ids = [str(value) for value in submission_job_ids.values()]
+    if any(re.fullmatch(r"[0-9]+", value) is None for value in job_ids):
+        raise ValueError("sacct command received a malformed scheduler job ID")
+    return [
+        "sacct",
+        "--array",
+        "-j",
+        ",".join(sorted(job_ids, key=int)),
+        "-nP",
+        f"--format={','.join(fields)}",
+    ]
+
+
 def _stable_hash(payload: Any) -> str:
     canonical = json.dumps(
         payload, sort_keys=True, separators=(",", ":"), ensure_ascii=True
@@ -91,9 +110,7 @@ def validate_scheduler_completion(
             continue
         values = line.split("|")
         if len(values) != 3:
-            raise ValueError(
-                "phase sacct output does not match JobIDRaw/State/ExitCode"
-            )
+            raise ValueError("phase sacct output does not match JobID/State/ExitCode")
         job_id, state, exit_code = values
         if job_id not in by_job_id:
             continue
@@ -144,7 +161,7 @@ def validate_scheduler_completion_accounting(
         if len(values) != 5:
             raise ValueError(
                 "phase sacct accounting output does not match "
-                "JobIDRaw/State/ExitCode/ElapsedRaw/AllocNodes"
+                "JobID/State/ExitCode/ElapsedRaw/AllocNodes"
             )
         job_id, state, exit_code, raw_elapsed, raw_nodes = values
         relevant = job_id in by_job_id or any(
@@ -1136,6 +1153,37 @@ def prepare_final_package(
     return dag, certificate
 
 
+def _validate_phase_manifest_authorization_paths(
+    dag: Any, *, phase: str, authorization_path: Path
+) -> int:
+    """Require every target-phase work unit to bind the authorization being written."""
+    expected = authorization_path.resolve()
+    matched = 0
+    for stage in dag.stages:
+        manifest_path = Path(stage.manifest_path)
+        for line_number, line in enumerate(
+            manifest_path.read_text(encoding="utf-8").splitlines(), start=1
+        ):
+            if not line.strip():
+                continue
+            record = json.loads(line)
+            if record.get("phase") != phase:
+                continue
+            matched += 1
+            observed_raw = record.get("execution_authorization_path")
+            if (
+                not isinstance(observed_raw, str)
+                or Path(observed_raw).resolve() != expected
+            ):
+                raise ValueError(
+                    "phase manifest authorization path differs from the authorization "
+                    f"target: {manifest_path}:{line_number}"
+                )
+    if matched == 0:
+        raise ValueError(f"phase {phase} has no manifest-bound scientific work units")
+    return matched
+
+
 def preflight_and_authorize_phase(
     *,
     dag: Any,
@@ -1152,6 +1200,9 @@ def preflight_and_authorize_phase(
         write_phase_authorization,
     )
 
+    _validate_phase_manifest_authorization_paths(
+        dag, phase=phase, authorization_path=authorization_path
+    )
     result = run_hpc_live_smoke(
         dag,
         target_phase=phase,
@@ -1351,14 +1402,12 @@ def verify_phase_completion(
         raise ValueError("phase completion evidence directory must be new or empty")
     evidence_dir.mkdir(parents=True, exist_ok=True)
     runner = subprocess.run if run_command is None else run_command
+    normalized_job_ids = {str(key): str(value) for key, value in job_ids.items()}
     completed = runner(
-        [
-            "sacct",
-            "-j",
-            ",".join(sorted(map(str, job_ids.values()), key=int)),
-            "-nP",
-            "--format=JobIDRaw,State,ExitCode,ElapsedRaw,AllocNodes",
-        ],
+        _sacct_array_command(
+            normalized_job_ids,
+            fields=("JobID", "State", "ExitCode", "ElapsedRaw", "AllocNodes"),
+        ),
         check=True,
         capture_output=True,
         text=True,
@@ -1367,7 +1416,7 @@ def verify_phase_completion(
     raw_path = evidence_dir / "sacct_raw.psv"
     raw_path.write_text(raw_sacct, encoding="utf-8")
     scheduler, observed_total_au = validate_scheduler_completion_accounting(
-        {str(key): str(value) for key, value in job_ids.items()},
+        normalized_job_ids,
         raw_sacct,
         cpu_charge_factor=float(dag.cluster.cpu_charge_factor),
         qos_factor=float(dag.cluster.qos_factor),
