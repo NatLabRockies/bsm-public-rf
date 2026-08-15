@@ -587,6 +587,10 @@ def test_final_package_uses_amended_contract_but_preserves_pilot_freeze_basis(
     assert selected.B_interaction == 999
     assert selected.resolution_decision_sha256 == "e" * 64
     assert observed["resource_freeze"] == freeze
+    assert observed["completed_observed_au_for_admission"] == pytest.approx(
+        90.36944444444445 + 192.55 + 250.0
+    )
+    assert observed["postprocessing_reserved_au_for_admission"] == 5.0
     amendment_path = output / "contract" / "fixed_family_amendment.json"
     amendment = json.loads(amendment_path.read_text(encoding="utf-8"))
     assert amendment["selected_contract_hash"] == dag.config_hash

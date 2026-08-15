@@ -102,7 +102,7 @@ private copy of the reviewed config.
 ```bash
 BSM_RUNTIME=/scratch/dhetting/bsm_runtime/software/bsm-public-rf
 RFM_SCIENTIFIC=/scratch/dhetting/bsm_runtime/software/rfm-pipeline
-RFM_CONTROLLER=/scratch/dhetting/bsm_runtime/software/rfm-controller-03635da
+RFM_CONTROLLER=/scratch/dhetting/bsm_runtime/software/rfm-controller-5d1ff14
 PILOT_ID=g11-pilot-final-sizing-20260814f
 FINAL_ID=g11-final-manuscript-YYYYMMDDa
 CONTROL=/projects/bsm/g11_authorizations/${FINAL_ID}
@@ -133,12 +133,15 @@ cd "${BSM_RUNTIME}"
 `RFM_SCIENTIFIC` must be a clean detached checkout at
 `fd12fd579d8743bdc4acd00e1dac217cbfc56e84`, the source identity measured by
 the accepted pilot. `RFM_CONTROLLER` must be a separate clean detached
-checkout at `03635da30a50de56eb94c7534cc9b89e1be3bf21`. Its changes from
+checkout at `5d1ff14fe0d6dd568f57a35e965457be764727e0`. Its changes from
 `fd12fd5` are limited to reviewed campaign-control behavior: the
 pilot-accounting schedule-hash repair, resolution-only development packaging,
 package-local Slurm logs, clean compute-node imports, and exact
 script/plan/accounting bindings, and partial-node placement for the
-resolution-only development stage. The
+resolution-only development stage. Confirmatory admission additionally uses
+observed allocation for completed pilot and development work, reserves 20%
+only on unexecuted confirmatory stages, and counts the separate 5-AU
+postprocessing reserve. The
 controller prepends that code to its own in-process import path; it never
 exports the controller checkout through `PYTHONPATH`. Real `sbatch` calls
 strip Python import overrides, and generated workers continue to execute from

@@ -1065,6 +1065,14 @@ def prepare_final_package(
         B_interaction=selected_b,
         resolution_decision_sha256=decision_sha256,
     )
+    accepted_pilot_observed_au = float(
+        allocation.get("accepted_pilot_observed_au", -1.0)
+    )
+    prior_rejected_attempt_au = float(allocation.get("prior_rejected_attempt_au", -1.0))
+    if accepted_pilot_observed_au < 0:
+        raise ValueError("resource freeze lacks accepted-pilot observed allocation")
+    if prior_rejected_attempt_au < 0:
+        raise ValueError("resource freeze lacks prior rejected-attempt allocation")
     dag = generate_campaign_package(
         output_dir=output_dir,
         resource_freeze=freeze,
@@ -1072,6 +1080,12 @@ def prepare_final_package(
         package_mode="confirmatory",
         repo_root=resolved_repo,
         config_path=config_path,
+        completed_observed_au_for_admission=(
+            accepted_pilot_observed_au
+            + prior_rejected_attempt_au
+            + development_observed_au
+        ),
+        postprocessing_reserved_au_for_admission=postprocessing_reserved_au,
     )
     amendment_identity = {
         key: value
@@ -1093,11 +1107,6 @@ def prepare_final_package(
         output_dir.resolve() / "contract" / "fixed_family_amendment.json",
         amendment,
     )
-    accepted_pilot_observed_au = float(
-        allocation.get("accepted_pilot_observed_au", -1.0)
-    )
-    if accepted_pilot_observed_au < 0:
-        raise ValueError("resource freeze lacks accepted-pilot observed allocation")
     remaining_estimated_au = _remaining_confirmatory_estimated_au(
         dag.campaign_envelope.stage_allocations
     )
@@ -1112,7 +1121,7 @@ def prepare_final_package(
     certificate = build_campaign_budget_certificate(
         run_id=dag.run_id,
         campaign_requested_au=adjusted_campaign_requested_au,
-        prior_rejected_attempt_au=float(allocation["prior_rejected_attempt_au"]),
+        prior_rejected_attempt_au=prior_rejected_attempt_au,
         postprocessing_reserved_au=postprocessing_reserved_au,
         allocation_quota_au=allocation_quota_au,
         resource_freeze_sha256=str(freeze["resource_freeze_sha256"]),
