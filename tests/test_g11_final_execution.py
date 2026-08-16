@@ -121,6 +121,7 @@ def test_completed_resolution_scores_promote_without_scientific_reexecution(
         "_current_source_and_lock_hashes",
         lambda: ("1" * 64, "2" * 64),
     )
+    monkeypatch.setenv("SLURM_CPUS_PER_TASK", "1")
 
     contract_path = (
         Path(__file__).resolve().parents[1] / "configs/g11_campaign_contract.toml"
@@ -161,6 +162,7 @@ def test_completed_resolution_scores_promote_without_scientific_reexecution(
             contract,
             draws=contract.resolution_base_draws * contract.resolution_max_multiplier,
             seed=seed,
+            n_jobs=4,
         )
         canonical = canonical_execution_contract_from_specs(spec)
         selected_pairs = pair_order[: contract.resolution_family_size]
@@ -199,7 +201,7 @@ def test_completed_resolution_scores_promote_without_scientific_reexecution(
                 "estimated_cpu_cores": 1,
                 "estimated_memory_gb": 1,
                 "estimated_walltime_seconds": 1,
-                "requested_cpu_cores": 1,
+                "requested_cpu_cores": 4,
                 "requested_memory_gb": 1,
                 "requested_walltime_seconds": 1,
             },

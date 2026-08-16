@@ -105,9 +105,22 @@ def _interaction_tables(data: Any) -> tuple[Any, Any, Any, Any, Any]:
     return inputs, catalog, assignments, pca_scores, catalog.copy()
 
 
-def _interaction_spec(campaign_contract: Any, *, draws: int, seed: int) -> Any:
+def _interaction_spec(
+    campaign_contract: Any,
+    *,
+    draws: int,
+    seed: int,
+    n_jobs: int | None = None,
+) -> Any:
     from rfm_pipeline.manuscript_stages import InteractionDiscoverySpec
 
+    resolved_n_jobs = (
+        max(1, int(os.environ.get("SLURM_CPUS_PER_TASK", "1")))
+        if n_jobs is None
+        else int(n_jobs)
+    )
+    if resolved_n_jobs <= 0:
+        raise ValueError("interaction worker count must be positive")
     return InteractionDiscoverySpec(
         method="tree_shap_interaction_values",
         aggregation_rule="max_over_components_of_mean_absolute_shap_interaction",
@@ -116,7 +129,7 @@ def _interaction_spec(campaign_contract: Any, *, draws: int, seed: int) -> Any:
         permutation_count_B=draws,
         random_seed=seed,
         n_tree_estimators=campaign_contract.n_tree_estimators,
-        n_jobs=max(1, int(os.environ.get("SLURM_CPUS_PER_TASK", "1"))),
+        n_jobs=resolved_n_jobs,
         selection_method=campaign_contract.method_name,
         selection_alpha=campaign_contract.alpha,
         minimum_selection_draws=campaign_contract.B_interaction,

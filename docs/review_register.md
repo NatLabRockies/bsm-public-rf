@@ -2,6 +2,21 @@
 
 Durable record of audit findings requiring follow-up. Newest first.
 
+## 2026-08-15 — Cache validator reconstructed the wrong worker count
+
+- **Severity:** BLOCKER (cache promotion, closed before copying or submission).
+  Cached score snapshots bind `n_jobs=65`, as executed under Slurm, but the
+  login-node validator reconstructed `n_jobs=1` from its own environment.
+- **Root-cause correction:** cache validation now reconstructs the interaction
+  contract from the manifest-bound requested CPU count and requires exact
+  source/target worker-resource equality. Worker execution remains driven by
+  `SLURM_CPUS_PER_TASK`; no scientific setting or cached byte is changed.
+- **Acceptance criteria:** a deliberately mismatched login environment must
+  still validate 20 cache shards from their manifest resources, report zero
+  executed scientific work units, and fail if worker resources differ.
+- **Disposition:** fixed in the cache-promotion path and regression-tested;
+  exact Kestrel replay remains required before submission.
+
 ## 2026-08-15 — Scientific verifier rejected the plan-bound authorization schema
 
 - **Severity:** BLOCKER (live development workers, closed before scientific

@@ -508,6 +508,7 @@ _RESOLUTION_CACHE_SCIENCE_FIELDS = (
     "family_order_file_sha256",
     "bsm_recovery_driver_sha256",
     "bsm_dgp_contract_sha256",
+    "worker_resources",
 )
 
 
@@ -667,10 +668,21 @@ def _promote_resolution_cache(
                 f"{relative_source}/score_only_interaction.json",
             )
             artifact = ScoreOnlyInteractionArtifact.read_from(source_scores.parent)
+            worker_resources = target_record.get("worker_resources")
+            if not isinstance(worker_resources, dict):
+                raise ValueError(
+                    f"target resolution worker resources are invalid for {shard_id}"
+                )
+            requested_cpu_cores = int(worker_resources.get("requested_cpu_cores", 0))
+            if requested_cpu_cores <= 0:
+                raise ValueError(
+                    f"target resolution CPU request is invalid for {shard_id}"
+                )
             interaction_spec = adapter._interaction_spec(
                 contract,
                 draws=int(target_record["nested_schedule_draws"]),
                 seed=int(target_record["seed"]),
+                n_jobs=requested_cpu_cores,
             )
             verify_control_snapshot(
                 artifact.control_snapshot,
