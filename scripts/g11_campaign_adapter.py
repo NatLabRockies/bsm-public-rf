@@ -177,6 +177,45 @@ def _truth_support_name(term: Any, design: Any) -> str:
     raise ValueError(f"unsupported truth term kind {kind!r}")
 
 
+def _canonical_interaction_id(value: str) -> str:
+    """Return an order-invariant identifier for one undirected interaction."""
+    if not isinstance(value, str):
+        raise ValueError("interaction identifier must be a string")
+    parts = value.split(":")
+    if len(parts) != 2 or not all(parts) or parts[0] == parts[1]:
+        raise ValueError(f"invalid interaction identifier {value!r}")
+    return ":".join(sorted(parts))
+
+
+def _canonical_support(values: Any, *, field: str) -> set[str]:
+    if not isinstance(values, (list, tuple, set, frozenset)):
+        raise ValueError(f"{field} must be a sequence of support identifiers")
+    canonical: set[str] = set()
+    for value in values:
+        if not isinstance(value, str) or not value:
+            raise ValueError(f"{field} contains an invalid support identifier")
+        normalized = _canonical_interaction_id(value) if ":" in value else value
+        if normalized in canonical:
+            raise ValueError(f"{field} contains duplicate semantic support")
+        canonical.add(normalized)
+    return canonical
+
+
+def _interaction_selection_outcome(row: dict[str, Any]) -> dict[str, Any]:
+    truth = _canonical_support(
+        row.get("truth_interaction_ids"), field="truth_interaction_ids"
+    )
+    retained = _canonical_support(
+        row.get("retained_interaction_ids"), field="retained_interaction_ids"
+    )
+    if any(":" not in value for value in truth | retained):
+        raise ValueError("interaction identifier fields contain a non-interaction")
+    return {
+        "false_pair_count": len(retained - truth),
+        "planted_interaction_discovered": truth <= retained,
+    }
+
+
 def _support_metrics(truth: set[str], selected: set[str]) -> dict[str, Any]:
     true_positive = len(truth & selected)
     false_positive = len(selected - truth)
@@ -598,8 +637,11 @@ def _reduce_gate_b(
         indices = [int(row.get("replicate_index", -1)) for row in rows]
         if sorted(indices) != list(range(scenario.n_replicates)):
             raise ValueError(f"Gate B does not exactly cover scenario {scenario.id}")
+        outcomes = [_interaction_selection_outcome(row) for row in rows]
         if scenario.kind == "null":
-            events = sum(int(row["false_pair_count"]) > 0 for row in rows)
+            events = sum(
+                int(outcome["false_pair_count"]) > 0 for outcome in outcomes
+            )
             upper = wilson_upper_bound(
                 events,
                 scenario.n_replicates,
@@ -626,7 +668,8 @@ def _reduce_gate_b(
             passed &= bool(summary["passes_calibration"])
         else:
             events = sum(
-                bool(row.get("planted_interaction_discovered")) for row in rows
+                bool(outcome["planted_interaction_discovered"])
+                for outcome in outcomes
             )
             lower = _wilson_lower_bound(
                 events,
@@ -2322,18 +2365,28 @@ def execute_scientific_work_unit(
         seed=int(record["seed"]),
         include_recovery_comparators=include_recovery_comparators,
     )
-    truth_pairs = {
-        _truth_support_name(term, design)
-        for term in data.truth.terms
-        if term.term_id.kind.endswith("_interaction")
-    }
-    retained_pairs = set(result.interaction_retained_set)
-    in_library_truth = {
-        _truth_support_name(term, design)
-        for term in data.truth.terms
-        if term.in_library
-    }
-    selected_support = set(result.final_selected_support)
+    truth_pairs = _canonical_support(
+        [
+            _truth_support_name(term, design)
+            for term in data.truth.terms
+            if term.term_id.kind.endswith("_interaction")
+        ],
+        field="truth_interaction_ids",
+    )
+    retained_pairs = _canonical_support(
+        list(result.interaction_retained_set), field="retained_interaction_ids"
+    )
+    in_library_truth = _canonical_support(
+        [
+            _truth_support_name(term, design)
+            for term in data.truth.terms
+            if term.in_library
+        ],
+        field="in_library_truth_support",
+    )
+    selected_support = _canonical_support(
+        list(result.final_selected_support), field="final_selected_support"
+    )
     transform_suffixes = ("_sq", "_log1p", "_inv", "_sqrt")
     truth_families = {
         "main": {

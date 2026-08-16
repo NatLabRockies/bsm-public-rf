@@ -2,6 +2,31 @@
 
 Durable record of audit findings requiring follow-up. Newest first.
 
+## 2026-08-16 — Undirected interaction pair order corrupted derived recovery metrics
+
+- **Severity:** BLOCKER (Gate-B power decision and manuscript recovery tables;
+  raw scientific artifacts unaffected). In 45 of the first 87 completed
+  `strong_cc` replicates, truth `HEFA:HTL` and retained `HTL:HEFA` represented
+  the same undirected pair but were compared as distinct strings. Stored
+  bookkeeping therefore reported 42/87 discoveries instead of the canonical
+  87/87 and converted those 45 discoveries into false positives.
+- **Root-cause correction:** canonicalize every interaction as an unordered
+  two-factor identity; recompute Gate-B decisions from raw truth/retained IDs;
+  rebuild publication recovery metrics from raw in-library truth and selected
+  support rather than trusting terminal summaries. Malformed or semantically
+  duplicated identifiers fail closed.
+- **Evidence conservation:** old audit/reducer and dependent jobs are held,
+  while worker arrays may finish because their score, prediction, model, truth,
+  and selected-support artifacts are valid. No successful scientific worker is
+  rerun or mutated. A continuation reducer must bind the original worker result
+  hashes and the corrected reducer identity.
+- **Acceptance criteria:** reversed-order unit and reducer regressions pass;
+  the publication compiler corrects deliberately stale metrics; the focused
+  recovery, campaign, final-execution, and publication suite passes; live
+  continuation produces exact complete coverage and canonical Gate-B metrics.
+- **Disposition:** code correction and local tests complete; clean commit,
+  deployment, and live continuation reducer verification remain.
+
 ## 2026-08-15 — Cache validator reconstructed the wrong worker count
 
 - **Severity:** BLOCKER (cache promotion, closed before copying or submission).

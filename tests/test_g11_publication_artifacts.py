@@ -585,16 +585,20 @@ def _build_fixture(tmp_path: Path) -> tuple[Path, Path]:
             "seed": 123,
             "contract_hash": contract_hash,
             "status": "completed",
+            "truth_interaction_ids": ["HEFA:HTL"],
+            "retained_interaction_ids": ["HTL:HEFA"],
+            "in_library_truth_support": ["main_effect", "HEFA:HTL"],
+            "final_selected_support": ["main_effect", "HTL:HEFA"],
             "recovery_metrics": {
                 "whole": {
-                    "precision": 1.0,
-                    "recall": 1.0,
-                    "exact_support_recovery": True,
+                    "precision": 0.5,
+                    "recall": 0.5,
+                    "exact_support_recovery": False,
                 },
                 "interaction": {
-                    "precision": 1.0,
-                    "recall": 1.0,
-                    "exact_support_recovery": True,
+                    "precision": 0.0,
+                    "recall": 0.0,
+                    "exact_support_recovery": False,
                 },
             },
             "macro_nrmse_by_method": {"proposed_terminal_workflow": 0.04},
@@ -642,6 +646,17 @@ def test_compiler_emits_complete_machine_readable_and_latex_surfaces(
     assert (output_root / "tables" / "ablation_table.csv").is_file()
     assert (output_root / "tables" / "recovery_replicates.csv").is_file()
     assert (output_root / "tables" / "recovery_scenario_summary.csv").is_file()
+    recovery_rows = pd.read_csv(output_root / "tables" / "recovery_replicates.csv")
+    recovery = json.loads(
+        recovery_rows.loc[
+            recovery_rows["scenario"] == "stress", "recovery_metrics_json"
+        ].item()
+    )
+    assert recovery["interaction"]["recall"] == pytest.approx(1.0)
+    assert recovery["interaction"]["false_discovery_proportion"] == pytest.approx(
+        0.0
+    )
+    assert recovery["whole"]["exact_support_recovery"] is True
     input_catalog = pd.read_csv(output_root / "metadata" / "input_feature_catalog.csv")
     assert len(input_catalog) == 160
     assert {
