@@ -471,6 +471,38 @@ def _load_resolution_cache_inventory(evidence_root: Path) -> dict[str, str]:
     return inventory
 
 
+def _load_scientific_interaction_runtime(rfm_repo_root: str | Path) -> Any:
+    """Load snapshot verification from the immutable scientific RFM checkout."""
+    root = Path(rfm_repo_root).resolve()
+    module_path = root / "src" / "rfm_pipeline" / "interaction_contract.py"
+    lock_path = root / "pixi.lock"
+    if not module_path.is_file() or not lock_path.is_file():
+        raise ValueError(
+            "scientific RFM runtime lacks interaction-contract or lock bytes"
+        )
+    module_name = "_g11_scientific_interaction_contract_" + _stable_hash(
+        {
+            "root": str(root),
+            "module_sha256": _sha256_path(module_path),
+            "lock_sha256": _sha256_path(lock_path),
+        }
+    )
+    loaded = sys.modules.get(module_name)
+    if loaded is not None:
+        return loaded
+    spec = importlib.util.spec_from_file_location(module_name, module_path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError("could not load scientific RFM interaction runtime")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[module_name] = module
+    try:
+        spec.loader.exec_module(module)
+    except BaseException:
+        sys.modules.pop(module_name, None)
+        raise
+    return module
+
+
 def _verified_cache_file(
     evidence_root: Path, inventory: dict[str, str], relative_path: str
 ) -> Path:
@@ -525,11 +557,6 @@ def _promote_resolution_cache(
     from rfm_pipeline.hpc_campaign_package import (
         load_stage_manifest,
         validate_resume_artifacts,
-    )
-    from rfm_pipeline.interaction_contract import (
-        ScoreOnlyInteractionArtifact,
-        canonical_execution_contract_from_specs,
-        verify_control_snapshot,
     )
 
     root = Path(str(control["campaign_root"]))
@@ -635,6 +662,9 @@ def _promote_resolution_cache(
     contract, contract_hash = load_contract(development.contract_config_path)
     if contract_hash != development.config_hash:
         raise ValueError("target resolution contract bytes differ")
+    scientific_interaction = _load_scientific_interaction_runtime(
+        control["rfm_repo_root"]
+    )
     pending_root = stage.output_root.parent / ".resolution-cache-promotion.pending"
     if pending_root.exists():
         raise ValueError("resolution cache promotion has a stale pending directory")
@@ -667,7 +697,9 @@ def _promote_resolution_cache(
                 inventory,
                 f"{relative_source}/score_only_interaction.json",
             )
-            artifact = ScoreOnlyInteractionArtifact.read_from(source_scores.parent)
+            artifact = scientific_interaction.ScoreOnlyInteractionArtifact.read_from(
+                source_scores.parent
+            )
             worker_resources = target_record.get("worker_resources")
             if not isinstance(worker_resources, dict):
                 raise ValueError(
@@ -684,9 +716,11 @@ def _promote_resolution_cache(
                 seed=int(target_record["seed"]),
                 n_jobs=requested_cpu_cores,
             )
-            verify_control_snapshot(
+            scientific_interaction.verify_control_snapshot(
                 artifact.control_snapshot,
-                canonical_execution_contract_from_specs(interaction_spec),
+                scientific_interaction.canonical_execution_contract_from_specs(
+                    interaction_spec
+                ),
             )
             terminal = adapter._resolution_terminal_from_artifact(
                 record=target_record,
@@ -699,7 +733,9 @@ def _promote_resolution_cache(
             pending_scores.mkdir(parents=True)
             shutil.copy2(source_scores, pending_scores / source_scores.name)
             shutil.copy2(source_metadata, pending_scores / source_metadata.name)
-            copied = ScoreOnlyInteractionArtifact.read_from(pending_scores)
+            copied = scientific_interaction.ScoreOnlyInteractionArtifact.read_from(
+                pending_scores
+            )
             if copied.payload_sha256 != artifact.payload_sha256:
                 raise ValueError("copied resolution cache payload differs")
             target_shard = Path(str(target_record["output_dir"]))
