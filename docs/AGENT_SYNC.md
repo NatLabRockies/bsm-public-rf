@@ -253,3 +253,27 @@
   through exact completion evidence, scientific gates, same-day preflights,
   and rolling allocation guards. Scientific failures are never retried
   automatically; a 30-minute heartbeat monitors the campaign.
+
+## SESSION STATE — 2026-08-15 — resolution terminalization repair and cache continuation
+
+- Final run `g11-final-manuscript-20260815k` is stopped and rejected after all
+  20 resolution workers failed at the same post-compute adapter line. The
+  controller is dead, the reducer was canceled before execution, and the queue
+  is empty. A 250-file, 125-MiB evidence bundle verifies under SHA-256 at
+  `/projects/bsm/g11_failure_evidence/g11-final-manuscript-20260815k_scientific_adapter_failure_20260815T182652`.
+- Exact failed-attempt cost is 118.40357905982906 AUs; cumulative rejected
+  attempts are 311.08165064102566 AUs. Failed-job telemetry is diagnostic only.
+- The adapter now uses `payload_sha256` in resolution, fixed-family, and applied
+  interaction outputs. Resolution decision materialization is separated from
+  score generation so completed self-verifying score blocks can be promoted.
+- The final controller accepts one content-bound resolution failure bundle at
+  initialization. It holds target outputs empty through preflight, promotes
+  only exact science-identity matches after authorization, verifies each score
+  block against the target contract, and writes standard result/success bytes.
+  Fresh workers therefore validate and exit without repeating scoring; audit
+  and reduction remain mandatory.
+- Local acceptance: 51 focused tests pass; the complete BSM suite passes in
+  both the BSM environment and the exact RFM integration environment; Ruff and
+  diff checks pass on modified surfaces. Remaining work is content-addressed
+  commit/push, RFM config repin, clean Kestrel deployment, independent no-submit
+  audit, cache promotion, and continuation submission/monitoring.

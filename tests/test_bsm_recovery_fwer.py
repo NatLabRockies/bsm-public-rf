@@ -682,6 +682,62 @@ def test_campaign_adapter_requires_manifest_bound_contract_and_dgp_paths(
         adapter.execute_scientific_work_unit(record, tmp_path / "shard")
 
 
+def test_campaign_adapter_uses_payload_identity_for_every_score_artifact() -> None:
+    """Score-only artifacts deliberately have no generic checksum alias."""
+    adapter = _load_adapter()
+
+    class PayloadOnlyArtifact:
+        payload_sha256 = "a" * 64
+
+    assert adapter._score_artifact_payload_sha256(PayloadOnlyArtifact()) == "a" * 64
+    assert "artifact.checksum" not in inspect.getsource(adapter)
+
+
+def test_resolution_terminal_can_be_rebuilt_from_a_completed_score_cache(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Terminalization must be cheap and independent of score generation."""
+    adapter = _load_adapter()
+    pair_order = ("x000:x001", "x000:x002")
+    artifact = SimpleNamespace(
+        pair_names=pair_order,
+        observed_scores=np.array([3.0, 1.0]),
+        null_scores=np.array(
+            [
+                [0.5, 0.25],
+                [1.0, 0.5],
+                [1.5, 0.75],
+                [2.0, 1.0],
+            ]
+        ),
+        draw_range_start=0,
+        draw_range_end=4,
+        payload_sha256="b" * 64,
+    )
+    monkeypatch.setattr(
+        adapter,
+        "_load_fixed_pair_order",
+        lambda _record, _contract: pair_order,
+    )
+    record = {
+        "fixture_kind": "nondegenerate_null",
+        "schedule_index": 7,
+        "family_size": 2,
+        "base_draws": 1,
+        "nested_schedule_draws": 4,
+    }
+
+    terminal = adapter._resolution_terminal_from_artifact(
+        record=record,
+        artifact=artifact,
+        campaign_contract=SimpleNamespace(alpha=0.05),
+    )
+
+    assert terminal["nested_draws"] == [1, 2, 4]
+    assert terminal["artifact_checksum"] == "b" * 64
+    assert terminal["status"] == "completed"
+
+
 def _adapter_reduction_record(
     tmp_path: Path,
     *,

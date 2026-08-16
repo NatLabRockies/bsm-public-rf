@@ -15,6 +15,8 @@ import pytest
 from scripts.g11_final_execution import (
     _development_phase_budget_guard,
     _prepare_artifact_job,
+    _promote_resolution_cache,
+    _resolution_cache_evidence_identity,
     _submit_artifact_job,
     _validate_rfm_runtime_binding,
     advance_campaign,
@@ -66,9 +68,264 @@ def test_final_controller_direct_cli_entry_point_loads() -> None:
     assert initialize_help.returncode == 0, initialize_help.stderr
     assert "--rfm-controller-root" in initialize_help.stdout
     assert "--pilot-resource-freeze" in initialize_help.stdout
+    assert "--resolution-cache-evidence-root" in initialize_help.stdout
 
     runbook = (repo / "docs" / "G11_FINAL_EXECUTION.md").read_text(encoding="utf-8")
     assert "PYTHONPATH=" not in runbook
+
+
+def test_resolution_cache_evidence_identity_is_content_bound(tmp_path: Path) -> None:
+    evidence = tmp_path / "failed-run-evidence"
+    evidence.mkdir()
+    sums = evidence / "SHA256SUMS"
+    sums.write_text("a" * 64 + "  ./failure_status.json\n", encoding="utf-8")
+    sums_hash = __import__("hashlib").sha256(sums.read_bytes()).hexdigest()
+    (evidence / "SHA256SUMS.sha256").write_text(
+        f"{sums_hash}  SHA256SUMS\n", encoding="utf-8"
+    )
+
+    identity = _resolution_cache_evidence_identity(evidence)
+
+    assert identity["resolution_cache_evidence_root"] == str(evidence.resolve())
+    assert identity["resolution_cache_sha256s_sha256"] == sums_hash
+    assert identity["resolution_cache_file_count"] == 1
+
+    sums.write_text("b" * 64 + "  ./failure_status.json\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="SHA256SUMS"):
+        _resolution_cache_evidence_identity(evidence)
+
+
+def test_completed_resolution_scores_promote_without_scientific_reexecution(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    import hashlib
+    import shutil
+
+    import numpy as np
+    from rfm_pipeline.campaign_contract import (
+        fixed_family_pair_order,
+        load_contract,
+    )
+    from rfm_pipeline.interaction_contract import (
+        ScoreOnlyInteractionArtifact,
+        build_control_snapshot,
+        canonical_execution_contract_from_specs,
+    )
+    import rfm_pipeline.interaction_contract as interaction_contract
+
+    from scripts import g11_campaign_adapter as adapter
+
+    monkeypatch.setattr(
+        interaction_contract,
+        "_current_source_and_lock_hashes",
+        lambda: ("1" * 64, "2" * 64),
+    )
+
+    contract_path = (
+        Path(__file__).resolve().parents[1] / "configs/g11_campaign_contract.toml"
+    )
+    contract, contract_hash = load_contract(contract_path)
+    pair_order = fixed_family_pair_order(contract)
+    target_contract_dir = tmp_path / "target-package" / "contract"
+    target_contract_dir.mkdir(parents=True)
+    target_contract = target_contract_dir / "g11_campaign_contract.toml"
+    shutil.copy2(contract_path, target_contract)
+    family_order = target_contract_dir / "fixed_family_pair_order.json"
+    family_order.write_text(json.dumps(list(pair_order)), encoding="utf-8")
+    family_order_sha256 = hashlib.sha256(family_order.read_bytes()).hexdigest()
+    adapter_path = Path(adapter.__file__).resolve()
+    adapter_sha256 = hashlib.sha256(adapter_path.read_bytes()).hexdigest()
+
+    evidence = tmp_path / "evidence"
+    source_results = evidence / "scratch_run/stages/resolution/results"
+    source_manifest = (
+        evidence / "control_root/development_package/stages/resolution/manifest.jsonl"
+    )
+    source_manifest.parent.mkdir(parents=True)
+    runtime_source = evidence / "runtime_source"
+    runtime_source.mkdir(parents=True)
+    shutil.copy2(adapter_path, runtime_source / "g11_campaign_adapter.py")
+    target_results = tmp_path / "target-run/stages/resolution/results"
+    target_manifest = tmp_path / "target-package/stages/resolution/manifest.jsonl"
+    target_manifest.parent.mkdir(parents=True)
+
+    source_records = []
+    target_records = []
+    source_hash = None
+    lock_hash = None
+    for index in range(20):
+        shard_id = f"task-{index:04d}"
+        seed = 10_000 + index
+        spec = adapter._interaction_spec(
+            contract,
+            draws=contract.resolution_base_draws * contract.resolution_max_multiplier,
+            seed=seed,
+        )
+        canonical = canonical_execution_contract_from_specs(spec)
+        selected_pairs = pair_order[: contract.resolution_family_size]
+        snapshot = build_control_snapshot(
+            canonical,
+            candidate_pair_names=selected_pairs,
+            training_sample_ids=np.array(["row-0", "row-1"]),
+            feature_matrix=np.zeros((2, 2)),
+            response_matrix=np.zeros((2, 1)),
+            component_names=("component-0",),
+        )
+        source_hash = snapshot.implementation_source_sha256
+        lock_hash = snapshot.dependency_lock_sha256
+        draws = contract.resolution_base_draws * contract.resolution_max_multiplier
+        artifact = ScoreOnlyInteractionArtifact(
+            status="score_only_completed",
+            draw_range_start=0,
+            draw_range_end=draws,
+            pair_names=selected_pairs,
+            observed_scores=np.zeros(len(selected_pairs)),
+            null_scores=np.zeros((draws, len(selected_pairs))),
+            draw_ids=np.arange(draws),
+            control_snapshot=snapshot,
+        )
+        artifact.write_to(source_results / shard_id / "interaction_score_blocks")
+        common = {
+            "schema_version": 1,
+            "stage": "resolution",
+            "shard_id": shard_id,
+            "interaction_sharding": "draw-block",
+            "status": "pending",
+            "attempt": 0,
+            "max_retries": 1,
+            "contract_config_path": str(target_contract),
+            "worker_resources": {
+                "estimated_cpu_cores": 1,
+                "estimated_memory_gb": 1,
+                "estimated_walltime_seconds": 1,
+                "requested_cpu_cores": 1,
+                "requested_memory_gb": 1,
+                "requested_walltime_seconds": 1,
+            },
+            "expected_range_start": index,
+            "expected_range_end": index + 1,
+            "operation": "resolution",
+            "fixture_kind": ("nondegenerate_null" if index < 10 else "strong_planted"),
+            "schedule_index": index % 10,
+            "seed": seed,
+            "base_draws": contract.resolution_base_draws,
+            "nested_schedule_draws": draws,
+            "family_size": contract.resolution_family_size,
+            "family_order_path": str(family_order),
+            "family_order_file_sha256": family_order_sha256,
+            "source_hash": source_hash,
+            "config_hash": contract_hash,
+            "lock_hash": lock_hash,
+            "bsm_recovery_driver_sha256": "d" * 64,
+            "bsm_dgp_contract_sha256": "e" * 64,
+            "scientific_adapter_path": str(adapter_path),
+            "scientific_adapter_sha256": adapter_sha256,
+            "parent_hash": "f" * 64,
+        }
+        source_output = tmp_path / "discarded-source" / shard_id
+        target_output = target_results / shard_id
+        source_records.append(
+            {
+                **common,
+                "output_dir": str(source_output),
+                "success_marker": str(source_output / "_SUCCESS.json"),
+                "input_hash": hashlib.sha256(f"source-{index}".encode()).hexdigest(),
+                "schedule_hash": hashlib.sha256(
+                    f"schedule-{index}".encode()
+                ).hexdigest(),
+                "output_hash": hashlib.sha256(
+                    f"old-output-{index}".encode()
+                ).hexdigest(),
+            }
+        )
+        target_records.append(
+            {
+                **common,
+                "output_dir": str(target_output),
+                "success_marker": str(target_output / "_SUCCESS.json"),
+                "input_hash": hashlib.sha256(f"target-{index}".encode()).hexdigest(),
+                "schedule_hash": hashlib.sha256(
+                    f"new-schedule-{index}".encode()
+                ).hexdigest(),
+                "output_hash": hashlib.sha256(
+                    f"new-output-{index}".encode()
+                ).hexdigest(),
+            }
+        )
+    source_manifest.write_text(
+        "".join(json.dumps(row, sort_keys=True) + "\n" for row in source_records),
+        encoding="utf-8",
+    )
+    target_manifest.write_text(
+        "".join(json.dumps(row, sort_keys=True) + "\n" for row in target_records),
+        encoding="utf-8",
+    )
+    for name, payload in {
+        "failure_status.json": {"status": "STOPPED_AFTER_SCIENTIFIC_FAILURE"},
+        "failure_diagnosis.json": {
+            "status": "CONFIRMED_ROOT_CAUSE",
+            "worker_failures_with_identical_signature": 20,
+            "canonical_property": "payload_sha256",
+        },
+        "failure_accounting.json": {
+            "status": "REJECTED_SCIENTIFIC_ADAPTER_FAILURE_ACCOUNTED",
+            "telemetry_eligibility": "DIAGNOSTIC_ONLY_NEVER_REUSE_FOR_RESOURCE_SELECTION",
+        },
+    }.items():
+        (evidence / name).write_text(json.dumps(payload), encoding="utf-8")
+    inventory_rows = []
+    for path in sorted(item for item in evidence.rglob("*") if item.is_file()):
+        relative = path.relative_to(evidence).as_posix()
+        inventory_rows.append(
+            f"{hashlib.sha256(path.read_bytes()).hexdigest()}  ./{relative}\n"
+        )
+    sums = evidence / "SHA256SUMS"
+    sums.write_text("".join(inventory_rows), encoding="utf-8")
+    sums_sha256 = hashlib.sha256(sums.read_bytes()).hexdigest()
+    (evidence / "SHA256SUMS.sha256").write_text(
+        f"{sums_sha256}  SHA256SUMS\n", encoding="utf-8"
+    )
+
+    campaign_root = tmp_path / "control"
+    authorization = campaign_root / "development/authorization.json"
+    authorization.parent.mkdir(parents=True)
+    authorization.write_text("{}\n", encoding="utf-8")
+    stage = SimpleNamespace(
+        name="resolution",
+        job_count=20,
+        manifest_path=target_manifest,
+        output_root=target_results,
+    )
+    development = SimpleNamespace(
+        stages=(stage,),
+        contract_config_path=target_contract,
+        config_hash=contract_hash,
+        run_id="g11-cache-continuation-test",
+    )
+    cache_identity = _resolution_cache_evidence_identity(evidence)
+    control = {"campaign_root": str(campaign_root), **cache_identity}
+
+    result = _promote_resolution_cache(
+        control=control,
+        development=development,
+    )
+
+    assert result["status"] == "RESOLUTION_CACHE_PROMOTED"
+    assert len(result["promoted_shards"]) == 20
+    for record in target_records:
+        shard = Path(record["output_dir"])
+        worker = json.loads((shard / "result.json").read_text(encoding="utf-8"))
+        assert worker["executed_work_units"] == 0
+        assert worker["profile_id"] == "verified-cache-promotion"
+        assert worker["slurm_job_id"] is None
+        assert (
+            worker["artifact_checksum"]
+            == result["promoted_shards"][int(record["shard_id"].split("-")[-1])][
+                "score_payload_sha256"
+            ]
+        )
+        assert (shard / "_SUCCESS.json").is_file()
 
 
 def test_final_controller_requires_the_pinned_rfm_controller(tmp_path: Path) -> None:
