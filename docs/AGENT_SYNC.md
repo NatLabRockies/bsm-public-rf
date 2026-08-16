@@ -1,5 +1,19 @@
 # Agent Sync
 
+## SESSION STATE — 2026-08-15 — Cache snapshot worker-count repair
+
+- The independent continuation audit found that cached resolution score
+  snapshots freeze the 65-CPU worker count, while login-node cache validation
+  reconstructed the contract from its one-CPU environment. Promotion therefore
+  failed closed before copying outputs or submitting a job.
+- Interaction-spec construction now accepts an explicit worker count for
+  offline identity reconstruction. Cache promotion requires source and target
+  `worker_resources` to match and uses the manifest's requested CPU count;
+  ordinary workers retain the unchanged `SLURM_CPUS_PER_TASK` behavior.
+- The promotion regression deliberately makes the login environment differ
+  from the manifest and proves all 20 cached shards validate and complete with
+  zero scientific work units. Scientific methods and score bytes are unchanged.
+
 ## SESSION STATE — 2026-08-11 — G11-HPC-S1 paired sync note (uncommitted)
 
 - This BSM worktree remains dispatch-blocked for G11:
