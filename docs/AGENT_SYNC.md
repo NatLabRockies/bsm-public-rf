@@ -1,5 +1,28 @@
 # Agent Sync
 
+## SESSION STATE — 2026-08-16 — Undirected interaction recovery bookkeeping
+
+- A live read-only audit of the first 1,817 completed Gate-B records found
+  valid, hash-bound scientific artifacts but an order-sensitive derived metric:
+  retained interaction `HTL:HEFA` was compared literally with truth
+  `HEFA:HTL`. This mislabeled 45 of 87 completed `strong_cc` replicates as
+  misses/false positives even though the planted undirected pair was retained.
+- Only the derived terminal bookkeeping is affected. Predictions, model
+  freezes, observed/null scores, seeds, schedules, truth ledgers, retained
+  support, and comparator outputs remain valid and reusable. The existing
+  Gate-B audit/reducer and all dependent fixed-family jobs were held; valid
+  Gate-B workers remain eligible to finish.
+- The adapter now canonicalizes undirected interaction IDs before terminal
+  support metrics and recomputes Gate-B false-selection/power events from raw
+  truth/retained IDs rather than cached booleans. The publication compiler
+  likewise rebuilds every recovery metric from raw support IDs, so completed
+  immutable records need no scientific rerun.
+- Acceptance requires the reversed-order regression to produce one discovery
+  and zero false pairs, malformed IDs to fail closed, publication CSVs to
+  ignore deliberately stale cached metrics, all focused recovery/campaign/
+  final-execution/publication tests to pass, and a provenance-preserving
+  continuation reducer to consume the original worker result hashes.
+
 ## SESSION STATE — 2026-08-15 — Cache snapshot worker-count repair
 
 - The independent continuation audit found that cached resolution score

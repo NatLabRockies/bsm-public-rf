@@ -150,6 +150,70 @@ def _feature_type(name: str) -> str:
     return str(_legacy_feature_type_label(name))
 
 
+def _canonical_interaction_id(value: str) -> str:
+    if not isinstance(value, str):
+        raise ValueError("interaction identifier must be a string")
+    parts = value.split(":")
+    if len(parts) != 2 or not all(parts) or parts[0] == parts[1]:
+        raise ValueError(f"invalid interaction identifier {value!r}")
+    return ":".join(sorted(parts))
+
+
+def _canonical_support(record: dict[str, Any], field: str) -> set[str]:
+    values = record.get(field)
+    if not isinstance(values, list):
+        raise ValueError(f"recovery terminal record lacks {field}")
+    canonical: set[str] = set()
+    for value in values:
+        if not isinstance(value, str) or not value:
+            raise ValueError(f"{field} contains an invalid support identifier")
+        normalized = _canonical_interaction_id(value) if ":" in value else value
+        if normalized in canonical:
+            raise ValueError(f"{field} contains duplicate semantic support")
+        canonical.add(normalized)
+    return canonical
+
+
+def _support_metrics(truth: set[str], selected: set[str]) -> dict[str, Any]:
+    true_positive = len(truth & selected)
+    false_positive = len(selected - truth)
+    return {
+        "precision": true_positive / len(selected) if selected else 1.0,
+        "recall": true_positive / len(truth) if truth else 1.0,
+        "false_discovery_proportion": false_positive / len(selected)
+        if selected
+        else 0.0,
+        "exact_support_recovery": selected == truth,
+        "true_size": len(truth),
+        "selected_size": len(selected),
+    }
+
+
+def _recompute_recovery_metrics(record: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    """Derive support metrics from raw IDs, ignoring stale cached summaries."""
+    truth = _canonical_support(record, "in_library_truth_support")
+    selected = _canonical_support(record, "final_selected_support")
+    transform_suffixes = ("_sq", "_log1p", "_inv", "_sqrt")
+
+    def family(values: set[str], name: str) -> set[str]:
+        if name == "interaction":
+            return {value for value in values if ":" in value}
+        if name == "transformation":
+            return {value for value in values if value.endswith(transform_suffixes)}
+        return {
+            value
+            for value in values
+            if ":" not in value and not value.endswith(transform_suffixes)
+        }
+
+    metrics = {
+        name: _support_metrics(family(truth, name), family(selected, name))
+        for name in ("main", "interaction", "transformation")
+    }
+    metrics["whole"] = _support_metrics(truth, selected)
+    return metrics
+
+
 def _write_wide_matrix(
     path: Path,
     *,
@@ -359,6 +423,8 @@ def _build_recovery_tables(
     for record in records:
         if record.get("status") != "completed":
             raise ValueError("recovery terminal record is incomplete")
+        if record.get("recovery_metrics"):
+            record["recovery_metrics"] = _recompute_recovery_metrics(record)
         rows.append(
             {
                 "operation": record.get("operation"),

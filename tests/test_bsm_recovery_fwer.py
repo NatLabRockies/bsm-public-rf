@@ -693,6 +693,65 @@ def test_campaign_adapter_uses_payload_identity_for_every_score_artifact() -> No
     assert "artifact.checksum" not in inspect.getsource(adapter)
 
 
+def test_campaign_adapter_scores_interaction_pairs_without_direction() -> None:
+    adapter = _load_adapter()
+
+    outcome = adapter._interaction_selection_outcome(
+        {
+            "truth_interaction_ids": ["HEFA:HTL"],
+            "retained_interaction_ids": ["HTL:HEFA"],
+        }
+    )
+
+    assert outcome == {
+        "false_pair_count": 0,
+        "planted_interaction_discovered": True,
+    }
+    with pytest.raises(ValueError, match="interaction identifier"):
+        adapter._interaction_selection_outcome(
+            {
+                "truth_interaction_ids": ["HEFA:HTL:extra"],
+                "retained_interaction_ids": [],
+            }
+        )
+
+
+def test_gate_b_reducer_recomputes_order_invariant_power(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    adapter = _load_adapter()
+    contract = SimpleNamespace(
+        scenarios=(
+            SimpleNamespace(id="strong_fixture", kind="strong", n_replicates=1),
+        ),
+        calibration_confidence=0.95,
+        power_gate_lower_bound=0.0,
+    )
+    monkeypatch.setattr(
+        adapter,
+        "_load_reduction_contract",
+        lambda _records: (contract, "f" * 64),
+    )
+
+    result = adapter._reduce_gate_b(
+        [],
+        [
+            {
+                "scenario": "strong_fixture",
+                "replicate_index": 0,
+                "truth_interaction_ids": ["HEFA:HTL"],
+                "retained_interaction_ids": ["HTL:HEFA"],
+                "planted_interaction_discovered": False,
+                "false_pair_count": 1,
+            }
+        ],
+        tmp_path / "reduced",
+    )
+
+    assert result["scenarios"]["strong_fixture"]["discovery_events"] == 1
+    assert result["scenarios"]["strong_fixture"]["power"] == pytest.approx(1.0)
+
+
 def test_resolution_terminal_can_be_rebuilt_from_a_completed_score_cache(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
