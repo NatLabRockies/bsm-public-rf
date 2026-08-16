@@ -459,6 +459,18 @@ def _write_terminal_record(shard_dir: Path, payload: dict[str, Any]) -> Path:
     return path
 
 
+def _score_artifact_payload_sha256(artifact: Any) -> str:
+    """Return the canonical score-block identity without a compatibility alias."""
+    payload_sha256 = str(getattr(artifact, "payload_sha256", ""))
+    if len(payload_sha256) != 64 or any(
+        character not in "0123456789abcdef" for character in payload_sha256
+    ):
+        raise ValueError(
+            "score-only interaction artifact has no valid payload identity"
+        )
+    return payload_sha256
+
+
 def _load_reduction_contract(records: list[dict[str, Any]]) -> tuple[Any, str]:
     from rfm_pipeline.campaign_contract import load_contract
 
@@ -1292,6 +1304,62 @@ def reduce_scientific_stage(
     return reducer(records, payloads, output_dir)
 
 
+def _resolution_terminal_from_artifact(
+    *, record: dict[str, Any], artifact: Any, campaign_contract: Any
+) -> dict[str, Any]:
+    """Materialize the resolution decision surface from one completed score block."""
+    from rfm_pipeline.manuscript_stages import max_t_adjusted_pvalues
+
+    pair_order = _load_fixed_pair_order(record, campaign_contract)[
+        : int(record["family_size"])
+    ]
+    max_draws = int(record["nested_schedule_draws"])
+    if (
+        tuple(artifact.pair_names) != pair_order
+        or int(artifact.draw_range_start) != 0
+        or int(artifact.draw_range_end) != max_draws
+        or artifact.observed_scores.shape != (len(pair_order),)
+        or artifact.null_scores.shape != (max_draws, len(pair_order))
+    ):
+        raise ValueError(
+            "cached resolution score block differs from its manifest work unit"
+        )
+    multipliers = (
+        1,
+        2,
+        max_draws // int(record["base_draws"]),
+    )
+    draw_schedule = tuple(int(record["base_draws"]) * value for value in multipliers)
+    if draw_schedule[-1] != max_draws or len(set(draw_schedule)) != len(draw_schedule):
+        raise ValueError(
+            "resolution manifest does not define three nested draw schedules"
+        )
+    decisions: dict[str, list[str]] = {}
+    adjusted_p_values: dict[str, list[float]] = {}
+    for draws in draw_schedule:
+        adjusted = max_t_adjusted_pvalues(
+            artifact.observed_scores,
+            artifact.null_scores[:draws],
+        )
+        adjusted_p_values[str(draws)] = adjusted.tolist()
+        decisions[str(draws)] = [
+            pair
+            for pair, p_value in zip(pair_order, adjusted, strict=True)
+            if p_value <= campaign_contract.alpha
+        ]
+    return {
+        "operation": "resolution",
+        "fixture_kind": str(record["fixture_kind"]),
+        "schedule_index": int(record["schedule_index"]),
+        "family_size": len(pair_order),
+        "nested_draws": list(draw_schedule),
+        "selected_pairs": decisions,
+        "adjusted_p_values": adjusted_p_values,
+        "artifact_checksum": _score_artifact_payload_sha256(artifact),
+        "status": "completed",
+    }
+
+
 def _execute_resolution(
     *,
     record: dict[str, Any],
@@ -1304,10 +1372,7 @@ def _execute_resolution(
     from rfm_pipeline.interaction_contract import (
         canonical_execution_contract_from_specs,
     )
-    from rfm_pipeline.manuscript_stages import (
-        max_t_adjusted_pvalues,
-        score_interaction_draw_block,
-    )
+    from rfm_pipeline.manuscript_stages import score_interaction_draw_block
 
     scenario_id = (
         "interaction_null_binary_main"
@@ -1341,35 +1406,11 @@ def _execute_resolution(
     )
     artifact_dir = shard_dir / "interaction_score_blocks"
     artifact.write_to(artifact_dir)
-    decisions: dict[str, list[str]] = {}
-    adjusted_p_values: dict[str, list[float]] = {}
-    for multiplier in (
-        1,
-        2,
-        int(record["nested_schedule_draws"]) // int(record["base_draws"]),
-    ):
-        draws = int(record["base_draws"]) * multiplier
-        adjusted = max_t_adjusted_pvalues(
-            artifact.observed_scores,
-            artifact.null_scores[:draws],
-        )
-        adjusted_p_values[str(draws)] = adjusted.tolist()
-        decisions[str(draws)] = [
-            pair
-            for pair, p_value in zip(pair_order, adjusted, strict=True)
-            if p_value <= campaign_contract.alpha
-        ]
-    terminal = {
-        "operation": "resolution",
-        "fixture_kind": str(record["fixture_kind"]),
-        "schedule_index": int(record["schedule_index"]),
-        "family_size": len(pair_order),
-        "nested_draws": sorted(int(value) for value in decisions),
-        "selected_pairs": decisions,
-        "adjusted_p_values": adjusted_p_values,
-        "artifact_checksum": artifact.checksum,
-        "status": "completed",
-    }
+    terminal = _resolution_terminal_from_artifact(
+        record=record,
+        artifact=artifact,
+        campaign_contract=campaign_contract,
+    )
     terminal_path = _write_terminal_record(shard_dir, terminal)
     return {
         **terminal,
@@ -1434,7 +1475,7 @@ def _execute_fixed_family(
         "global_null_replicate_index": int(record["global_null_replicate_index"]),
         "family_sizes": list(campaign_contract.fixed_family_sizes),
         "selected_pairs": selected_by_family,
-        "artifact_checksum": artifact.checksum,
+        "artifact_checksum": _score_artifact_payload_sha256(artifact),
         "status": "completed",
     }
     terminal_path = _write_terminal_record(shard_dir, terminal)
@@ -1595,7 +1636,7 @@ def _execute_applied_interaction(
         draw_start=artifact.draw_range_start,
         draw_end=artifact.draw_range_end,
         pair_count=len(artifact.pair_names),
-        artifact_checksum=artifact.checksum,
+        artifact_checksum=_score_artifact_payload_sha256(artifact),
     )
 
 

@@ -474,3 +474,38 @@ ______________________________________________________________________
   evidence are unavailable locally. No scheduler submission is authorized.
 - Blocks merge/submission: merge no after review/commit; HPC submission yes
   until every remaining blocker is satisfied.
+
+## REVIEW-0014 — Final resolution workers lost completed score work at terminalization
+
+- Date: 2026-08-15
+- Severity: P0 / final scientific campaign and allocation conservation
+- Status: fixed locally; clean deployment and continuation replay required
+- Evidence: all 20 tasks in final-campaign array `16278789` completed their
+  score-only interaction artifacts, then exited `FAILED/1:0` at
+  `g11_campaign_adapter.py:1370` because the wrapper read nonexistent
+  `ScoreOnlyInteractionArtifact.checksum`. The canonical property has always
+  been `payload_sha256`. The same stale access existed in fixed-family and
+  applied-interaction paths. The failed attempt consumed exactly
+  118.40357905982906 AUs; cumulative rejected-attempt usage is
+  311.08165064102566 AUs.
+- Root cause: the BSM adapter duplicated score-artifact terminalization in
+  three call sites and had no payload-only regression, despite the equivalent
+  RFM pilot-wrapper defect having already been documented and repaired.
+- Resolution: all score paths now use one validated payload-identity helper;
+  resolution terminalization is factored from score generation. A fresh
+  controller may promote only the preserved, hashed resolution score blocks
+  after live preflight and phase authorization. Promotion requires exact
+  scientific-identity equality, verifies every artifact against the fresh
+  canonical contract, writes cache provenance and atomic success wrappers,
+  and leaves failed scheduler telemetry diagnostic-only. Normal workers then
+  run the existing complete-stage resume validator instead of recomputing.
+- Acceptance: payload-only tests cover all adapter source paths; a 20-shard
+  promotion regression proves zero executed scientific work units and exact
+  resume coverage; the complete BSM suite passes under both its local
+  environment and the RFM scientific environment. Live acceptance additionally
+  requires a new content-addressed BSM runtime/config pin, an independent
+  no-submit audit, exact promoted-cache coverage, `COMPLETED/0:0` for the fresh
+  no-op workers/audit/reducer, and a valid resolution decision.
+- Blocks submission: yes until the clean revisions are deployed and the fresh
+  continuation passes those live gates. The failed run and its job telemetry
+  remain ineligible scientific/resource-selection evidence.

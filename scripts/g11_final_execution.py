@@ -16,6 +16,7 @@ import math
 import os
 import re
 import shlex
+import shutil
 import subprocess
 import sys
 import time
@@ -305,6 +306,7 @@ def initialize_campaign(
     remaining_au: int,
     allocation_quota_au: float = 25_000.0,
     postprocessing_reserved_au: float = 5.0,
+    resolution_cache_evidence_root: str | Path | None = None,
 ) -> dict[str, Any]:
     """Create one immutable control root; never submit or run scientific work."""
     root = Path(campaign_root).resolve()
@@ -366,6 +368,10 @@ def initialize_campaign(
         "postprocessing_reserved_au": float(postprocessing_reserved_au),
         "submission_requires_execute_flag": True,
     }
+    if resolution_cache_evidence_root is not None:
+        identity.update(
+            _resolution_cache_evidence_identity(resolution_cache_evidence_root)
+        )
     manifest = {**identity, "control_manifest_sha256": _stable_hash(identity)}
     _write_new_json(root / "control_manifest.json", manifest)
     return manifest
@@ -405,6 +411,428 @@ def _load_control(path: str | Path) -> dict[str, Any]:
         Path(str(payload["bsm_runtime_root"])) / "scripts"
     ) != payload.get("bsm_scripts_source_sha256"):
         raise ValueError("BSM controller source changed after initialization")
+    if "resolution_cache_evidence_root" in payload:
+        observed_cache = _resolution_cache_evidence_identity(
+            payload["resolution_cache_evidence_root"]
+        )
+        for field, value in observed_cache.items():
+            if payload.get(field) != value:
+                raise ValueError(
+                    "resolution cache evidence changed after initialization"
+                )
+    return payload
+
+
+def _resolution_cache_evidence_identity(
+    evidence_root: str | Path,
+) -> dict[str, Any]:
+    """Bind a preserved failure bundle without repeatedly hashing every artifact."""
+    root = Path(evidence_root).resolve()
+    sums = root / "SHA256SUMS"
+    sums_checksum = root / "SHA256SUMS.sha256"
+    if not root.is_dir() or not sums.is_file() or not sums_checksum.is_file():
+        raise ValueError("resolution cache evidence lacks SHA256SUMS identity files")
+    lines = [line for line in sums.read_text(encoding="utf-8").splitlines() if line]
+    expected = _sha256_path(sums)
+    checksum_fields = sums_checksum.read_text(encoding="utf-8").strip().split()
+    if checksum_fields != [expected, "SHA256SUMS"]:
+        raise ValueError("resolution cache evidence SHA256SUMS checksum differs")
+    if not lines:
+        raise ValueError("resolution cache evidence SHA256SUMS is empty")
+    return {
+        "resolution_cache_evidence_root": str(root),
+        "resolution_cache_sha256s_sha256": expected,
+        "resolution_cache_file_count": len(lines),
+    }
+
+
+def _load_resolution_cache_inventory(evidence_root: Path) -> dict[str, str]:
+    """Parse the preserved relative-path inventory and reject ambiguity."""
+    inventory: dict[str, str] = {}
+    for line_number, line in enumerate(
+        (evidence_root / "SHA256SUMS").read_text(encoding="utf-8").splitlines(),
+        start=1,
+    ):
+        if not line:
+            continue
+        fields = line.split(maxsplit=1)
+        if (
+            len(fields) != 2
+            or re.fullmatch(r"[0-9a-f]{64}", fields[0]) is None
+            or not fields[1].startswith("./")
+        ):
+            raise ValueError(
+                f"resolution cache inventory line {line_number} is malformed"
+            )
+        relative = fields[1][2:]
+        if relative in inventory:
+            raise ValueError("resolution cache inventory contains a duplicate path")
+        inventory[relative] = fields[0]
+    return inventory
+
+
+def _verified_cache_file(
+    evidence_root: Path, inventory: dict[str, str], relative_path: str
+) -> Path:
+    """Return one regular evidence file only after its preserved hash verifies."""
+    if relative_path not in inventory:
+        raise ValueError(f"resolution cache evidence omits {relative_path}")
+    path = (evidence_root / relative_path).resolve()
+    try:
+        path.relative_to(evidence_root)
+    except ValueError as exc:
+        raise ValueError(
+            "resolution cache inventory path escapes its evidence root"
+        ) from exc
+    if (
+        not path.is_file()
+        or path.is_symlink()
+        or _sha256_path(path) != inventory[relative_path]
+    ):
+        raise ValueError(f"resolution cache evidence file differs: {relative_path}")
+    return path
+
+
+_RESOLUTION_CACHE_SCIENCE_FIELDS = (
+    "stage",
+    "operation",
+    "fixture_kind",
+    "schedule_index",
+    "seed",
+    "base_draws",
+    "nested_schedule_draws",
+    "family_size",
+    "source_hash",
+    "config_hash",
+    "lock_hash",
+    "family_order_file_sha256",
+    "bsm_recovery_driver_sha256",
+    "bsm_dgp_contract_sha256",
+)
+
+
+def _promote_resolution_cache(
+    *, control: dict[str, Any], development: Any
+) -> dict[str, Any]:
+    """Promote verified completed score blocks into a fresh authorized run.
+
+    This performs no model fitting or permutation scoring. It reconstructs only
+    terminal JSON and standard atomic success wrappers from self-verifying score
+    artifacts whose complete scientific identity matches the fresh manifest.
+    """
+    from rfm_pipeline.campaign_contract import load_contract
+    from rfm_pipeline.hpc_campaign_package import (
+        load_stage_manifest,
+        validate_resume_artifacts,
+    )
+    from rfm_pipeline.interaction_contract import (
+        ScoreOnlyInteractionArtifact,
+        canonical_execution_contract_from_specs,
+        verify_control_snapshot,
+    )
+
+    root = Path(str(control["campaign_root"]))
+    promotion_path = root / "development" / "cache_promotion.json"
+    resolution_stages = [
+        stage for stage in development.stages if stage.name == "resolution"
+    ]
+    if len(resolution_stages) != 1:
+        raise ValueError("development package does not uniquely contain resolution")
+    stage = resolution_stages[0]
+    if promotion_path.is_file():
+        payload = json.loads(promotion_path.read_text(encoding="utf-8"))
+        identity = {
+            key: value for key, value in payload.items() if key != "promotion_sha256"
+        }
+        if payload.get("promotion_sha256") != _stable_hash(identity):
+            raise ValueError("resolution cache promotion record self-hash differs")
+        if validate_resume_artifacts(stage) != {
+            "completed": stage.job_count,
+            "failed": 0,
+            "pending": 0,
+        }:
+            raise ValueError("resolution cache promotion no longer has exact coverage")
+        return payload
+
+    authorization = root / "development" / "authorization.json"
+    submission = root / "development" / "submission.json"
+    if not authorization.is_file() or submission.exists():
+        raise ValueError(
+            "resolution cache promotion requires authorization before submission"
+        )
+    target_records = load_stage_manifest(stage.manifest_path)
+    if any(Path(record["output_dir"]).exists() for record in target_records):
+        raise ValueError("resolution cache target output already exists")
+
+    evidence_root = Path(str(control["resolution_cache_evidence_root"])).resolve()
+    inventory = _load_resolution_cache_inventory(evidence_root)
+    status_path = _verified_cache_file(evidence_root, inventory, "failure_status.json")
+    diagnosis_path = _verified_cache_file(
+        evidence_root, inventory, "failure_diagnosis.json"
+    )
+    accounting_path = _verified_cache_file(
+        evidence_root, inventory, "failure_accounting.json"
+    )
+    failure_status = json.loads(status_path.read_text(encoding="utf-8"))
+    diagnosis = json.loads(diagnosis_path.read_text(encoding="utf-8"))
+    accounting = json.loads(accounting_path.read_text(encoding="utf-8"))
+    if (
+        failure_status.get("status") != "STOPPED_AFTER_SCIENTIFIC_FAILURE"
+        or diagnosis.get("status") != "CONFIRMED_ROOT_CAUSE"
+        or diagnosis.get("worker_failures_with_identical_signature") != 20
+        or diagnosis.get("canonical_property") != "payload_sha256"
+        or accounting.get("status") != "REJECTED_SCIENTIFIC_ADAPTER_FAILURE_ACCOUNTED"
+        or accounting.get("telemetry_eligibility")
+        != "DIAGNOSTIC_ONLY_NEVER_REUSE_FOR_RESOURCE_SELECTION"
+    ):
+        raise ValueError(
+            "resolution cache evidence is not the accepted terminal failure bundle"
+        )
+
+    source_manifest_relative = (
+        "control_root/development_package/stages/resolution/manifest.jsonl"
+    )
+    source_manifest = _verified_cache_file(
+        evidence_root, inventory, source_manifest_relative
+    )
+    source_records = load_stage_manifest(source_manifest)
+    if len(source_records) != len(target_records) or len(target_records) != 20:
+        raise ValueError("resolution cache manifest coverage differs from the target")
+    source_by_shard = {str(record["shard_id"]): record for record in source_records}
+    target_by_shard = {str(record["shard_id"]): record for record in target_records}
+    if set(source_by_shard) != set(target_by_shard):
+        raise ValueError("resolution cache shard identities differ from the target")
+
+    source_adapter = _verified_cache_file(
+        evidence_root, inventory, "runtime_source/g11_campaign_adapter.py"
+    )
+    old_adapter_hashes = {
+        str(record["scientific_adapter_sha256"]) for record in source_records
+    }
+    if old_adapter_hashes != {_sha256_path(source_adapter)}:
+        raise ValueError("resolution cache source adapter differs from its manifest")
+    target_adapter_paths = {
+        Path(str(record["scientific_adapter_path"])) for record in target_records
+    }
+    target_adapter_hashes = {
+        str(record["scientific_adapter_sha256"]) for record in target_records
+    }
+    if len(target_adapter_paths) != 1 or len(target_adapter_hashes) != 1:
+        raise ValueError("target resolution manifest mixes adapter identities")
+    target_adapter_path = target_adapter_paths.pop()
+    target_adapter_hash = target_adapter_hashes.pop()
+    if _sha256_path(target_adapter_path) != target_adapter_hash:
+        raise ValueError("target resolution adapter differs from its manifest")
+    adapter_spec = importlib.util.spec_from_file_location(
+        f"_g11_resolution_cache_adapter_{target_adapter_hash}", target_adapter_path
+    )
+    if adapter_spec is None or adapter_spec.loader is None:
+        raise RuntimeError("could not load target resolution adapter")
+    adapter = importlib.util.module_from_spec(adapter_spec)
+    adapter_spec.loader.exec_module(adapter)
+
+    contract, contract_hash = load_contract(development.contract_config_path)
+    if contract_hash != development.config_hash:
+        raise ValueError("target resolution contract bytes differ")
+    pending_root = stage.output_root.parent / ".resolution-cache-promotion.pending"
+    if pending_root.exists():
+        raise ValueError("resolution cache promotion has a stale pending directory")
+    pending_root.mkdir(parents=True)
+    promoted: list[dict[str, Any]] = []
+    try:
+        for shard_id in sorted(target_by_shard):
+            source_record = source_by_shard[shard_id]
+            target_record = target_by_shard[shard_id]
+            differing = [
+                field
+                for field in _RESOLUTION_CACHE_SCIENCE_FIELDS
+                if source_record.get(field) != target_record.get(field)
+            ]
+            if differing:
+                raise ValueError(
+                    f"resolution cache scientific identity differs for {shard_id}: {differing}"
+                )
+            relative_source = (
+                f"scratch_run/stages/resolution/results/{shard_id}/"
+                "interaction_score_blocks"
+            )
+            source_scores = _verified_cache_file(
+                evidence_root,
+                inventory,
+                f"{relative_source}/score_only_interaction.npz",
+            )
+            source_metadata = _verified_cache_file(
+                evidence_root,
+                inventory,
+                f"{relative_source}/score_only_interaction.json",
+            )
+            artifact = ScoreOnlyInteractionArtifact.read_from(source_scores.parent)
+            interaction_spec = adapter._interaction_spec(
+                contract,
+                draws=int(target_record["nested_schedule_draws"]),
+                seed=int(target_record["seed"]),
+            )
+            verify_control_snapshot(
+                artifact.control_snapshot,
+                canonical_execution_contract_from_specs(interaction_spec),
+            )
+            terminal = adapter._resolution_terminal_from_artifact(
+                record=target_record,
+                artifact=artifact,
+                campaign_contract=contract,
+            )
+
+            pending_shard = pending_root / shard_id
+            pending_scores = pending_shard / "interaction_score_blocks"
+            pending_scores.mkdir(parents=True)
+            shutil.copy2(source_scores, pending_scores / source_scores.name)
+            shutil.copy2(source_metadata, pending_scores / source_metadata.name)
+            copied = ScoreOnlyInteractionArtifact.read_from(pending_scores)
+            if copied.payload_sha256 != artifact.payload_sha256:
+                raise ValueError("copied resolution cache payload differs")
+            target_shard = Path(str(target_record["output_dir"]))
+            cache_identity = {
+                "schema_version": 1,
+                "status": "VERIFIED_SCIENTIFIC_CACHE_PROMOTION",
+                "source_evidence_sha256s_sha256": control[
+                    "resolution_cache_sha256s_sha256"
+                ],
+                "source_manifest_sha256": _sha256_path(source_manifest),
+                "source_adapter_sha256": _sha256_path(source_adapter),
+                "target_adapter_sha256": target_adapter_hash,
+                "source_shard_id": shard_id,
+                "target_shard_id": shard_id,
+                "target_output_hash": target_record["output_hash"],
+                "score_payload_sha256": artifact.payload_sha256,
+                "source_npz_sha256": _sha256_path(source_scores),
+                "source_metadata_sha256": _sha256_path(source_metadata),
+                "scientific_compute_reused": True,
+                "failed_scheduler_telemetry_reused": False,
+            }
+            cache_provenance = {
+                **cache_identity,
+                "cache_provenance_sha256": _stable_hash(cache_identity),
+            }
+            (pending_shard / "cache_provenance.json").write_text(
+                json.dumps(cache_provenance, indent=2, sort_keys=True) + "\n",
+                encoding="utf-8",
+            )
+            (pending_shard / "terminal_record.json").write_text(
+                json.dumps(terminal, indent=2, sort_keys=True) + "\n",
+                encoding="utf-8",
+            )
+            artifact_rows = []
+            for artifact_path in sorted(
+                path for path in pending_shard.rglob("*") if path.is_file()
+            ):
+                relative = artifact_path.relative_to(pending_shard)
+                artifact_rows.append(
+                    {
+                        "path": str(target_shard / relative),
+                        "relative_path": relative.as_posix(),
+                        "sha256": _sha256_path(artifact_path),
+                        "bytes": artifact_path.stat().st_size,
+                    }
+                )
+            result = {
+                **terminal,
+                "terminal_record": str(target_shard / "terminal_record.json"),
+                "scientific_artifacts": artifact_rows,
+                "schema_version": 2,
+                "stage": target_record["stage"],
+                "shard_id": shard_id,
+                "input_hash": target_record["input_hash"],
+                "schedule_hash": target_record["schedule_hash"],
+                "elapsed_seconds": 0.0,
+                "total_cpu_seconds": 0.0,
+                "cpu_time_seconds": 0.0,
+                "max_rss_bytes": 0,
+                "bytes_read": 0,
+                "bytes_written": 0,
+                "task_size": int(target_record.get("task_size", 1)),
+                "block_size": int(target_record.get("block_size", 1)),
+                "executed_work_units": 0,
+                "profile_id": "verified-cache-promotion",
+                "partition": str(target_record.get("partition", "")),
+                "requested_cpus": int(
+                    target_record["worker_resources"]["requested_cpu_cores"]
+                ),
+                "requested_memory_gb": int(
+                    target_record["worker_resources"]["requested_memory_gb"]
+                ),
+                "requested_walltime_seconds": int(
+                    target_record["worker_resources"]["requested_walltime_seconds"]
+                ),
+                "status": "completed",
+                "attempt": int(target_record["attempt"]) + 1,
+                "hostname": "verified-cache-promotion",
+                "slurm_job_id": None,
+                "slurm_array_job_id": None,
+                "slurm_array_task_id": None,
+                "source_hash": target_record["source_hash"],
+                "config_hash": target_record["config_hash"],
+                "lock_hash": target_record["lock_hash"],
+                "parent_hash": target_record["parent_hash"],
+                "output_hash": target_record["output_hash"],
+                "cache_provenance": str(target_shard / "cache_provenance.json"),
+            }
+            result_path = pending_shard / "result.json"
+            result_path.write_text(
+                json.dumps(result, indent=2, sort_keys=True) + "\n",
+                encoding="utf-8",
+            )
+            marker = {
+                "schema_version": 2,
+                "stage": target_record["stage"],
+                "shard_id": shard_id,
+                "output_hash": target_record["output_hash"],
+                "artifact_sha256": _sha256_path(result_path),
+                "parent_hash": target_record["parent_hash"],
+                "attempt": int(target_record["attempt"]) + 1,
+                "status": "completed",
+            }
+            (pending_shard / "_SUCCESS.json").write_text(
+                json.dumps(marker, indent=2, sort_keys=True) + "\n",
+                encoding="utf-8",
+            )
+            promoted.append(
+                {
+                    "shard_id": shard_id,
+                    "score_payload_sha256": artifact.payload_sha256,
+                    "result_sha256": marker["artifact_sha256"],
+                    "target_output_hash": target_record["output_hash"],
+                }
+            )
+        stage.output_root.mkdir(parents=True, exist_ok=True)
+        for shard_id in sorted(target_by_shard):
+            (pending_root / shard_id).replace(
+                Path(str(target_by_shard[shard_id]["output_dir"]))
+            )
+    finally:
+        if pending_root.exists():
+            shutil.rmtree(pending_root)
+
+    summary = validate_resume_artifacts(stage)
+    if summary != {"completed": 20, "failed": 0, "pending": 0}:
+        raise ValueError("resolution cache promotion lacks exact completed coverage")
+    promotion_identity = {
+        "schema_version": 1,
+        "status": "RESOLUTION_CACHE_PROMOTED",
+        "run_id": development.run_id,
+        "authorization_sha256": _sha256_path(authorization),
+        "target_manifest_sha256": _sha256_path(stage.manifest_path),
+        "source_evidence_sha256s_sha256": control["resolution_cache_sha256s_sha256"],
+        "source_failure_accounting_sha256": _sha256_path(accounting_path),
+        "scientific_compute_reused": True,
+        "failed_scheduler_telemetry_reused": False,
+        "coverage": summary,
+        "promoted_shards": promoted,
+    }
+    payload = {
+        **promotion_identity,
+        "promotion_sha256": _stable_hash(promotion_identity),
+    }
+    _write_new_json(promotion_path, payload)
     return payload
 
 
@@ -1041,6 +1469,23 @@ def advance_campaign(
             raise ValueError("development budget guard is stale or differs")
     else:
         _write_new_json(development_paths["budget_guard"], development_guard)
+    if (
+        "resolution_cache_evidence_root" in control
+        and development_paths["authorization"].is_file()
+        and not development_paths["submission"].exists()
+    ):
+        promotion_was_absent = not (
+            development_paths["root"] / "cache_promotion.json"
+        ).is_file()
+        promotion = _promote_resolution_cache(
+            control=control,
+            development=development,
+        )
+        if promotion_was_absent:
+            return {
+                "status": "RESOLUTION_CACHE_PROMOTED",
+                "promoted_shards": len(promotion["promoted_shards"]),
+            }
     development_result = _advance_phase(
         dag=development,
         phase="development",
@@ -1177,6 +1622,13 @@ def main(argv: list[str] | None = None) -> int:
     initialize.add_argument("--remaining-au", required=True, type=int)
     initialize.add_argument("--allocation-quota-au", type=float, default=25_000.0)
     initialize.add_argument("--postprocessing-reserved-au", type=float, default=5.0)
+    initialize.add_argument(
+        "--resolution-cache-evidence-root",
+        help=(
+            "preserved failed-run bundle containing self-verifying completed "
+            "resolution score artifacts"
+        ),
+    )
 
     advance = commands.add_parser("advance", help="perform at most one safe transition")
     advance.add_argument("--control-manifest", required=True)
@@ -1222,6 +1674,7 @@ def main(argv: list[str] | None = None) -> int:
             remaining_au=args.remaining_au,
             allocation_quota_au=args.allocation_quota_au,
             postprocessing_reserved_au=args.postprocessing_reserved_au,
+            resolution_cache_evidence_root=args.resolution_cache_evidence_root,
         )
         print(json.dumps(result, sort_keys=True))
         return 0

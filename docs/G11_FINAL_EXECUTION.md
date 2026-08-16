@@ -14,6 +14,33 @@ refuses to overwrite evidence, and never advances past a failed scheduler job,
 failed reducer, failed calibration gate, failed applied-data gate, failed
 recovery gate, or campaign projection above 25,000 AUs.
 
+### Verified continuation after completed scientific work
+
+If a worker finishes an expensive, self-verifying score artifact but fails
+while writing its terminal JSON wrapper, preserve the failed run before making
+any repair. A fresh campaign may receive that preserved evidence through
+`initialize --resolution-cache-evidence-root`. The evidence root must contain
+the verified `SHA256SUMS`/`SHA256SUMS.sha256` pair, exact failed-run manifests,
+source snapshots, scheduler accounting, and copied score artifacts.
+
+The controller keeps the fresh development outputs empty through live
+preflight. After phase authorization and before submission, it then promotes
+the cache only when all 20 work units match on fixture, schedule index, seed,
+draw schedule, family order, RFM source, dependency lock, campaign contract,
+DGP, and recovery-driver identities. Every copied `ScoreOnlyInteractionArtifact`
+is loaded and verified against the fresh canonical execution contract. The
+controller reconstructs terminal records and atomic worker success wrappers,
+then submits the normal worker array. Those workers perform only complete-stage
+resume validation and exit; they do not repeat permutation scoring. The normal
+audit and reducer remain mandatory.
+
+Failed-job resource telemetry is never reused for profile selection or runtime
+forecasting. Only the completed scientific score bytes are reused, with a
+per-shard cache-provenance record. Later stages similarly retain valid atomic
+worker results across audit or reducer failures; recovery work must resubmit
+only inexpensive validation/terminalization around those retained artifacts,
+not their scientific kernels.
+
 ## Fixed execution order
 
 1. Close the completed 63-step accepted pilot from exact retained job IDs and
@@ -129,6 +156,19 @@ cd "${BSM_RUNTIME}"
   --allocation-quota-au 25000 \
   --postprocessing-reserved-au 5
 ```
+
+For the one authorized continuation of
+`g11-final-manuscript-20260815k`, also supply the preserved failure bundle and
+the exact cumulative rejected-attempt charge:
+
+```bash
+  --resolution-cache-evidence-root \
+    /projects/bsm/g11_failure_evidence/g11-final-manuscript-20260815k_scientific_adapter_failure_20260815T182652 \
+  --prior-sunk-au 311.08165064102566
+```
+
+That continuation is the only campaign allowed to use this cache. Its control
+manifest binds the evidence inventory before any package or scheduler action.
 
 `RFM_SCIENTIFIC` must be a clean detached checkout at
 `fd12fd579d8743bdc4acd00e1dac217cbfc56e84`, the source identity measured by
