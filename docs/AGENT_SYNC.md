@@ -10,6 +10,10 @@
   offline identity reconstruction. Cache promotion requires source and target
   `worker_resources` to match and uses the manifest's requested CPU count;
   ordinary workers retain the unchanged `SLURM_CPUS_PER_TASK` behavior.
+- Snapshot verification is loaded from the immutable scientific RFM checkout,
+  not the separately versioned controller checkout. This preserves the exact
+  implementation-tree and lock hashes that created the cached scores while
+  still using the newer controller only for orchestration.
 - The promotion regression deliberately makes the login environment differ
   from the manifest and proves all 20 cached shards validate and complete with
   zero scientific work units. Scientific methods and score bytes are unchanged.

@@ -9,11 +9,14 @@ Durable record of audit findings requiring follow-up. Newest first.
   login-node validator reconstructed `n_jobs=1` from its own environment.
 - **Root-cause correction:** cache validation now reconstructs the interaction
   contract from the manifest-bound requested CPU count and requires exact
-  source/target worker-resource equality. Worker execution remains driven by
-  `SLURM_CPUS_PER_TASK`; no scientific setting or cached byte is changed.
+  source/target worker-resource equality. It loads snapshot verification from
+  the immutable scientific RFM checkout rather than the newer controller tree.
+  Worker execution remains driven by `SLURM_CPUS_PER_TASK`; no scientific
+  setting or cached byte is changed.
 - **Acceptance criteria:** a deliberately mismatched login environment must
-  still validate 20 cache shards from their manifest resources, report zero
-  executed scientific work units, and fail if worker resources differ.
+  and controller source hash must still validate 20 cache shards from their
+  manifest resources and scientific runtime, report zero executed scientific
+  work units, and fail if worker resources differ.
 - **Disposition:** fixed in the cache-promotion path and regression-tested;
   exact Kestrel replay remains required before submission.
 

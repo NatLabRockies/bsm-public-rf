@@ -14,6 +14,7 @@ import pytest
 
 from scripts.g11_final_execution import (
     _development_phase_budget_guard,
+    _load_scientific_interaction_runtime,
     _prepare_artifact_job,
     _promote_resolution_cache,
     _resolution_cache_evidence_identity,
@@ -107,21 +108,31 @@ def test_completed_resolution_scores_promote_without_scientific_reexecution(
         fixed_family_pair_order,
         load_contract,
     )
-    from rfm_pipeline.interaction_contract import (
-        ScoreOnlyInteractionArtifact,
-        build_control_snapshot,
-        canonical_execution_contract_from_specs,
-    )
     import rfm_pipeline.interaction_contract as interaction_contract
 
     from scripts import g11_campaign_adapter as adapter
 
+    monkeypatch.setenv("SLURM_CPUS_PER_TASK", "1")
+
+    scientific_rfm_root = tmp_path / "scientific-rfm"
+    scientific_package = scientific_rfm_root / "src/rfm_pipeline"
+    scientific_package.mkdir(parents=True)
+    shutil.copy2(
+        Path(interaction_contract.__file__).resolve(),
+        scientific_package / "interaction_contract.py",
+    )
+    (scientific_rfm_root / "pixi.lock").write_text(
+        "test-only-scientific-lock\n", encoding="utf-8"
+    )
+    scientific_interaction = _load_scientific_interaction_runtime(scientific_rfm_root)
+    scientific_source_hash, scientific_lock_hash = (
+        scientific_interaction._current_source_and_lock_hashes()
+    )
     monkeypatch.setattr(
         interaction_contract,
         "_current_source_and_lock_hashes",
-        lambda: ("1" * 64, "2" * 64),
+        lambda: (scientific_source_hash, scientific_lock_hash),
     )
-    monkeypatch.setenv("SLURM_CPUS_PER_TASK", "1")
 
     contract_path = (
         Path(__file__).resolve().parents[1] / "configs/g11_campaign_contract.toml"
@@ -164,9 +175,9 @@ def test_completed_resolution_scores_promote_without_scientific_reexecution(
             seed=seed,
             n_jobs=4,
         )
-        canonical = canonical_execution_contract_from_specs(spec)
+        canonical = interaction_contract.canonical_execution_contract_from_specs(spec)
         selected_pairs = pair_order[: contract.resolution_family_size]
-        snapshot = build_control_snapshot(
+        snapshot = interaction_contract.build_control_snapshot(
             canonical,
             candidate_pair_names=selected_pairs,
             training_sample_ids=np.array(["row-0", "row-1"]),
@@ -177,7 +188,7 @@ def test_completed_resolution_scores_promote_without_scientific_reexecution(
         source_hash = snapshot.implementation_source_sha256
         lock_hash = snapshot.dependency_lock_sha256
         draws = contract.resolution_base_draws * contract.resolution_max_multiplier
-        artifact = ScoreOnlyInteractionArtifact(
+        artifact = interaction_contract.ScoreOnlyInteractionArtifact(
             status="score_only_completed",
             draw_range_start=0,
             draw_range_end=draws,
@@ -306,7 +317,16 @@ def test_completed_resolution_scores_promote_without_scientific_reexecution(
         run_id="g11-cache-continuation-test",
     )
     cache_identity = _resolution_cache_evidence_identity(evidence)
-    control = {"campaign_root": str(campaign_root), **cache_identity}
+    control = {
+        "campaign_root": str(campaign_root),
+        "rfm_repo_root": str(scientific_rfm_root),
+        **cache_identity,
+    }
+    monkeypatch.setattr(
+        interaction_contract,
+        "_current_source_and_lock_hashes",
+        lambda: ("9" * 64, "8" * 64),
+    )
 
     result = _promote_resolution_cache(
         control=control,
