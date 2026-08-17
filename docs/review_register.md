@@ -2,6 +2,31 @@
 
 Durable record of audit findings requiring follow-up. Newest first.
 
+## 2026-08-16 — Binary-only screens failed at the nonlinear stage
+
+- **Severity:** BLOCKER (seven Gate-B null tasks failed; downstream remained
+  held). A valid empirical screen can retain only the two-point binary inputs.
+  Such a support has no non-collinear supported nonlinear transformation, but
+  the pinned generic stage raised instead of emitting its vacuous terminal
+  result.
+- **Root-cause correction:** the campaign adapter intercepts only the exact
+  empty-family terminal, independently proves the supported candidate family
+  is empty, validates training/PCA invariants, and returns schema-complete
+  empty nonlinear artifacts. The patch is scoped to one worker call and always
+  restores the pinned generic function; all other exceptions fail closed.
+- **Evidence conservation:** 4,921 successful Gate-B results are retained
+  without mutation or rerun. Seven failed attempts and charged cancelled work
+  are diagnostic/accounting-only. A provenance-preserving continuation must
+  run exactly the 679 missing tasks and combine them with the original success
+  hashes under the corrected adapter/reducer identities.
+- **Acceptance criteria:** binary-only and scoped-restoration regressions pass;
+  the complete BSM suite passes; failed/cancelled AUs are added to campaign
+  accounting; the continuation preflight validates all 4,921 cached results;
+  all 5,600 Gate-B records finish with exact scheduler/artifact coverage before
+  a replacement audit/reducer or fixed-family work begins.
+- **Disposition:** code correction and local validation complete; deployment,
+  live failed-task replay, cache promotion, and continuation submission remain.
+
 ## 2026-08-16 — Undirected interaction pair order corrupted derived recovery metrics
 
 - **Severity:** BLOCKER (Gate-B power decision and manuscript recovery tables;

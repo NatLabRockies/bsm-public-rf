@@ -693,6 +693,78 @@ def test_campaign_adapter_uses_payload_identity_for_every_score_artifact() -> No
     assert "artifact.checksum" not in inspect.getsource(adapter)
 
 
+def test_campaign_adapter_terminalizes_binary_only_nonlinear_family() -> None:
+    """A binary-only retained screen is a valid empty nonlinear family."""
+    import pandas as pd
+    from rfm_pipeline.manuscript_stages import (
+        NonlinearDiscoverySpec,
+        discover_manuscript_nonlinear_transformations,
+    )
+    from rfm_pipeline.transforms import QUADRATIC
+
+    adapter = _load_adapter()
+    sample_ids = list(range(1, 41))
+    inputs = pd.DataFrame({"sample_id": sample_ids, "binary_0": [0.0, 1.0] * 20})
+    catalog = pd.DataFrame(
+        {"feature_name": ["binary_0"], "feature_type": ["first_order"]}
+    )
+    assignments = pd.DataFrame(
+        {"sample_id": sample_ids, "split": ["train"] * 32 + ["holdout"] * 8}
+    )
+    pca_scores = pd.DataFrame(
+        {"sample_id": sample_ids, "PC1": [float(index % 5) for index in sample_ids]}
+    )
+    retained = pd.DataFrame(
+        {"feature_name": ["binary_0"], "feature_type": ["first_order"]}
+    )
+    spec = NonlinearDiscoverySpec(
+        method="gam_plus_restricted_parametric_replacement",
+        curvature_rule="edf_gt_1_and_smooth_pvalue_lt_0p01",
+        replacement_selection_rule="minimum_training_rmse_against_gam_smooth",
+        identified_transformations_reference=0,
+        final_support_transformations_reference=0,
+        transform_library=[QUADRATIC],
+    )
+
+    result = adapter._discover_nonlinear_allow_empty_family(
+        discover_manuscript_nonlinear_transformations,
+        inputs,
+        catalog,
+        assignments,
+        pca_scores,
+        retained,
+        spec,
+    )
+
+    assert result.transformation_scores.empty
+    assert result.component_transformation_scores.empty
+    assert result.retained_transformations.empty
+    assert result.summary.loc[0, "status"] == "empty_candidate_family"
+
+
+def test_campaign_adapter_scopes_empty_family_rule_to_one_pipeline_call(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    import rfm_pipeline.recovery_study as recovery_study
+
+    adapter = _load_adapter()
+    original = recovery_study.discover_manuscript_nonlinear_transformations
+    sentinel = object()
+    monkeypatch.setattr(
+        adapter,
+        "_discover_nonlinear_allow_empty_family",
+        lambda discover, *args, **kwargs: sentinel,
+    )
+
+    class Driver:
+        @staticmethod
+        def run_pipeline():
+            return recovery_study.discover_manuscript_nonlinear_transformations()
+
+    assert adapter._run_pipeline_allowing_empty_nonlinear_family(Driver()) is sentinel
+    assert recovery_study.discover_manuscript_nonlinear_transformations is original
+
+
 def test_campaign_adapter_scores_interaction_pairs_without_direction() -> None:
     adapter = _load_adapter()
 

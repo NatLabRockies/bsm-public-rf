@@ -1,5 +1,29 @@
 # Agent Sync
 
+## SESSION STATE — 2026-08-16 — Binary-only nonlinear terminalization
+
+- Canonical `sacct --array` review found seven Gate-B null tasks in
+  `FAILED/1:0`: `4040`, `4054`, `4124`, `4220`, `4304`, `4466`, and `4467`.
+  Each failed after empirical screening legitimately retained only binary
+  first-order terms; the generic nonlinear stage then rejected the resulting
+  empty supported-transform family. The controller and all Gate-B/downstream
+  jobs were stopped, and failure evidence was preserved under the campaign
+  control root.
+- The 4,921 exact completed worker results remain scientifically valid and
+  immutable. The continuation must submit only the 679 missing tasks, must not
+  reuse the seven failed jobs' telemetry, and must retain the corrected
+  undirected-pair reducer from the preceding review finding.
+- The adapter now scopes a reviewed `empty_candidate_family` terminal result
+  to this exact valid condition, revalidates the candidate family, training
+  rows, component columns, and active-component variance, and restores the
+  pinned generic function after each worker call. Unrelated errors still
+  propagate. A matching generic RFM correction is maintained separately for
+  future source identities; this continuation keeps the accepted worker RFM
+  identity and changes only the content-addressed adapter.
+- Focused adapter regressions and the complete BSM suite pass (123 tests).
+  Clean deployment, exact failed/cancelled AU accounting, continuation-cache
+  audit, missing-task submission, and live completion remain required.
+
 ## SESSION STATE — 2026-08-16 — Undirected interaction recovery bookkeeping
 
 - A live read-only audit of the first 1,817 completed Gate-B records found
