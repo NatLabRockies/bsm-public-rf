@@ -2263,6 +2263,126 @@ def _execute_applied_work_unit(
     return handler(record, shard_dir, campaign_contract)
 
 
+def _discover_nonlinear_allow_empty_family(
+    discover: Any,
+    input_matrix: Any,
+    feature_catalog: Any,
+    holdout_assignments: Any,
+    pca_scores: Any,
+    retained_terms: Any,
+    spec: Any,
+    **kwargs: Any,
+) -> Any:
+    """Return a terminal empty result when a valid screen has no nonlinear family."""
+    empty_family_error: ValueError | None = None
+    try:
+        return discover(
+            input_matrix,
+            feature_catalog,
+            holdout_assignments,
+            pca_scores,
+            retained_terms,
+            spec,
+            **kwargs,
+        )
+    except ValueError as exc:
+        if (
+            str(exc)
+            != "feature_catalog does not contain supported nonlinear candidates."
+        ):
+            raise
+        empty_family_error = exc
+
+    import pandas as pd
+    from rfm_pipeline.manuscript_stages import (
+        NonlinearDiscoveryResult,
+        _align_table_by_sample_id,
+        _build_nonlinear_discovery_summary,
+        _build_nonlinear_provenance,
+        _component_columns,
+        _generate_supported_nonlinear_candidates,
+        _retained_first_order_term_names,
+        _standardize_for_screening,
+        _train_sample_ids,
+    )
+
+    candidates = _generate_supported_nonlinear_candidates(
+        _retained_first_order_term_names(retained_terms, input_matrix),
+        input_matrix,
+        transform_library=spec.transform_library,
+    )
+    if candidates:
+        raise ValueError(
+            "nonlinear discovery raised the empty-family terminal error for a non-empty family"
+        ) from empty_family_error
+    component_names = _component_columns(pca_scores)
+    train_ids = _train_sample_ids(holdout_assignments)
+    y_train = _align_table_by_sample_id(
+        pca_scores, train_ids, component_names, "PCA scores"
+    )
+    if len(y_train) < 3:
+        raise ValueError("Nonlinear discovery requires at least three training rows.")
+    _, component_active = _standardize_for_screening(y_train)
+    if not component_active.any():
+        raise ValueError("All retained PCA components have zero training variance.")
+
+    score_columns = [
+        "feature_name",
+        "base_feature",
+        "transformation_family",
+        "curvature_score",
+        "gam_p_value",
+        "best_component",
+        "replacement_training_rmse",
+        "active_transform",
+        "empirical_null_retained",
+        "retained",
+        "curvature_rule",
+        "replacement_selection_rule",
+    ]
+    empty_scores = pd.DataFrame(columns=score_columns)
+    summary = _build_nonlinear_discovery_summary(
+        n_training_rows=len(y_train),
+        n_candidate_transformations=0,
+        n_active_transformations=0,
+        n_empirical_null_retained_transformations=0,
+        n_retained_transformations=0,
+        n_components=len(component_names),
+        max_curvature_score=0.0,
+        spec=spec,
+    )
+    summary.insert(1, "status", "empty_candidate_family")
+    return NonlinearDiscoveryResult(
+        transformation_scores=empty_scores,
+        component_transformation_scores=pd.DataFrame(
+            columns=["feature_name", "component", "smooth_edf", "gam_p_value"]
+        ),
+        retained_transformations=empty_scores.copy(),
+        provenance=_build_nonlinear_provenance(spec),
+        summary=summary,
+    )
+
+
+def _run_pipeline_allowing_empty_nonlinear_family(
+    driver: ModuleType, *args: Any, **kwargs: Any
+) -> Any:
+    """Run one recovery replicate with the reviewed empty-family terminal rule."""
+    import rfm_pipeline.recovery_study as recovery_study
+
+    original = recovery_study.discover_manuscript_nonlinear_transformations
+
+    def _discover(*call_args: Any, **call_kwargs: Any) -> Any:
+        return _discover_nonlinear_allow_empty_family(
+            original, *call_args, **call_kwargs
+        )
+
+    recovery_study.discover_manuscript_nonlinear_transformations = _discover
+    try:
+        return driver.run_pipeline(*args, **kwargs)
+    finally:
+        recovery_study.discover_manuscript_nonlinear_transformations = original
+
+
 def execute_scientific_work_unit(
     record: dict[str, Any], shard_dir: Path
 ) -> dict[str, Any]:
@@ -2355,7 +2475,8 @@ def execute_scientific_work_unit(
         raise ValueError(
             "manifest recovery comparator population differs from the contract"
         )
-    result = driver.run_pipeline(
+    result = _run_pipeline_allowing_empty_nonlinear_family(
+        driver,
         data,
         dgp_contract,
         campaign_contract_path=Path(str(campaign_contract_path)),
