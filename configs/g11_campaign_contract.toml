@@ -1,9 +1,15 @@
-schema_version = "g11_campaign_contract_v9"
+schema_version = "g11_campaign_contract_v10"
 generation = 11
 gate = "G0"
 status = "FROZEN"
-contract_hash = "cabe66991b7724a16e2d96056ce245c904cf934236c5f05bbce12d35fa9f3961"
+contract_hash = "66f9a7fb702c0726c464393f7c153001846510d891a75ccb2c1d48b467375c24"
 method_name = "max_stat_adjusted_p_mc"
+interaction_detector_method = "type_aware_tree_shap_binary_factorial"
+family_partition_method = "bonferroni_partitioned_max_stat"
+tree_family_alpha = 0.025
+binary_binary_family_alpha = 0.025
+binary_binary_method = "studentized_factorial_contrast_hc3"
+binary_binary_minimum_cell_count = 2
 B_screen = 3199
 B_interaction = 999
 alpha = 0.05
@@ -37,7 +43,7 @@ boosted_tree_candidate_grid = [[100, 2, 0.05], [250, 3, 0.05]]
 boosted_tree_response_components = 4
 comparator_tuning_metric = "training_cv_macro_nrmse"
 comparator_failure_action = "terminal_failure_no_retry"
-artifact_schema_version = 2
+artifact_schema_version = 3
 
 [[terminal_row_schema]]
 name = "scenario"

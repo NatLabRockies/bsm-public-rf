@@ -1,5 +1,31 @@
 # Agent Sync
 
+## SESSION STATE — 2026-08-18 — Prospective Gate-B BB factorial correction
+
+- The completed development Gate B passed all five null regimes and recovered
+  200/200 strong continuous--continuous and 200/200 strong binary--continuous
+  interactions, but canonical strong binary--binary recovery was 103/200
+  (power 0.515; one-sided 95% Wilson lower 0.4570604894), below the frozen 0.80
+  gate. Downstream execution remains blocked.
+- The root cause is a detector mismatch: after additive conditioning, the
+  planted binary--binary signal is a parity contrast with zero population
+  marginal split gain. The correction retains TreeSHAP for continuous--
+  continuous and binary--continuous pairs and assigns binary--binary pairs to
+  a studentized HC3 saturated 2x2 factorial contrast.
+- The G11-v10 contract freezes separate maxT families at alpha 0.025 and 0.025,
+  requires all four BB cells with at least two rows per cell, and increments
+  the scientific artifact schema to 3. Detector identity is persisted and
+  hashed for every pair; old score artifacts cannot be reduced as corrected
+  evidence.
+- The prior 5,600-task run remains immutable development/ablation evidence. A
+  fresh 5,600-task Gate-B confirmation on new contract-derived seeds is
+  mandatory after clean-code validation and a separate AU review. No job is
+  submitted by this implementation slice, and no later stage may start before
+  that confirmation passes.
+- Manuscript method wording and the complete internal amendment are maintained
+  in the paired manuscript worktree. All numerical results remain provisional
+  until corrected Gate B and its dependent stages are regenerated.
+
 ## SESSION STATE — 2026-08-16 — Binary-only nonlinear terminalization
 
 - Canonical `sacct --array` review found seven Gate-B null tasks in

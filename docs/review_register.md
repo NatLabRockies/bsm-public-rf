@@ -2,6 +2,35 @@
 
 Durable record of audit findings requiring follow-up. Newest first.
 
+## 2026-08-18 — TreeSHAP is underpowered for the strong BB parity regime
+
+- **Severity:** BLOCKER (canonical Gate-B power gate; all downstream analysis
+  remains stopped). The complete development run recovered only 103/200 strong
+  binary--binary interactions, with a one-sided 95% Wilson lower bound of
+  0.4570604894 versus the frozen 0.80 gate.
+- **Root cause:** after additive main-effect conditioning, the two binary
+  predictors form a pure 2x2 parity contrast. Greedy tree splitting has zero
+  population marginal gain at the first split, so TreeSHAP interaction scores
+  are driven by noise-induced splits even though the planted interaction is
+  strong and the four-cell design is balanced.
+- **Correction:** assign detector identity from the training design; retain
+  TreeSHAP for CC/BC pairs and use the absolute HC3-studentized saturated 2x2
+  interaction coefficient for BB pairs. Apply shared-response maxT separately
+  at 0.025 within each detector family, preserving an overall 0.05 bound by the
+  union bound. Require all four cells and at least two rows per cell.
+- **Evidence conservation:** preserve all prior results as development and
+  ablation evidence, but do not reuse them as confirmation after this
+  data-informed method change. Earlier data/interface/Gate-A work remains
+  valid. A new Gate B uses new contract-derived seeds and no downstream work
+  begins before it passes.
+- **Acceptance criteria:** focused statistic, invariance, adequacy, partitioned
+  maxT, artifact identity, distributed reduction, and adapter tests pass; full
+  repository gates pass; clean runtime hashes and an exact AU estimate are
+  audited; then a fresh 5,600-task Gate B passes all null and power rules.
+- **Disposition:** prospective code/config/manuscript correction implemented in
+  isolated worktrees; full validation, clean revision publication, AU review,
+  and confirmation submission remain.
+
 ## 2026-08-16 — Binary-only screens failed at the nonlinear stage
 
 - **Severity:** BLOCKER (seven Gate-B null tasks failed; downstream remained

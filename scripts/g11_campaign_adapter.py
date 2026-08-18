@@ -122,8 +122,8 @@ def _interaction_spec(
     if resolved_n_jobs <= 0:
         raise ValueError("interaction worker count must be positive")
     return InteractionDiscoverySpec(
-        method="tree_shap_interaction_values",
-        aggregation_rule="max_over_components_of_mean_absolute_shap_interaction",
+        method=campaign_contract.interaction_detector_method,
+        aggregation_rule="max_over_components_by_detector",
         null_threshold_quantile=0.995,
         retained_pairs_reference=0,
         permutation_count_B=draws,
@@ -132,6 +132,13 @@ def _interaction_spec(
         n_jobs=resolved_n_jobs,
         selection_method=campaign_contract.method_name,
         selection_alpha=campaign_contract.alpha,
+        family_partition_method=campaign_contract.family_partition_method,
+        tree_family_alpha=campaign_contract.tree_family_alpha,
+        binary_binary_family_alpha=campaign_contract.binary_binary_family_alpha,
+        binary_binary_method=campaign_contract.binary_binary_method,
+        binary_binary_minimum_cell_count=(
+            campaign_contract.binary_binary_minimum_cell_count
+        ),
         minimum_selection_draws=campaign_contract.B_interaction,
     )
 

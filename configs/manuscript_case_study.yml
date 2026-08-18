@@ -68,19 +68,24 @@ case_study:
     bh_q_screen: 0.05
 
   interaction_discovery:
-    method: tree_shap_interaction_values
-    aggregation_rule: max_over_components_of_mean_absolute_shap_interaction
+    method: type_aware_tree_shap_binary_factorial
+    aggregation_rule: max_over_components_by_detector
     aggregation_rule_status: frozen_repo_decision
-    public_implementation_method: tree_shap_gradient_boosting
-    public_implementation_status: manuscript_aligned
-    source_workflow_reference: private_tree_shap_interaction_workflow
-    source_workflow_equivalence_status: manuscript_aligned_via_shap_gradient_boosting
+    public_implementation_method: type_aware_tree_shap_and_binary_factorial
+    public_implementation_status: prospective_gate_b_correction
+    source_workflow_reference: gate_b_binary_factorial_method_amendment
+    source_workflow_equivalence_status: confirmation_required_on_new_gate_b_seeds
+    family_partition_method: bonferroni_partitioned_max_stat
+    tree_family_alpha: 0.025
+    binary_binary_family_alpha: 0.025
+    binary_binary_method: studentized_factorial_contrast_hc3
+    binary_binary_minimum_cell_count: 2
     null_threshold_quantile: 0.995
     # --- G0/B pre-execution interaction settings ---
     # The neutral adjusted-p selector and its draw floor are bound by
     # configs/method_contract.yaml before any later execution gate.
-    family_error_method: max_stat_adjusted_p_mc
-    family_error_alpha: 0.05
+    selection_method: max_stat_adjusted_p_mc
+    selection_alpha: 0.05
     permutation_count_B: 999
     minimum_selection_draws: 999
     permutation_count_source: g11_campaign_contract

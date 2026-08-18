@@ -112,6 +112,27 @@ def _terminal_record(
     )
 
 
+def test_gate_b_adapter_uses_type_aware_binary_factorial_contract() -> None:
+    """The campaign adapter must not fall back to TreeSHAP for BB pairs."""
+    from rfm_pipeline.campaign_contract import G11_CONTRACT
+
+    adapter = _load_adapter()
+    spec = adapter._interaction_spec(
+        G11_CONTRACT,
+        draws=G11_CONTRACT.B_interaction,
+        seed=20260818,
+        n_jobs=1,
+    )
+
+    assert spec.method == "type_aware_tree_shap_binary_factorial"
+    assert spec.aggregation_rule == "max_over_components_by_detector"
+    assert spec.family_partition_method == "bonferroni_partitioned_max_stat"
+    assert spec.tree_family_alpha == pytest.approx(0.025)
+    assert spec.binary_binary_family_alpha == pytest.approx(0.025)
+    assert spec.binary_binary_method == "studentized_factorial_contrast_hc3"
+    assert spec.binary_binary_minimum_cell_count == 2
+
+
 def test_pinned_control_snapshot_reconciles_with_contract(driver, contract):
     snapshot = driver.verify_pinned_control_snapshot(contract)
 
