@@ -368,3 +368,23 @@
   diff checks pass on modified surfaces. Remaining work is content-addressed
   commit/push, RFM config repin, clean Kestrel deployment, independent no-submit
   audit, cache promotion, and continuation submission/monitoring.
+
+## SESSION STATE — 2026-08-19 — downstream continuation readiness repair
+
+- The paired RFM generator is pinned to fully validated commit
+  `a3bcbaa389bc7a708ca644f4e95f9b9268407e21`. Its downstream-only package mode omits Gate B,
+  starts at the approved 200-replicate fixed-family supplement, binds every phase authorization
+  to the exact submission-plan hash, and admits the remaining workflow using exact completed AUs
+  plus the shared 20% reserve on only unexecuted work and the five-AU publication reserve.
+- `g11_campaign_workflow.py` can carry a passing 5,600-record Gate-B decision across the signed
+  publication amendment only when `fixed_family_replicates: 1000 -> 200` is the sole contract
+  change. The adoption record binds the old/new contract identities, source decision file hash,
+  amendment hash, exact record count, and its own canonical hash. Fixed-family is now a distinct
+  authorization phase whose only prerequisite is that adoption record.
+- Updating the RFM pin exposed an environment defect: the rejected-history G0/B contract bound
+  its generic commit and lock checksum to the former live Pixi environment. The contract, lock,
+  and deterministic seed ledger were advanced together following the repository's established
+  pin-update convention; this changes no active Gate-B seed, schedule, model, result, or submitted
+  job. The regenerated Pixi lock installs the exact repaired RFM commit.
+- Validation passes: scoped Ruff format/lint, lock installation, exact installed-package smoke,
+  and all 126 BSM tests. No downstream scheduler job was submitted.

@@ -2238,6 +2238,7 @@ def _verify_execution_authorization(
     expected_prerequisites = {
         "development": set(),
         "gate_b": {"resolution"},
+        "fixed_family": {"gate_b"},
         "gate_p": {"gate_b", "fixed_family_supplement"},
         "gate_c": {"gate_b", "fixed_family_supplement", "applied_bootstrap"},
     }[phase]

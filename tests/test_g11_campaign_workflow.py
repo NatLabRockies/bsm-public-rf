@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 import subprocess
-from dataclasses import asdict
+from dataclasses import asdict, replace
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -16,17 +16,21 @@ from scripts.g11_campaign_workflow import (
     _stable_hash,
     _validate_phase_manifest_authorization_paths,
     augment_resource_freeze_accounting,
+    adopt_gate_b_decision_for_downstream,
     build_campaign_budget_certificate,
     build_development_admission_guard,
+    build_downstream_budget_certificate,
     build_publication_contract_amendment,
     main,
     prepare_development_package,
+    prepare_downstream_package,
     prepare_final_package,
     submit_authorized_phase,
     validate_completed_submission_record,
     validate_phase_budget_guard,
     validate_scheduler_completion,
     validate_scheduler_completion_accounting,
+    write_gate_b_adoption,
 )
 
 
@@ -531,6 +535,222 @@ def test_publication_amendment_changes_only_fixed_family_replicates() -> None:
         "or later incremental expansion"
     )
     assert len(amendment["contract_amendment_sha256"]) == 64
+
+
+def test_gate_b_pass_is_adopted_only_across_fixed_family_count_amendment() -> None:
+    from rfm_pipeline.campaign_contract import G11_CONTRACT, compute_contract_hash
+
+    publication, amendment = build_publication_contract_amendment(G11_CONTRACT)
+    new_hash = compute_contract_hash(publication)
+    amendment_identity = {
+        key: value
+        for key, value in amendment.items()
+        if key != "contract_amendment_sha256"
+    }
+    amendment_identity["selected_contract_hash"] = new_hash
+    amendment = {
+        **amendment_identity,
+        "contract_amendment_sha256": _stable_hash(amendment_identity),
+    }
+    original = {
+        "operation": "gate_b",
+        "status": "completed",
+        "decision": "PASS",
+        "contract_hash": compute_contract_hash(G11_CONTRACT),
+        "terminal_record_count": 5600,
+    }
+
+    adopted = adopt_gate_b_decision_for_downstream(
+        gate_b_decision=original,
+        gate_b_decision_sha256="a" * 64,
+        amendment=amendment,
+    )
+
+    assert adopted["operation"] == "gate_b"
+    assert adopted["decision"] == "PASS"
+    assert adopted["contract_hash"] == new_hash
+    assert adopted["adopted_from_contract_hash"] == original["contract_hash"]
+    assert adopted["adopted_gate_b_decision_sha256"] == "a" * 64
+    identity = {
+        key: value for key, value in adopted.items() if key != "adoption_sha256"
+    }
+    assert adopted["adoption_sha256"] == _stable_hash(identity)
+
+
+def test_gate_b_adoption_writer_hashes_exact_decision_bytes(tmp_path: Path) -> None:
+    from rfm_pipeline.campaign_contract import G11_CONTRACT, compute_contract_hash
+
+    publication, amendment = build_publication_contract_amendment(G11_CONTRACT)
+    amendment_identity = {
+        key: value
+        for key, value in amendment.items()
+        if key != "contract_amendment_sha256"
+    }
+    amendment_identity["selected_contract_hash"] = compute_contract_hash(publication)
+    amendment = {
+        **amendment_identity,
+        "contract_amendment_sha256": _stable_hash(amendment_identity),
+    }
+    amendment_path = tmp_path / "amendment.json"
+    amendment_path.write_text(json.dumps(amendment), encoding="utf-8")
+    decision = {
+        "operation": "gate_b",
+        "status": "completed",
+        "decision": "PASS",
+        "contract_hash": compute_contract_hash(G11_CONTRACT),
+        "terminal_record_count": 5600,
+    }
+    decision_path = tmp_path / "gate_b_decision.json"
+    decision_path.write_text(json.dumps(decision), encoding="utf-8")
+    output = tmp_path / "gate_b_adoption.json"
+
+    adopted = write_gate_b_adoption(
+        gate_b_decision_path=decision_path,
+        amendment_path=amendment_path,
+        output_path=output,
+    )
+
+    import hashlib
+
+    assert (
+        adopted["adopted_gate_b_decision_sha256"]
+        == hashlib.sha256(decision_path.read_bytes()).hexdigest()
+    )
+    assert json.loads(output.read_text(encoding="utf-8")) == adopted
+
+
+def test_downstream_budget_certificate_reserves_only_unexecuted_work() -> None:
+    certificate = build_downstream_budget_certificate(
+        run_id="g11-final",
+        completed_observed_au=5_000.25,
+        remaining_downstream_estimated_au=20_000.1,
+        postprocessing_reserved_au=5.0,
+        allocation_quota_au=30_000.0,
+        resource_freeze_sha256="a" * 64,
+        campaign_inventory_hash="b" * 64,
+        contract_amendment_sha256="c" * 64,
+    )
+
+    assert (
+        certificate["remaining_downstream_requested_au_with_shared_reserve"] == 24_001
+    )
+    assert certificate["whole_campaign_projected_au"] == pytest.approx(29_006.25)
+    assert certificate["shared_reserve_fraction_on_unexecuted_downstream_work"] == 0.20
+
+    with pytest.raises(ValueError, match="allocation ceiling"):
+        build_downstream_budget_certificate(
+            run_id="g11-final",
+            completed_observed_au=6_000.0,
+            remaining_downstream_estimated_au=20_000.1,
+            postprocessing_reserved_au=5.0,
+            allocation_quota_au=30_000.0,
+            resource_freeze_sha256="a" * 64,
+            campaign_inventory_hash="b" * 64,
+            contract_amendment_sha256="c" * 64,
+        )
+
+
+def test_downstream_package_omits_gate_b_and_binds_exact_completed_spend(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import rfm_pipeline.hpc_campaign_package as hpc
+    from rfm_pipeline.campaign_contract import (
+        G11_CONTRACT,
+        compute_contract_hash,
+        render_contract_toml,
+    )
+
+    repo = tmp_path / "rfm"
+    (repo / "src" / "rfm_pipeline").mkdir(parents=True)
+    (repo / "pixi.lock").write_text("lock", encoding="utf-8")
+    config = tmp_path / "campaign.yml"
+    config.write_text("config", encoding="utf-8")
+    base_contract = replace(
+        G11_CONTRACT,
+        B_interaction=999,
+        resolution_decision_sha256="f" * 64,
+    )
+    contract_path = tmp_path / "gate_b_contract.toml"
+    contract_path.write_text(
+        render_contract_toml(
+            base_contract,
+            compute_contract_hash(base_contract),
+            gate="HPC",
+            status="NO_SUBMIT",
+        ),
+        encoding="utf-8",
+    )
+    freeze_path = tmp_path / "resource_freeze.json"
+    freeze = {
+        "status": "ACCEPTED",
+        "source_hash": "a" * 64,
+        "config_hash": compute_contract_hash(base_contract),
+        "lock_hash": "b" * 64,
+        "resource_freeze_sha256": "c" * 64,
+    }
+    freeze_path.write_text(json.dumps(freeze), encoding="utf-8")
+    monkeypatch.setattr(hpc, "_validate_resource_freeze", lambda _freeze: None)
+    monkeypatch.setattr(hpc, "_hash_python_tree", lambda _path: "a" * 64)
+    monkeypatch.setattr(
+        hpc,
+        "_load_campaign_config",
+        lambda _path: {"cluster": {"allocation_quota": "30000"}},
+    )
+
+    def fake_hash(path: Path) -> str:
+        return "b" * 64 if Path(path).name == "pixi.lock" else "d" * 64
+
+    monkeypatch.setattr(hpc, "_hash_file", fake_hash)
+    observed: dict[str, object] = {}
+
+    def fake_generate(**kwargs: object) -> SimpleNamespace:
+        observed.update(kwargs)
+        output = Path(str(kwargs["output_dir"]))
+        (output / "contract").mkdir(parents=True)
+        contract = kwargs["contract"]
+        return SimpleNamespace(
+            run_id="g11-final",
+            config_hash=compute_contract_hash(contract),
+            campaign_inventory_hash="e" * 64,
+            campaign_envelope=SimpleNamespace(
+                stage_allocations=(
+                    SimpleNamespace(
+                        stage_name="fixed_family_supplement", estimated_au=100.0
+                    ),
+                    SimpleNamespace(stage_name="recovery", estimated_au=200.0),
+                )
+            ),
+        )
+
+    monkeypatch.setattr(hpc, "generate_campaign_package", fake_generate)
+    output = tmp_path / "downstream"
+    certificate_path = tmp_path / "downstream_budget.json"
+
+    dag, certificate = prepare_downstream_package(
+        output_dir=output,
+        resource_freeze_path=freeze_path,
+        gate_b_contract_path=contract_path,
+        repo_root=repo,
+        config_path=config,
+        completed_observed_au=500.0,
+        allocation_quota_au=30_000.0,
+        postprocessing_reserved_au=5.0,
+        budget_certificate_path=certificate_path,
+    )
+
+    assert observed["package_mode"] == "downstream"
+    assert observed["completed_observed_au_for_admission"] == 500.0
+    assert observed["postprocessing_reserved_au_for_admission"] == 5.0
+    assert observed["contract"].fixed_family_replicates == 200
+    assert certificate["remaining_downstream_estimated_au"] == 300.0
+    assert certificate["remaining_downstream_requested_au_with_shared_reserve"] == 360
+    amendment = json.loads(
+        (output / "contract" / "fixed_family_amendment.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert amendment["selected_contract_hash"] == dag.config_hash
+    assert certificate_path.is_file()
 
 
 def test_development_package_requests_resolution_only_mode(

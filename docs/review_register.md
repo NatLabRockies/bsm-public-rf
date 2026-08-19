@@ -606,3 +606,21 @@ ______________________________________________________________________
 - Blocks submission: yes until the clean revisions are deployed and the fresh
   continuation passes those live gates. The failed run and its job telemetry
   remain ineligible scientific/resource-selection evidence.
+
+## REVIEW-0015 — Downstream package and environment were not executable
+
+- Date: 2026-08-19
+- Severity: P0 / post-Gate-B execution availability and provenance
+- Status: fixed and locally validated; clean Kestrel deployment/dry-run pending
+- Evidence: the stale package included 1,000 fixed-family tasks and projected 48,414.674145 AUs,
+  while schema-v2 phase authorizations omitted the exact submission-plan hash required by the
+  worker. The paired BSM environment also pinned RFM `58f3066`, which lacked the repaired
+  downstream authorization contract used by the active corrected Gate B.
+- Resolution: pin RFM `a3bcbaa389bc7a708ca644f4e95f9b9268407e21`, regenerate `pixi.lock`,
+  rebind the rejected-history development contract and deterministic seed ledger under the
+  repository's established pin-update rule, add an independently hashed Gate-B adoption bridge,
+  and authorize the 200-task supplement as its own `fixed_family` phase. The RFM generator now
+  creates a downstream-only DAG with no Gate-B workers and rejects authorization/plan drift before
+  any scheduler call.
+- Validation: exact locked install, installed-package import smoke, scoped Ruff format/lint, and
+  all 126 BSM tests pass. No scientific or downstream job was submitted by this repair.

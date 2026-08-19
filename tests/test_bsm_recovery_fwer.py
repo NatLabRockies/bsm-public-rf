@@ -587,6 +587,40 @@ def test_execution_authorization_requires_submission_plan_binding(
     assert observed["submission_plan_sha256"] == "6" * 64
 
 
+def test_fixed_family_authorization_requires_adopted_gate_b_prerequisite(
+    driver, tmp_path: Path
+) -> None:
+    identity = {
+        "schema_version": 2,
+        "status": "ACCEPTED",
+        "phase": "fixed_family",
+        "run_id": "g11-downstream",
+        "contract_hash": "1" * 64,
+        "source_hash": "2" * 64,
+        "lock_hash": "3" * 64,
+        "campaign_inventory_hash": "4" * 64,
+        "preflight_sha256": "5" * 64,
+        "submission_plan_sha256": "6" * 64,
+        "prerequisite_sha256": {"gate_b": "8" * 64},
+        "execution_permitted": True,
+        "resource_freeze_sha256": "7" * 64,
+    }
+    authorization = {
+        **identity,
+        "authorization_sha256": driver._sha256_bytes(driver._canonical_json(identity)),
+    }
+    path = tmp_path / "authorization.json"
+    path.write_text(json.dumps(authorization), encoding="utf-8")
+
+    observed = driver._verify_execution_authorization(
+        path,
+        contract_hash="1" * 64,
+        phase="fixed_family",
+    )
+
+    assert observed["prerequisite_sha256"] == {"gate_b": "8" * 64}
+
+
 def test_future_production_adapter_is_explicit_and_has_no_local_fallback(driver):
     source = inspect.getsource(driver.run_pipeline)
     assert "run_production_recovery_pipeline" in source

@@ -494,6 +494,78 @@ def build_publication_contract_amendment(
     }
 
 
+def adopt_gate_b_decision_for_downstream(
+    *,
+    gate_b_decision: dict[str, Any],
+    gate_b_decision_sha256: str,
+    amendment: dict[str, Any],
+) -> dict[str, Any]:
+    """Carry a Gate-B PASS across the sole fixed-family-count amendment.
+
+    Gate B does not read ``fixed_family_replicates``.  This bridge is valid
+    only when that count is the amendment's sole changed field and the source
+    decision has exact 5,600-task PASS coverage.
+    """
+    amendment_identity = {
+        key: value
+        for key, value in amendment.items()
+        if key != "contract_amendment_sha256"
+    }
+    changed = amendment.get("changed_fields")
+    old_hash = str(amendment.get("pilot_base_contract_hash", ""))
+    new_hash = str(amendment.get("selected_contract_hash", ""))
+    if (
+        amendment.get("contract_amendment_sha256") != _stable_hash(amendment_identity)
+        or changed != {"fixed_family_replicates": {"before": 1000, "after": 200}}
+        or re.fullmatch(r"[0-9a-f]{64}", old_hash) is None
+        or re.fullmatch(r"[0-9a-f]{64}", new_hash) is None
+        or old_hash == new_hash
+    ):
+        raise ValueError("fixed-family contract amendment is stale or malformed")
+    if (
+        gate_b_decision.get("operation") != "gate_b"
+        or gate_b_decision.get("status") != "completed"
+        or gate_b_decision.get("decision") != "PASS"
+        or gate_b_decision.get("contract_hash") != old_hash
+        or int(gate_b_decision.get("terminal_record_count", 0)) != 5600
+        or re.fullmatch(r"[0-9a-f]{64}", gate_b_decision_sha256) is None
+    ):
+        raise ValueError("Gate-B decision is not an exact passing source for adoption")
+    identity = {
+        "schema_version": 1,
+        "operation": "gate_b",
+        "status": "completed",
+        "decision": "PASS",
+        "contract_hash": new_hash,
+        "terminal_record_count": 5600,
+        "adoption_rule": "fixed_family_replicates_only_1000_to_200",
+        "adopted_from_contract_hash": old_hash,
+        "adopted_gate_b_decision_sha256": gate_b_decision_sha256,
+        "contract_amendment_sha256": amendment["contract_amendment_sha256"],
+    }
+    return {**identity, "adoption_sha256": _stable_hash(identity)}
+
+
+def write_gate_b_adoption(
+    *,
+    gate_b_decision_path: Path,
+    amendment_path: Path,
+    output_path: Path,
+) -> dict[str, Any]:
+    """Write the exact-byte-bound Gate-B prerequisite for downstream phases."""
+    decision = json.loads(gate_b_decision_path.read_text(encoding="utf-8"))
+    amendment = json.loads(amendment_path.read_text(encoding="utf-8"))
+    adopted = adopt_gate_b_decision_for_downstream(
+        gate_b_decision=decision,
+        gate_b_decision_sha256=hashlib.sha256(
+            gate_b_decision_path.read_bytes()
+        ).hexdigest(),
+        amendment=amendment,
+    )
+    _write_new_json(output_path, adopted)
+    return adopted
+
+
 def build_development_admission_guard(
     *,
     stage_allocations: Any,
@@ -683,6 +755,67 @@ def build_campaign_budget_certificate(
             "shared_reserve_fraction_on_unexecuted_confirmatory_work": 0.20,
         }
     )
+    return {**identity, "budget_certificate_sha256": _stable_hash(identity)}
+
+
+def build_downstream_budget_certificate(
+    *,
+    run_id: str,
+    completed_observed_au: float,
+    remaining_downstream_estimated_au: float,
+    postprocessing_reserved_au: float,
+    allocation_quota_au: float,
+    resource_freeze_sha256: str,
+    campaign_inventory_hash: str,
+    contract_amendment_sha256: str,
+) -> dict[str, Any]:
+    """Certify a downstream-only package from exact completed campaign spend."""
+    values = (
+        completed_observed_au,
+        remaining_downstream_estimated_au,
+        postprocessing_reserved_au,
+        allocation_quota_au,
+    )
+    if any(not math.isfinite(float(value)) or float(value) < 0 for value in values):
+        raise ValueError("downstream allocation values must be finite and nonnegative")
+    if float(allocation_quota_au) <= 0:
+        raise ValueError("allocation quota must be positive")
+    for label, value in (
+        ("resource freeze", resource_freeze_sha256),
+        ("campaign inventory", campaign_inventory_hash),
+        ("contract amendment", contract_amendment_sha256),
+    ):
+        if re.fullmatch(r"[0-9a-f]{64}", value) is None:
+            raise ValueError(f"{label} hash is malformed")
+    remaining_requested_au = math.ceil(float(remaining_downstream_estimated_au) * 1.20)
+    total = (
+        float(completed_observed_au)
+        + float(remaining_requested_au)
+        + float(postprocessing_reserved_au)
+    )
+    if total > float(allocation_quota_au) + 1.0e-9:
+        raise ValueError(
+            "whole-campaign projection exceeds the allocation ceiling: "
+            f"{total:.6f} > {float(allocation_quota_au):.6f}"
+        )
+    identity = {
+        "schema_version": 1,
+        "status": "DOWNSTREAM_WITHIN_ALLOCATION",
+        "run_id": run_id,
+        "completed_observed_au": float(completed_observed_au),
+        "remaining_downstream_estimated_au": float(remaining_downstream_estimated_au),
+        "remaining_downstream_requested_au_with_shared_reserve": float(
+            remaining_requested_au
+        ),
+        "shared_reserve_fraction_on_unexecuted_downstream_work": 0.20,
+        "postprocessing_reserved_au": float(postprocessing_reserved_au),
+        "whole_campaign_projected_au": total,
+        "allocation_quota_au": float(allocation_quota_au),
+        "headroom_au": float(allocation_quota_au) - total,
+        "resource_freeze_sha256": resource_freeze_sha256,
+        "campaign_inventory_hash": campaign_inventory_hash,
+        "contract_amendment_sha256": contract_amendment_sha256,
+    }
     return {**identity, "budget_certificate_sha256": _stable_hash(identity)}
 
 
@@ -1205,6 +1338,98 @@ def prepare_final_package(
     return dag, certificate
 
 
+def prepare_downstream_package(
+    *,
+    output_dir: Path,
+    resource_freeze_path: Path,
+    gate_b_contract_path: Path,
+    repo_root: Path,
+    config_path: Path,
+    completed_observed_au: float,
+    allocation_quota_au: float,
+    postprocessing_reserved_au: float,
+    budget_certificate_path: Path,
+) -> tuple[Any, dict[str, Any]]:
+    """Build the fixed-family-and-later package without repeating Gate B."""
+    from rfm_pipeline.campaign_contract import load_contract
+    from rfm_pipeline.hpc_campaign_package import (
+        _hash_file,
+        _hash_python_tree,
+        _load_campaign_config,
+        _validate_resource_freeze,
+        generate_campaign_package,
+    )
+
+    freeze = json.loads(resource_freeze_path.read_text(encoding="utf-8"))
+    _validate_resource_freeze(freeze)
+    resolved_repo = repo_root.resolve()
+    if freeze.get("source_hash") != _hash_python_tree(
+        resolved_repo / "src" / "rfm_pipeline"
+    ) or freeze.get("lock_hash") != _hash_file(resolved_repo / "pixi.lock"):
+        raise ValueError(
+            "resource freeze does not belong to the accepted source and lock"
+        )
+    base_contract, base_hash = load_contract(gate_b_contract_path.resolve())
+    if base_contract.resolution_decision_sha256 == "PENDING":
+        raise ValueError("Gate-B contract lacks the accepted resolution decision")
+    raw_config = _load_campaign_config(config_path.resolve())
+    configured_quota = float(raw_config["cluster"]["allocation_quota"])
+    if not math.isclose(
+        configured_quota,
+        float(allocation_quota_au),
+        rel_tol=0.0,
+        abs_tol=1.0e-9,
+    ):
+        raise ValueError(
+            "downstream budget ceiling differs from packaged scheduler configuration"
+        )
+    selected_contract, amendment = build_publication_contract_amendment(base_contract)
+    dag = generate_campaign_package(
+        output_dir=output_dir,
+        resource_freeze=freeze,
+        contract=selected_contract,
+        package_mode="downstream",
+        repo_root=resolved_repo,
+        config_path=config_path,
+        completed_observed_au_for_admission=float(completed_observed_au),
+        postprocessing_reserved_au_for_admission=float(postprocessing_reserved_au),
+    )
+    amendment_identity = {
+        key: value
+        for key, value in amendment.items()
+        if key != "contract_amendment_sha256"
+    }
+    amendment_identity.update(
+        {
+            "gate_b_source_contract_hash": base_hash,
+            "selected_contract_hash": dag.config_hash,
+        }
+    )
+    amendment = {
+        **amendment_identity,
+        "contract_amendment_sha256": _stable_hash(amendment_identity),
+    }
+    _write_new_json(
+        output_dir.resolve() / "contract" / "fixed_family_amendment.json",
+        amendment,
+    )
+    remaining_estimated_au = sum(
+        float(item.estimated_au) for item in dag.campaign_envelope.stage_allocations
+    )
+    certificate = build_downstream_budget_certificate(
+        run_id=dag.run_id,
+        completed_observed_au=float(completed_observed_au),
+        remaining_downstream_estimated_au=remaining_estimated_au,
+        postprocessing_reserved_au=float(postprocessing_reserved_au),
+        allocation_quota_au=float(allocation_quota_au),
+        resource_freeze_sha256=str(freeze["resource_freeze_sha256"]),
+        campaign_inventory_hash=dag.campaign_inventory_hash,
+        contract_amendment_sha256=amendment["contract_amendment_sha256"],
+    )
+    _write_new_json(budget_certificate_path, certificate)
+    return dag, certificate
+
+
 def _validate_phase_manifest_authorization_paths(
     dag: Any, *, phase: str, authorization_path: Path
 ) -> int:
@@ -1639,6 +1864,44 @@ def _cli_prepare_final(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cli_prepare_downstream(args: argparse.Namespace) -> int:
+    dag, certificate = prepare_downstream_package(
+        output_dir=Path(args.output_dir),
+        resource_freeze_path=Path(args.resource_freeze),
+        gate_b_contract_path=Path(args.gate_b_contract),
+        repo_root=Path(args.repo_root),
+        config_path=Path(args.config),
+        completed_observed_au=float(args.completed_observed_au),
+        allocation_quota_au=float(args.allocation_quota),
+        postprocessing_reserved_au=float(args.postprocessing_reserved_au),
+        budget_certificate_path=Path(args.budget_certificate),
+    )
+    print(
+        json.dumps(
+            {
+                "status": "DOWNSTREAM_PACKAGE_READY_FOR_LIVE_PREFLIGHT",
+                "run_id": dag.run_id,
+                "whole_campaign_projected_au": certificate[
+                    "whole_campaign_projected_au"
+                ],
+                "headroom_au": certificate["headroom_au"],
+            },
+            sort_keys=True,
+        )
+    )
+    return 0
+
+
+def _cli_adopt_gate_b(args: argparse.Namespace) -> int:
+    adoption = write_gate_b_adoption(
+        gate_b_decision_path=Path(args.gate_b_decision),
+        amendment_path=Path(args.amendment),
+        output_path=Path(args.output),
+    )
+    print(json.dumps(adoption, sort_keys=True))
+    return 0
+
+
 def _cli_preflight_phase(args: argparse.Namespace) -> int:
     dag = load_packaged_dag(
         package_root=args.package_root,
@@ -1745,6 +2008,30 @@ def main(argv: list[str] | None = None) -> int:
     final.add_argument("--budget-certificate", required=True)
     final.set_defaults(func=_cli_prepare_final)
 
+    downstream = subparsers.add_parser(
+        "prepare-downstream",
+        help="generate fixed-family and later stages without repeating Gate B",
+    )
+    downstream.add_argument("--output-dir", required=True)
+    downstream.add_argument("--resource-freeze", required=True)
+    downstream.add_argument("--gate-b-contract", required=True)
+    downstream.add_argument("--repo-root", required=True)
+    downstream.add_argument("--config", required=True)
+    downstream.add_argument("--completed-observed-au", required=True, type=float)
+    downstream.add_argument("--allocation-quota", type=float, default=30_000)
+    downstream.add_argument("--postprocessing-reserved-au", type=float, default=5.0)
+    downstream.add_argument("--budget-certificate", required=True)
+    downstream.set_defaults(func=_cli_prepare_downstream)
+
+    adoption = subparsers.add_parser(
+        "adopt-gate-b",
+        help="bind an exact Gate-B PASS to the fixed-family-only amendment",
+    )
+    adoption.add_argument("--gate-b-decision", required=True)
+    adoption.add_argument("--amendment", required=True)
+    adoption.add_argument("--output", required=True)
+    adoption.set_defaults(func=_cli_adopt_gate_b)
+
     preflight = subparsers.add_parser(
         "preflight-phase", help="run live probes and write one phase authorization"
     )
@@ -1752,7 +2039,9 @@ def main(argv: list[str] | None = None) -> int:
     preflight.add_argument("--config", required=True)
     preflight.add_argument("--repo-root", required=True)
     preflight.add_argument(
-        "--phase", required=True, choices=("development", "gate_b", "gate_p", "gate_c")
+        "--phase",
+        required=True,
+        choices=("development", "gate_b", "fixed_family", "gate_p", "gate_c"),
     )
     preflight.add_argument("--remaining-au", required=True, type=int)
     preflight.add_argument("--evidence-dir", required=True)
@@ -1769,7 +2058,9 @@ def main(argv: list[str] | None = None) -> int:
     submit.add_argument("--config", required=True)
     submit.add_argument("--repo-root", required=True)
     submit.add_argument(
-        "--phase", required=True, choices=("development", "gate_b", "gate_p", "gate_c")
+        "--phase",
+        required=True,
+        choices=("development", "gate_b", "fixed_family", "gate_p", "gate_c"),
     )
     submit.add_argument("--preflight", required=True)
     submit.add_argument("--authorization", required=True)
@@ -1785,7 +2076,9 @@ def main(argv: list[str] | None = None) -> int:
     verify.add_argument("--config", required=True)
     verify.add_argument("--repo-root", required=True)
     verify.add_argument(
-        "--phase", required=True, choices=("development", "gate_b", "gate_p", "gate_c")
+        "--phase",
+        required=True,
+        choices=("development", "gate_b", "fixed_family", "gate_p", "gate_c"),
     )
     verify.add_argument("--submission-record", required=True)
     verify.add_argument("--evidence-dir", required=True)
