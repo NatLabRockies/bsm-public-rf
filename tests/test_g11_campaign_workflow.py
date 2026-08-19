@@ -534,6 +534,8 @@ def test_publication_amendment_changes_only_fixed_family_replicates() -> None:
         "exactly 200 precommitted replicates; no interim testing, optional stopping, "
         "or later incremental expansion"
     )
+    assert "approved campaign allocation" in amendment["rationale"]
+    assert "25,000" not in amendment["rationale"]
     assert len(amendment["contract_amendment_sha256"]) == 64
 
 

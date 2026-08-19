@@ -485,7 +485,7 @@ def build_publication_contract_amendment(
         "rationale": (
             "retain the fixed-family non-vacuity check with a prespecified one-sided "
             "confidence-bound decision while keeping the complete manuscript campaign "
-            "within the 25,000-AU allocation"
+            "within the approved campaign allocation"
         ),
     }
     return publication_contract, {
