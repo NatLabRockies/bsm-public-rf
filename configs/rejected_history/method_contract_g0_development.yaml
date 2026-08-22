@@ -6,6 +6,8 @@
 # This file is the sole scientific-settings source for the recovery driver.
 # It intentionally describes a development-only control state: no calibration,
 # scheduler, HPC, production, holdout, or result generation is authorized.
+# The former rejected dependency binding was RFM a3bcbaa with lock SHA-256
+# a3ba7b4786dbaf52151552cb8b4d0a0d951388cd35cff80f53e18b384255e5d1.
 
 schema_version: 2
 gate: G0
@@ -18,10 +20,10 @@ control_snapshot:
 
 pinned_generic_source:
   repository: rfm-pipeline
-  commit: a3bcbaa389bc7a708ca644f4e95f9b9268407e21
+  commit: fb8b57f180ac24aba9ed6df01726cb1f380ee65f
   require_clean_checkout: true
   lockfile: pixi.lock
-  lockfile_sha256: a3ba7b4786dbaf52151552cb8b4d0a0d951388cd35cff80f53e18b384255e5d1
+  lockfile_sha256: 8a41e30041261521037464cc99b4ae5cf56d98a316553663b01bccd5b7dbf4cb
 
 input_schema:
   n_inputs: 160
@@ -227,5 +229,5 @@ scenarios:
 
 seed_ledger:
   path: configs/g0_seed_ledger.yaml
-  sha256: "59be2a717dd6272fc727b488ea3a1d0295e74faba8051828a3608e4ebf97f18a"
+  sha256: "a8c7790b8ad59de4cf7dccfbddac204fb219469e592983d6d828bc92731ee2ca"
   derivation: sha256_contract_phase_scenario_replicate_stage

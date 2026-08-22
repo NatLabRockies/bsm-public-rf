@@ -212,20 +212,18 @@ def _build_fixture(tmp_path: Path) -> tuple[Path, Path]:
         Path(__file__).resolve().parents[1] / "configs" / "g11_campaign_contract.toml",
         contract_path,
     )
-    from rfm_pipeline.campaign_contract import load_contract
+    from rfm_pipeline.campaign_contract import G11_CONTRACT, load_contract
 
     contract, contract_hash = load_contract(contract_path)
+    from scripts.g11_campaign_workflow import build_publication_contract_amendment
+
+    _, provisional_amendment = build_publication_contract_amendment(G11_CONTRACT)
     amendment_identity = {
-        "schema_version": 1,
-        "status": "PRESPECIFIED_BEFORE_CONFIRMATORY_EXECUTION",
-        "changed_fields": {"fixed_family_replicates": {"before": 1000, "after": 200}},
-        "primary_null_regimes": {
-            "count": 5,
-            "replicates_per_regime": 1000,
-            "unchanged": True,
-        },
-        "selected_contract_hash": contract_hash,
+        key: value
+        for key, value in provisional_amendment.items()
+        if key != "contract_amendment_sha256"
     }
+    amendment_identity["selected_contract_hash"] = contract_hash
     amendment = {
         **amendment_identity,
         "contract_amendment_sha256": hashlib.sha256(
@@ -234,7 +232,7 @@ def _build_fixture(tmp_path: Path) -> tuple[Path, Path]:
             ).encode()
         ).hexdigest(),
     }
-    assert contract.fixed_family_replicates == 200
+    assert contract.fixed_family_replicates == 300
     _write_json(package_root / "contract" / "fixed_family_amendment.json", amendment)
     source_hash = "b" * 64
     lock_hash = "c" * 64
@@ -684,7 +682,7 @@ def test_compiler_emits_complete_machine_readable_and_latex_surfaces(
         )
     )
     assert copied_amendment["changed_fields"] == {
-        "fixed_family_replicates": {"before": 1000, "after": 200}
+        "fixed_family_replicates": {"before": 1000, "after": 300}
     }
     tex = (output_root / "manuscript" / "manuscript_results.tex").read_text(
         encoding="utf-8"

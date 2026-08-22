@@ -1482,6 +1482,62 @@ def _execute_resolution(
     }
 
 
+def _select_fixed_family_pairs(
+    *,
+    observed_scores: np.ndarray,
+    null_scores: np.ndarray,
+    pair_order: tuple[str, ...],
+    pair_detectors: tuple[str, ...],
+    family_sizes: tuple[int, ...],
+    tree_family_alpha: float,
+    binary_binary_family_alpha: float,
+) -> dict[str, list[str]]:
+    """Select nested fixed families inside the frozen detector partitions."""
+    from rfm_pipeline.manuscript_stages import max_t_adjusted_pvalues
+
+    observed = np.asarray(observed_scores, dtype=float)
+    null = np.asarray(null_scores, dtype=float)
+    if observed.ndim != 1 or null.ndim != 2 or null.shape[1] != observed.size:
+        raise ValueError("fixed-family observed/null score shapes are inconsistent")
+    if len(pair_order) != observed.size or len(pair_detectors) != observed.size:
+        raise ValueError("fixed-family pair and detector identities must cover every score")
+    if not np.isfinite(observed).all() or not np.isfinite(null).all():
+        raise ValueError("fixed-family selection rejects non-finite scores")
+    alpha_by_detector = {
+        "tree_shap": float(tree_family_alpha),
+        "studentized_binary_factorial": float(binary_binary_family_alpha),
+    }
+    if any(not 0.0 < alpha < 1.0 for alpha in alpha_by_detector.values()):
+        raise ValueError("fixed-family detector alphas must lie in the open interval (0, 1)")
+
+    selected_by_family: dict[str, list[str]] = {}
+    for family_size in family_sizes:
+        size = int(family_size)
+        if size <= 0 or size > observed.size:
+            raise ValueError("fixed-family size is outside the persisted candidate family")
+        prefix_detectors = pair_detectors[:size]
+        unknown = sorted(set(prefix_detectors).difference(alpha_by_detector))
+        if unknown:
+            raise ValueError(f"fixed-family selection found unsupported detectors: {unknown}")
+        retained = np.zeros(size, dtype=bool)
+        for detector, alpha in alpha_by_detector.items():
+            indices = np.asarray(
+                [index for index, value in enumerate(prefix_detectors) if value == detector],
+                dtype=int,
+            )
+            if indices.size == 0:
+                continue
+            adjusted = max_t_adjusted_pvalues(
+                observed[indices],
+                null[:, indices],
+            )
+            retained[indices] = adjusted <= alpha
+        selected_by_family[str(size)] = [
+            pair for pair, keep in zip(pair_order[:size], retained, strict=True) if keep
+        ]
+    return selected_by_family
+
+
 def _execute_fixed_family(
     *,
     record: dict[str, Any],
@@ -1494,10 +1550,7 @@ def _execute_fixed_family(
     from rfm_pipeline.interaction_contract import (
         canonical_execution_contract_from_specs,
     )
-    from rfm_pipeline.manuscript_stages import (
-        max_t_adjusted_pvalues,
-        score_interaction_draw_block,
-    )
+    from rfm_pipeline.manuscript_stages import score_interaction_draw_block
 
     data = driver.generate_campaign_dataset(
         campaign_contract=campaign_contract,
@@ -1522,22 +1575,23 @@ def _execute_fixed_family(
     )
     artifact_dir = shard_dir / "interaction_score_blocks"
     artifact.write_to(artifact_dir)
-    selected_by_family: dict[str, list[str]] = {}
-    for family_size in campaign_contract.fixed_family_sizes:
-        adjusted = max_t_adjusted_pvalues(
-            artifact.observed_scores[:family_size],
-            artifact.null_scores[:, :family_size],
-        )
-        selected_by_family[str(family_size)] = [
-            pair
-            for pair, p_value in zip(pair_order[:family_size], adjusted, strict=True)
-            if p_value <= campaign_contract.alpha
-        ]
+    selected_by_family = _select_fixed_family_pairs(
+        observed_scores=artifact.observed_scores,
+        null_scores=artifact.null_scores,
+        pair_order=pair_order,
+        pair_detectors=artifact.control_snapshot.candidate_pair_detectors,
+        family_sizes=campaign_contract.fixed_family_sizes,
+        tree_family_alpha=campaign_contract.tree_family_alpha,
+        binary_binary_family_alpha=campaign_contract.binary_binary_family_alpha,
+    )
     terminal = {
         "operation": "fixed_family_supplement",
         "global_null_replicate_index": int(record["global_null_replicate_index"]),
         "family_sizes": list(campaign_contract.fixed_family_sizes),
         "selected_pairs": selected_by_family,
+        "family_partition_method": campaign_contract.family_partition_method,
+        "tree_family_alpha": campaign_contract.tree_family_alpha,
+        "binary_binary_family_alpha": campaign_contract.binary_binary_family_alpha,
         "artifact_checksum": _score_artifact_payload_sha256(artifact),
         "status": "completed",
     }

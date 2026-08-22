@@ -136,9 +136,27 @@ def audit_publication_artifacts(
         for key, value in amendment.items()
         if key != "contract_amendment_sha256"
     }
+    generation_transition = {
+        "superseded_schema_version": "g11_campaign_contract_v10",
+        "superseded_generation": 11,
+        "superseded_contract_hash": (
+            "66f9a7fb702c0726c464393f7c153001846510d891a75ccb2c1d48b467375c24"
+        ),
+        "selected_schema_version": contract.schema_version,
+        "selected_generation": int(contract.generation),
+        "changed_scientific_fields": {
+            "tree_family_alpha": {"before": 0.025, "after": 0.020},
+            "binary_binary_family_alpha": {"before": 0.025, "after": 0.020},
+            "fixed_family_replicates": {"before": 200, "after": 300},
+        },
+        "superseded_gate_b_evidence_status": "development_only_not_adoptable",
+        "superseded_fixed_family_evidence_status": "failed_confirmatory_not_reusable",
+        "required_fresh_phases": ["gate_b", "fixed_family_supplement"],
+        "seed_policy": "contract_hash_derived_zero_overlap_required",
+    }
     if (
         contract_hash != manifest.get("contract_hash")
-        or contract.fixed_family_replicates != 200
+        or contract.fixed_family_replicates != 300
         or len([scenario for scenario in contract.scenarios if scenario.kind == "null"])
         != 5
         or any(
@@ -149,10 +167,12 @@ def audit_publication_artifacts(
         or amendment.get("contract_amendment_sha256")
         != _stable_hash(amendment_identity)
         or amendment.get("changed_fields")
-        != {"fixed_family_replicates": {"before": 1000, "after": 200}}
+        != {"fixed_family_replicates": {"before": 1000, "after": 300}}
         or amendment.get("primary_null_regimes")
         != {"count": 5, "replicates_per_regime": 1000, "unchanged": True}
         or amendment.get("selected_contract_hash") != contract_hash
+        or amendment.get("scientific_generation_transition")
+        != generation_transition
     ):
         raise ValueError("fixed-family publication amendment is stale or malformed")
     eligibility = pd.read_csv(publication / "tables" / "output_eligibility_ledger.csv")

@@ -127,8 +127,8 @@ def test_gate_b_adapter_uses_type_aware_binary_factorial_contract() -> None:
     assert spec.method == "type_aware_tree_shap_binary_factorial"
     assert spec.aggregation_rule == "max_over_components_by_detector"
     assert spec.family_partition_method == "bonferroni_partitioned_max_stat"
-    assert spec.tree_family_alpha == pytest.approx(0.025)
-    assert spec.binary_binary_family_alpha == pytest.approx(0.025)
+    assert spec.tree_family_alpha == pytest.approx(0.020)
+    assert spec.binary_binary_family_alpha == pytest.approx(0.020)
     assert spec.binary_binary_method == "studentized_factorial_contrast_hc3"
     assert spec.binary_binary_minimum_cell_count == 2
 
@@ -994,14 +994,14 @@ def test_campaign_adapter_reduces_resolution_with_exact_coverage(tmp_path: Path)
     assert (tmp_path / "reduced" / "resolution_decision.json").is_file()
 
 
-def test_fixed_family_supplement_has_exactly_200_precommitted_records(
+def test_fixed_family_supplement_has_exactly_300_precommitted_records(
     tmp_path: Path,
 ):
     adapter = _load_adapter()
     from rfm_pipeline.campaign_contract import load_contract
 
     contract, _ = load_contract(_ROOT / "configs" / "g11_campaign_contract.toml")
-    assert contract.fixed_family_replicates == 200
+    assert contract.fixed_family_replicates == 300
     assert {
         scenario.n_replicates
         for scenario in contract.scenarios
@@ -1019,14 +1019,38 @@ def test_fixed_family_supplement_has_exactly_200_precommitted_records(
                 "selected_pairs": {"10": [], "100": [], "1000": []},
             },
         )
-        for index in range(200)
+        for index in range(300)
     ]
 
     result = adapter.reduce_scientific_stage(records, tmp_path / "reduced-fixed")
 
-    assert result["terminal_record_count"] == 200
-    assert {row["denominator"] for row in result["families"].values()} == {200}
+    assert result["terminal_record_count"] == 300
+    assert {row["denominator"] for row in result["families"].values()} == {300}
     assert all(row["passes_calibration"] for row in result["families"].values())
+
+
+def test_fixed_family_selection_uses_frozen_detector_partitions() -> None:
+    """Nested fixed families must not mix BB t statistics with TreeSHAP scores."""
+    adapter = _load_adapter()
+    pair_order = ("x000:binary_0", "binary_0:binary_1")
+    pair_detectors = ("tree_shap", "studentized_binary_factorial")
+    observed_scores = np.array([0.9, 1.0])
+    null_scores = np.zeros((40, 2))
+    null_scores[0, 1] = 2.0
+
+    selected = adapter._select_fixed_family_pairs(
+        observed_scores=observed_scores,
+        null_scores=null_scores,
+        pair_order=pair_order,
+        pair_detectors=pair_detectors,
+        family_sizes=(2,),
+        tree_family_alpha=0.025,
+        binary_binary_family_alpha=0.025,
+    )
+
+    # Both single-detector adjusted p-values are evaluated inside their own
+    # score scale.  TreeSHAP has p=1/41 and is retained; BB has p=2/41 and is not.
+    assert selected == {"2": ["x000:binary_0"]}
 
 
 def test_campaign_adapter_reduction_rejects_missing_terminal_record(tmp_path: Path):

@@ -1,5 +1,49 @@
 # Agent Sync
 
+## SESSION STATE — 2026-08-22 — Prospective fixed-family calibration recovery
+
+- The generation-11 fixed-family supplement completed 200/200 workers but
+  failed its frozen one-sided Wilson gate in the 100-pair family: 12/200 false
+  selection events gave an upper bound of 0.0939310661 versus the unchanged
+  0.09 limit. The result is an exact scientific failure; the gate is not
+  relaxed to 0.10 and downstream evidence remains invalidated.
+- Audit of the production adapter found that fixed-family selection mixed raw
+  TreeSHAP and binary-factorial statistics in one maxT calculation and then
+  compared every adjusted value with overall alpha 0.05. The frozen method
+  requires detector-partitioned maxT. The adapter now applies TreeSHAP and
+  binary-factorial maxT within their own score families and uses their exact
+  family-specific alpha allocations.
+- Correct partitioning at the former 0.025/0.025 allocation still failed the
+  100-pair family. Development-only, compute-node diagnostics of the already
+  failed artifacts found that a prospective 0.020/0.020 allocation yielded
+  6/200, 9/200, and 6/200 events for the 10-, 100-, and 1,000-pair families;
+  canonical strong CC, BC, and BB power remained 200/200. Those reused results
+  are design evidence only and cannot become confirmation.
+- Generation 12 therefore freezes detector-family alpha at 0.020/0.020,
+  retains the 0.09 publication gate, and precommits exactly 300 fixed-family
+  replicates. The expected operating characteristic at true FWER 0.04 is
+  approximately 96.6% probability of passing without changing the decision
+  threshold after observing outcomes.
+- The prior Gate-B PASS is demoted to development-only for this scientific
+  generation because its alpha allocation differs. Publication readiness now
+  requires a fresh 5,600-task Gate B and a fresh 300-task fixed-family
+  supplement using contract-hash-derived seeds with proven zero overlap. The
+  failed generation-11 artifacts and exact Kestrel accounting remain immutable.
+  No applied, recovery, or publication stage may resume before both new
+  reducers independently pass.
+- Development evidence is preserved under
+  `run3/alpha_0020_development_20260822T140500Z`: fixed-family payload SHA-256
+  `c04fb41e8ca45341de2a4436690e9e1024faec29be5ec5843206e0f1f2fe6d7c`
+  and canonical-power payload SHA-256
+  `288987d16a51fbd196abd2f99573ec7acaf05ec9e83d1d164b45dc3fcc294a02`.
+  The fresh confirmation package must not consume these payloads as results.
+- The paired RFM scientific contract is published at
+  `fb8b57f180ac24aba9ed6df01726cb1f380ee65f`. BSM pins that exact revision and
+  regenerated lock SHA-256. The development-only rejected-history fixture was
+  rebound to the new lock and its seed ledger regenerated from the fixture's
+  new contract identity; the former rejected commit and lock hash remain
+  recorded in the fixture header. The complete BSM suite passes (131 tests).
+
 ## SESSION STATE — 2026-08-18 — Prospective Gate-B BB factorial correction
 
 - The completed development Gate B passed all five null regimes and recovered

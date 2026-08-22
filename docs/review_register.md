@@ -2,6 +2,36 @@
 
 Durable record of audit findings requiring follow-up. Newest first.
 
+## 2026-08-22 — Fixed-family adapter violated detector partitions and confirmation failed
+
+- **Severity:** BLOCKER (publication calibration gate). Generation 11 completed
+  the fixed-family supplement but produced 12/200 false-selection events for
+  the 100-pair family; its one-sided Wilson upper bound was 0.0939310661 above
+  the frozen 0.09 gate. The threshold remains unchanged and downstream work is
+  not publication evidence.
+- **Root cause:** the production adapter pooled incomparable raw TreeSHAP and
+  HC3-studentized binary-factorial scores into one maxT family and compared the
+  result with overall alpha 0.05. The method contract instead requires a
+  separate maxT calculation per detector family at its assigned family alpha.
+- **Correction:** partition by persisted detector identity, apply maxT inside
+  each score scale, freeze a prospective 0.020/0.020 allocation, and increase
+  the precommitted fixed-family sample from 200 to 300 while retaining the
+  0.09 Wilson gate. The scientific contract advances from v10/generation 11 to
+  v11/generation 12, so every affected seed changes with the contract hash.
+- **Evidence conservation:** the failed 200-task supplement and the prior
+  5,600-task Gate B remain immutable development evidence. Diagnostics using
+  those bytes support design selection only; they may not be relabeled or
+  reduced as confirmation. Failed diagnostic pair-ordering attempts are also
+  retained as packaging evidence and excluded from scientific decisions.
+- **Acceptance criteria:** focused partition and contract-drift regressions,
+  complete RFM and BSM repository gates, and immutable amendment/hash checks
+  pass; clean source revisions are independently reviewed; inventories prove
+  zero seed overlap; then a fresh 5,600-task Gate B and fresh 300-task
+  fixed-family supplement each achieve exact scheduler/artifact coverage and
+  passing reducers before downstream execution resumes.
+- **Disposition:** implementation and development diagnostics are in progress
+  on isolated branches. No fresh scientific phase has been submitted.
+
 ## 2026-08-18 — TreeSHAP is underpowered for the strong BB parity regime
 
 - **Severity:** BLOCKER (canonical Gate-B power gate; all downstream analysis

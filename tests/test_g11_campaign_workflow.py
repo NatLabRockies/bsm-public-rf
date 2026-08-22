@@ -516,7 +516,7 @@ def test_publication_amendment_changes_only_fixed_family_replicates() -> None:
     changed = {key for key in before if before[key] != after[key]}
     assert changed == {"fixed_family_replicates"}
     assert before["fixed_family_replicates"] == 1000
-    assert publication.fixed_family_replicates == 200
+    assert publication.fixed_family_replicates == 300
     assert (
         len([scenario for scenario in publication.scenarios if scenario.kind == "null"])
         == 5
@@ -527,16 +527,78 @@ def test_publication_amendment_changes_only_fixed_family_replicates() -> None:
         if scenario.kind == "null"
     } == {1000}
     assert amendment["changed_fields"] == {
-        "fixed_family_replicates": {"before": 1000, "after": 200}
+        "fixed_family_replicates": {"before": 1000, "after": 300}
     }
-    assert amendment["fixed_family_gate"]["largest_passing_false_selection_count"] == 11
+    assert amendment["scientific_generation_transition"] == {
+        "superseded_schema_version": "g11_campaign_contract_v10",
+        "superseded_generation": 11,
+        "superseded_contract_hash": (
+            "66f9a7fb702c0726c464393f7c153001846510d891a75ccb2c1d48b467375c24"
+        ),
+        "selected_schema_version": "g11_campaign_contract_v11",
+        "selected_generation": 12,
+        "changed_scientific_fields": {
+            "tree_family_alpha": {"before": 0.025, "after": 0.020},
+            "binary_binary_family_alpha": {"before": 0.025, "after": 0.020},
+            "fixed_family_replicates": {"before": 200, "after": 300},
+        },
+        "superseded_gate_b_evidence_status": "development_only_not_adoptable",
+        "superseded_fixed_family_evidence_status": (
+            "failed_confirmatory_not_reusable"
+        ),
+        "required_fresh_phases": ["gate_b", "fixed_family_supplement"],
+        "seed_policy": "contract_hash_derived_zero_overlap_required",
+    }
+    assert amendment["fixed_family_gate"]["largest_passing_false_selection_count"] == 18
     assert amendment["execution_rule"] == (
-        "exactly 200 precommitted replicates; no interim testing, optional stopping, "
+        "exactly 300 precommitted replicates; no interim testing, optional stopping, "
         "or later incremental expansion"
     )
     assert "approved campaign allocation" in amendment["rationale"]
     assert "25,000" not in amendment["rationale"]
     assert len(amendment["contract_amendment_sha256"]) == 64
+
+
+def test_generation_12_confirmation_seeds_do_not_overlap_failed_generation() -> None:
+    from rfm_pipeline.campaign_contract import (
+        G11_CONTRACT,
+        compute_contract_hash,
+        derive_seed,
+    )
+
+    publication, _ = build_publication_contract_amendment(G11_CONTRACT)
+    selected_hash = compute_contract_hash(publication)
+    failed_hash = (
+        "66f9a7fb702c0726c464393f7c153001846510d891a75ccb2c1d48b467375c24"
+    )
+    gate_b_identities = [
+        (scenario.id, replicate_index)
+        for scenario in G11_CONTRACT.scenarios
+        if scenario.kind in {"null", "strong"}
+        for replicate_index in range(scenario.n_replicates)
+    ]
+    assert len(gate_b_identities) == 5600
+
+    failed_seeds = {
+        derive_seed(failed_hash, scenario_id, replicate_index)
+        for scenario_id, replicate_index in gate_b_identities
+    }
+    failed_seeds.update(
+        derive_seed(failed_hash, "fixed_family_supplement", replicate_index)
+        for replicate_index in range(200)
+    )
+    selected_seeds = {
+        derive_seed(selected_hash, scenario_id, replicate_index)
+        for scenario_id, replicate_index in gate_b_identities
+    }
+    selected_seeds.update(
+        derive_seed(selected_hash, "fixed_family_supplement", replicate_index)
+        for replicate_index in range(300)
+    )
+
+    assert len(failed_seeds) == 5800
+    assert len(selected_seeds) == 5900
+    assert failed_seeds.isdisjoint(selected_seeds)
 
 
 def test_gate_b_pass_is_adopted_only_across_fixed_family_count_amendment() -> None:
@@ -743,7 +805,7 @@ def test_downstream_package_omits_gate_b_and_binds_exact_completed_spend(
     assert observed["package_mode"] == "downstream"
     assert observed["completed_observed_au_for_admission"] == 500.0
     assert observed["postprocessing_reserved_au_for_admission"] == 5.0
-    assert observed["contract"].fixed_family_replicates == 200
+    assert observed["contract"].fixed_family_replicates == 300
     assert certificate["remaining_downstream_estimated_au"] == 300.0
     assert certificate["remaining_downstream_requested_au_with_shared_reserve"] == 360
     amendment = json.loads(
@@ -897,7 +959,7 @@ def test_final_package_uses_amended_contract_but_preserves_pilot_freeze_basis(
     )
 
     selected = observed["contract"]
-    assert selected.fixed_family_replicates == 200
+    assert selected.fixed_family_replicates == 300
     assert selected.B_interaction == 999
     assert selected.resolution_decision_sha256 == "e" * 64
     assert observed["resource_freeze"] == freeze

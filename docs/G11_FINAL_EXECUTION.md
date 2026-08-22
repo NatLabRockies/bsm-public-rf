@@ -1,5 +1,14 @@
 # G11 final campaign and manuscript-release runbook
 
+> **Generation-12 amendment (2026-08-22):** The generation-11 fixed-family
+> supplement failed the unchanged 0.09 Wilson gate. It and the preceding Gate B
+> are now development-only for the affected interaction calibration. The next
+> confirmation freezes separate TreeSHAP and binary-factorial maxT families at
+> 0.020/0.020 and exactly 300 fixed-family replicates. It requires fresh
+> contract-derived seeds with zero overlap, a fresh 5,600-task Gate B, and a
+> fresh 300-task fixed-family supplement. No later step in this runbook is
+> permitted until both generation-12 reducers pass.
+
 ## Outcome
 
 One restartable controller carries the accepted pilot through development
@@ -52,7 +61,7 @@ not their scientific kernels.
 4. Accept only a prespecified resolution decision and build a fresh
    confirmatory package whose seeds are bound to those decision bytes. Before
    package generation, apply the hashed publication amendment that changes
-   only the fixed-family supplement from 1,000 to exactly 200 precommitted
+   only the fixed-family supplement from 1,000 to exactly 300 precommitted
    replicates; all five primary null regimes remain at 1,000 each.
 5. Certify the complete package envelope, prior rejected-attempt AUs, and a
    5-AU publication-job reserve against the 25,000-AU ceiling.

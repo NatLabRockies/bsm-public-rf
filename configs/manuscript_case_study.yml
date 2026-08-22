@@ -76,8 +76,8 @@ case_study:
     source_workflow_reference: gate_b_binary_factorial_method_amendment
     source_workflow_equivalence_status: confirmation_required_on_new_gate_b_seeds
     family_partition_method: bonferroni_partitioned_max_stat
-    tree_family_alpha: 0.025
-    binary_binary_family_alpha: 0.025
+    tree_family_alpha: 0.020
+    binary_binary_family_alpha: 0.020
     binary_binary_method: studentized_factorial_contrast_hc3
     binary_binary_minimum_cell_count: 2
     null_threshold_quantile: 0.995

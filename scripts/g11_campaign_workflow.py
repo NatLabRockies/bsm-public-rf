@@ -20,7 +20,10 @@ from dataclasses import asdict, replace
 from pathlib import Path
 from typing import Any
 
-PUBLICATION_FIXED_FAMILY_REPLICATES = 200
+PUBLICATION_FIXED_FAMILY_REPLICATES = 300
+SUPERSEDED_FIXED_FAMILY_CONTRACT_SHA256 = (
+    "66f9a7fb702c0726c464393f7c153001846510d891a75ccb2c1d48b467375c24"
+)
 PUBLICATION_B999_CONFIRMATORY_ESTIMATED_AU = 20_250.751923076525
 PUBLICATION_B999_CONFIRMATORY_REQUESTED_AU = math.ceil(
     PUBLICATION_B999_CONFIRMATORY_ESTIMATED_AU * 1.20
@@ -418,7 +421,7 @@ def build_publication_contract_amendment(
 
     The accepted pilot and development resolution retain their original
     1,000-fixed-family base-contract identity.  Before any confirmatory work,
-    the non-vacuity supplement is prospectively reduced to 200 complete
+    the non-vacuity supplement is prospectively reduced to 300 complete
     replicates.  The five primary null regimes remain at 1,000 replicates each.
     """
     from rfm_pipeline.campaign_contract import (
@@ -429,6 +432,23 @@ def build_publication_contract_amendment(
     if int(base_contract.fixed_family_replicates) != 1000:
         raise ValueError(
             "publication amendment requires the accepted 1,000-replicate pilot base"
+        )
+    if (
+        base_contract.schema_version != "g11_campaign_contract_v11"
+        or int(base_contract.generation) != 12
+        or not math.isclose(
+            float(base_contract.tree_family_alpha), 0.020, rel_tol=0.0, abs_tol=1e-12
+        )
+        or not math.isclose(
+            float(base_contract.binary_binary_family_alpha),
+            0.020,
+            rel_tol=0.0,
+            abs_tol=1e-12,
+        )
+    ):
+        raise ValueError(
+            "publication amendment requires the prospective generation-12 "
+            "0.020/0.020 detector-family contract"
         )
     null_scenarios = tuple(
         scenario for scenario in base_contract.scenarios if scenario.kind == "null"
@@ -462,6 +482,30 @@ def build_publication_contract_amendment(
                 "after": PUBLICATION_FIXED_FAMILY_REPLICATES,
             }
         },
+        "scientific_generation_transition": {
+            "superseded_schema_version": "g11_campaign_contract_v10",
+            "superseded_generation": 11,
+            "superseded_contract_hash": SUPERSEDED_FIXED_FAMILY_CONTRACT_SHA256,
+            "selected_schema_version": publication_contract.schema_version,
+            "selected_generation": int(publication_contract.generation),
+            "changed_scientific_fields": {
+                "tree_family_alpha": {"before": 0.025, "after": 0.020},
+                "binary_binary_family_alpha": {
+                    "before": 0.025,
+                    "after": 0.020,
+                },
+                "fixed_family_replicates": {
+                    "before": 200,
+                    "after": PUBLICATION_FIXED_FAMILY_REPLICATES,
+                },
+            },
+            "superseded_gate_b_evidence_status": "development_only_not_adoptable",
+            "superseded_fixed_family_evidence_status": (
+                "failed_confirmatory_not_reusable"
+            ),
+            "required_fresh_phases": ["gate_b", "fixed_family_supplement"],
+            "seed_policy": "contract_hash_derived_zero_overlap_required",
+        },
         "primary_null_regimes": {
             "count": len(null_scenarios),
             "replicates_per_regime": 1000,
@@ -479,7 +523,7 @@ def build_publication_contract_amendment(
             ),
         },
         "execution_rule": (
-            "exactly 200 precommitted replicates; no interim testing, optional stopping, "
+            "exactly 300 precommitted replicates; no interim testing, optional stopping, "
             "or later incremental expansion"
         ),
         "rationale": (
@@ -516,7 +560,7 @@ def adopt_gate_b_decision_for_downstream(
     new_hash = str(amendment.get("selected_contract_hash", ""))
     if (
         amendment.get("contract_amendment_sha256") != _stable_hash(amendment_identity)
-        or changed != {"fixed_family_replicates": {"before": 1000, "after": 200}}
+        or changed != {"fixed_family_replicates": {"before": 1000, "after": 300}}
         or re.fullmatch(r"[0-9a-f]{64}", old_hash) is None
         or re.fullmatch(r"[0-9a-f]{64}", new_hash) is None
         or old_hash == new_hash
@@ -538,7 +582,7 @@ def adopt_gate_b_decision_for_downstream(
         "decision": "PASS",
         "contract_hash": new_hash,
         "terminal_record_count": 5600,
-        "adoption_rule": "fixed_family_replicates_only_1000_to_200",
+        "adoption_rule": "fixed_family_replicates_only_1000_to_300",
         "adopted_from_contract_hash": old_hash,
         "adopted_gate_b_decision_sha256": gate_b_decision_sha256,
         "contract_amendment_sha256": amendment["contract_amendment_sha256"],
