@@ -432,3 +432,17 @@
   job. The regenerated Pixi lock installs the exact repaired RFM commit.
 - Validation passes: scoped Ruff format/lint, lock installation, exact installed-package smoke,
   and all 126 BSM tests. No downstream scheduler job was submitted.
+
+## SESSION STATE — 2026-08-22 — generation-12 prerequisite adoption
+
+- The prospective generation-12 confirmation reuses only the successful pilot
+  resource selections and the accepted B=999 resolution. It does not reuse the
+  superseded Gate-B or failed fixed-family scientific results.
+- `adopt-generation-12-prerequisites` now binds the exact old freeze, resolution
+  bytes, and development completion into four new self-hashed records under the
+  current RFM source, lock, base-contract, and fresh run identity. The exact
+  telemetry and selected resource profiles remain byte-equivalent and are
+  separately hashed; `resource_decision_changed` is false.
+- Fresh package admission must prove 5,600 Gate-B plus 300 fixed-family task
+  identities, zero seed overlap with the prior 5,800 tasks, native RFM package
+  validation, and both-host Linux runtime preflight before scientific launch.

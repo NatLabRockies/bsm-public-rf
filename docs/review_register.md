@@ -654,3 +654,23 @@ ______________________________________________________________________
   any scheduler call.
 - Validation: exact locked install, installed-package import smoke, scoped Ruff format/lint, and
   all 126 BSM tests pass. No scientific or downstream job was submitted by this repair.
+
+## REVIEW-0016 — Generation-12 packaging needed explicit prerequisite adoption
+
+- Date: 2026-08-22
+- Severity: P0 / confirmatory provenance
+- Status: fixed in `codex/g11-fixed-family-partition`; live immutable package pending
+- Evidence: the accepted pilot resource freeze, B=999 resolution decision, and
+  development completion bind the superseded source and contract identities.
+  Relabeling those JSON records would make the new package executable but would
+  erase which evidence was reused across the generation boundary.
+- Resolution: `adopt-generation-12-prerequisites` verifies every source
+  self-hash and identity, preserves the exact telemetry, resource selections,
+  resolution decision, and observed development AUs, then writes new
+  content-addressed prerequisite records. The adoption explicitly excludes all
+  prior Gate-B and fixed-family results and requires fresh zero-overlap 5,600 +
+  300 task confirmation. No resource decision or scientific resolution result
+  is recomputed.
+- Validation: positive and stale-source negative tests pass; package generation
+  must additionally verify the adopted freeze with the RFM native validator and
+  prove fresh seed disjointness before execution.

@@ -16,6 +16,7 @@ from scripts.g11_campaign_workflow import (
     _stable_hash,
     _validate_phase_manifest_authorization_paths,
     augment_resource_freeze_accounting,
+    adopt_generation_12_prerequisites,
     adopt_gate_b_decision_for_downstream,
     build_campaign_budget_certificate,
     build_development_admission_guard,
@@ -543,9 +544,7 @@ def test_publication_amendment_changes_only_fixed_family_replicates() -> None:
             "fixed_family_replicates": {"before": 200, "after": 300},
         },
         "superseded_gate_b_evidence_status": "development_only_not_adoptable",
-        "superseded_fixed_family_evidence_status": (
-            "failed_confirmatory_not_reusable"
-        ),
+        "superseded_fixed_family_evidence_status": ("failed_confirmatory_not_reusable"),
         "required_fresh_phases": ["gate_b", "fixed_family_supplement"],
         "seed_policy": "contract_hash_derived_zero_overlap_required",
     }
@@ -568,9 +567,7 @@ def test_generation_12_confirmation_seeds_do_not_overlap_failed_generation() -> 
 
     publication, _ = build_publication_contract_amendment(G11_CONTRACT)
     selected_hash = compute_contract_hash(publication)
-    failed_hash = (
-        "66f9a7fb702c0726c464393f7c153001846510d891a75ccb2c1d48b467375c24"
-    )
+    failed_hash = "66f9a7fb702c0726c464393f7c153001846510d891a75ccb2c1d48b467375c24"
     gate_b_identities = [
         (scenario.id, replicate_index)
         for scenario in G11_CONTRACT.scenarios
@@ -599,6 +596,122 @@ def test_generation_12_confirmation_seeds_do_not_overlap_failed_generation() -> 
     assert len(failed_seeds) == 5800
     assert len(selected_seeds) == 5900
     assert failed_seeds.isdisjoint(selected_seeds)
+
+
+def test_generation_12_prerequisite_adoption_preserves_resource_decision() -> None:
+    source_freeze = {
+        "schema_version": 1,
+        "status": "ACCEPTED",
+        "selector": "minimum_projected_au_subject_to_resource_bounds",
+        "source_hash": "a" * 64,
+        "config_hash": "b" * 64,
+        "lock_hash": "c" * 64,
+        "telemetry_sha256": "d" * 64,
+        "selections": {"pilot": {"status": "ACCEPTED", "profile": "p1"}},
+        "allocation_accounting": {"spent_through_pilot_au": 401.0},
+    }
+    source_freeze["resource_freeze_sha256"] = _stable_hash(source_freeze)
+    source_resolution = {
+        "operation": "resolution",
+        "status": "completed",
+        "decision": "ACCEPTED",
+        "terminal_record_count": 20,
+        "selected_B_interaction": 999,
+        "contract_hash": "b" * 64,
+    }
+    source_completion = {
+        "schema_version": 1,
+        "status": "PHASE_COMPLETE",
+        "phase": "development",
+        "run_id": "g11-old",
+        "source_hash": "a" * 64,
+        "config_hash": "b" * 64,
+        "lock_hash": "c" * 64,
+        "observed_total_au": 0.125,
+        "campaign_inventory_hash": "e" * 64,
+    }
+    source_completion["completion_sha256"] = _stable_hash(source_completion)
+
+    freeze, resolution, completion, adoption = adopt_generation_12_prerequisites(
+        source_resource_freeze=source_freeze,
+        source_resolution_decision=source_resolution,
+        source_resolution_decision_sha256="f" * 64,
+        source_development_completion=source_completion,
+        target_source_hash="1" * 64,
+        target_config_hash="2" * 64,
+        target_lock_hash="3" * 64,
+        target_run_id="g11-generation-12",
+    )
+
+    assert freeze["selections"] == source_freeze["selections"]
+    assert freeze["telemetry_sha256"] == source_freeze["telemetry_sha256"]
+    assert freeze["allocation_accounting"] == source_freeze["allocation_accounting"]
+    assert freeze["source_hash"] == "1" * 64
+    assert freeze["config_hash"] == "2" * 64
+    assert freeze["lock_hash"] == "3" * 64
+    assert freeze["resource_freeze_sha256"] == _stable_hash(
+        {key: value for key, value in freeze.items() if key != "resource_freeze_sha256"}
+    )
+    assert resolution["selected_B_interaction"] == 999
+    assert resolution["contract_hash"] == "2" * 64
+    assert resolution["adopted_resolution_decision_sha256"] == "f" * 64
+    assert completion["run_id"] == "g11-generation-12"
+    assert completion["observed_total_au"] == 0.125
+    assert completion["completion_sha256"] == _stable_hash(
+        {key: value for key, value in completion.items() if key != "completion_sha256"}
+    )
+    assert adoption["resource_decision_changed"] is False
+    assert adoption["scientific_result_reused"] == "resolution_only"
+    assert adoption["generation_adoption_sha256"] == _stable_hash(
+        {
+            key: value
+            for key, value in adoption.items()
+            if key != "generation_adoption_sha256"
+        }
+    )
+
+
+def test_generation_12_prerequisite_adoption_rejects_stale_source() -> None:
+    source_freeze = {
+        "schema_version": 1,
+        "status": "ACCEPTED",
+        "source_hash": "a" * 64,
+        "config_hash": "b" * 64,
+        "lock_hash": "c" * 64,
+        "telemetry_sha256": "d" * 64,
+        "selections": {},
+        "resource_freeze_sha256": "0" * 64,
+    }
+    source_resolution = {
+        "operation": "resolution",
+        "status": "completed",
+        "decision": "ACCEPTED",
+        "terminal_record_count": 20,
+        "selected_B_interaction": 999,
+        "contract_hash": "b" * 64,
+    }
+    source_completion = {
+        "status": "PHASE_COMPLETE",
+        "phase": "development",
+        "run_id": "g11-old",
+        "source_hash": "a" * 64,
+        "config_hash": "b" * 64,
+        "lock_hash": "c" * 64,
+        "observed_total_au": 0.125,
+        "completion_sha256": "0" * 64,
+    }
+
+    with pytest.raises(ValueError, match="source resource freeze self-hash differs"):
+        adopt_generation_12_prerequisites(
+            source_resource_freeze=source_freeze,
+            source_resolution_decision=source_resolution,
+            source_resolution_decision_sha256="f" * 64,
+            source_development_completion=source_completion,
+            target_source_hash="1" * 64,
+            target_config_hash="2" * 64,
+            target_lock_hash="3" * 64,
+            target_run_id="g11-generation-12",
+        )
 
 
 def test_gate_b_pass_is_adopted_only_across_fixed_family_count_amendment() -> None:

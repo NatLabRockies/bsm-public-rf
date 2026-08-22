@@ -538,6 +538,244 @@ def build_publication_contract_amendment(
     }
 
 
+def adopt_generation_12_prerequisites(
+    *,
+    source_resource_freeze: dict[str, Any],
+    source_resolution_decision: dict[str, Any],
+    source_resolution_decision_sha256: str,
+    source_development_completion: dict[str, Any],
+    target_source_hash: str,
+    target_config_hash: str,
+    target_lock_hash: str,
+    target_run_id: str,
+) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any], dict[str, Any]]:
+    """Adopt only invariant pilot telemetry and the accepted resolution into G12.
+
+    Gate-B and fixed-family results are intentionally not accepted here.  The
+    returned records make the unchanged resource choice and B=999 resolution
+    explicit while rebinding their controller identities to the prospective
+    generation-12 package.
+    """
+    source_freeze_hash = str(source_resource_freeze.get("resource_freeze_sha256", ""))
+    source_freeze_identity = {
+        key: value
+        for key, value in source_resource_freeze.items()
+        if key != "resource_freeze_sha256"
+    }
+    if (
+        re.fullmatch(r"[0-9a-f]{64}", source_freeze_hash) is None
+        or _stable_hash(source_freeze_identity) != source_freeze_hash
+    ):
+        raise ValueError("source resource freeze self-hash differs")
+
+    target_hashes = (target_source_hash, target_config_hash, target_lock_hash)
+    if any(re.fullmatch(r"[0-9a-f]{64}", value) is None for value in target_hashes):
+        raise ValueError("target source, contract, and lock hashes must be SHA-256")
+    if not target_run_id.strip():
+        raise ValueError("target run identity is empty")
+    if target_config_hash == source_resource_freeze.get("config_hash"):
+        raise ValueError("generation-12 adoption requires a new contract identity")
+
+    if (
+        source_resolution_decision.get("operation") != "resolution"
+        or source_resolution_decision.get("status") != "completed"
+        or source_resolution_decision.get("decision") != "ACCEPTED"
+        or int(source_resolution_decision.get("terminal_record_count", 0)) != 20
+        or int(source_resolution_decision.get("selected_B_interaction", 0)) != 999
+        or source_resolution_decision.get("contract_hash")
+        != source_resource_freeze.get("config_hash")
+        or re.fullmatch(r"[0-9a-f]{64}", source_resolution_decision_sha256) is None
+    ):
+        raise ValueError(
+            "source resolution decision is not the accepted B=999 decision"
+        )
+
+    source_completion_hash = str(
+        source_development_completion.get("completion_sha256", "")
+    )
+    source_completion_identity = {
+        key: value
+        for key, value in source_development_completion.items()
+        if key != "completion_sha256"
+    }
+    expected_completion_identity = {
+        "status": "PHASE_COMPLETE",
+        "phase": "development",
+        "source_hash": source_resource_freeze.get("source_hash"),
+        "config_hash": source_resource_freeze.get("config_hash"),
+        "lock_hash": source_resource_freeze.get("lock_hash"),
+    }
+    if (
+        re.fullmatch(r"[0-9a-f]{64}", source_completion_hash) is None
+        or _stable_hash(source_completion_identity) != source_completion_hash
+        or any(
+            source_development_completion.get(key) != value
+            for key, value in expected_completion_identity.items()
+        )
+        or float(source_development_completion.get("observed_total_au", -1.0)) < 0
+    ):
+        raise ValueError("source development completion is stale or invalid")
+
+    selections_hash = _stable_hash(source_resource_freeze.get("selections"))
+    adoption_basis = {
+        "schema_version": 1,
+        "status": "ACCEPTED_FOR_GENERATION_12_CONFIRMATION",
+        "source_resource_freeze_sha256": source_freeze_hash,
+        "source_resolution_decision_sha256": source_resolution_decision_sha256,
+        "source_development_completion_sha256": source_completion_hash,
+        "source_run_id": source_development_completion.get("run_id"),
+        "target_run_id": target_run_id,
+        "source_identity": {
+            "source_hash": source_resource_freeze.get("source_hash"),
+            "config_hash": source_resource_freeze.get("config_hash"),
+            "lock_hash": source_resource_freeze.get("lock_hash"),
+        },
+        "target_identity": {
+            "source_hash": target_source_hash,
+            "config_hash": target_config_hash,
+            "lock_hash": target_lock_hash,
+        },
+        "resource_selections_sha256": selections_hash,
+        "telemetry_sha256": source_resource_freeze.get("telemetry_sha256"),
+        "resource_decision_changed": False,
+        "scientific_result_reused": "resolution_only",
+        "excluded_prior_results": ["gate_b", "fixed_family_supplement"],
+        "required_fresh_results": ["gate_b", "fixed_family_supplement"],
+        "adoption_rule": (
+            "reuse exact successful-pilot resource selections and accepted B=999 "
+            "resolution only; execute fresh zero-overlap generation-12 confirmation"
+        ),
+    }
+    adoption = {
+        **adoption_basis,
+        "generation_adoption_sha256": _stable_hash(adoption_basis),
+    }
+
+    freeze_identity = deepcopy(source_freeze_identity)
+    freeze_identity.update(
+        {
+            "source_hash": target_source_hash,
+            "config_hash": target_config_hash,
+            "lock_hash": target_lock_hash,
+            "generation_adoption_sha256": adoption["generation_adoption_sha256"],
+            "source_resource_freeze_sha256": source_freeze_hash,
+            "resource_selections_sha256": selections_hash,
+            "resource_decision_changed": False,
+        }
+    )
+    freeze = {
+        **freeze_identity,
+        "resource_freeze_sha256": _stable_hash(freeze_identity),
+    }
+
+    resolution_identity = {
+        "operation": "resolution",
+        "status": "completed",
+        "decision": "ACCEPTED",
+        "terminal_record_count": 20,
+        "selected_B_interaction": 999,
+        "contract_hash": target_config_hash,
+        "adopted_resolution_decision_sha256": source_resolution_decision_sha256,
+        "generation_adoption_sha256": adoption["generation_adoption_sha256"],
+        "new_resolution_science_executed": False,
+    }
+    resolution = {
+        **resolution_identity,
+        "resolution_adoption_sha256": _stable_hash(resolution_identity),
+    }
+
+    completion_identity = deepcopy(source_completion_identity)
+    completion_identity.update(
+        {
+            "run_id": target_run_id,
+            "source_hash": target_source_hash,
+            "config_hash": target_config_hash,
+            "lock_hash": target_lock_hash,
+            "source_completion_sha256": source_completion_hash,
+            "generation_adoption_sha256": adoption["generation_adoption_sha256"],
+            "scientific_result_reused": "resolution_only",
+        }
+    )
+    completion = {
+        **completion_identity,
+        "completion_sha256": _stable_hash(completion_identity),
+    }
+    return freeze, resolution, completion, adoption
+
+
+def write_generation_12_prerequisites(
+    *,
+    source_resource_freeze_path: Path,
+    source_resolution_decision_path: Path,
+    source_development_completion_path: Path,
+    repo_root: Path,
+    target_run_id: str,
+    output_dir: Path,
+) -> dict[str, Any]:
+    """Write immutable G12 prerequisite-adoption evidence for package generation."""
+    from rfm_pipeline.campaign_contract import G11_CONTRACT, compute_contract_hash
+    from rfm_pipeline.hpc_campaign_package import (
+        _hash_file,
+        _hash_python_tree,
+        _validate_resource_freeze,
+    )
+
+    source_resource_freeze_path = source_resource_freeze_path.resolve()
+    source_resolution_decision_path = source_resolution_decision_path.resolve()
+    source_development_completion_path = source_development_completion_path.resolve()
+    resolved_repo_root = repo_root.resolve()
+    source_freeze = json.loads(source_resource_freeze_path.read_text(encoding="utf-8"))
+    _validate_resource_freeze(source_freeze)
+    resolution_bytes = source_resolution_decision_path.read_bytes()
+    resolution = json.loads(resolution_bytes)
+    completion = json.loads(
+        source_development_completion_path.read_text(encoding="utf-8")
+    )
+    freeze, adopted_resolution, adopted_completion, adoption = (
+        adopt_generation_12_prerequisites(
+            source_resource_freeze=source_freeze,
+            source_resolution_decision=resolution,
+            source_resolution_decision_sha256=hashlib.sha256(
+                resolution_bytes
+            ).hexdigest(),
+            source_development_completion=completion,
+            target_source_hash=_hash_python_tree(
+                resolved_repo_root / "src" / "rfm_pipeline"
+            ),
+            target_config_hash=compute_contract_hash(G11_CONTRACT),
+            target_lock_hash=_hash_file(resolved_repo_root / "pixi.lock"),
+            target_run_id=target_run_id,
+        )
+    )
+    outputs = {
+        "resource_freeze": output_dir.resolve() / "resource_freeze.json",
+        "resolution_decision": output_dir.resolve() / "resolution_decision.json",
+        "development_completion": (
+            output_dir.resolve() / "development_completion.json"
+        ),
+        "generation_adoption": output_dir.resolve() / "generation_adoption.json",
+    }
+    for label, payload in (
+        ("resource_freeze", freeze),
+        ("resolution_decision", adopted_resolution),
+        ("development_completion", adopted_completion),
+        ("generation_adoption", adoption),
+    ):
+        _write_new_json(outputs[label], payload)
+    return {
+        "status": "GENERATION_12_PREREQUISITES_ADOPTED",
+        "target_run_id": target_run_id,
+        "outputs": {
+            label: {
+                "path": str(path),
+                "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+            }
+            for label, path in outputs.items()
+        },
+        "generation_adoption_sha256": adoption["generation_adoption_sha256"],
+    }
+
+
 def adopt_gate_b_decision_for_downstream(
     *,
     gate_b_decision: dict[str, Any],
@@ -1908,6 +2146,19 @@ def _cli_prepare_final(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cli_adopt_generation_12(args: argparse.Namespace) -> int:
+    result = write_generation_12_prerequisites(
+        source_resource_freeze_path=Path(args.source_resource_freeze),
+        source_resolution_decision_path=Path(args.source_resolution_decision),
+        source_development_completion_path=Path(args.source_development_completion),
+        repo_root=Path(args.repo_root),
+        target_run_id=str(args.target_run_id),
+        output_dir=Path(args.output_dir),
+    )
+    print(json.dumps(result, sort_keys=True))
+    return 0
+
+
 def _cli_prepare_downstream(args: argparse.Namespace) -> int:
     dag, certificate = prepare_downstream_package(
         output_dir=Path(args.output_dir),
@@ -2051,6 +2302,21 @@ def main(argv: list[str] | None = None) -> int:
     final.add_argument("--postprocessing-reserved-au", type=float, default=5.0)
     final.add_argument("--budget-certificate", required=True)
     final.set_defaults(func=_cli_prepare_final)
+
+    generation_12 = subparsers.add_parser(
+        "adopt-generation-12-prerequisites",
+        help=(
+            "bind invariant pilot telemetry and the accepted resolution to a fresh "
+            "generation-12 package"
+        ),
+    )
+    generation_12.add_argument("--source-resource-freeze", required=True)
+    generation_12.add_argument("--source-resolution-decision", required=True)
+    generation_12.add_argument("--source-development-completion", required=True)
+    generation_12.add_argument("--repo-root", required=True)
+    generation_12.add_argument("--target-run-id", required=True)
+    generation_12.add_argument("--output-dir", required=True)
+    generation_12.set_defaults(func=_cli_adopt_generation_12)
 
     downstream = subparsers.add_parser(
         "prepare-downstream",
