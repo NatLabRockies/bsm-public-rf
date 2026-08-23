@@ -6,6 +6,7 @@ and manifest behavior.  They do not start calibration, HPC, or production work.
 
 from __future__ import annotations
 
+import hashlib
 import importlib.util
 import inspect
 import json
@@ -735,6 +736,54 @@ def test_campaign_adapter_requires_manifest_bound_contract_and_dgp_paths(
 
     with pytest.raises(ValueError, match="contract_config_path"):
         adapter.execute_scientific_work_unit(record, tmp_path / "shard")
+
+
+def test_fixed_family_adapter_uses_authorization_phase_alias(tmp_path: Path) -> None:
+    adapter = _load_adapter()
+    observed: dict[str, object] = {}
+
+    class Driver:
+        @staticmethod
+        def _verify_execution_authorization(
+            path: Path,
+            *,
+            contract_hash: str,
+            phase: str,
+            expected_identity: dict[str, object],
+        ) -> dict[str, object]:
+            observed.update(
+                path=path,
+                contract_hash=contract_hash,
+                phase=phase,
+                expected_identity=expected_identity,
+            )
+            return {
+                "resource_freeze_sha256": expected_identity["resource_freeze_sha256"],
+                "campaign_inventory_hash": hashlib.sha256(
+                    Path(expected_identity["campaign_inventory_path"]).read_bytes()
+                ).hexdigest(),
+            }
+
+    inventory = tmp_path / "campaign_inventory.jsonl"
+    inventory.write_text("{}\n", encoding="utf-8")
+    record = {
+        "phase": "gate_b",
+        "stage": "fixed_family_supplement",
+        "operation": "fixed_family_supplement",
+        "execution_authorization_path": str(tmp_path / "gate_b.json"),
+        "resource_freeze_sha256": "a" * 64,
+        "campaign_inventory_path": str(inventory),
+    }
+
+    adapter._verify_phase_authorization(Driver(), record, contract_hash="b" * 64)
+
+    assert observed["phase"] == "fixed_family"
+
+    observed.clear()
+    record["operation"] = "gate_b"
+    adapter._verify_phase_authorization(Driver(), record, contract_hash="b" * 64)
+
+    assert observed["phase"] == "gate_b"
 
 
 def test_campaign_adapter_uses_payload_identity_for_every_score_artifact() -> None:

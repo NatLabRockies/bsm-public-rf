@@ -61,10 +61,16 @@ def _load_driver(record: dict[str, Any]) -> ModuleType:
 def _verify_phase_authorization(
     driver: ModuleType, record: dict[str, Any], *, contract_hash: str
 ) -> dict[str, Any]:
+    authorization_phase = str(record["phase"])
+    if (
+        record.get("stage") == "fixed_family_supplement"
+        and record.get("operation") == "fixed_family_supplement"
+    ):
+        authorization_phase = "fixed_family"
     authorization = driver._verify_execution_authorization(
         Path(str(record["execution_authorization_path"])),
         contract_hash=contract_hash,
-        phase=str(record["phase"]),
+        phase=authorization_phase,
         expected_identity=record,
     )
     if authorization.get("resource_freeze_sha256") != record.get(
