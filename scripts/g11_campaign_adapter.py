@@ -415,7 +415,11 @@ def _verify_applied_data_manifest(
     return root, payload
 
 
-def _load_applied_train_tables(record: dict[str, Any]) -> tuple[Any, Any, Any, Any]:
+def _load_applied_train_tables(
+    record: dict[str, Any],
+    *,
+    names: tuple[str, ...] = ("inputs", "outputs", "assignments", "catalog"),
+) -> tuple[Any, ...]:
     import pandas as pd
 
     root, manifest = _verify_applied_data_manifest(record)
@@ -426,14 +430,14 @@ def _load_applied_train_tables(record: dict[str, Any]) -> tuple[Any, Any, Any, A
         "assignments": root / "adaptive_train" / "assignments.parquet",
         "catalog": root / "metadata" / "manuscript_feature_catalog.parquet",
     }
-    for path in paths.values():
+    if not names or len(names) != len(set(names)) or not set(names) <= set(paths):
+        raise ValueError("requested applied training tables must be unique canonical names")
+    for name in names:
+        path = paths[name]
         relative = str(path.relative_to(root))
         if hashlib.sha256(path.read_bytes()).hexdigest() != generated.get(relative):
             raise ValueError(f"applied training artifact hash differs: {relative}")
-    return tuple(
-        pd.read_parquet(paths[name])
-        for name in ("inputs", "outputs", "assignments", "catalog")
-    )
+    return tuple(pd.read_parquet(paths[name]) for name in names)
 
 
 def _stages_root(record: dict[str, Any]) -> Path:
@@ -983,7 +987,9 @@ def _reduce_applied_nonlinear(
                     raise ValueError("nonlinear checkpoint metadata identities differ")
             if not destination.exists():
                 shutil.copy2(path, destination)
-    inputs, _, assignments, catalog = _load_applied_train_tables(records[0])
+    inputs, assignments, catalog = _load_applied_train_tables(
+        records[0], names=("inputs", "assignments", "catalog")
+    )
     conditioning = _load_conditioning(records[0])
     screening = _load_screening(records[0])
     _, _, _, nonlinear, *_ = _applied_specifications(records[0], contract)
@@ -1080,7 +1086,7 @@ def _reduce_applied_sparse_resample(
     ]
     if len(blocks) != contract.n_stability_subsamples:
         raise ValueError("sparse stability blocks do not exactly cover all resamples")
-    _, _, _, catalog = _load_applied_train_tables(records[0])
+    (catalog,) = _load_applied_train_tables(records[0], names=("catalog",))
     screening = _load_screening(records[0])
     interactions = _load_interactions(records[0])
     nonlinear = _load_nonlinear(records[0])
@@ -1713,7 +1719,9 @@ def _execute_applied_conditioning(
         write_output_conditioning_artifacts,
     )
 
-    _, outputs, assignments, _ = _load_applied_train_tables(record)
+    outputs, assignments = _load_applied_train_tables(
+        record, names=("outputs", "assignments")
+    )
     conditioning, *_ = _applied_specifications(record, campaign_contract)
     result = condition_manuscript_outputs(outputs, assignments, conditioning)
     paths = write_output_conditioning_artifacts(result, shard_dir)
@@ -1731,7 +1739,9 @@ def _execute_applied_screening(
 ) -> dict[str, Any]:
     from rfm_pipeline.manuscript_stages import score_screening_draw_block
 
-    inputs, _, assignments, catalog = _load_applied_train_tables(record)
+    inputs, assignments, catalog = _load_applied_train_tables(
+        record, names=("inputs", "assignments", "catalog")
+    )
     conditioning = _load_conditioning(record)
     _, screening, *_ = _applied_specifications(record, campaign_contract)
     block = score_screening_draw_block(
@@ -1761,7 +1771,9 @@ def _execute_applied_interaction(
     )
     from rfm_pipeline.manuscript_stages import score_interaction_draw_block
 
-    inputs, _, assignments, catalog = _load_applied_train_tables(record)
+    inputs, assignments, catalog = _load_applied_train_tables(
+        record, names=("inputs", "assignments", "catalog")
+    )
     conditioning = _load_conditioning(record)
     screening = _load_screening(record)
     _, _, interaction, *_ = _applied_specifications(record, campaign_contract)
@@ -1795,7 +1807,9 @@ def _execute_applied_nonlinear(
         discover_manuscript_nonlinear_transformations,
     )
 
-    inputs, _, assignments, catalog = _load_applied_train_tables(record)
+    inputs, assignments, catalog = _load_applied_train_tables(
+        record, names=("inputs", "assignments", "catalog")
+    )
     conditioning = _load_conditioning(record)
     screening = _load_screening(record)
     _, _, _, nonlinear, *_ = _applied_specifications(record, campaign_contract)
@@ -1837,7 +1851,9 @@ def _execute_applied_nonlinear(
 
 
 def _sparse_inputs(record: dict[str, Any]) -> tuple[Any, ...]:
-    inputs, _, assignments, catalog = _load_applied_train_tables(record)
+    inputs, assignments, catalog = _load_applied_train_tables(
+        record, names=("inputs", "assignments", "catalog")
+    )
     conditioning = _load_conditioning(record)
     screening = _load_screening(record)
     interactions = _load_interactions(record)
@@ -1923,7 +1939,9 @@ def _aligned_train_design(
 
     from rfm_pipeline.manuscript_stages import build_manuscript_feature_design
 
-    inputs, outputs, assignments, _ = _load_applied_train_tables(record)
+    inputs, outputs, assignments = _load_applied_train_tables(
+        record, names=("inputs", "outputs", "assignments")
+    )
     train_ids = assignments.loc[
         assignments["split"].astype(str) == "train", "sample_id"
     ]
@@ -1993,7 +2011,9 @@ def _execute_applied_ablation_fit(
     model = str(record["ablation_model"])
     if model not in _ABLATION_MODELS:
         raise ValueError(f"unknown applied ablation model {model!r}")
-    _, outputs, assignments, catalog = _load_applied_train_tables(record)
+    outputs, assignments, catalog = _load_applied_train_tables(
+        record, names=("outputs", "assignments", "catalog")
+    )
     train_ids = assignments.loc[
         assignments["split"].astype(str) == "train", "sample_id"
     ].tolist()

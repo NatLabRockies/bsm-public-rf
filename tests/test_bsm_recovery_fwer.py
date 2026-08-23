@@ -134,6 +134,44 @@ def test_gate_b_adapter_uses_type_aware_binary_factorial_contract() -> None:
     assert spec.binary_binary_minimum_cell_count == 2
 
 
+def test_applied_table_loader_reads_only_requested_tables(tmp_path, monkeypatch) -> None:
+    """Light stages must not materialize the 23,495-column output matrix."""
+    adapter = _load_adapter()
+    paths = {
+        "inputs": tmp_path / "adaptive_train" / "X.parquet",
+        "outputs": tmp_path / "adaptive_train" / "Y.parquet",
+        "assignments": tmp_path / "adaptive_train" / "assignments.parquet",
+        "catalog": tmp_path / "metadata" / "manuscript_feature_catalog.parquet",
+    }
+    for name, path in paths.items():
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(name.encode())
+    generated = {
+        str(path.relative_to(tmp_path)): hashlib.sha256(path.read_bytes()).hexdigest()
+        for path in paths.values()
+    }
+    monkeypatch.setattr(
+        adapter,
+        "_verify_applied_data_manifest",
+        lambda _record: (tmp_path, {"generated_sha256": generated}),
+    )
+    reads: list[Path] = []
+
+    def fake_read_parquet(path):
+        reads.append(Path(path))
+        return Path(path).name
+
+    monkeypatch.setattr("pandas.read_parquet", fake_read_parquet)
+
+    loaded = adapter._load_applied_train_tables(
+        {}, names=("inputs", "assignments", "catalog")
+    )
+
+    assert loaded == ("X.parquet", "assignments.parquet", "manuscript_feature_catalog.parquet")
+    assert reads == [paths["inputs"], paths["assignments"], paths["catalog"]]
+    assert paths["outputs"] not in reads
+
+
 def test_pinned_control_snapshot_reconciles_with_contract(driver, contract):
     snapshot = driver.verify_pinned_control_snapshot(contract)
 
