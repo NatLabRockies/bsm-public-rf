@@ -91,6 +91,35 @@ def test_phase_preflight_rejects_manifest_authorization_path_drift(
     )
 
 
+def test_fixed_family_preflight_accepts_confirmatory_manifest_phase_alias(
+    tmp_path: Path,
+) -> None:
+    expected = tmp_path / "g11-final" / "gate_b.json"
+    manifest = tmp_path / "fixed-family-manifest.jsonl"
+    manifest.write_text(
+        json.dumps(
+            {
+                "phase": "gate_b",
+                "stage": "fixed_family_supplement",
+                "operation": "fixed_family_supplement",
+                "execution_authorization_path": str(expected),
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    dag = SimpleNamespace(stages=(SimpleNamespace(manifest_path=manifest),))
+
+    assert (
+        _validate_phase_manifest_authorization_paths(
+            dag,
+            phase="fixed_family",
+            authorization_path=expected,
+        )
+        == 1
+    )
+
+
 def test_accepted_freeze_reconciliation_allows_only_accounting_rule_text() -> None:
     accepted_identity = {
         "status": "ACCEPTED",

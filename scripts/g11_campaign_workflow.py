@@ -1726,7 +1726,11 @@ def _validate_phase_manifest_authorization_paths(
             if not line.strip():
                 continue
             record = json.loads(line)
-            if record.get("phase") != phase:
+            fixed_family_alias = (
+                phase == "fixed_family"
+                and record.get("stage") == "fixed_family_supplement"
+            )
+            if record.get("phase") != phase and not fixed_family_alias:
                 continue
             matched += 1
             observed_raw = record.get("execution_authorization_path")
