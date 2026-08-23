@@ -1116,6 +1116,57 @@ def test_campaign_adapter_reduction_rejects_missing_terminal_record(tmp_path: Pa
         adapter.reduce_scientific_stage([records], tmp_path / "reduced")
 
 
+def test_campaign_adapter_accepts_current_applied_scientific_controls(
+    tmp_path: Path,
+) -> None:
+    from rfm_pipeline.campaign_contract import load_contract
+
+    adapter = _load_adapter()
+    contract, _ = load_contract(_ROOT / "configs" / "g11_campaign_contract.toml")
+    source = _ROOT / "configs" / "manuscript_case_study.yml"
+    applied_config = tmp_path / source.name
+    applied_config.write_bytes(source.read_bytes())
+    record = {
+        "applied_config_path": str(applied_config),
+        "applied_config_sha256": hashlib.sha256(applied_config.read_bytes()).hexdigest(),
+    }
+
+    case_study = adapter._load_applied_case_config(record, contract)
+
+    interaction = case_study["interaction_discovery"]
+    assert interaction["selection_method"] == contract.method_name
+    assert interaction["selection_alpha"] == pytest.approx(contract.alpha)
+    assert interaction["family_partition_method"] == contract.family_partition_method
+    assert interaction["tree_family_alpha"] == pytest.approx(
+        contract.tree_family_alpha
+    )
+    assert interaction["binary_binary_family_alpha"] == pytest.approx(
+        contract.binary_binary_family_alpha
+    )
+
+
+def test_campaign_adapter_rejects_applied_selection_alpha_drift(
+    tmp_path: Path,
+) -> None:
+    from rfm_pipeline.campaign_contract import load_contract
+
+    adapter = _load_adapter()
+    contract, _ = load_contract(_ROOT / "configs" / "g11_campaign_contract.toml")
+    source = _ROOT / "configs" / "manuscript_case_study.yml"
+    raw = source.read_text(encoding="utf-8").replace(
+        "selection_alpha: 0.05", "selection_alpha: 0.051"
+    )
+    applied_config = tmp_path / source.name
+    applied_config.write_text(raw, encoding="utf-8")
+    record = {
+        "applied_config_path": str(applied_config),
+        "applied_config_sha256": hashlib.sha256(applied_config.read_bytes()).hexdigest(),
+    }
+
+    with pytest.raises(ValueError, match="scientific controls differ"):
+        adapter._load_applied_case_config(record, contract)
+
+
 def test_applied_data_preparer_physically_separates_and_seals_holdout(tmp_path: Path):
     import pandas as pd
 

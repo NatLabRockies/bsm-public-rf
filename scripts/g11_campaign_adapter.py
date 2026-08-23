@@ -309,8 +309,22 @@ def _load_applied_case_config(
     exact = {
         "B_screen": int(screening.get("permutation_count_B", -1)),
         "q_screen": float(screening.get("bh_q_screen", -1.0)),
-        "method_name": str(interaction.get("family_error_method", "")),
-        "alpha": float(interaction.get("family_error_alpha", -1.0)),
+        "interaction_detector_method": str(interaction.get("method", "")),
+        "aggregation_rule": str(interaction.get("aggregation_rule", "")),
+        "family_partition_method": str(
+            interaction.get("family_partition_method", "")
+        ),
+        "tree_family_alpha": float(interaction.get("tree_family_alpha", -1.0)),
+        "binary_binary_family_alpha": float(
+            interaction.get("binary_binary_family_alpha", -1.0)
+        ),
+        "binary_binary_method": str(interaction.get("binary_binary_method", "")),
+        "binary_binary_minimum_cell_count": int(
+            interaction.get("binary_binary_minimum_cell_count", -1)
+        ),
+        "method_name": str(interaction.get("selection_method", "")),
+        "alpha": float(interaction.get("selection_alpha", -1.0)),
+        "B_interaction": int(interaction.get("permutation_count_B", -1)),
         "n_stability_subsamples": int(
             str(stability.get("resampling_scheme", "")).split("_", maxsplit=1)[0]
         ),
@@ -322,8 +336,18 @@ def _load_applied_case_config(
     expected = {
         "B_screen": campaign_contract.B_screen,
         "q_screen": campaign_contract.q_screen,
+        "interaction_detector_method": campaign_contract.interaction_detector_method,
+        "aggregation_rule": "max_over_components_by_detector",
+        "family_partition_method": campaign_contract.family_partition_method,
+        "tree_family_alpha": campaign_contract.tree_family_alpha,
+        "binary_binary_family_alpha": campaign_contract.binary_binary_family_alpha,
+        "binary_binary_method": campaign_contract.binary_binary_method,
+        "binary_binary_minimum_cell_count": (
+            campaign_contract.binary_binary_minimum_cell_count
+        ),
         "method_name": campaign_contract.method_name,
         "alpha": campaign_contract.alpha,
+        "B_interaction": campaign_contract.B_interaction,
         "n_stability_subsamples": campaign_contract.n_stability_subsamples,
         "stability_jaccard_threshold": campaign_contract.stability_jaccard_threshold,
         "stability_spearman_threshold": campaign_contract.stability_spearman_threshold,
