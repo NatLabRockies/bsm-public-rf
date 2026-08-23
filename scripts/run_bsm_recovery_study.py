@@ -2197,6 +2197,7 @@ def _verify_execution_authorization(
         "preflight_sha256",
         "submission_plan_sha256",
         "prerequisite_sha256",
+        "prerequisite_decisions",
         "execution_permitted",
         "resource_freeze_sha256",
         "authorization_sha256",
@@ -2217,6 +2218,30 @@ def _verify_execution_authorization(
     ):
         raise PreexecutionBlockedError(
             "campaign execution authorization is not valid for this phase"
+        )
+    prerequisite_decisions = _require_mapping(
+        payload["prerequisite_decisions"], "authorization prerequisite decisions"
+    )
+    expected_decision_keys = {
+        "development": set(),
+        "gate_b": set(),
+        "fixed_family": {"gate_b"},
+        "gate_p": {"gate_b", "fixed_family_supplement"},
+        "gate_c": {"gate_b", "fixed_family_supplement"},
+    }.get(phase)
+    if expected_decision_keys is None or set(prerequisite_decisions) != (
+        expected_decision_keys
+    ):
+        raise PreexecutionBlockedError(
+            "campaign execution authorization prerequisite decisions differ"
+        )
+    if prerequisite_decisions.get("gate_b", "PASS") != "PASS" or (
+        "fixed_family_supplement" in prerequisite_decisions
+        and prerequisite_decisions["fixed_family_supplement"]
+        not in {"PASS", "CONDITIONALLY_ADOPTED"}
+    ):
+        raise PreexecutionBlockedError(
+            "campaign execution authorization prerequisite decisions differ"
         )
     if expected_identity is not None:
         for field in ("run_id", "source_hash", "lock_hash"):
