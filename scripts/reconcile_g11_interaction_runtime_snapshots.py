@@ -265,7 +265,7 @@ def _build_pre_score_diagnostic(
     }
     return (
         metadata,
-        train_ids.astype(str).to_numpy(),
+        np.asarray(train_ids.astype(str).tolist(), dtype=np.str_),
         np.asarray(x_full, dtype=np.float64),
         np.asarray(y_scaled, dtype=np.float64),
     )

@@ -137,3 +137,24 @@ def test_diagnostic_bundle_comparison_rejects_material_response_drift(
 
     with pytest.raises(ValueError, match="response matrices"):
         compare_diagnostic_bundles(reference, candidate)
+
+
+def test_diagnostic_bundle_loader_rejects_object_arrays(tmp_path: Path) -> None:
+    reference = tmp_path / "reference.npz"
+    candidate = tmp_path / "candidate.npz"
+    object_ids = np.asarray(["sample-1"], dtype=object)
+    _write_bundle(
+        reference,
+        train_ids=object_ids,
+        features=np.asarray([[1.0]]),
+        response=np.asarray([[1.0]]),
+    )
+    _write_bundle(
+        candidate,
+        train_ids=object_ids,
+        features=np.asarray([[1.0]]),
+        response=np.asarray([[1.0]]),
+    )
+
+    with pytest.raises(ValueError, match="Object arrays"):
+        compare_diagnostic_bundles(reference, candidate)
