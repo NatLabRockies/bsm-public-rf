@@ -102,10 +102,12 @@ def classify_snapshot_runtime(
             for key in snapshot
             if key not in ALLOWED_SNAPSHOT_RUNTIME_DRIFT
         )
+        # The legacy response hash is process-sensitive because upstream
+        # conditioning uses floating-point linear algebra.  The separately
+        # persisted diagnostic matrices establish strict numerical equality;
+        # the canonical contract checksum identifies the runtime group here.
         runtime_group_matches = (
             snapshot["contract_sha256"] == diagnostic["contract_sha256"]
-            and snapshot["response_matrix_sha256"]
-            == diagnostic["response_matrix_sha256"]
         )
         if stable_fields_match and runtime_group_matches:
             matches.append(label)
@@ -505,6 +507,18 @@ def reconcile(args: argparse.Namespace) -> int:
             "reference": runtime_groups.count("reference"),
             "candidate": runtime_groups.count("candidate"),
         },
+        "distinct_legacy_training_id_hashes": len(
+            {
+                artifact.control_snapshot.training_sample_ids_sha256
+                for artifact in artifacts
+            }
+        ),
+        "distinct_legacy_response_matrix_hashes": len(
+            {
+                artifact.control_snapshot.response_matrix_sha256
+                for artifact in artifacts
+            }
+        ),
         "diagnostic_bundle_comparison": bundle_report,
         "reference_diagnostic_sha256": _sha256_file(
             Path(args.reference_diagnostic)

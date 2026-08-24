@@ -82,6 +82,7 @@ def test_worker_snapshot_binds_runtime_with_process_specific_string_hash() -> No
     candidate["training_sample_ids_sha256"] = "7" * 64
     worker = deepcopy(candidate)
     worker["training_sample_ids_sha256"] = "8" * 64
+    worker["response_matrix_sha256"] = "9" * 64
 
     assert (
         classify_snapshot_runtime(
@@ -90,7 +91,7 @@ def test_worker_snapshot_binds_runtime_with_process_specific_string_hash() -> No
         == "candidate"
     )
 
-    worker["feature_matrix_sha256"] = "9" * 64
+    worker["feature_matrix_sha256"] = "0" * 64
     with pytest.raises(ValueError, match="exactly one"):
         classify_snapshot_runtime(worker, reference=reference, candidate=candidate)
 
