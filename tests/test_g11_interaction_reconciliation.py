@@ -9,6 +9,7 @@ import numpy as np
 import pytest
 
 from scripts.reconcile_g11_interaction_runtime_snapshots import (
+    classify_snapshot_runtime,
     compare_diagnostic_bundles,
     validate_contract_runtime_drift,
     validate_snapshot_runtime_drift,
@@ -71,6 +72,27 @@ def test_contract_runtime_drift_requires_n_jobs_as_only_difference() -> None:
     candidate["random_seed"] = 456
     with pytest.raises(ValueError, match="random_seed"):
         validate_contract_runtime_drift(reference, candidate)
+
+
+def test_worker_snapshot_binds_runtime_with_process_specific_string_hash() -> None:
+    reference = _snapshot()
+    candidate = deepcopy(reference)
+    candidate["contract_sha256"] = "5" * 64
+    candidate["response_matrix_sha256"] = "6" * 64
+    candidate["training_sample_ids_sha256"] = "7" * 64
+    worker = deepcopy(candidate)
+    worker["training_sample_ids_sha256"] = "8" * 64
+
+    assert (
+        classify_snapshot_runtime(
+            worker, reference=reference, candidate=candidate
+        )
+        == "candidate"
+    )
+
+    worker["feature_matrix_sha256"] = "9" * 64
+    with pytest.raises(ValueError, match="exactly one"):
+        classify_snapshot_runtime(worker, reference=reference, candidate=candidate)
 
 
 def _write_bundle(

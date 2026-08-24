@@ -86,6 +86,36 @@ def validate_contract_runtime_drift(
     return int(reference["n_jobs"]), int(candidate["n_jobs"])
 
 
+def classify_snapshot_runtime(
+    snapshot: dict[str, Any],
+    *,
+    reference: dict[str, Any],
+    candidate: dict[str, Any],
+) -> str:
+    """Bind one worker snapshot to a diagnosed runtime despite pointer hashing."""
+    matches: list[str] = []
+    for label, diagnostic in (("reference", reference), ("candidate", candidate)):
+        if set(snapshot) != set(diagnostic):
+            continue
+        stable_fields_match = all(
+            snapshot[key] == diagnostic[key]
+            for key in snapshot
+            if key not in ALLOWED_SNAPSHOT_RUNTIME_DRIFT
+        )
+        runtime_group_matches = (
+            snapshot["contract_sha256"] == diagnostic["contract_sha256"]
+            and snapshot["response_matrix_sha256"]
+            == diagnostic["response_matrix_sha256"]
+        )
+        if stable_fields_match and runtime_group_matches:
+            matches.append(label)
+    if len(matches) != 1:
+        raise ValueError(
+            "worker snapshot does not bind exactly one diagnosed runtime group"
+        )
+    return matches[0]
+
+
 def compare_diagnostic_bundles(
     reference_path: Path, candidate_path: Path
 ) -> dict[str, Any]:
@@ -405,17 +435,16 @@ def reconcile(args: argparse.Namespace) -> int:
         reference_metadata["canonical_contract"]["interaction_controls"],
         candidate_metadata["canonical_contract"]["interaction_controls"],
     )
-    observed_snapshots = {artifact.control_snapshot.checksum for artifact in artifacts}
-    expected_snapshots = {
-        ScoreOnlyInteractionArtifact.read_from(
-            results_root / "task-0000" / "interaction_block"
-        ).control_snapshot.checksum,
-        ScoreOnlyInteractionArtifact.read_from(
-            results_root / "task-0017" / "interaction_block"
-        ).control_snapshot.checksum,
-    }
-    if observed_snapshots != expected_snapshots or len(observed_snapshots) != 2:
-        raise ValueError("worker artifacts do not contain the two diagnosed snapshots")
+    runtime_groups = [
+        classify_snapshot_runtime(
+            artifact.control_snapshot.to_dict(),
+            reference=reference_snapshot,
+            candidate=candidate_snapshot,
+        )
+        for artifact in artifacts
+    ]
+    if set(runtime_groups) != {"reference", "candidate"}:
+        raise ValueError("worker artifacts do not contain both diagnosed runtime groups")
     if {
         artifact.control_snapshot.contract_sha256 for artifact in artifacts
     } != {
@@ -472,6 +501,10 @@ def reconcile(args: argparse.Namespace) -> int:
         "observed_snapshot_runtime_drift": sorted(snapshot_differences),
         "canonical_n_jobs": reference_n_jobs,
         "alternate_runtime_n_jobs": candidate_n_jobs,
+        "runtime_group_counts": {
+            "reference": runtime_groups.count("reference"),
+            "candidate": runtime_groups.count("candidate"),
+        },
         "diagnostic_bundle_comparison": bundle_report,
         "reference_diagnostic_sha256": _sha256_file(
             Path(args.reference_diagnostic)
