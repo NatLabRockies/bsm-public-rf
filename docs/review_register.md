@@ -4,6 +4,23 @@ Durable record of audit findings requiring follow-up. Newest first.
 
 ______________________________________________________________________
 
+## 2026-09-07 — G11/G12 reconciliation BLOCKED: main and codex chain make contradictory method claims
+
+- **Severity:** HIGH (blocks branch reconciliation; two divergent scientific contracts in one repo).
+- **Context.** The `bsm-public-rf-g11-*` / `-g12-*` directories are **git worktrees**, not separate repos — all objects already live in `bsm-public-rf/.git`. Reconciliation is branch integration, not repo consolidation. Two lines diverged at `47849a5` (2026-08-09): `main` (+6 commits → `fee4368`) and a linear 48-commit chain tipped by `codex/g12-interaction-reconcile` (`963ec4f`, 2026-08-24). `git cherry` confirms neither side contains the other.
+- **Completed this session (safe, reversible):**
+  - All 20 branch tips tagged `reconcile-backup/20260907-060905/*` in both repos.
+  - Uncommitted base-worktree work (43 files) committed to `reconcile/base-worktree-snapshot-20260907-060905` (`d19b4d5`) — was at risk of loss.
+  - `main` reconciled with `origin/main`'s 2 commits → `ca35ece` (3 conflicts resolved: kept main's B999 Gate-B settings; adopted the reproducible rfm-pipeline git pin over the local editable path).
+- **BLOCKER — the chain merge cannot proceed without an author decision.** `codex/g12-interaction-reconcile` contains `test_runtime_surfaces_have_no_legacy_158_exact_or_free_text_gate_claims`, which asserts that `scripts/run_bsm_recovery_study.py`, `configs/bsm_dgp_contract.yaml`, and `configs/manuscript_case_study.yml` contain **none** of: `fwer_max_stat_exact`, `min_exact_permutation_draws`, `158-continuous`, `representative replicate`; and that `artifacts/recovery_study/` holds **only** `README.md`. The `main` line requires exactly the opposite: `StudyScale(family_error_method="fwer_max_stat_exact", min_exact_permutation_draws=199)`, `first_order_candidate_design()` over 158 continuous inputs, `family_error_method: fwer_max_stat_exact` in `manuscript_case_study.yml`, and 7 committed result CSVs under `artifacts/recovery_study/`.
+- **Consequence.** Merging in either direction requires *either* deleting committed scientific results and retiring the `fwer_max_stat_exact` runtime surface, *or* weakening the chain's guard test. Both are prohibited without explicit approval, so the merge was aborted and the working tree restored clean.
+- **Silent-loss hazard found.** In the trial merge, `configs/manuscript_case_study.yml` **auto-merged without conflict** and silently dropped `family_error_method: fwer_max_stat_exact`. Any future reconciliation must assert this key explicitly rather than trust auto-merge.
+- **Evidence preserved, not yet applied.** Trial resolutions saved outside the repo: the retired `configs/method_contract.yaml` archived as `docs/archive/method_contract_G0_retired.yaml` (it is the **only** carrier of the P9-A-S2 independent-review PASS record — the chain's replacement configs do not contain it, so accepting the chain's deletion as-is would destroy that evidence); and a union merge of the two independently-authored `docs/execution_control/control_manifest.json` files (safety flags left locked).
+- **Required action (author decision):** declare which method contract is canonical — the chain's campaign-contract architecture (`fwer_max_stat_exact` retired from runtime surfaces, recovery artifacts purged) or main's direct-runtime formulation. The reconciliation cannot be completed mechanically.
+- **Disposition:** OPEN — blocked pending author decision. `main` is at `ca35ece`; no results deleted, no tests weakened.
+
+______________________________________________________________________
+
 ## 2026-07-30 — Corrected 30k run promoted: canonical re-baseline 123 → 245
 
 - **Severity:** HIGH (headline scientific numbers). The corrected main-effect-conditioned interaction method (rfm-pipeline 0965994) 30k Kestrel run (`publication_full_dataset_distributed_20260723`) supersedes the prior 123-feature canonical run. Artifacts, canonical config, consistency tests, and the manuscript were re-baselined.
