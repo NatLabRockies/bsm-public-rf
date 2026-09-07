@@ -35,7 +35,7 @@ if [[ ! -f "${BASE_CONFIG_PATH}" ]]; then
   exit 2
 fi
 
-for required in X.parquet Y.parquet fixed_holdout_assignments.parquet manuscript_feature_catalog.parquet; do
+for required in X.parquet Y.parquet holdout_assignments.parquet actual_input_feature_catalog.parquet; do
   if [[ ! -f "${DATASET_PATH}/${required}" ]]; then
     echo "error: missing required dataset artifact: ${DATASET_PATH}/${required}" >&2
     exit 2
@@ -55,11 +55,15 @@ N_SHARDS=(8 800 4000 1600 1200 1600)
 N_JOBS=(104 104 104 104 104 104)
 CPUS_PER_TASK=(104 104 104 104 104 104)
 MEMORY_GB=(230 230 230 230 230 230)
-WALLTIME=("01:00:00" "03:00:00" "03:50:00" "03:50:00" "03:50:00" "03:50:00")
+WALLTIME=("01:00:00" "03:00:00" "04:00:00" "03:50:00" "03:50:00" "03:50:00")
 MAX_CONCURRENT=(8 1024 4000 1600 1200 1600)
 REDUCE_WALLTIME=("00:45:00" "01:30:00" "03:30:00" "02:00:00" "02:30:00" "03:30:00")
 REDUCE_MEMORY_GB=(128 128 128 128 128 128)
 PARTITIONS=(short short short short short short)
+STAGE_QOS="${STAGE_QOS:-}"
+STOP_AFTER_STAGE="${STOP_AFTER_STAGE:-}"
+QOS_FLAG=""
+[[ -n "${STAGE_QOS}" ]] && QOS_FLAG="--qos=${STAGE_QOS}"
 RUN_ID_SUFFIX=(s01_output s02_empirical s03_interaction s04_nonlinear s05_sparse s06_final)
 
 # Guard against parallel-array drift: every resource list MUST have the
@@ -267,19 +271,19 @@ submit_stage() {
   if [[ -f "${array_script}" ]]; then
     if [[ -n "${previous_reduce_job_id}" ]]; then
       array_job_id="$(
-        sbatch --parsable --dependency=afterok:"${previous_reduce_job_id}" "${array_script}"
+        sbatch --parsable ${QOS_FLAG} --dependency=afterok:"${previous_reduce_job_id}" "${array_script}"
       )"
     else
-      array_job_id="$(sbatch --parsable "${array_script}")"
+      array_job_id="$(sbatch --parsable ${QOS_FLAG} "${array_script}")"
     fi
-    reduce_job_id="$(sbatch --parsable --dependency=afterany:"${array_job_id}" "${reduce_script}")"
+    reduce_job_id="$(sbatch --parsable ${QOS_FLAG} --dependency=afterany:"${array_job_id}" "${reduce_script}")"
   else
     if [[ -n "${previous_reduce_job_id}" ]]; then
       reduce_job_id="$(
-        sbatch --parsable --dependency=afterok:"${previous_reduce_job_id}" "${reduce_script}"
+        sbatch --parsable ${QOS_FLAG} --dependency=afterok:"${previous_reduce_job_id}" "${reduce_script}"
       )"
     else
-      reduce_job_id="$(sbatch --parsable "${reduce_script}")"
+      reduce_job_id="$(sbatch --parsable ${QOS_FLAG} "${reduce_script}")"
     fi
   fi
 
@@ -305,13 +309,29 @@ pixi install --locked
 
 previous_reduce_job_id=""
 STAGE_REDUCE_JOB_ID=""
+START_AT_STAGE="${START_AT_STAGE:-}"
+_started=0
+[[ -z "${START_AT_STAGE}" ]] && _started=1
 for i in "${!STAGES[@]}"; do
   stage="${STAGES[i]}"
+  if [[ "${_started}" -eq 0 ]]; then
+    if [[ "${stage}" == "${START_AT_STAGE}" ]]; then
+      _started=1
+    else
+      echo "[controller] START_AT_STAGE=${START_AT_STAGE}: skipping completed stage=${stage}"
+      continue
+    fi
+  fi
   if ! submit_stage "${stage}" "${i}" "${previous_reduce_job_id}"; then
     echo "[controller] pipeline failed at stage=${stage}" >&2
     exit 1
   fi
   previous_reduce_job_id="${STAGE_REDUCE_JOB_ID}"
+  if [[ -n "${STOP_AFTER_STAGE}" && "${stage}" == "${STOP_AFTER_STAGE}" ]]; then
+    echo "[controller] STOP_AFTER_STAGE=${STOP_AFTER_STAGE} reached; pausing before remaining stages"
+    touch "${METADATA_ROOT}/RUN_PAUSED_AFTER_${stage}"
+    exit 0
+  fi
 done
 
 touch "${METADATA_ROOT}/RUN_COMPLETE"

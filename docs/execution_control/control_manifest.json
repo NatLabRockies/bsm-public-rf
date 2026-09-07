@@ -1,5 +1,13 @@
 {
   "schema_version": 1,
+  "generation": 11,
+  "created": "2026-08-11",
+  "created_by": "G11-CTRL-S2-repair-r2",
+  "milestone": "HPC_SUBMISSION_READY",
+  "phase": "development",
+  "execution_permitted": false,
+  "dispatch_authorized": false,
+  "hpc_submission_authorized": false,
   "control_snapshot": "g0b_preexecution_control.md",
   "control_snapshot_sha256": "b4e276bc802cf6b899c18b48535de6b96b5d4f9cfdaacef696d04393a0efd246",
   "source_document": "ANALYSIS_HANDOFF.md",
@@ -10,11 +18,52 @@
     "Mandatory clean restart",
     "Clean-restart implementation response — 2026-08-10"
   ],
+  "control_files": {
+    "plan": {
+      "path": "docs/execution_control/generation11_control.md",
+      "sha256": "e48b30ed74c309d51403b1d8b14005bef29b7bd6e158764d92f8afcc413e68b5",
+      "committed": true,
+      "also_at": "docs/AUTONOMOUS_ANALYSIS_PLAN_G11.md (manuscript, gitignored)"
+    },
+    "prompt": {
+      "path": "docs/execution_control/autonomous_slice_prompt_g11.md",
+      "sha256": "3b5a55958083c9dbf731ed7bcb4162e03090716bb98c7188b39fbce93042b506",
+      "committed": true,
+      "also_at": "scripts/autonomous_slice_prompt_g11.md (manuscript, gitignored)"
+    },
+    "validator": {
+      "path": "docs/execution_control/validate_autonomous_slice_g11.py",
+      "sha256": "ad4328c7091661d57f9842296a33c15845553727f4c2c4d06eb575d4a38afc9b",
+      "committed": true,
+      "also_at": "scripts/validate_autonomous_slice_g11.py (manuscript, gitignored)"
+    },
+    "bundle": {
+      "path": "docs/g11_control_bundle.toml (manuscript, gitignored)",
+      "sha256": "bundle-sha-to-be-updated-after-toml-revision",
+      "committed": false,
+      "note": "bundle toml SHA committed indirectly via config/analysis_gate_status.toml in manuscript repo"
+    }
+  },
+  "handoff": {
+    "path": "docs/ANALYSIS_HANDOFF.md (manuscript)",
+    "sha256": "c251d4d3532938ad5ce62d9d766c482b1b4bcbeb6ad622f04df1c8d92df8ac6a",
+    "date": "2026-08-10",
+    "authority": "direct author instruction — supersedes prior interpretations"
+  },
   "gates": {
     "G0": "OPEN",
     "A": "OPEN",
-    "B": "OPEN"
+    "B": "OPEN",
+    "P": "OPEN",
+    "C": "OPEN",
+    "D": "OPEN",
+    "E": "OPEN",
+    "F_review": "OPEN",
+    "F_camera_ready": "OPEN"
   },
-  "phase": "development",
-  "execution_permitted": false
+  "quarantine": {
+    "p9_and_g10_state": "All P9/G10 outputs, seeds, caches are quarantined",
+    "reason": "REVIEW-0025 and REVIEW-0026"
+  },
+  "reconciliation_note": "Merged 2026-09-07 during G11/G12 reconciliation. The codex G11/G12 chain and the main line each created this file independently on 2026-08-11 with different schemas. This is the union: snapshot provenance and execution_permitted from the chain; generation/control_files/handoff/quarantine and the full gate ladder from main. Safety flags remain locked. See docs/review_register.md REV-RECONCILE-002."
 }

@@ -31,7 +31,7 @@ stages:
     bh_q_threshold: 0.05
 
   interaction_discovery:
-    n_permutations: 31
+    n_permutations: 500
     n_tree_estimators: 250
     max_tree_depth: 5
     p_threshold: 0.05
@@ -68,11 +68,13 @@ distributed:
   # publication run used /projects/bsm/.pixi).
   pixi_env_path: /projects/bsm/.pixi
   slurm:
-    account: bsm  # CONFIGURE: replace with your HPC allocation account
+    account: ira45y48e  # paid allocation (switched from bsm standby)
     partition: shared
     walltime: "04:00:00"
     memory_gb: 128
     cpus_per_task: 8
+    reduce_partition: shared
+    reduce_cpus_per_task: 8
     max_concurrent_array_tasks: 64
     # Overridden by controller.
     log_dir: "/scratch/${USER}/bsm/bsm_pub_full_dist_base/logs"
