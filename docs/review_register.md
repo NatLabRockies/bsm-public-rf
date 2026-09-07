@@ -272,7 +272,7 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
-## 2026-09-07 — G11/G12 reconciliation BLOCKED: main and codex chain make contradictory method claims
+## 2026-09-07 — G11/G12 reconciliation (RESOLVED): main and codex chain made contradictory method claims
 
 - **Severity:** HIGH (blocks branch reconciliation; two divergent scientific contracts in one repo).
 - **Context.** The `bsm-public-rf-g11-*` / `-g12-*` directories are **git worktrees**, not separate repos — all objects already live in `bsm-public-rf/.git`. Reconciliation is branch integration, not repo consolidation. Two lines diverged at `47849a5` (2026-08-09): `main` (+6 commits → `fee4368`) and a linear 48-commit chain tipped by `codex/g12-interaction-reconcile` (`963ec4f`, 2026-08-24). `git cherry` confirms neither side contains the other.
@@ -285,7 +285,20 @@ ______________________________________________________________________
 - **Silent-loss hazard found.** In the trial merge, `configs/manuscript_case_study.yml` **auto-merged without conflict** and silently dropped `family_error_method: fwer_max_stat_exact`. Any future reconciliation must assert this key explicitly rather than trust auto-merge.
 - **Evidence preserved, not yet applied.** Trial resolutions saved outside the repo: the retired `configs/method_contract.yaml` archived as `docs/archive/method_contract_G0_retired.yaml` (it is the **only** carrier of the P9-A-S2 independent-review PASS record — the chain's replacement configs do not contain it, so accepting the chain's deletion as-is would destroy that evidence); and a union merge of the two independently-authored `docs/execution_control/control_manifest.json` files (safety flags left locked).
 - **Required action (author decision):** declare which method contract is canonical — the chain's campaign-contract architecture (`fwer_max_stat_exact` retired from runtime surfaces, recovery artifacts purged) or main's direct-runtime formulation. The reconciliation cannot be completed mechanically.
-- **Disposition:** OPEN — blocked pending author decision. `main` is at `ca35ece`; no results deleted, no tests weakened.
+- **Disposition:** RESOLVED 2026-09-07 — see the resolution entry below.
+
+### Resolution (2026-09-07): the G11/G12 campaign chain is canonical
+
+- **Decision (author).** The chain's campaign-contract architecture is canonical. `main` was fast-forwarded to the reconciled tip `7eefe06`.
+- **Deciding evidence.** `bsm-public-rf-manuscript/generated/manuscript_results.tex` is headed *"Generated from one immutable G11 campaign; do not hand-edit"* (run `g11-final-manuscript-20260815p-g12-20260822a`). The manuscript's `sec:recovery` numbers therefore derive from the G11/G12 campaign, **not** from main's committed `artifacts/recovery_study/` bundle. The bundle is superseded on every axis: 2 scenarios vs 12; 100 null replicates vs 1,000; `B=199` vs a 3,199-draw screening schedule; a two-sided Wilson interval vs the one-sided 95% Wilson upper bound the manuscript actually reports. `docs/ANALYSIS_HANDOFF.md:1317` independently flags the two-sided `_wilson_ci` as a mislabeling defect, which the chain fixed.
+- **Runtime evidence.** Measured on the pre-merge `main`: the `interaction_null` gate replicate cost **99.7 s**, so `fwer_reps=40` made `pixi run pytest tests/` an approximately **66-minute** job (`global_null` short-circuits at 0.15 s because no signal is screened). The chain deliberately moves scientific execution to the HPC campaign so the gate stays a smoke test. Post-merge the full suite is **150 passed in ~33 s**. Note this is *not* the CPU-hours tier — that remains the campaign itself (B=3,199, ~30k runs, 23,495 outputs).
+- **Resolutions applied.** `scripts/run_bsm_recovery_study.py` and `tests/test_bsm_recovery_fwer.py` taken from the chain (**no test weakened** — the guard test is intact and passing); `configs/method_contract.yaml` deletion accepted **after** archiving the P9-A-S2 review PASS record to `docs/archive/method_contract_G0_retired.yaml`; `docs/execution_control/control_manifest.json` taken from the chain (the earlier union merge broke `verify_pinned_control_snapshot`, since that manifest is hash-pinned by `control_snapshot_sha256`, and main's file is an unrelated G0-era schema); `pixi.toml` uses the chain's `rfm-pipeline` pin `fb8b57f`, which matches the API the chain's code expects.
+- **Silent-loss hazard closed.** The `family_error_method` auto-merge hazard is moot under this decision: removing the key from runtime surfaces is intended, and the chain's own guard test asserts its absence, so no additional assertion is required.
+- **Superseded branches confirmed, not merged.** `g11-g0-s1-contract` (an earlier, smaller draft of `g11_campaign_contract.toml`), `g11-hpc-s1-hpc-package` (a pre-submission manifest pinned to the old tip `fee4368`, with `campaign_submit = "DISABLED_UNTIL_GATE_B_PASS"`, superseded by the completed campaign), and `p9-c-s1-bsm-calibration` (its `correlated_null` regime now ships as `correlated_interaction_null` among the 12 contract scenarios).
+- **R4B-S02 dropped as superseded.** It implemented the retired two-sided-Wilson, two-scenario calibration; the manuscript uses the campaign's one-sided bound. Recoverable on `reconcile/base-worktree-snapshot-20260907-060905`.
+- **Worktrees.** All 10 removed; `bsm-public-rf` is now a single clean worktree on `main`. Uncommitted work was first preserved to `reconcile/g10-repair-wip-20260907`, `reconcile/g11-hpc-s1-wip-20260907`, and `reconcile/g12-publication-wip-20260907`. The manuscript repo is likewise a single worktree on `main`.
+- **Follow-up (non-blocking).** Triage the three `reconcile/*-wip-20260907` branches; `configs/hpc/g11_hpc_package_config.toml` and `scripts/hpc/generate_g11_package.py` are absent from `main` and may still be wanted. All pre-reconciliation tips remain tagged `reconcile-backup/20260907-060905/*`.
+- **Not pushed.** This repo is ADVISORY autonomy; all work is local pending author review.
 
 ______________________________________________________________________
 
