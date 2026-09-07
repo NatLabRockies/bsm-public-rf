@@ -58,7 +58,7 @@ distributed:
     memory_gb: 32
     cpus_per_task: 36
     max_concurrent_array_tasks: 4
-    log_dir: "/scratch/${USER}/bsm/bsm_kestrel_debug/logs"
+    log_dir: "/projects/bsm/dhetting/bsm_kestrel_debug/logs"
     requeue: false
     signal_seconds_before_timeout: 30
 
@@ -72,7 +72,7 @@ distributed:
     production_partition: shared
 
   spill:
-    scratch_root: "/scratch/${USER}/bsm"
+    scratch_root: "/projects/bsm/dhetting/bsm_kestrel_debug/spill"
     tmpdir_spill_enabled: false
     min_free_gb: 5.0
     spill_chunk_size_mb: 64
