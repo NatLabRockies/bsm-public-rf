@@ -26,6 +26,7 @@ Re-run with:
 from __future__ import annotations
 
 import json
+import os
 import re
 import zipfile
 from datetime import datetime, timezone
@@ -34,9 +35,18 @@ from pathlib import Path
 import pandas as pd
 import yaml
 
-RFM_ROOT = Path("/Users/dhetting/src/rfm-pipeline")
-BSM_REPO = Path("/Users/dhetting/src/bsm-public-rf")
-DOCX = RFM_ROOT / "docs/manuscripts/BSM Reduced Form FY25Q4 Report_20250930.docx"
+_DOCX_RELPATH = "docs/manuscripts/BSM Reduced Form FY25Q4 Report_20250930.docx"
+
+# Repo root is derived from this file's location so the script works from any
+# checkout. The technical-report docx lives outside this repository; point at
+# it with BSM_SOURCE_DOCX, or at its containing repo with RFM_PIPELINE_ROOT.
+BSM_REPO = Path(__file__).resolve().parents[1]
+RFM_ROOT = Path(
+    os.environ.get("RFM_PIPELINE_ROOT", BSM_REPO.parent / "rfm-pipeline")
+).expanduser()
+DOCX = Path(
+    os.environ.get("BSM_SOURCE_DOCX", RFM_ROOT / _DOCX_RELPATH)
+).expanduser()
 FINAL = BSM_REPO / "artifacts/final_model"
 CONFIGS = BSM_REPO / "configs"
 DOCS = BSM_REPO / "docs"
@@ -564,6 +574,13 @@ def render_coefficient_column_order_md(xref: pd.DataFrame) -> str:
 def main() -> None:
     if not BSM_REPO.exists():
         raise SystemExit(f"bsm-public-rf repo not found at {BSM_REPO}")
+    if not DOCX.is_file():
+        raise SystemExit(
+            f"Source technical report not found at {DOCX}.\n"
+            "This document is not distributed with this repository. Set "
+            "BSM_SOURCE_DOCX to its path, or RFM_PIPELINE_ROOT to the root of "
+            "a checkout containing it."
+        )
     print(f"Extracting text from {DOCX.name} ...")
     text = extract_docx_text(DOCX)
     inputs = parse_inputs(text)
