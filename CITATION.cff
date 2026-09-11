@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using the metadata below."
+title: "bsm-public-rf: Reproduction repository for the BSM reduced-form model case study"
+type: software
+authors:
+  - family-names: Hettinger
+    given-names: Dylan
+    email: dylan.hettinger@nlr.gov
+    affiliation: National Renewable Energy Laboratory
+license: MIT
+repository-code: "https://github.com/NatLabRockies/bsm-public-rf"
+url: "https://github.com/NatLabRockies/bsm-public-rf"
+abstract: >-
+  bsm-public-rf is the reproduction repository for a reduced-form modeling case
+  study built on the Biomass Scenario Model (BSM), a deterministic system
+  dynamics model of U.S. biofuels deployment. It contains the pipeline
+  configuration, committed final model artifacts, and driver scripts needed to
+  reproduce the published results using the rfm-pipeline framework. The
+  reduced-form surrogate maps exogenous simulator inputs to a large set of
+  scalar responses through an explicit, portable algebraic model.
+keywords:
+  - reduced-form modeling
+  - surrogate modeling
+  - reproducibility
+  - sensitivity analysis
+  - bioenergy
+references:
+  - type: software
+    title: "rfm-pipeline"
+    repository-code: "https://github.com/NatLabRockies/rfm-pipeline"
+    authors:
+      - family-names: Hettinger
+        given-names: Dylan
