@@ -169,6 +169,28 @@ def test_loader_rejects_artifact_order_drift(artifact_dir: Path) -> None:
         BSMReducedFormModel.from_artifact_dir(artifact_dir)
 
 
+def test_loader_accepts_float_serialization_roundoff(artifact_dir: Path) -> None:
+    intercepts = pd.read_csv(artifact_dir / "per_output_intercepts.csv")
+    outputs = pd.read_csv(artifact_dir / "y_standardization.csv")
+    intercepts.loc[0, "intercept"] = 10_000_000_000.000002
+    outputs.loc[0, "mean"] = 10_000_000_000.0
+    intercepts.to_csv(artifact_dir / "per_output_intercepts.csv", index=False)
+    outputs.to_csv(artifact_dir / "y_standardization.csv", index=False)
+
+    model = BSMReducedFormModel.from_artifact_dir(artifact_dir)
+
+    assert model.output_names == ("out_a", "out_b")
+
+
+def test_loader_rejects_material_output_mean_mismatch(artifact_dir: Path) -> None:
+    outputs = pd.read_csv(artifact_dir / "y_standardization.csv")
+    outputs.loc[0, "mean"] = 10.01
+    outputs.to_csv(artifact_dir / "y_standardization.csv", index=False)
+
+    with pytest.raises(ModelArtifactError, match="output means"):
+        BSMReducedFormModel.from_artifact_dir(artifact_dir)
+
+
 def test_repository_model_bundle_loads() -> None:
     model = load_model()
 

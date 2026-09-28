@@ -175,8 +175,8 @@ class BSMReducedFormModel:
         if not np.allclose(
             intercepts.to_numpy(dtype=float),
             output_metadata["mean"].to_numpy(dtype=float),
-            rtol=0,
-            atol=1e-9,
+            rtol=8 * np.finfo(float).eps,
+            atol=1e-12,
         ):
             raise ModelArtifactError("output means do not match the intercept vector")
 
