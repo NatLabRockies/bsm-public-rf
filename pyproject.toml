@@ -1,9 +1,41 @@
-# Repo-root marker for rfm_pipeline.manuscript_runtime.normalize_manuscript_repo_root,
-# which locates the repository root by the presence of pyproject.toml + configs/.
-# This project uses pixi.toml as its authoritative manifest; this file exists only
-# as a root marker and minimal PEP 621 metadata. Do not add a build backend here.
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "bsm-public-rf"
-version = "0.0.0"
-description = "BSM reduced-form model case study (pixi-managed; see pixi.toml)."
-requires-python = ">=3.10"
+version = "0.1.0"
+description = "Public loading and inference tools for the BSM reduced-form model"
+readme = "README.md"
+requires-python = ">=3.10,<3.13"
+license = "MIT"
+dependencies = [
+  "numpy>=1.24",
+  "pandas>=2.0",
+]
+
+[project.urls]
+Repository = "https://github.com/NatLabRockies/bsm-public-rf"
+Issues = "https://github.com/NatLabRockies/bsm-public-rf/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "D"]
+ignore = ["D203", "D213"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["D"]
+"examples/**/*.py" = ["D"]

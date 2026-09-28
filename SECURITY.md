@@ -18,10 +18,9 @@ We will acknowledge receipt and provide an assessment of next steps.
 
 ## Scope
 
-This repository contains research configuration, committed model artifacts, and
-reproduction scripts. It is intended for scientific reproduction rather than
-production deployment, and it is not hardened against untrusted input.
+This repository contains a model loader and committed model artifacts. It is
+intended for research use and is not hardened as an untrusted multi-tenant
+prediction service.
 
-In particular, configuration files and model artifacts are loaded as trusted
-inputs. Do not run this code against configuration or artifact files from an
-untrusted source.
+Model artifacts and user-provided CSV files are loaded as trusted local inputs.
+Do not use artifact files from an untrusted source.

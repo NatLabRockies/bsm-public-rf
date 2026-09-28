@@ -1,18 +1,10 @@
 .pixi/
+.pytest_cache/
+.ruff_cache/
 __pycache__/
 *.pyc
 *.egg-info/
+build/
+dist/
 .DS_Store
-configs/manuscript_paths.yml
-figures/*.png
-figures/*.svg
-figures/*.pdf
-outputs/
-*.log
-# HC3 Wald intervals: 450MB, exceeds GitHub limit.
-# Regenerate with: rfm_pipeline final_manuscript_artifacts stage (reuses bootstrap checkpoints).
-artifacts/final_model/hc3_wald_intervals.csv
-# Local HPC orchestration overrides — contain real cluster hostnames and user paths
-configs/hpc/*.local.yml
-${SCRATCH_DIR}/
-.slice-runner/
+predictions.csv

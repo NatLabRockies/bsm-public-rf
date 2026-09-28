@@ -1,30 +1,42 @@
-# BSM Case Study Repo (bsm-public-rf)
+# bsm-public-rf agent instructions
 
-This is the BSM study reproducibility repository.
+## Repository purpose
 
-The generic pipeline framework is at NatLabRockies/rfm-pipeline.
+This repository distributes the consumable BSM reduced-form model. Keep it
+focused on model loading, inference, schemas, examples, and the model files a
+user needs to make predictions.
 
-## What this repo contains
+Publication configurations, execution scripts, diagnostic artifacts, figures,
+and scientific workflow tests belong in
+`rfm-pipeline/examples/bsm-manuscript/`. Article and submission files belong in
+`bsm-public-rf-manuscript`.
 
-- `configs/` — BSM-specific pipeline configuration files
-- `artifacts/` — committed final model artifacts (CSV tables, not binary blobs)
-- `scripts/` — thin reproduction scripts using rfm_pipeline
-- `figures/` — output directory for generated figures
+## Safety
 
-## What this repo does NOT contain
+- Treat `model/` as a versioned public data contract.
+- Never reorder coefficient columns or output rows without updating and
+  validating every aligned file.
+- Do not fabricate model values, hashes, provenance, or publication status.
+- The current bundle is an existing interim export; do not attribute it to a
+  newer method or run without accepted evidence.
+- Do not add manuscript execution or HPC orchestration back to this repository.
+- Use Pixi for development commands.
+- Add or update tests before changing loader behavior.
+- Do not weaken, skip, or narrow tests to make a change pass.
 
-- Pipeline source code → that lives in NatLabRockies/rfm-pipeline
-- Raw BSM input data → contact repo owners for access
-- LaTeX manuscript → see NatLabRockies/bsm-public-rf-manuscript
+## Git control
 
-## Autonomy level: ADVISORY
+This repository is advisory. Work on a task branch. Ask before committing,
+pushing, opening a pull request, merging, deleting branches, or rewriting
+history unless the user explicitly authorized that exact operation.
 
-This repo does not have autonomous commit/push/PR enabled.
-Do not make destructive git operations without user approval.
+## Validation
 
-## Key files
+Run:
 
-- `configs/manuscript_case_study.yml` — main BSM study config
-- `configs/manuscript_data_contract.yml` — data schema
-- `artifacts/final_model/final_ols_summary.csv` — final fitted model
-- `artifacts/final_model/final_support_features.csv` — screened feature set
+```bash
+pixi run test
+pixi run lint
+pixi run format-check
+git diff --check
+```

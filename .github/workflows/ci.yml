@@ -21,4 +21,7 @@ jobs:
           locked: true
 
       - name: Run test suite
-        run: pixi run pytest tests/ --tb=short -q
+        run: pixi run test
+
+      - name: Check style
+        run: pixi run lint && pixi run format-check
