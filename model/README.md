@@ -3,6 +3,12 @@
 This directory contains the existing BSM reduced-form model export. The public
 loader validates the row and column relationships before using it.
 
+The files are byte-identical to the canonical BSM manuscript example at
+`rfm-pipeline` commit `618357705949c9c3ab418c5eaa5a363cb9d864f5`.
+`SHA256SUMS` records every released CSV digest. The Python wheel carries this
+same bundle under `share/bsm-public-rf/model` so an installed package remains
+usable without a source checkout.
+
 ## Runtime files
 
 | File | Purpose |
@@ -19,6 +25,7 @@ loader validates the row and column relationships before using it.
 | `coefficient_matrix_standardized.csv` | Coefficients on the train-standardized feature scale. |
 | `y_standardization.csv` | Output order and per-output training mean/scale. |
 | `final_support_features.csv` | Selection and feature-type metadata for the 245 columns. |
+| `SHA256SUMS` | SHA-256 digest for every released CSV in this directory. |
 
 The diagnostic tables, publication figure inputs, workflow configurations,
 and reproduction scripts are maintained with the canonical example at

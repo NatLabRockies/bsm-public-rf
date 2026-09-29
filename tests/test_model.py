@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
+import bsm_public_rf.model as model_module
 from bsm_public_rf import BSMReducedFormModel, ModelArtifactError, load_model
 
 
@@ -207,3 +208,29 @@ def test_repository_model_predicts_from_required_base_inputs() -> None:
 
     assert predictions.shape == (1, 1)
     assert np.isfinite(predictions.iloc[0, 0])
+
+
+def test_default_model_dir_falls_back_to_installed_distribution(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    installed_root = tmp_path / "installed"
+    installed_model = installed_root / "share" / "bsm-public-rf" / "model"
+    installed_model.mkdir(parents=True)
+
+    class Distribution:
+        def locate_file(self, path: str) -> Path:
+            return installed_root / path
+
+    monkeypatch.delenv("BSM_PUBLIC_RF_MODEL_DIR", raising=False)
+    monkeypatch.setattr(
+        model_module,
+        "__file__",
+        str(tmp_path / "site-packages" / "bsm_public_rf" / "model.py"),
+    )
+    monkeypatch.setattr(
+        model_module.metadata,
+        "distribution",
+        lambda name: Distribution(),
+    )
+
+    assert model_module.default_model_dir() == installed_model

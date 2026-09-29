@@ -5,6 +5,7 @@ from __future__ import annotations
 import os
 from collections.abc import Iterable
 from dataclasses import dataclass
+from importlib import metadata
 from pathlib import Path
 
 import numpy as np
@@ -33,15 +34,23 @@ _SUPPORTED_TRANSFORMS = {
 
 
 def default_model_dir() -> Path:
-    """Return the released model directory for a source checkout.
+    """Return the released model directory.
 
-    Set ``BSM_PUBLIC_RF_MODEL_DIR`` when importing the package from outside the
-    repository checkout.
+    ``BSM_PUBLIC_RF_MODEL_DIR`` takes precedence. Source checkouts use their
+    top-level ``model/`` directory, while installed distributions use the
+    bundle installed under ``share/bsm-public-rf/model``.
     """
     configured = os.environ.get("BSM_PUBLIC_RF_MODEL_DIR")
     if configured:
         return Path(configured).expanduser().resolve()
-    return Path(__file__).resolve().parents[2] / "model"
+    checkout_model_dir = Path(__file__).resolve().parents[2] / "model"
+    if checkout_model_dir.is_dir():
+        return checkout_model_dir
+    try:
+        distribution = metadata.distribution("bsm-public-rf")
+    except metadata.PackageNotFoundError:
+        return checkout_model_dir
+    return Path(distribution.locate_file("share/bsm-public-rf/model")).resolve()
 
 
 def _require_columns(frame: pd.DataFrame, columns: set[str], *, source: Path) -> None:

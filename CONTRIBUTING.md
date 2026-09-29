@@ -21,10 +21,11 @@ source changes belong in
 git clone https://github.com/NatLabRockies/bsm-public-rf.git
 cd bsm-public-rf
 pixi install --locked
-pixi run test
-pixi run lint
-pixi run format-check
+./test_repo.sh --check
 ```
+
+Before proposing a release, also build the wheel and verify that a clean
+installation can load the bundled model without `BSM_PUBLIC_RF_MODEL_DIR`.
 
 Use a feature branch and add tests before changing behavior. Do not alter model
 rows, columns, values, or metadata without documenting provenance and testing

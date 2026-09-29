@@ -37,15 +37,17 @@ cd bsm-public-rf
 pixi install --locked
 ```
 
-Or install the loader into an existing Python 3.10+ environment:
+Or install the complete model distribution into an existing Python 3.10+
+environment:
 
 ```bash
-python -m pip install -e .
+python -m pip install .
 ```
 
-The model CSVs remain in the repository's `model/` directory. When importing
-the package from another location, pass that directory to `load_model(...)` or
-set `BSM_PUBLIC_RF_MODEL_DIR`.
+The wheel includes the model CSVs and `load_model()` discovers them
+automatically. A source checkout continues to use its top-level `model/`
+directory. To use a separately downloaded or updated bundle, pass its path to
+`load_model(...)` or set `BSM_PUBLIC_RF_MODEL_DIR`.
 
 ## Predict
 
@@ -71,12 +73,14 @@ predictions = model.predict(
 predictions.to_csv("predictions.csv", index=False)
 ```
 
-For command-line use:
+For command-line use after either installation method:
 
 ```bash
-pixi run predict -- my_bsm_inputs.csv predictions.csv \
+bsm-rf-predict my_bsm_inputs.csv predictions.csv \
   --output 'AHC.MFSPMetric[HEFA, A]_2030'
 ```
+
+Inside the Pixi environment, `pixi run predict -- ...` is equivalent.
 
 The API rejects missing columns, non-finite values, invalid transformation
 domains, artifact-order drift, and unknown output names. It reports but does
@@ -98,10 +102,11 @@ descriptions.
 ## Validate
 
 ```bash
-pixi run test
-pixi run lint
-pixi run format-check
+./test_repo.sh --check
 ```
+
+The release bundle's recorded SHA-256 digests are in
+[`model/SHA256SUMS`](model/SHA256SUMS).
 
 ## Data scope
 
@@ -112,4 +117,5 @@ the controlled-data requirements for full scientific reproduction.
 ## License and citation
 
 The software is released under the [MIT License](LICENSE). Citation metadata
-is available in [`CITATION.cff`](CITATION.cff).
+is available in [`CITATION.cff`](CITATION.cff). See
+[`CHANGELOG.md`](CHANGELOG.md) for release history.

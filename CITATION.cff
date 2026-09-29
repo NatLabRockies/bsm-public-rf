@@ -8,6 +8,7 @@ authors:
     email: dylan.hettinger@nlr.gov
     affiliation: National Renewable Energy Laboratory
 license: MIT
+version: 0.1.0
 repository-code: "https://github.com/NatLabRockies/bsm-public-rf"
 url: "https://github.com/NatLabRockies/bsm-public-rf"
 abstract: >-

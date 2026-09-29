@@ -20,8 +20,5 @@ jobs:
           cache: true
           locked: true
 
-      - name: Run test suite
-        run: pixi run test
-
-      - name: Check style
-        run: pixi run lint && pixi run format-check
+      - name: Run repository gate
+        run: ./test_repo.sh --ci

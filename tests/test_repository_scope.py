@@ -21,3 +21,12 @@ def test_model_bundle_contains_required_release_files() -> None:
         "y_standardization.csv",
     }
     assert required <= {path.name for path in model_root.iterdir()}
+
+
+def test_ci_uses_the_repository_gate() -> None:
+    gate = ROOT / "test_repo.sh"
+    workflow = (ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+
+    assert gate.is_file()
+    assert gate.stat().st_mode & 0o111
+    assert "./test_repo.sh --ci" in workflow
