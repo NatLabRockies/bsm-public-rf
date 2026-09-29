@@ -1,67 +1,72 @@
-# Model artifact contract
+# Model bundle reference
 
-This directory contains the existing BSM reduced-form model export. The public
-loader validates the row and column relationships before using it.
+This directory is the versioned BSM reduced-form model. `load_model()` checks
+the cross-file schema and ordering contracts before exposing it for inference.
+The installed wheel carries the same files under
+`share/bsm-public-rf/model/`.
 
-The files are byte-identical to the canonical BSM manuscript example at
-`rfm-pipeline` commit `618357705949c9c3ab418c5eaa5a363cb9d864f5`.
-`SHA256SUMS` records every released CSV digest. The Python wheel carries this
-same bundle under `share/bsm-public-rf/model` so an installed package remains
-usable without a source checkout.
+## Required inference files
 
-## Runtime files
-
-| File | Purpose |
+| File | Contents |
 | --- | --- |
-| `coefficient_matrix_raw_scale.csv` | Raw-output-scale coefficients; rows are 23,495 outputs and columns are 245 engineered features. |
-| `per_output_intercepts.csv` | Intercept for every coefficient-matrix output row. |
-| `x_standardization.csv` | Feature order plus the training mean and scale. The raw-scale equation uses the mean for centering. |
-| `coefficient_column_metadata.csv` | Transformation and base-input metadata used to construct the 245 features from 65 inputs. |
+| `coefficient_matrix_raw_scale.csv` | 23,495 output rows by 245 engineered-feature columns |
+| `per_output_intercepts.csv` | One aligned intercept per output |
+| `x_standardization.csv` | Engineered-feature order, training means, and scales |
+| `coefficient_column_metadata.csv` | Rules for constructing the 245 features from 65 base inputs |
+| `y_standardization.csv` | Output order, training means, and scales |
 
-## Additional existing export files
+Additional release files are:
 
-| File | Purpose |
+| File | Contents |
 | --- | --- |
-| `coefficient_matrix_standardized.csv` | Coefficients on the train-standardized feature scale. |
-| `y_standardization.csv` | Output order and per-output training mean/scale. |
-| `final_support_features.csv` | Selection and feature-type metadata for the 245 columns. |
-| `SHA256SUMS` | SHA-256 digest for every released CSV in this directory. |
+| `coefficient_matrix_standardized.csv` | Coefficients on the standardized feature scale |
+| `final_support_features.csv` | Selection metadata for the 245 retained features |
+| `SHA256SUMS` | SHA-256 digest for every released CSV |
 
-The diagnostic tables, publication figure inputs, workflow configurations,
-and reproduction scripts are maintained with the canonical example at
-`rfm-pipeline/examples/bsm-manuscript/`.
+## Prediction contract
 
-## Feature construction
-
-`coefficient_column_metadata.csv` defines six transformations:
-
-- `identity`: `x`
-- `quadratic`: `x**2`
-- `sqrt`: `sqrt(x)`
-- `log1p`: `log(1 + x)`
-- `inverse`: `1 / x`
-- `interaction`: `x1 * x2`
-
-The loader rejects square-root values below zero, log1p values at or below
-`-1`, inverse values equal to zero, and any non-finite input.
-
-## Prediction equation
-
-For output `i` and case `r`:
+For output `i` and input row `r`:
 
 ```text
 y_hat[i, r] = intercept[i]
             + sum_j coefficient_raw[i, j]
-                    * (engineered_feature[r, j] - feature_mean[j])
+                    * (engineered_feature[r, j] - training_mean[j])
 ```
 
-Coefficient columns, feature metadata rows, and `x_standardization.csv` rows
-must remain in exactly the same order. Output rows and intercept rows must also
-remain aligned.
+The loader supports six transformations declared in
+`coefficient_column_metadata.csv`:
 
-## Release note
+| Name | Definition |
+| --- | --- |
+| `identity` | `x` |
+| `quadratic` | `x**2` |
+| `sqrt` | `sqrt(x)` |
+| `log1p` | `log(1 + x)` |
+| `inverse` | `1 / x` |
+| `interaction` | `x1 * x2` |
 
-This is the existing model artifact requested for immediate public use. It is
-not the planned metadata-derived release matrix. That future conversion should
-arrive as a separately reviewed artifact update with the same fail-closed
-alignment guarantees.
+Square-root inputs must be nonnegative, log1p inputs must exceed `-1`,
+inverse inputs must be nonzero, and all values must be finite. Coefficient
+columns, feature metadata, and feature-standardization rows must have
+identical order; output rows, intercepts, and output metadata must also align.
+
+## Loading a different bundle
+
+Pass a directory explicitly:
+
+```python
+from bsm_public_rf import load_model
+
+model = load_model("/path/to/model")
+```
+
+Or set `BSM_PUBLIC_RF_MODEL_DIR`. An explicit argument takes precedence over
+the checkout or installed default.
+
+## Provenance
+
+These files are byte-identical to the retained model output in the canonical
+BSM workflow case study at `rfm-pipeline` commit
+`618357705949c9c3ab418c5eaa5a363cb9d864f5`. Workflow diagnostics and
+publication artifacts remain in that case study rather than this distribution
+repository.

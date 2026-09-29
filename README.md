@@ -1,60 +1,35 @@
 # BSM Reduced-Form Model
 
-`bsm-public-rf` distributes a portable reduced-form surrogate for the Biomass
-Scenario Model (BSM). Clone this repository to inspect the model inputs and
-outputs, load the existing coefficient bundle, and generate predictions
-without rerunning the publication workflow.
+`bsm-public-rf` is the ready-to-use Biomass Scenario Model (BSM)
+reduced-form surrogate. The model bundle, Python loader, and command-line
+predictor are included; the original simulator runs are not required.
 
-This repository is deliberately model-focused. The generic modeling workflow
-and the complete manuscript case study live in
-[`rfm-pipeline`](https://github.com/NatLabRockies/rfm-pipeline/tree/main/examples/bsm-manuscript).
-The article source and submission files live in
-[`bsm-public-rf-manuscript`](https://github.com/NatLabRockies/bsm-public-rf-manuscript).
+## Choose the right repository
 
-## Current release status
-
-The checked-in `model/` directory contains the existing BSM model artifact:
-
-- 23,495 named outputs;
-- 245 selected engineered features derived from 65 required base inputs;
-- raw-scale and standardized coefficient matrices;
-- per-output intercepts and input/output scaling metadata; and
-- feature names, transformations, units, ranges, and descriptions.
-
-This is the current legacy export, made available now so the model is usable.
-A separately developed metadata-to-release-matrix conversion will replace or
-augment it when that work is ready. Until then, the bundle must not be
-described as evidence from a newer analysis method or a future publication
-run.
+| I want to... | Go to... |
+| --- | --- |
+| Predict BSM outputs with the released model | **This repository** |
+| Fit or adapt a reduced-form modeling workflow | [`rfm-pipeline`](https://github.com/NatLabRockies/rfm-pipeline) |
+| Inspect the complete BSM workflow case study | [`rfm-pipeline/examples/bsm-manuscript`](https://github.com/NatLabRockies/rfm-pipeline/tree/main/examples/bsm-manuscript) |
+| Read or build the article | [`bsm-public-rf-manuscript`](https://github.com/NatLabRockies/bsm-public-rf-manuscript) |
 
 ## Install
 
-With [Pixi](https://pixi.sh):
+Python 3.10–3.12 is supported.
 
 ```bash
 git clone https://github.com/NatLabRockies/bsm-public-rf.git
 cd bsm-public-rf
-pixi install --locked
-```
-
-Or install the complete model distribution into an existing Python 3.10+
-environment:
-
-```bash
 python -m pip install .
 ```
 
-The wheel includes the model CSVs and `load_model()` discovers them
-automatically. A source checkout continues to use its top-level `model/`
-directory. To use a separately downloaded or updated bundle, pass its path to
-`load_model(...)` or set `BSM_PUBLIC_RF_MODEL_DIR`.
+For a locked development environment, install
+[Pixi](https://pixi.sh) and run `pixi install --locked` instead.
 
-## Predict
+## Predict in Python
 
-The loader accepts a `pandas.DataFrame` containing the 65 base inputs used by
-the selected support. It materializes identity, quadratic, square-root,
-log1p, inverse, and pairwise-interaction features in the exact coefficient
-column order.
+The model expects a pandas DataFrame containing its 65 named base inputs. It
+constructs the selected transformations and interactions automatically.
 
 ```python
 import pandas as pd
@@ -62,8 +37,10 @@ import pandas as pd
 from bsm_public_rf import load_model
 
 model = load_model()
-print(model.required_input_names)
-print(model.input_schema())
+
+# Discover the exact input and output names before preparing data.
+model.input_schema().reset_index().to_csv("bsm_input_schema.csv", index=False)
+model.output_schema().reset_index().to_csv("bsm_output_schema.csv", index=False)
 
 inputs = pd.read_csv("my_bsm_inputs.csv")
 predictions = model.predict(
@@ -73,49 +50,57 @@ predictions = model.predict(
 predictions.to_csv("predictions.csv", index=False)
 ```
 
-For command-line use after either installation method:
+Omit `outputs` to predict all 23,495 outputs. Extra input columns are allowed;
+missing or invalid required inputs are rejected with a clear error.
+
+## Predict from the command line
 
 ```bash
 bsm-rf-predict my_bsm_inputs.csv predictions.csv \
   --output 'AHC.MFSPMetric[HEFA, A]_2030'
 ```
 
-Inside the Pixi environment, `pixi run predict -- ...` is equivalent.
+Repeat `--output` to select more outputs, or omit it to predict all outputs.
+Run `bsm-rf-predict --help` for all options. In the Pixi environment, use
+`pixi run predict -- ...`.
 
-The API rejects missing columns, non-finite values, invalid transformation
-domains, artifact-order drift, and unknown output names. It reports but does
-not enforce the historical input ranges; predictions outside those ranges are
+## What is included
+
+The versioned `model/` bundle contains:
+
+- 23,495 named outputs;
+- 245 selected engineered features built from 65 required base inputs;
+- raw-scale and standardized coefficient matrices;
+- one intercept per output;
+- feature and output scaling metadata; and
+- feature transformations, input ranges, units, and descriptions.
+
+The loader validates file presence, schemas, row and column order, duplicate
+names, finite values, and transformation domains before prediction. Historical
+input ranges are descriptive rather than enforced; values outside them are
 extrapolations.
 
-## Model equation
-
-For output `i` and input row `r`:
-
-```text
-y_hat[i, r] = intercept[i]
-            + sum_j coefficient[i, j] * (feature[r, j] - training_mean[j])
-```
-
-See [`model/README.md`](model/README.md) for the artifact contract and file
-descriptions.
-
-## Validate
-
-```bash
-./test_repo.sh --check
-```
-
-The release bundle's recorded SHA-256 digests are in
+See [`model/README.md`](model/README.md) for the file contract and prediction
+equation. SHA-256 digests for every released CSV are recorded in
 [`model/SHA256SUMS`](model/SHA256SUMS).
 
-## Data scope
+## Model status and scope
 
-Raw BSM simulator runs are not distributed here. They are not required for
-inference with the committed coefficient bundle. The workflow example explains
-the controlled-data requirements for full scientific reproduction.
+This release packages the existing validated coefficient export so it is
+usable independently of the research workflow. A future metadata-derived
+matrix may update the artifact, but it must preserve the same fail-closed
+alignment and provenance requirements.
 
-## License and citation
+Raw BSM simulator runs, workflow configurations, diagnostics, and publication
+figures are intentionally not stored here. The BSM case study in
+`rfm-pipeline` is their canonical home.
 
-The software is released under the [MIT License](LICENSE). Citation metadata
-is available in [`CITATION.cff`](CITATION.cff). See
-[`CHANGELOG.md`](CHANGELOG.md) for release history.
+## Develop, cite, and report issues
+
+- Validate a checkout with `./test_repo.sh --check`.
+- See [`CONTRIBUTING.md`](CONTRIBUTING.md) for repository boundaries.
+- Cite the software using [`CITATION.cff`](CITATION.cff).
+- See [`CHANGELOG.md`](CHANGELOG.md) for release history.
+- Report defects through [GitHub Issues](https://github.com/NatLabRockies/bsm-public-rf/issues).
+
+Licensed under the [MIT License](LICENSE).

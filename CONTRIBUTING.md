@@ -10,9 +10,9 @@ Appropriate changes include:
 - clearer input/output documentation and usage examples; and
 - reviewed updates to the released model bundle.
 
-Generic workflow changes and BSM publication reproduction changes belong in
-[`rfm-pipeline`](https://github.com/NatLabRockies/rfm-pipeline). Manuscript
-source changes belong in
+Generic workflow changes and BSM case-study reproduction changes belong in
+[`rfm-pipeline`](https://github.com/NatLabRockies/rfm-pipeline). Article
+source and submission changes belong in
 [`bsm-public-rf-manuscript`](https://github.com/NatLabRockies/bsm-public-rf-manuscript).
 
 ## Development
@@ -32,4 +32,4 @@ rows, columns, values, or metadata without documenting provenance and testing
 all cross-file alignment contracts.
 
 Do not commit raw simulator data, credentials, local paths, generated caches,
-or publication workflow outputs.
+or case-study workflow outputs.
