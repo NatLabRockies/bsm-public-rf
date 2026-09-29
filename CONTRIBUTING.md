@@ -11,9 +11,7 @@ Appropriate changes include:
 - reviewed updates to the released model bundle.
 
 Generic workflow changes and BSM case-study reproduction changes belong in
-[`rfm-pipeline`](https://github.com/NatLabRockies/rfm-pipeline). Article
-source and submission changes belong in
-[`bsm-public-rf-manuscript`](https://github.com/NatLabRockies/bsm-public-rf-manuscript).
+[`rfm-pipeline`](https://github.com/NatLabRockies/rfm-pipeline).
 
 ## Development
 
@@ -21,7 +19,7 @@ source and submission changes belong in
 git clone https://github.com/NatLabRockies/bsm-public-rf.git
 cd bsm-public-rf
 pixi install --locked
-./test_repo.sh --check
+pixi run gate
 ```
 
 Before proposing a release, also build the wheel and verify that a clean

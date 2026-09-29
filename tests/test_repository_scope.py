@@ -24,9 +24,13 @@ def test_model_bundle_contains_required_release_files() -> None:
 
 
 def test_ci_uses_the_repository_gate() -> None:
-    gate = ROOT / "test_repo.sh"
+    pixi = (ROOT / "pixi.toml").read_text(encoding="utf-8")
     workflow = (ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
 
-    assert gate.is_file()
-    assert gate.stat().st_mode & 0o111
-    assert "./test_repo.sh --ci" in workflow
+    assert 'gate = "pytest -q && ruff check src tests examples' in pixi
+    assert "pixi run gate" in workflow
+
+
+def test_internal_policy_files_are_not_part_of_the_public_repository() -> None:
+    forbidden = ["AGENTS.md", "CODE_OF_CONDUCT.md", "SECURITY.md", "test_repo.sh"]
+    assert not [name for name in forbidden if (ROOT / name).exists()]

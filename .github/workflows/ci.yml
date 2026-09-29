@@ -21,4 +21,4 @@ jobs:
           locked: true
 
       - name: Run repository gate
-        run: ./test_repo.sh --ci
+        run: pixi run gate

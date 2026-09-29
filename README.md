@@ -11,7 +11,6 @@ predictor are included; the original simulator runs are not required.
 | Predict BSM outputs with the released model | **This repository** |
 | Fit or adapt a reduced-form modeling workflow | [`rfm-pipeline`](https://github.com/NatLabRockies/rfm-pipeline) |
 | Inspect the complete BSM workflow case study | [`rfm-pipeline/examples/bsm-manuscript`](https://github.com/NatLabRockies/rfm-pipeline/tree/main/examples/bsm-manuscript) |
-| Read or build the article | [`bsm-public-rf-manuscript`](https://github.com/NatLabRockies/bsm-public-rf-manuscript) |
 
 ## Install
 
@@ -97,7 +96,7 @@ figures are intentionally not stored here. The BSM case study in
 
 ## Develop, cite, and report issues
 
-- Validate a checkout with `./test_repo.sh --check`.
+- Validate a checkout with `pixi run gate`.
 - See [`CONTRIBUTING.md`](CONTRIBUTING.md) for repository boundaries.
 - Cite the software using [`CITATION.cff`](CITATION.cff).
 - See [`CHANGELOG.md`](CHANGELOG.md) for release history.
