@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Public loading and inference tools for the BSM reduced-form model"
 authors = ["Dylan Hettinger"]
 channels = ["conda-forge"]
-platforms = ["osx-arm64", "linux-64"]
+platforms = ["osx-arm64", "linux-64", "win-64"]
 
 [dependencies]
 python = ">=3.10,<3.13"
@@ -12,6 +12,8 @@ numpy = ">=1.24"
 pandas = ">=2.0"
 pytest = ">=8"
 ruff = ">=0.8"
+# Reads the Parquet coefficients of models in versions/.
+pyarrow = ">=14"
 
 [pypi-dependencies]
 bsm-public-rf = {path = ".", editable = true}
@@ -23,3 +25,12 @@ format-check = "ruff format --check src tests examples"
 format = "ruff check --fix src tests examples && ruff format src tests examples"
 gate = "pytest -q && ruff check src tests examples && ruff format --check src tests examples && git diff --check"
 predict = "bsm-rf-predict"
+
+[feature.notebook.dependencies]
+jupyterlab = ">=4"
+
+[feature.notebook.tasks]
+notebook = "jupyter lab examples/quickstart.ipynb"
+
+[environments]
+notebook = ["notebook"]

@@ -16,6 +16,7 @@ def test_model_bundle_contains_required_release_files() -> None:
         "coefficient_matrix_raw_scale.csv",
         "coefficient_matrix_standardized.csv",
         "final_support_features.csv",
+        "output_metadata.json",
         "per_output_intercepts.csv",
         "x_standardization.csv",
         "y_standardization.csv",

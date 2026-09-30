@@ -1,0 +1,100 @@
+from __future__ import annotations
+
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+import pytest
+
+from bsm_public_rf import (
+    load_model,
+    load_output_metadata,
+    output_catalog,
+    parse_output_name,
+    unpack_outputs,
+)
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+@pytest.fixture(scope="module")
+def metadata() -> dict:
+    return load_output_metadata()
+
+
+def test_output_metadata_describes_every_released_output(metadata: dict) -> None:
+    model = load_model()
+
+    catalog = output_catalog(model.output_names, metadata)
+
+    assert catalog.index.tolist() == list(model.output_names)
+    assert set(catalog["variable"]) == set(metadata["variables"])
+    assert (
+        catalog["year"]
+        .between(metadata["year_range"]["start"], metadata["year_range"]["end"])
+        .all()
+    )
+    assert len(catalog.groupby(["variable", "pathway", "region", "product"])) == 635
+
+
+@pytest.mark.parametrize(
+    ("name", "expected"),
+    [
+        (
+            "AHC.MFSPMetric[HEFA, A]_2030",
+            {"variable": "AHC.MFSPMetric", "pathway": "HEFA", "region": "A", "product": ""},
+        ),
+        (
+            "OI.annual total HCBN prodn_2051",
+            {"variable": "OI.annual total HCBN prodn", "pathway": "", "region": "", "product": ""},
+        ),
+    ],
+)
+def test_parse_output_name(metadata: dict, name: str, expected: dict) -> None:
+    parsed = parse_output_name(name, metadata)
+
+    assert {key: parsed[key] for key in expected} == expected
+    assert parsed["year"] == int(name.rsplit("_", 1)[1])
+
+
+@pytest.mark.parametrize(
+    "name", ["Unknown.Var_2030", "AHC.MFSPMetric[HEFA]_2030", "AHC.MFSPMetric[XX, A]_2030"]
+)
+def test_parse_output_name_rejects_unknown_names(metadata: dict, name: str) -> None:
+    with pytest.raises(ValueError):
+        parse_output_name(name, metadata)
+
+
+def test_unpack_outputs_round_trips_example_predictions(metadata: dict) -> None:
+    model = load_model()
+    inputs = pd.read_csv(ROOT / "examples" / "example_inputs.csv", index_col="scenario")
+    predictions = model.predict(inputs)
+
+    unpacked = unpack_outputs(predictions, metadata)
+
+    years = list(range(metadata["year_range"]["start"], metadata["year_range"]["end"] + 1))
+    assert unpacked.shape == (635 * len(inputs), 5 + len(years))
+    series_columns = ["sample", "variable", "pathway", "region", "product"]
+    assert unpacked.columns.tolist() == [*series_columns, *years]
+    assert set(unpacked["region"]) - {""} <= set(metadata["region_legend"].values())
+
+    row = unpacked[
+        (unpacked["sample"] == "scenario_1")
+        & (unpacked["variable"] == "AHC.MFSPMetric")
+        & (unpacked["pathway"] == "HEFA")
+        & (unpacked["region"] == "Atlantic")
+    ]
+    assert len(row) == 1
+    np.testing.assert_allclose(
+        row[2030].iloc[0], predictions.loc["scenario_1", "AHC.MFSPMetric[HEFA, A]_2030"]
+    )
+
+
+def test_example_inputs_cover_required_inputs_within_documented_ranges() -> None:
+    model = load_model()
+    inputs = pd.read_csv(ROOT / "examples" / "example_inputs.csv", index_col="scenario")
+    schema = model.input_schema().dropna(subset=["minimum", "maximum"])
+
+    assert list(inputs.columns) == list(model.required_input_names)
+    assert (inputs[schema.index] >= schema["minimum"]).all().all()
+    assert (inputs[schema.index] <= schema["maximum"]).all().all()

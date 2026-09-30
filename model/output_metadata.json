@@ -1,0 +1,459 @@
+{
+  "year_range": {
+    "start": 2015,
+    "end": 2051
+  },
+  "region_legend": {
+    "A": "Atlantic",
+    "CB": "Corn Belt",
+    "DS": "Delta States",
+    "LS": "Lake States",
+    "M": "Mountain",
+    "NE": "Northeast",
+    "NP": "Northern Plains",
+    "P": "Pacific",
+    "SE": "Southeast",
+    "SP": "Southern Plains"
+  },
+  "product_legend": {
+    "gasoline": "Gasoline",
+    "diesel": "Diesel",
+    "JetFuel": "Jet fuel",
+    "AllOther": "All other fuel products"
+  },
+  "name_format": "BASE_VARIABLE[dim1, dim2, ...]_YEAR  (bracket omitted when a variable has zero dimensions; dims always ordered pathway, region, product when present)",
+  "variables": {
+    "AHC.MFSPMetric": {
+      "description": "Minimum Fuel Selling Price metric for algal fuels",
+      "unit": "USD/gal",
+      "dimensions": [
+        "pathway",
+        "region"
+      ],
+      "pathway_values": [
+        "HEFA",
+        "HTL"
+      ],
+      "pathway_labels": {
+        "HEFA": "Algal HEFA",
+        "HTL": "Algal HTL"
+      },
+      "region_values": [
+        "A",
+        "CB",
+        "DS",
+        "LS",
+        "M",
+        "NE",
+        "NP",
+        "P",
+        "SE",
+        "SP"
+      ]
+    },
+    "CHC.MFSPMetric": {
+      "description": "Minimum Fuel Selling Price metric for cellulosic fuels",
+      "unit": "USD/gal",
+      "dimensions": [
+        "pathway",
+        "region"
+      ],
+      "pathway_values": [
+        "Biochem",
+        "Brownfield",
+        "Thermochem"
+      ],
+      "pathway_labels": {
+        "Biochem": "Cellulosic Biochem",
+        "Brownfield": "Cellulosic Thermochem (Brownfield)",
+        "Thermochem": "Cellulosic Thermochem"
+      },
+      "region_values": [
+        "A",
+        "CB",
+        "DS",
+        "LS",
+        "M",
+        "NE",
+        "NP",
+        "P",
+        "SE",
+        "SP"
+      ]
+    },
+    "OHC.MFSPMetric": {
+      "description": "Minimum Fuel Selling Price metric for oilcrop and FOG-derived fuels",
+      "unit": "USD/gal",
+      "dimensions": [
+        "pathway",
+        "region"
+      ],
+      "pathway_values": [
+        "HEFA",
+        "HEFABrownfield",
+        "TransEster"
+      ],
+      "pathway_labels": {
+        "HEFA": "Oilcrop HEFA",
+        "HEFABrownfield": "Oilcrop HEFA (Brownfield)",
+        "TransEster": "Oilcrop Transesterification"
+      },
+      "region_values": [
+        "A",
+        "CB",
+        "DS",
+        "LS",
+        "M",
+        "NE",
+        "NP",
+        "P",
+        "SE",
+        "SP"
+      ]
+    },
+    "OI.AHC output by product": {
+      "description": "Annual production of biofuels from algal feedstocks",
+      "unit": "Gal/yr",
+      "dimensions": [
+        "pathway",
+        "region",
+        "product"
+      ],
+      "pathway_values": [
+        "HEFA",
+        "HTL"
+      ],
+      "pathway_labels": {
+        "HEFA": "Algal HEFA",
+        "HTL": "Algal HTL"
+      },
+      "region_values": [
+        "A",
+        "CB",
+        "DS",
+        "LS",
+        "M",
+        "NE",
+        "NP",
+        "P",
+        "SE",
+        "SP"
+      ],
+      "product_values": [
+        "AllOther",
+        "JetFuel",
+        "diesel",
+        "gasoline"
+      ]
+    },
+    "OI.CHC output by product": {
+      "description": "Annual production of biofuels from cellulosic feedstocks",
+      "unit": "Gal/yr",
+      "dimensions": [
+        "pathway",
+        "region",
+        "product"
+      ],
+      "pathway_values": [
+        "Biochem",
+        "Brownfield",
+        "Thermochem"
+      ],
+      "pathway_labels": {
+        "Biochem": "Cellulosic Biochem",
+        "Brownfield": "Cellulosic Thermochem (Brownfield)",
+        "Thermochem": "Cellulosic Thermochem"
+      },
+      "region_values": [
+        "A",
+        "CB",
+        "DS",
+        "LS",
+        "M",
+        "NE",
+        "NP",
+        "P",
+        "SE",
+        "SP"
+      ],
+      "product_values": [
+        "AllOther",
+        "JetFuel",
+        "diesel",
+        "gasoline"
+      ]
+    },
+    "OI.OHC output by product": {
+      "description": "Annual production of biofuels from oilcrop and FOG feedstocks",
+      "unit": "Gal/yr",
+      "dimensions": [
+        "pathway",
+        "region",
+        "product"
+      ],
+      "pathway_values": [
+        "HEFA",
+        "HEFABrownfield",
+        "TransEster"
+      ],
+      "pathway_labels": {
+        "HEFA": "Oilcrop HEFA",
+        "HEFABrownfield": "Oilcrop HEFA (Brownfield)",
+        "TransEster": "Oilcrop Transesterification"
+      },
+      "region_values": [
+        "A",
+        "CB",
+        "DS",
+        "LS",
+        "M",
+        "NE",
+        "NP",
+        "P",
+        "SE",
+        "SP"
+      ],
+      "product_values": [
+        "AllOther",
+        "JetFuel",
+        "diesel",
+        "gasoline"
+      ]
+    },
+    "OI.SJ output by product": {
+      "description": "Annual production of jet fuel from starch-ethanol",
+      "unit": "Gal/yr",
+      "dimensions": [
+        "region",
+        "product"
+      ],
+      "region_values": [
+        "A",
+        "CB",
+        "DS",
+        "LS",
+        "M",
+        "NE",
+        "NP",
+        "P",
+        "SE",
+        "SP"
+      ],
+      "product_values": [
+        "AllOther",
+        "JetFuel",
+        "diesel",
+        "gasoline"
+      ]
+    },
+    "OI.WW output by product": {
+      "description": "Annual production of biofuels from wet waste feedstocks",
+      "unit": "Gal/yr",
+      "dimensions": [
+        "pathway",
+        "region",
+        "product"
+      ],
+      "pathway_values": [
+        "ManureToHTL",
+        "SludgeToHTL"
+      ],
+      "pathway_labels": {
+        "ManureToHTL": "Manure HTL",
+        "SludgeToHTL": "Sewage Sludge HTL"
+      },
+      "region_values": [
+        "A",
+        "CB",
+        "DS",
+        "LS",
+        "M",
+        "NE",
+        "NP",
+        "P",
+        "SE",
+        "SP"
+      ],
+      "product_values": [
+        "AllOther",
+        "JetFuel",
+        "diesel",
+        "gasoline"
+      ]
+    },
+    "OI.annual EtOH prodn by region": {
+      "description": "Annual production of ethanol from starch and cellulosic feedstocks",
+      "unit": "Gal/yr",
+      "dimensions": [
+        "region"
+      ],
+      "region_values": [
+        "A",
+        "CB",
+        "DS",
+        "LS",
+        "M",
+        "NE",
+        "NP",
+        "P",
+        "SE",
+        "SP"
+      ]
+    },
+    "OI.annual HCBN prodn by product": {
+      "description": "Total production of hydrocarbons from all conversion platforms",
+      "unit": "Gal/yr",
+      "dimensions": [
+        "product"
+      ],
+      "product_values": [
+        "AllOther",
+        "JetFuel",
+        "diesel",
+        "gasoline"
+      ]
+    },
+    "OI.annual total HCBN prodn": {
+      "description": "Total production of hydrocarbons. Sums production across platforms, products",
+      "unit": "Gal/yr",
+      "dimensions": []
+    },
+    "OI.composite EtOH CI": {
+      "description": "Composite metric for carbon intensity of ethanol from starch and cellulosic feedstocks",
+      "unit": "g/MJ",
+      "dimensions": [
+        "region"
+      ],
+      "region_values": [
+        "A",
+        "CB",
+        "DS",
+        "LS",
+        "M",
+        "NE",
+        "NP",
+        "P",
+        "SE",
+        "SP"
+      ]
+    },
+    "OI.composite EtOH MFSP": {
+      "description": "Composite metric for minimum fuel selling price of ethanol from starch and cellulosic feedstocks",
+      "unit": "USD/gal",
+      "dimensions": [
+        "region"
+      ],
+      "region_values": [
+        "A",
+        "CB",
+        "DS",
+        "LS",
+        "M",
+        "NE",
+        "NP",
+        "P",
+        "SE",
+        "SP"
+      ]
+    },
+    "OI.composite HCBN CI": {
+      "description": "Composite metric for carbon intensity of hydrocarbon fuels from all modeled hydrocarbon fuels",
+      "unit": "g/MJ",
+      "dimensions": [
+        "region",
+        "product"
+      ],
+      "region_values": [
+        "A",
+        "CB",
+        "DS",
+        "LS",
+        "M",
+        "NE",
+        "NP",
+        "P",
+        "SE",
+        "SP"
+      ],
+      "product_values": [
+        "AllOther",
+        "JetFuel",
+        "diesel",
+        "gasoline"
+      ]
+    },
+    "OI.composite HCBN MFSP": {
+      "description": "Composite metric for minimum fuel selling price of hydrocarbons from all conversion platforms",
+      "unit": "USD/gal",
+      "dimensions": [
+        "region"
+      ],
+      "region_values": [
+        "A",
+        "CB",
+        "DS",
+        "LS",
+        "M",
+        "NE",
+        "NP",
+        "P",
+        "SE",
+        "SP"
+      ]
+    },
+    "SE.MFSPMetric": {
+      "description": "Metric for minimum fuel selling price of starch ethanol and ethanol-to-jet fuel",
+      "unit": "USD/gal",
+      "dimensions": [
+        "pathway",
+        "region"
+      ],
+      "pathway_values": [
+        "Jet"
+      ],
+      "pathway_labels": {
+        "Jet": "Starch Ethanol-to-Jet"
+      },
+      "region_values": [
+        "A",
+        "CB",
+        "DS",
+        "LS",
+        "M",
+        "NE",
+        "NP",
+        "P",
+        "SE",
+        "SP"
+      ]
+    },
+    "WW.MFSPMetric": {
+      "description": "Minimum Fuel Selling Price metric for wet waste-derived fuels",
+      "unit": "USD/gal",
+      "dimensions": [
+        "pathway",
+        "region"
+      ],
+      "pathway_values": [
+        "ManureToHTL",
+        "SludgeToHTL"
+      ],
+      "pathway_labels": {
+        "ManureToHTL": "Manure HTL",
+        "SludgeToHTL": "Sewage Sludge HTL"
+      },
+      "region_values": [
+        "A",
+        "CB",
+        "DS",
+        "LS",
+        "M",
+        "NE",
+        "NP",
+        "P",
+        "SE",
+        "SP"
+      ]
+    }
+  }
+}

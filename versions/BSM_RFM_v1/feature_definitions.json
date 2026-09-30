@@ -1,0 +1,3458 @@
+{
+  "AHC.Debt Interest Rate as pct[HEFA]": {
+    "derivation": "AHC.Debt Interest Rate as pct[HEFA]",
+    "base_inputs": [
+      "AHC.Debt Interest Rate as pct[HEFA]"
+    ]
+  },
+  "AHC.FCI  sensi multiplier[HEFA]": {
+    "derivation": "AHC.FCI  sensi multiplier[HEFA]",
+    "base_inputs": [
+      "AHC.FCI  sensi multiplier[HEFA]"
+    ]
+  },
+  "AHC.FCI  sensi multiplier[HTL]": {
+    "derivation": "AHC.FCI  sensi multiplier[HTL]",
+    "base_inputs": [
+      "AHC.FCI  sensi multiplier[HTL]"
+    ]
+  },
+  "AHC.Mature Industry Rate of Return as PCT[HEFA]": {
+    "derivation": "AHC.Mature Industry Rate of Return as PCT[HEFA]",
+    "base_inputs": [
+      "AHC.Mature Industry Rate of Return as PCT[HEFA]"
+    ]
+  },
+  "AHC.Mature Industry Rate of Return as PCT[HTL]": {
+    "derivation": "AHC.Mature Industry Rate of Return as PCT[HTL]",
+    "base_inputs": [
+      "AHC.Mature Industry Rate of Return as PCT[HTL]"
+    ]
+  },
+  "AHC.ORNOOC sensi multiplier[HTL]": {
+    "derivation": "AHC.ORNOOC sensi multiplier[HTL]",
+    "base_inputs": [
+      "AHC.ORNOOC sensi multiplier[HTL]"
+    ]
+  },
+  "AHC.PY sensi multiplier[HEFA]": {
+    "derivation": "AHC.PY sensi multiplier[HEFA]",
+    "base_inputs": [
+      "AHC.PY sensi multiplier[HEFA]"
+    ]
+  },
+  "AHC.PY sensi multiplier[HTL]": {
+    "derivation": "AHC.PY sensi multiplier[HTL]",
+    "base_inputs": [
+      "AHC.PY sensi multiplier[HTL]"
+    ]
+  },
+  "AHC.initial indices of Commercial Maturity[HEFA]": {
+    "derivation": "AHC.initial indices of Commercial Maturity[HEFA]",
+    "base_inputs": [
+      "AHC.initial indices of Commercial Maturity[HEFA]"
+    ]
+  },
+  "AHC.initial indices of Commercial Maturity[HTL]": {
+    "derivation": "AHC.initial indices of Commercial Maturity[HTL]",
+    "base_inputs": [
+      "AHC.initial indices of Commercial Maturity[HTL]"
+    ]
+  },
+  "CHC.Debt Interest Rate as pct[Thermochem]": {
+    "derivation": "CHC.Debt Interest Rate as pct[Thermochem]",
+    "base_inputs": [
+      "CHC.Debt Interest Rate as pct[Thermochem]"
+    ]
+  },
+  "CHC.FCI  sensi multiplier[Biochem]": {
+    "derivation": "CHC.FCI  sensi multiplier[Biochem]",
+    "base_inputs": [
+      "CHC.FCI  sensi multiplier[Biochem]"
+    ]
+  },
+  "CHC.FCI  sensi multiplier[Brownfield]": {
+    "derivation": "CHC.FCI  sensi multiplier[Brownfield]",
+    "base_inputs": [
+      "CHC.FCI  sensi multiplier[Brownfield]"
+    ]
+  },
+  "CHC.FCI  sensi multiplier[Thermochem]": {
+    "derivation": "CHC.FCI  sensi multiplier[Thermochem]",
+    "base_inputs": [
+      "CHC.FCI  sensi multiplier[Thermochem]"
+    ]
+  },
+  "CHC.Mature Industry Rate of Return as PCT[Biochem]": {
+    "derivation": "CHC.Mature Industry Rate of Return as PCT[Biochem]",
+    "base_inputs": [
+      "CHC.Mature Industry Rate of Return as PCT[Biochem]"
+    ]
+  },
+  "CHC.Mature Industry Rate of Return as PCT[Brownfield]": {
+    "derivation": "CHC.Mature Industry Rate of Return as PCT[Brownfield]",
+    "base_inputs": [
+      "CHC.Mature Industry Rate of Return as PCT[Brownfield]"
+    ]
+  },
+  "CHC.Mature Industry Rate of Return as PCT[Thermochem]": {
+    "derivation": "CHC.Mature Industry Rate of Return as PCT[Thermochem]",
+    "base_inputs": [
+      "CHC.Mature Industry Rate of Return as PCT[Thermochem]"
+    ]
+  },
+  "CHC.ORNOOC sensi multiplier[Thermochem]": {
+    "derivation": "CHC.ORNOOC sensi multiplier[Thermochem]",
+    "base_inputs": [
+      "CHC.ORNOOC sensi multiplier[Thermochem]"
+    ]
+  },
+  "CHC.PY sensi multiplier[Biochem]": {
+    "derivation": "CHC.PY sensi multiplier[Biochem]",
+    "base_inputs": [
+      "CHC.PY sensi multiplier[Biochem]"
+    ]
+  },
+  "CHC.PY sensi multiplier[Brownfield]": {
+    "derivation": "CHC.PY sensi multiplier[Brownfield]",
+    "base_inputs": [
+      "CHC.PY sensi multiplier[Brownfield]"
+    ]
+  },
+  "CHC.PY sensi multiplier[Thermochem]": {
+    "derivation": "CHC.PY sensi multiplier[Thermochem]",
+    "base_inputs": [
+      "CHC.PY sensi multiplier[Thermochem]"
+    ]
+  },
+  "CHC.initial indices of Commercial Maturity[Biochem]": {
+    "derivation": "CHC.initial indices of Commercial Maturity[Biochem]",
+    "base_inputs": [
+      "CHC.initial indices of Commercial Maturity[Biochem]"
+    ]
+  },
+  "CHC.initial indices of Commercial Maturity[Brownfield]": {
+    "derivation": "CHC.initial indices of Commercial Maturity[Brownfield]",
+    "base_inputs": [
+      "CHC.initial indices of Commercial Maturity[Brownfield]"
+    ]
+  },
+  "CHC.initial indices of Commercial Maturity[Thermochem]": {
+    "derivation": "CHC.initial indices of Commercial Maturity[Thermochem]",
+    "base_inputs": [
+      "CHC.initial indices of Commercial Maturity[Thermochem]"
+    ]
+  },
+  "CHC.progress ratios commercial[Brownfield]": {
+    "derivation": "CHC.progress ratios commercial[Brownfield]",
+    "base_inputs": [
+      "CHC.progress ratios commercial[Brownfield]"
+    ]
+  },
+  "CHC.progress ratios commercial[Thermochem]": {
+    "derivation": "CHC.progress ratios commercial[Thermochem]",
+    "base_inputs": [
+      "CHC.progress ratios commercial[Thermochem]"
+    ]
+  },
+  "OHC.FCI  sensi multiplier[HEFA]": {
+    "derivation": "OHC.FCI  sensi multiplier[HEFA]",
+    "base_inputs": [
+      "OHC.FCI  sensi multiplier[HEFA]"
+    ]
+  },
+  "OHC.Mature Industry Rate of Return as PCT[HEFA]": {
+    "derivation": "OHC.Mature Industry Rate of Return as PCT[HEFA]",
+    "base_inputs": [
+      "OHC.Mature Industry Rate of Return as PCT[HEFA]"
+    ]
+  },
+  "OHC.ORNOOC sensi multiplier[HEFABrownfield]": {
+    "derivation": "OHC.ORNOOC sensi multiplier[HEFABrownfield]",
+    "base_inputs": [
+      "OHC.ORNOOC sensi multiplier[HEFABrownfield]"
+    ]
+  },
+  "OHC.ORNOOC sensi multiplier[HEFA]": {
+    "derivation": "OHC.ORNOOC sensi multiplier[HEFA]",
+    "base_inputs": [
+      "OHC.ORNOOC sensi multiplier[HEFA]"
+    ]
+  },
+  "OHC.PY sensi multiplier[HEFABrownfield]": {
+    "derivation": "OHC.PY sensi multiplier[HEFABrownfield]",
+    "base_inputs": [
+      "OHC.PY sensi multiplier[HEFABrownfield]"
+    ]
+  },
+  "OHC.PY sensi multiplier[HEFA]": {
+    "derivation": "OHC.PY sensi multiplier[HEFA]",
+    "base_inputs": [
+      "OHC.PY sensi multiplier[HEFA]"
+    ]
+  },
+  "OHC.Policy Duration[Price,HEFABrownfield]": {
+    "derivation": "OHC.Policy Duration[Price,HEFABrownfield]",
+    "base_inputs": [
+      "OHC.Policy Duration[Price,HEFABrownfield]"
+    ]
+  },
+  "OHC.Policy Duration[Price,HEFA]": {
+    "derivation": "OHC.Policy Duration[Price,HEFA]",
+    "base_inputs": [
+      "OHC.Policy Duration[Price,HEFA]"
+    ]
+  },
+  "OHC.Policy Duration[Price,TransEster]": {
+    "derivation": "OHC.Policy Duration[Price,TransEster]",
+    "base_inputs": [
+      "OHC.Policy Duration[Price,TransEster]"
+    ]
+  },
+  "OHC.Retirement Frac[TransEster]": {
+    "derivation": "OHC.Retirement Frac[TransEster]",
+    "base_inputs": [
+      "OHC.Retirement Frac[TransEster]"
+    ]
+  },
+  "OHC.initial indices of Commercial Maturity[HEFA]": {
+    "derivation": "OHC.initial indices of Commercial Maturity[HEFA]",
+    "base_inputs": [
+      "OHC.initial indices of Commercial Maturity[HEFA]"
+    ]
+  },
+  "OHC.progress ratios commercial[HEFABrownfield]": {
+    "derivation": "OHC.progress ratios commercial[HEFABrownfield]",
+    "base_inputs": [
+      "OHC.progress ratios commercial[HEFABrownfield]"
+    ]
+  },
+  "OHC.progress ratios commercial[HEFA]": {
+    "derivation": "OHC.progress ratios commercial[HEFA]",
+    "base_inputs": [
+      "OHC.progress ratios commercial[HEFA]"
+    ]
+  },
+  "SE.FCI  sensi multiplier[Jet]": {
+    "derivation": "SE.FCI  sensi multiplier[Jet]",
+    "base_inputs": [
+      "SE.FCI  sensi multiplier[Jet]"
+    ]
+  },
+  "SE.Mature Industry Rate of Return as PCT[Jet]": {
+    "derivation": "SE.Mature Industry Rate of Return as PCT[Jet]",
+    "base_inputs": [
+      "SE.Mature Industry Rate of Return as PCT[Jet]"
+    ]
+  },
+  "SE.Max Jet Investment Hit Rate": {
+    "derivation": "SE.Max Jet Investment Hit Rate",
+    "base_inputs": [
+      "SE.Max Jet Investment Hit Rate"
+    ]
+  },
+  "SE.ORNOOC sensi multiplier[Jet]": {
+    "derivation": "SE.ORNOOC sensi multiplier[Jet]",
+    "base_inputs": [
+      "SE.ORNOOC sensi multiplier[Jet]"
+    ]
+  },
+  "SE.PY sensi multiplier[Jet]": {
+    "derivation": "SE.PY sensi multiplier[Jet]",
+    "base_inputs": [
+      "SE.PY sensi multiplier[Jet]"
+    ]
+  },
+  "SE.Policy Duration[Price,Jet]": {
+    "derivation": "SE.Policy Duration[Price,Jet]",
+    "base_inputs": [
+      "SE.Policy Duration[Price,Jet]"
+    ]
+  },
+  "SE.initial indices of Commercial Maturity[Jet]": {
+    "derivation": "SE.initial indices of Commercial Maturity[Jet]",
+    "base_inputs": [
+      "SE.initial indices of Commercial Maturity[Jet]"
+    ]
+  },
+  "SE.progress ratios commercial[Jet]": {
+    "derivation": "SE.progress ratios commercial[Jet]",
+    "base_inputs": [
+      "SE.progress ratios commercial[Jet]"
+    ]
+  },
+  "WW.FCI  sensi multiplier[ManureToHTL]": {
+    "derivation": "WW.FCI  sensi multiplier[ManureToHTL]",
+    "base_inputs": [
+      "WW.FCI  sensi multiplier[ManureToHTL]"
+    ]
+  },
+  "WW.FCI  sensi multiplier[SludgeToHTL]": {
+    "derivation": "WW.FCI  sensi multiplier[SludgeToHTL]",
+    "base_inputs": [
+      "WW.FCI  sensi multiplier[SludgeToHTL]"
+    ]
+  },
+  "WW.Mature Industry Rate of Return as PCT[ManureToHTL]": {
+    "derivation": "WW.Mature Industry Rate of Return as PCT[ManureToHTL]",
+    "base_inputs": [
+      "WW.Mature Industry Rate of Return as PCT[ManureToHTL]"
+    ]
+  },
+  "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]": {
+    "derivation": "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+    "base_inputs": [
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]"
+    ]
+  },
+  "WW.ORNOOC sensi multiplier[ManureToHTL]": {
+    "derivation": "WW.ORNOOC sensi multiplier[ManureToHTL]",
+    "base_inputs": [
+      "WW.ORNOOC sensi multiplier[ManureToHTL]"
+    ]
+  },
+  "WW.ORNOOC sensi multiplier[SludgeToHTL]": {
+    "derivation": "WW.ORNOOC sensi multiplier[SludgeToHTL]",
+    "base_inputs": [
+      "WW.ORNOOC sensi multiplier[SludgeToHTL]"
+    ]
+  },
+  "WW.PY sensi multiplier[ManureToHTL]": {
+    "derivation": "WW.PY sensi multiplier[ManureToHTL]",
+    "base_inputs": [
+      "WW.PY sensi multiplier[ManureToHTL]"
+    ]
+  },
+  "WW.PY sensi multiplier[SludgeToHTL]": {
+    "derivation": "WW.PY sensi multiplier[SludgeToHTL]",
+    "base_inputs": [
+      "WW.PY sensi multiplier[SludgeToHTL]"
+    ]
+  },
+  "WW.Policy Duration[Price,SludgeToHTL]": {
+    "derivation": "WW.Policy Duration[Price,SludgeToHTL]",
+    "base_inputs": [
+      "WW.Policy Duration[Price,SludgeToHTL]"
+    ]
+  },
+  "WW.initial indices of Commercial Maturity[ManureToHTL]": {
+    "derivation": "WW.initial indices of Commercial Maturity[ManureToHTL]",
+    "base_inputs": [
+      "WW.initial indices of Commercial Maturity[ManureToHTL]"
+    ]
+  },
+  "WW.initial indices of Commercial Maturity[SludgeToHTL]": {
+    "derivation": "WW.initial indices of Commercial Maturity[SludgeToHTL]",
+    "base_inputs": [
+      "WW.initial indices of Commercial Maturity[SludgeToHTL]"
+    ]
+  },
+  "WW.progress ratios commercial[ManureToHTL]": {
+    "derivation": "WW.progress ratios commercial[ManureToHTL]",
+    "base_inputs": [
+      "WW.progress ratios commercial[ManureToHTL]"
+    ]
+  },
+  "WW.progress ratios commercial[SludgeToHTL]": {
+    "derivation": "WW.progress ratios commercial[SludgeToHTL]",
+    "base_inputs": [
+      "WW.progress ratios commercial[SludgeToHTL]"
+    ]
+  },
+  "AFSC": {
+    "derivation": "AFSC",
+    "base_inputs": [
+      "AFSC"
+    ]
+  },
+  "UAEORO": {
+    "derivation": "UAEORO",
+    "base_inputs": [
+      "UAEORO"
+    ]
+  },
+  "WW.initial indices of Commercial Maturity[ManureToHTL]*WW.Mature Industry Rate of Return as PCT[ManureToHTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.initial indices of Commercial Maturity[ManureToHTL]",
+      "WW.Mature Industry Rate of Return as PCT[ManureToHTL]"
+    ],
+    "base_inputs": [
+      "WW.initial indices of Commercial Maturity[ManureToHTL]",
+      "WW.Mature Industry Rate of Return as PCT[ManureToHTL]"
+    ]
+  },
+  "WW.initial indices of Commercial Maturity[ManureToHTL]*WW.PY sensi multiplier[ManureToHTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.initial indices of Commercial Maturity[ManureToHTL]",
+      "WW.PY sensi multiplier[ManureToHTL]"
+    ],
+    "base_inputs": [
+      "WW.initial indices of Commercial Maturity[ManureToHTL]",
+      "WW.PY sensi multiplier[ManureToHTL]"
+    ]
+  },
+  "WW.initial indices of Commercial Maturity[ManureToHTL]*WW.ORNOOC sensi multiplier[ManureToHTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.initial indices of Commercial Maturity[ManureToHTL]",
+      "WW.ORNOOC sensi multiplier[ManureToHTL]"
+    ],
+    "base_inputs": [
+      "WW.initial indices of Commercial Maturity[ManureToHTL]",
+      "WW.ORNOOC sensi multiplier[ManureToHTL]"
+    ]
+  },
+  "WW.initial indices of Commercial Maturity[ManureToHTL]*WW.FCI  sensi multiplier[ManureToHTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.initial indices of Commercial Maturity[ManureToHTL]",
+      "WW.FCI  sensi multiplier[ManureToHTL]"
+    ],
+    "base_inputs": [
+      "WW.initial indices of Commercial Maturity[ManureToHTL]",
+      "WW.FCI  sensi multiplier[ManureToHTL]"
+    ]
+  },
+  "WW.initial indices of Commercial Maturity[SludgeToHTL]*WW.progress ratios commercial[SludgeToHTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.initial indices of Commercial Maturity[SludgeToHTL]",
+      "WW.progress ratios commercial[SludgeToHTL]"
+    ],
+    "base_inputs": [
+      "WW.initial indices of Commercial Maturity[SludgeToHTL]",
+      "WW.progress ratios commercial[SludgeToHTL]"
+    ]
+  },
+  "WW.initial indices of Commercial Maturity[SludgeToHTL]*WW.Mature Industry Rate of Return as PCT[SludgeToHTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.initial indices of Commercial Maturity[SludgeToHTL]",
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]"
+    ],
+    "base_inputs": [
+      "WW.initial indices of Commercial Maturity[SludgeToHTL]",
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]"
+    ]
+  },
+  "WW.initial indices of Commercial Maturity[SludgeToHTL]*WW.PY sensi multiplier[SludgeToHTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.initial indices of Commercial Maturity[SludgeToHTL]",
+      "WW.PY sensi multiplier[SludgeToHTL]"
+    ],
+    "base_inputs": [
+      "WW.initial indices of Commercial Maturity[SludgeToHTL]",
+      "WW.PY sensi multiplier[SludgeToHTL]"
+    ]
+  },
+  "WW.initial indices of Commercial Maturity[SludgeToHTL]*WW.ORNOOC sensi multiplier[SludgeToHTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.initial indices of Commercial Maturity[SludgeToHTL]",
+      "WW.ORNOOC sensi multiplier[SludgeToHTL]"
+    ],
+    "base_inputs": [
+      "WW.initial indices of Commercial Maturity[SludgeToHTL]",
+      "WW.ORNOOC sensi multiplier[SludgeToHTL]"
+    ]
+  },
+  "WW.initial indices of Commercial Maturity[SludgeToHTL]*AHC.initial indices of Commercial Maturity[HTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.initial indices of Commercial Maturity[SludgeToHTL]",
+      "AHC.initial indices of Commercial Maturity[HTL]"
+    ],
+    "base_inputs": [
+      "WW.initial indices of Commercial Maturity[SludgeToHTL]",
+      "AHC.initial indices of Commercial Maturity[HTL]"
+    ]
+  },
+  "WW.progress ratios commercial[ManureToHTL]*WW.Mature Industry Rate of Return as PCT[ManureToHTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.progress ratios commercial[ManureToHTL]",
+      "WW.Mature Industry Rate of Return as PCT[ManureToHTL]"
+    ],
+    "base_inputs": [
+      "WW.progress ratios commercial[ManureToHTL]",
+      "WW.Mature Industry Rate of Return as PCT[ManureToHTL]"
+    ]
+  },
+  "WW.progress ratios commercial[ManureToHTL]*WW.PY sensi multiplier[ManureToHTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.progress ratios commercial[ManureToHTL]",
+      "WW.PY sensi multiplier[ManureToHTL]"
+    ],
+    "base_inputs": [
+      "WW.progress ratios commercial[ManureToHTL]",
+      "WW.PY sensi multiplier[ManureToHTL]"
+    ]
+  },
+  "WW.progress ratios commercial[SludgeToHTL]*WW.Mature Industry Rate of Return as PCT[SludgeToHTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]"
+    ],
+    "base_inputs": [
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]"
+    ]
+  },
+  "WW.progress ratios commercial[SludgeToHTL]*WW.PY sensi multiplier[SludgeToHTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "WW.PY sensi multiplier[SludgeToHTL]"
+    ],
+    "base_inputs": [
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "WW.PY sensi multiplier[SludgeToHTL]"
+    ]
+  },
+  "WW.progress ratios commercial[SludgeToHTL]*WW.ORNOOC sensi multiplier[SludgeToHTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "WW.ORNOOC sensi multiplier[SludgeToHTL]"
+    ],
+    "base_inputs": [
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "WW.ORNOOC sensi multiplier[SludgeToHTL]"
+    ]
+  },
+  "WW.progress ratios commercial[SludgeToHTL]*WW.FCI  sensi multiplier[SludgeToHTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "WW.FCI  sensi multiplier[SludgeToHTL]"
+    ],
+    "base_inputs": [
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "WW.FCI  sensi multiplier[SludgeToHTL]"
+    ]
+  },
+  "WW.progress ratios commercial[SludgeToHTL]*AHC.initial indices of Commercial Maturity[HTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "AHC.initial indices of Commercial Maturity[HTL]"
+    ],
+    "base_inputs": [
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "AHC.initial indices of Commercial Maturity[HTL]"
+    ]
+  },
+  "WW.progress ratios commercial[SludgeToHTL]*AHC.Mature Industry Rate of Return as PCT[HTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "AHC.Mature Industry Rate of Return as PCT[HTL]"
+    ],
+    "base_inputs": [
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "AHC.Mature Industry Rate of Return as PCT[HTL]"
+    ]
+  },
+  "WW.progress ratios commercial[SludgeToHTL]*AHC.PY sensi multiplier[HTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "AHC.PY sensi multiplier[HTL]"
+    ],
+    "base_inputs": [
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "AHC.PY sensi multiplier[HTL]"
+    ]
+  },
+  "WW.progress ratios commercial[SludgeToHTL]*AHC.FCI  sensi multiplier[HTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "AHC.FCI  sensi multiplier[HTL]"
+    ],
+    "base_inputs": [
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "AHC.FCI  sensi multiplier[HTL]"
+    ]
+  },
+  "WW.progress ratios commercial[SludgeToHTL]*OHC.progress ratios commercial[HEFA]": {
+    "derivation": [
+      "Multiply",
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "OHC.progress ratios commercial[HEFA]"
+    ],
+    "base_inputs": [
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "OHC.progress ratios commercial[HEFA]"
+    ]
+  },
+  "WW.progress ratios commercial[SludgeToHTL]*OHC.Mature Industry Rate of Return as PCT[HEFA]": {
+    "derivation": [
+      "Multiply",
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "OHC.Mature Industry Rate of Return as PCT[HEFA]"
+    ],
+    "base_inputs": [
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "OHC.Mature Industry Rate of Return as PCT[HEFA]"
+    ]
+  },
+  "WW.progress ratios commercial[SludgeToHTL]*OHC.PY sensi multiplier[HEFA]": {
+    "derivation": [
+      "Multiply",
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "OHC.PY sensi multiplier[HEFA]"
+    ],
+    "base_inputs": [
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "OHC.PY sensi multiplier[HEFA]"
+    ]
+  },
+  "WW.progress ratios commercial[SludgeToHTL]*OHC.PY sensi multiplier[HEFABrownfield]": {
+    "derivation": [
+      "Multiply",
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "OHC.PY sensi multiplier[HEFABrownfield]"
+    ],
+    "base_inputs": [
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "OHC.PY sensi multiplier[HEFABrownfield]"
+    ]
+  },
+  "WW.progress ratios commercial[SludgeToHTL]*CHC.initial indices of Commercial Maturity[Brownfield]": {
+    "derivation": [
+      "Multiply",
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "CHC.initial indices of Commercial Maturity[Brownfield]"
+    ],
+    "base_inputs": [
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "CHC.initial indices of Commercial Maturity[Brownfield]"
+    ]
+  },
+  "WW.progress ratios commercial[SludgeToHTL]*CHC.initial indices of Commercial Maturity[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "CHC.initial indices of Commercial Maturity[Thermochem]"
+    ],
+    "base_inputs": [
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "CHC.initial indices of Commercial Maturity[Thermochem]"
+    ]
+  },
+  "WW.progress ratios commercial[SludgeToHTL]*CHC.progress ratios commercial[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "CHC.progress ratios commercial[Thermochem]"
+    ],
+    "base_inputs": [
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "CHC.progress ratios commercial[Thermochem]"
+    ]
+  },
+  "WW.progress ratios commercial[SludgeToHTL]*CHC.Mature Industry Rate of Return as PCT[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "CHC.Mature Industry Rate of Return as PCT[Thermochem]"
+    ],
+    "base_inputs": [
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "CHC.Mature Industry Rate of Return as PCT[Thermochem]"
+    ]
+  },
+  "WW.progress ratios commercial[SludgeToHTL]*CHC.PY sensi multiplier[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "CHC.PY sensi multiplier[Thermochem]"
+    ],
+    "base_inputs": [
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "CHC.PY sensi multiplier[Thermochem]"
+    ]
+  },
+  "WW.progress ratios commercial[SludgeToHTL]*CHC.FCI  sensi multiplier[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "CHC.FCI  sensi multiplier[Thermochem]"
+    ],
+    "base_inputs": [
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "CHC.FCI  sensi multiplier[Thermochem]"
+    ]
+  },
+  "WW.progress ratios commercial[SludgeToHTL]*SE.Mature Industry Rate of Return as PCT[Jet]": {
+    "derivation": [
+      "Multiply",
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "SE.Mature Industry Rate of Return as PCT[Jet]"
+    ],
+    "base_inputs": [
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "SE.Mature Industry Rate of Return as PCT[Jet]"
+    ]
+  },
+  "WW.progress ratios commercial[SludgeToHTL]*SE.PY sensi multiplier[Jet]": {
+    "derivation": [
+      "Multiply",
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "SE.PY sensi multiplier[Jet]"
+    ],
+    "base_inputs": [
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "SE.PY sensi multiplier[Jet]"
+    ]
+  },
+  "WW.progress ratios commercial[SludgeToHTL]*SE.Max Jet Investment Hit Rate": {
+    "derivation": [
+      "Multiply",
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "SE.Max Jet Investment Hit Rate"
+    ],
+    "base_inputs": [
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "SE.Max Jet Investment Hit Rate"
+    ]
+  },
+  "WW.progress ratios commercial[SludgeToHTL]*AFSC": {
+    "derivation": [
+      "Multiply",
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "AFSC"
+    ],
+    "base_inputs": [
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "AFSC"
+    ]
+  },
+  "WW.progress ratios commercial[SludgeToHTL]*UAEORO": {
+    "derivation": [
+      "Multiply",
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "UAEORO"
+    ],
+    "base_inputs": [
+      "WW.progress ratios commercial[SludgeToHTL]",
+      "UAEORO"
+    ]
+  },
+  "WW.Mature Industry Rate of Return as PCT[ManureToHTL]*WW.Mature Industry Rate of Return as PCT[SludgeToHTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.Mature Industry Rate of Return as PCT[ManureToHTL]",
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]"
+    ],
+    "base_inputs": [
+      "WW.Mature Industry Rate of Return as PCT[ManureToHTL]",
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]"
+    ]
+  },
+  "WW.Mature Industry Rate of Return as PCT[ManureToHTL]*WW.PY sensi multiplier[ManureToHTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.Mature Industry Rate of Return as PCT[ManureToHTL]",
+      "WW.PY sensi multiplier[ManureToHTL]"
+    ],
+    "base_inputs": [
+      "WW.Mature Industry Rate of Return as PCT[ManureToHTL]",
+      "WW.PY sensi multiplier[ManureToHTL]"
+    ]
+  },
+  "WW.Mature Industry Rate of Return as PCT[ManureToHTL]*WW.PY sensi multiplier[SludgeToHTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.Mature Industry Rate of Return as PCT[ManureToHTL]",
+      "WW.PY sensi multiplier[SludgeToHTL]"
+    ],
+    "base_inputs": [
+      "WW.Mature Industry Rate of Return as PCT[ManureToHTL]",
+      "WW.PY sensi multiplier[SludgeToHTL]"
+    ]
+  },
+  "WW.Mature Industry Rate of Return as PCT[ManureToHTL]*WW.ORNOOC sensi multiplier[ManureToHTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.Mature Industry Rate of Return as PCT[ManureToHTL]",
+      "WW.ORNOOC sensi multiplier[ManureToHTL]"
+    ],
+    "base_inputs": [
+      "WW.Mature Industry Rate of Return as PCT[ManureToHTL]",
+      "WW.ORNOOC sensi multiplier[ManureToHTL]"
+    ]
+  },
+  "WW.Mature Industry Rate of Return as PCT[ManureToHTL]*WW.FCI  sensi multiplier[ManureToHTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.Mature Industry Rate of Return as PCT[ManureToHTL]",
+      "WW.FCI  sensi multiplier[ManureToHTL]"
+    ],
+    "base_inputs": [
+      "WW.Mature Industry Rate of Return as PCT[ManureToHTL]",
+      "WW.FCI  sensi multiplier[ManureToHTL]"
+    ]
+  },
+  "WW.Mature Industry Rate of Return as PCT[ManureToHTL]*CHC.Mature Industry Rate of Return as PCT[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "WW.Mature Industry Rate of Return as PCT[ManureToHTL]",
+      "CHC.Mature Industry Rate of Return as PCT[Thermochem]"
+    ],
+    "base_inputs": [
+      "WW.Mature Industry Rate of Return as PCT[ManureToHTL]",
+      "CHC.Mature Industry Rate of Return as PCT[Thermochem]"
+    ]
+  },
+  "WW.Mature Industry Rate of Return as PCT[ManureToHTL]*CHC.PY sensi multiplier[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "WW.Mature Industry Rate of Return as PCT[ManureToHTL]",
+      "CHC.PY sensi multiplier[Thermochem]"
+    ],
+    "base_inputs": [
+      "WW.Mature Industry Rate of Return as PCT[ManureToHTL]",
+      "CHC.PY sensi multiplier[Thermochem]"
+    ]
+  },
+  "WW.Mature Industry Rate of Return as PCT[ManureToHTL]*SE.Max Jet Investment Hit Rate": {
+    "derivation": [
+      "Multiply",
+      "WW.Mature Industry Rate of Return as PCT[ManureToHTL]",
+      "SE.Max Jet Investment Hit Rate"
+    ],
+    "base_inputs": [
+      "WW.Mature Industry Rate of Return as PCT[ManureToHTL]",
+      "SE.Max Jet Investment Hit Rate"
+    ]
+  },
+  "WW.Mature Industry Rate of Return as PCT[ManureToHTL]*UAEORO": {
+    "derivation": [
+      "Multiply",
+      "WW.Mature Industry Rate of Return as PCT[ManureToHTL]",
+      "UAEORO"
+    ],
+    "base_inputs": [
+      "WW.Mature Industry Rate of Return as PCT[ManureToHTL]",
+      "UAEORO"
+    ]
+  },
+  "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]*WW.PY sensi multiplier[ManureToHTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+      "WW.PY sensi multiplier[ManureToHTL]"
+    ],
+    "base_inputs": [
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+      "WW.PY sensi multiplier[ManureToHTL]"
+    ]
+  },
+  "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]*WW.PY sensi multiplier[SludgeToHTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+      "WW.PY sensi multiplier[SludgeToHTL]"
+    ],
+    "base_inputs": [
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+      "WW.PY sensi multiplier[SludgeToHTL]"
+    ]
+  },
+  "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]*WW.ORNOOC sensi multiplier[SludgeToHTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+      "WW.ORNOOC sensi multiplier[SludgeToHTL]"
+    ],
+    "base_inputs": [
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+      "WW.ORNOOC sensi multiplier[SludgeToHTL]"
+    ]
+  },
+  "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]*WW.FCI  sensi multiplier[SludgeToHTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+      "WW.FCI  sensi multiplier[SludgeToHTL]"
+    ],
+    "base_inputs": [
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+      "WW.FCI  sensi multiplier[SludgeToHTL]"
+    ]
+  },
+  "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]*AHC.initial indices of Commercial Maturity[HTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+      "AHC.initial indices of Commercial Maturity[HTL]"
+    ],
+    "base_inputs": [
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+      "AHC.initial indices of Commercial Maturity[HTL]"
+    ]
+  },
+  "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]*AHC.Mature Industry Rate of Return as PCT[HTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+      "AHC.Mature Industry Rate of Return as PCT[HTL]"
+    ],
+    "base_inputs": [
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+      "AHC.Mature Industry Rate of Return as PCT[HTL]"
+    ]
+  },
+  "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]*AHC.PY sensi multiplier[HTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+      "AHC.PY sensi multiplier[HTL]"
+    ],
+    "base_inputs": [
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+      "AHC.PY sensi multiplier[HTL]"
+    ]
+  },
+  "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]*OHC.progress ratios commercial[HEFA]": {
+    "derivation": [
+      "Multiply",
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+      "OHC.progress ratios commercial[HEFA]"
+    ],
+    "base_inputs": [
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+      "OHC.progress ratios commercial[HEFA]"
+    ]
+  },
+  "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]*OHC.PY sensi multiplier[HEFA]": {
+    "derivation": [
+      "Multiply",
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+      "OHC.PY sensi multiplier[HEFA]"
+    ],
+    "base_inputs": [
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+      "OHC.PY sensi multiplier[HEFA]"
+    ]
+  },
+  "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]*OHC.PY sensi multiplier[HEFABrownfield]": {
+    "derivation": [
+      "Multiply",
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+      "OHC.PY sensi multiplier[HEFABrownfield]"
+    ],
+    "base_inputs": [
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+      "OHC.PY sensi multiplier[HEFABrownfield]"
+    ]
+  },
+  "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]*OHC.ORNOOC sensi multiplier[HEFA]": {
+    "derivation": [
+      "Multiply",
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+      "OHC.ORNOOC sensi multiplier[HEFA]"
+    ],
+    "base_inputs": [
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+      "OHC.ORNOOC sensi multiplier[HEFA]"
+    ]
+  },
+  "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]*OHC.Retirement Frac[TransEster]": {
+    "derivation": [
+      "Multiply",
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+      "OHC.Retirement Frac[TransEster]"
+    ],
+    "base_inputs": [
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+      "OHC.Retirement Frac[TransEster]"
+    ]
+  },
+  "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]*CHC.initial indices of Commercial Maturity[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+      "CHC.initial indices of Commercial Maturity[Thermochem]"
+    ],
+    "base_inputs": [
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+      "CHC.initial indices of Commercial Maturity[Thermochem]"
+    ]
+  },
+  "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]*CHC.progress ratios commercial[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+      "CHC.progress ratios commercial[Thermochem]"
+    ],
+    "base_inputs": [
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+      "CHC.progress ratios commercial[Thermochem]"
+    ]
+  },
+  "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]*CHC.Mature Industry Rate of Return as PCT[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+      "CHC.Mature Industry Rate of Return as PCT[Thermochem]"
+    ],
+    "base_inputs": [
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+      "CHC.Mature Industry Rate of Return as PCT[Thermochem]"
+    ]
+  },
+  "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]*CHC.PY sensi multiplier[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+      "CHC.PY sensi multiplier[Thermochem]"
+    ],
+    "base_inputs": [
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+      "CHC.PY sensi multiplier[Thermochem]"
+    ]
+  },
+  "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]*CHC.FCI  sensi multiplier[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+      "CHC.FCI  sensi multiplier[Thermochem]"
+    ],
+    "base_inputs": [
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+      "CHC.FCI  sensi multiplier[Thermochem]"
+    ]
+  },
+  "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]*SE.PY sensi multiplier[Jet]": {
+    "derivation": [
+      "Multiply",
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+      "SE.PY sensi multiplier[Jet]"
+    ],
+    "base_inputs": [
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+      "SE.PY sensi multiplier[Jet]"
+    ]
+  },
+  "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]*SE.Max Jet Investment Hit Rate": {
+    "derivation": [
+      "Multiply",
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+      "SE.Max Jet Investment Hit Rate"
+    ],
+    "base_inputs": [
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+      "SE.Max Jet Investment Hit Rate"
+    ]
+  },
+  "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]*AFSC": {
+    "derivation": [
+      "Multiply",
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+      "AFSC"
+    ],
+    "base_inputs": [
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+      "AFSC"
+    ]
+  },
+  "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]*UAEORO": {
+    "derivation": [
+      "Multiply",
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+      "UAEORO"
+    ],
+    "base_inputs": [
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+      "UAEORO"
+    ]
+  },
+  "WW.PY sensi multiplier[ManureToHTL]*WW.PY sensi multiplier[SludgeToHTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.PY sensi multiplier[ManureToHTL]",
+      "WW.PY sensi multiplier[SludgeToHTL]"
+    ],
+    "base_inputs": [
+      "WW.PY sensi multiplier[ManureToHTL]",
+      "WW.PY sensi multiplier[SludgeToHTL]"
+    ]
+  },
+  "WW.PY sensi multiplier[ManureToHTL]*WW.ORNOOC sensi multiplier[ManureToHTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.PY sensi multiplier[ManureToHTL]",
+      "WW.ORNOOC sensi multiplier[ManureToHTL]"
+    ],
+    "base_inputs": [
+      "WW.PY sensi multiplier[ManureToHTL]",
+      "WW.ORNOOC sensi multiplier[ManureToHTL]"
+    ]
+  },
+  "WW.PY sensi multiplier[ManureToHTL]*WW.FCI  sensi multiplier[ManureToHTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.PY sensi multiplier[ManureToHTL]",
+      "WW.FCI  sensi multiplier[ManureToHTL]"
+    ],
+    "base_inputs": [
+      "WW.PY sensi multiplier[ManureToHTL]",
+      "WW.FCI  sensi multiplier[ManureToHTL]"
+    ]
+  },
+  "WW.PY sensi multiplier[ManureToHTL]*WW.FCI  sensi multiplier[SludgeToHTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.PY sensi multiplier[ManureToHTL]",
+      "WW.FCI  sensi multiplier[SludgeToHTL]"
+    ],
+    "base_inputs": [
+      "WW.PY sensi multiplier[ManureToHTL]",
+      "WW.FCI  sensi multiplier[SludgeToHTL]"
+    ]
+  },
+  "WW.PY sensi multiplier[ManureToHTL]*CHC.initial indices of Commercial Maturity[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "WW.PY sensi multiplier[ManureToHTL]",
+      "CHC.initial indices of Commercial Maturity[Thermochem]"
+    ],
+    "base_inputs": [
+      "WW.PY sensi multiplier[ManureToHTL]",
+      "CHC.initial indices of Commercial Maturity[Thermochem]"
+    ]
+  },
+  "WW.PY sensi multiplier[ManureToHTL]*CHC.Mature Industry Rate of Return as PCT[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "WW.PY sensi multiplier[ManureToHTL]",
+      "CHC.Mature Industry Rate of Return as PCT[Thermochem]"
+    ],
+    "base_inputs": [
+      "WW.PY sensi multiplier[ManureToHTL]",
+      "CHC.Mature Industry Rate of Return as PCT[Thermochem]"
+    ]
+  },
+  "WW.PY sensi multiplier[ManureToHTL]*CHC.PY sensi multiplier[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "WW.PY sensi multiplier[ManureToHTL]",
+      "CHC.PY sensi multiplier[Thermochem]"
+    ],
+    "base_inputs": [
+      "WW.PY sensi multiplier[ManureToHTL]",
+      "CHC.PY sensi multiplier[Thermochem]"
+    ]
+  },
+  "WW.PY sensi multiplier[ManureToHTL]*SE.Max Jet Investment Hit Rate": {
+    "derivation": [
+      "Multiply",
+      "WW.PY sensi multiplier[ManureToHTL]",
+      "SE.Max Jet Investment Hit Rate"
+    ],
+    "base_inputs": [
+      "WW.PY sensi multiplier[ManureToHTL]",
+      "SE.Max Jet Investment Hit Rate"
+    ]
+  },
+  "WW.PY sensi multiplier[ManureToHTL]*UAEORO": {
+    "derivation": [
+      "Multiply",
+      "WW.PY sensi multiplier[ManureToHTL]",
+      "UAEORO"
+    ],
+    "base_inputs": [
+      "WW.PY sensi multiplier[ManureToHTL]",
+      "UAEORO"
+    ]
+  },
+  "WW.PY sensi multiplier[SludgeToHTL]*WW.ORNOOC sensi multiplier[SludgeToHTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.PY sensi multiplier[SludgeToHTL]",
+      "WW.ORNOOC sensi multiplier[SludgeToHTL]"
+    ],
+    "base_inputs": [
+      "WW.PY sensi multiplier[SludgeToHTL]",
+      "WW.ORNOOC sensi multiplier[SludgeToHTL]"
+    ]
+  },
+  "WW.PY sensi multiplier[SludgeToHTL]*WW.FCI  sensi multiplier[SludgeToHTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.PY sensi multiplier[SludgeToHTL]",
+      "WW.FCI  sensi multiplier[SludgeToHTL]"
+    ],
+    "base_inputs": [
+      "WW.PY sensi multiplier[SludgeToHTL]",
+      "WW.FCI  sensi multiplier[SludgeToHTL]"
+    ]
+  },
+  "WW.PY sensi multiplier[SludgeToHTL]*AHC.initial indices of Commercial Maturity[HTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.PY sensi multiplier[SludgeToHTL]",
+      "AHC.initial indices of Commercial Maturity[HTL]"
+    ],
+    "base_inputs": [
+      "WW.PY sensi multiplier[SludgeToHTL]",
+      "AHC.initial indices of Commercial Maturity[HTL]"
+    ]
+  },
+  "WW.PY sensi multiplier[SludgeToHTL]*AHC.Mature Industry Rate of Return as PCT[HTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.PY sensi multiplier[SludgeToHTL]",
+      "AHC.Mature Industry Rate of Return as PCT[HTL]"
+    ],
+    "base_inputs": [
+      "WW.PY sensi multiplier[SludgeToHTL]",
+      "AHC.Mature Industry Rate of Return as PCT[HTL]"
+    ]
+  },
+  "WW.PY sensi multiplier[SludgeToHTL]*AHC.PY sensi multiplier[HTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.PY sensi multiplier[SludgeToHTL]",
+      "AHC.PY sensi multiplier[HTL]"
+    ],
+    "base_inputs": [
+      "WW.PY sensi multiplier[SludgeToHTL]",
+      "AHC.PY sensi multiplier[HTL]"
+    ]
+  },
+  "WW.PY sensi multiplier[SludgeToHTL]*AHC.FCI  sensi multiplier[HTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.PY sensi multiplier[SludgeToHTL]",
+      "AHC.FCI  sensi multiplier[HTL]"
+    ],
+    "base_inputs": [
+      "WW.PY sensi multiplier[SludgeToHTL]",
+      "AHC.FCI  sensi multiplier[HTL]"
+    ]
+  },
+  "WW.PY sensi multiplier[SludgeToHTL]*OHC.PY sensi multiplier[HEFA]": {
+    "derivation": [
+      "Multiply",
+      "WW.PY sensi multiplier[SludgeToHTL]",
+      "OHC.PY sensi multiplier[HEFA]"
+    ],
+    "base_inputs": [
+      "WW.PY sensi multiplier[SludgeToHTL]",
+      "OHC.PY sensi multiplier[HEFA]"
+    ]
+  },
+  "WW.PY sensi multiplier[SludgeToHTL]*OHC.PY sensi multiplier[HEFABrownfield]": {
+    "derivation": [
+      "Multiply",
+      "WW.PY sensi multiplier[SludgeToHTL]",
+      "OHC.PY sensi multiplier[HEFABrownfield]"
+    ],
+    "base_inputs": [
+      "WW.PY sensi multiplier[SludgeToHTL]",
+      "OHC.PY sensi multiplier[HEFABrownfield]"
+    ]
+  },
+  "WW.PY sensi multiplier[SludgeToHTL]*OHC.Retirement Frac[TransEster]": {
+    "derivation": [
+      "Multiply",
+      "WW.PY sensi multiplier[SludgeToHTL]",
+      "OHC.Retirement Frac[TransEster]"
+    ],
+    "base_inputs": [
+      "WW.PY sensi multiplier[SludgeToHTL]",
+      "OHC.Retirement Frac[TransEster]"
+    ]
+  },
+  "WW.PY sensi multiplier[SludgeToHTL]*CHC.initial indices of Commercial Maturity[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "WW.PY sensi multiplier[SludgeToHTL]",
+      "CHC.initial indices of Commercial Maturity[Thermochem]"
+    ],
+    "base_inputs": [
+      "WW.PY sensi multiplier[SludgeToHTL]",
+      "CHC.initial indices of Commercial Maturity[Thermochem]"
+    ]
+  },
+  "WW.PY sensi multiplier[SludgeToHTL]*CHC.progress ratios commercial[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "WW.PY sensi multiplier[SludgeToHTL]",
+      "CHC.progress ratios commercial[Thermochem]"
+    ],
+    "base_inputs": [
+      "WW.PY sensi multiplier[SludgeToHTL]",
+      "CHC.progress ratios commercial[Thermochem]"
+    ]
+  },
+  "WW.PY sensi multiplier[SludgeToHTL]*CHC.Mature Industry Rate of Return as PCT[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "WW.PY sensi multiplier[SludgeToHTL]",
+      "CHC.Mature Industry Rate of Return as PCT[Thermochem]"
+    ],
+    "base_inputs": [
+      "WW.PY sensi multiplier[SludgeToHTL]",
+      "CHC.Mature Industry Rate of Return as PCT[Thermochem]"
+    ]
+  },
+  "WW.PY sensi multiplier[SludgeToHTL]*CHC.PY sensi multiplier[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "WW.PY sensi multiplier[SludgeToHTL]",
+      "CHC.PY sensi multiplier[Thermochem]"
+    ],
+    "base_inputs": [
+      "WW.PY sensi multiplier[SludgeToHTL]",
+      "CHC.PY sensi multiplier[Thermochem]"
+    ]
+  },
+  "WW.PY sensi multiplier[SludgeToHTL]*CHC.FCI  sensi multiplier[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "WW.PY sensi multiplier[SludgeToHTL]",
+      "CHC.FCI  sensi multiplier[Thermochem]"
+    ],
+    "base_inputs": [
+      "WW.PY sensi multiplier[SludgeToHTL]",
+      "CHC.FCI  sensi multiplier[Thermochem]"
+    ]
+  },
+  "WW.PY sensi multiplier[SludgeToHTL]*SE.PY sensi multiplier[Jet]": {
+    "derivation": [
+      "Multiply",
+      "WW.PY sensi multiplier[SludgeToHTL]",
+      "SE.PY sensi multiplier[Jet]"
+    ],
+    "base_inputs": [
+      "WW.PY sensi multiplier[SludgeToHTL]",
+      "SE.PY sensi multiplier[Jet]"
+    ]
+  },
+  "WW.PY sensi multiplier[SludgeToHTL]*SE.Max Jet Investment Hit Rate": {
+    "derivation": [
+      "Multiply",
+      "WW.PY sensi multiplier[SludgeToHTL]",
+      "SE.Max Jet Investment Hit Rate"
+    ],
+    "base_inputs": [
+      "WW.PY sensi multiplier[SludgeToHTL]",
+      "SE.Max Jet Investment Hit Rate"
+    ]
+  },
+  "WW.PY sensi multiplier[SludgeToHTL]*AFSC": {
+    "derivation": [
+      "Multiply",
+      "WW.PY sensi multiplier[SludgeToHTL]",
+      "AFSC"
+    ],
+    "base_inputs": [
+      "WW.PY sensi multiplier[SludgeToHTL]",
+      "AFSC"
+    ]
+  },
+  "WW.PY sensi multiplier[SludgeToHTL]*UAEORO": {
+    "derivation": [
+      "Multiply",
+      "WW.PY sensi multiplier[SludgeToHTL]",
+      "UAEORO"
+    ],
+    "base_inputs": [
+      "WW.PY sensi multiplier[SludgeToHTL]",
+      "UAEORO"
+    ]
+  },
+  "WW.ORNOOC sensi multiplier[ManureToHTL]*WW.FCI  sensi multiplier[ManureToHTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.ORNOOC sensi multiplier[ManureToHTL]",
+      "WW.FCI  sensi multiplier[ManureToHTL]"
+    ],
+    "base_inputs": [
+      "WW.ORNOOC sensi multiplier[ManureToHTL]",
+      "WW.FCI  sensi multiplier[ManureToHTL]"
+    ]
+  },
+  "WW.ORNOOC sensi multiplier[ManureToHTL]*SE.Max Jet Investment Hit Rate": {
+    "derivation": [
+      "Multiply",
+      "WW.ORNOOC sensi multiplier[ManureToHTL]",
+      "SE.Max Jet Investment Hit Rate"
+    ],
+    "base_inputs": [
+      "WW.ORNOOC sensi multiplier[ManureToHTL]",
+      "SE.Max Jet Investment Hit Rate"
+    ]
+  },
+  "WW.ORNOOC sensi multiplier[ManureToHTL]*UAEORO": {
+    "derivation": [
+      "Multiply",
+      "WW.ORNOOC sensi multiplier[ManureToHTL]",
+      "UAEORO"
+    ],
+    "base_inputs": [
+      "WW.ORNOOC sensi multiplier[ManureToHTL]",
+      "UAEORO"
+    ]
+  },
+  "WW.ORNOOC sensi multiplier[SludgeToHTL]*WW.FCI  sensi multiplier[SludgeToHTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.ORNOOC sensi multiplier[SludgeToHTL]",
+      "WW.FCI  sensi multiplier[SludgeToHTL]"
+    ],
+    "base_inputs": [
+      "WW.ORNOOC sensi multiplier[SludgeToHTL]",
+      "WW.FCI  sensi multiplier[SludgeToHTL]"
+    ]
+  },
+  "WW.ORNOOC sensi multiplier[SludgeToHTL]*AHC.Mature Industry Rate of Return as PCT[HTL]": {
+    "derivation": [
+      "Multiply",
+      "WW.ORNOOC sensi multiplier[SludgeToHTL]",
+      "AHC.Mature Industry Rate of Return as PCT[HTL]"
+    ],
+    "base_inputs": [
+      "WW.ORNOOC sensi multiplier[SludgeToHTL]",
+      "AHC.Mature Industry Rate of Return as PCT[HTL]"
+    ]
+  },
+  "WW.ORNOOC sensi multiplier[SludgeToHTL]*OHC.PY sensi multiplier[HEFA]": {
+    "derivation": [
+      "Multiply",
+      "WW.ORNOOC sensi multiplier[SludgeToHTL]",
+      "OHC.PY sensi multiplier[HEFA]"
+    ],
+    "base_inputs": [
+      "WW.ORNOOC sensi multiplier[SludgeToHTL]",
+      "OHC.PY sensi multiplier[HEFA]"
+    ]
+  },
+  "WW.ORNOOC sensi multiplier[SludgeToHTL]*OHC.PY sensi multiplier[HEFABrownfield]": {
+    "derivation": [
+      "Multiply",
+      "WW.ORNOOC sensi multiplier[SludgeToHTL]",
+      "OHC.PY sensi multiplier[HEFABrownfield]"
+    ],
+    "base_inputs": [
+      "WW.ORNOOC sensi multiplier[SludgeToHTL]",
+      "OHC.PY sensi multiplier[HEFABrownfield]"
+    ]
+  },
+  "WW.ORNOOC sensi multiplier[SludgeToHTL]*OHC.Retirement Frac[TransEster]": {
+    "derivation": [
+      "Multiply",
+      "WW.ORNOOC sensi multiplier[SludgeToHTL]",
+      "OHC.Retirement Frac[TransEster]"
+    ],
+    "base_inputs": [
+      "WW.ORNOOC sensi multiplier[SludgeToHTL]",
+      "OHC.Retirement Frac[TransEster]"
+    ]
+  },
+  "WW.ORNOOC sensi multiplier[SludgeToHTL]*CHC.initial indices of Commercial Maturity[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "WW.ORNOOC sensi multiplier[SludgeToHTL]",
+      "CHC.initial indices of Commercial Maturity[Thermochem]"
+    ],
+    "base_inputs": [
+      "WW.ORNOOC sensi multiplier[SludgeToHTL]",
+      "CHC.initial indices of Commercial Maturity[Thermochem]"
+    ]
+  },
+  "WW.ORNOOC sensi multiplier[SludgeToHTL]*CHC.Mature Industry Rate of Return as PCT[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "WW.ORNOOC sensi multiplier[SludgeToHTL]",
+      "CHC.Mature Industry Rate of Return as PCT[Thermochem]"
+    ],
+    "base_inputs": [
+      "WW.ORNOOC sensi multiplier[SludgeToHTL]",
+      "CHC.Mature Industry Rate of Return as PCT[Thermochem]"
+    ]
+  },
+  "WW.ORNOOC sensi multiplier[SludgeToHTL]*CHC.PY sensi multiplier[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "WW.ORNOOC sensi multiplier[SludgeToHTL]",
+      "CHC.PY sensi multiplier[Thermochem]"
+    ],
+    "base_inputs": [
+      "WW.ORNOOC sensi multiplier[SludgeToHTL]",
+      "CHC.PY sensi multiplier[Thermochem]"
+    ]
+  },
+  "WW.ORNOOC sensi multiplier[SludgeToHTL]*CHC.FCI  sensi multiplier[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "WW.ORNOOC sensi multiplier[SludgeToHTL]",
+      "CHC.FCI  sensi multiplier[Thermochem]"
+    ],
+    "base_inputs": [
+      "WW.ORNOOC sensi multiplier[SludgeToHTL]",
+      "CHC.FCI  sensi multiplier[Thermochem]"
+    ]
+  },
+  "WW.ORNOOC sensi multiplier[SludgeToHTL]*SE.Max Jet Investment Hit Rate": {
+    "derivation": [
+      "Multiply",
+      "WW.ORNOOC sensi multiplier[SludgeToHTL]",
+      "SE.Max Jet Investment Hit Rate"
+    ],
+    "base_inputs": [
+      "WW.ORNOOC sensi multiplier[SludgeToHTL]",
+      "SE.Max Jet Investment Hit Rate"
+    ]
+  },
+  "WW.ORNOOC sensi multiplier[SludgeToHTL]*UAEORO": {
+    "derivation": [
+      "Multiply",
+      "WW.ORNOOC sensi multiplier[SludgeToHTL]",
+      "UAEORO"
+    ],
+    "base_inputs": [
+      "WW.ORNOOC sensi multiplier[SludgeToHTL]",
+      "UAEORO"
+    ]
+  },
+  "WW.FCI  sensi multiplier[ManureToHTL]*UAEORO": {
+    "derivation": [
+      "Multiply",
+      "WW.FCI  sensi multiplier[ManureToHTL]",
+      "UAEORO"
+    ],
+    "base_inputs": [
+      "WW.FCI  sensi multiplier[ManureToHTL]",
+      "UAEORO"
+    ]
+  },
+  "WW.FCI  sensi multiplier[SludgeToHTL]*OHC.PY sensi multiplier[HEFA]": {
+    "derivation": [
+      "Multiply",
+      "WW.FCI  sensi multiplier[SludgeToHTL]",
+      "OHC.PY sensi multiplier[HEFA]"
+    ],
+    "base_inputs": [
+      "WW.FCI  sensi multiplier[SludgeToHTL]",
+      "OHC.PY sensi multiplier[HEFA]"
+    ]
+  },
+  "WW.FCI  sensi multiplier[SludgeToHTL]*OHC.PY sensi multiplier[HEFABrownfield]": {
+    "derivation": [
+      "Multiply",
+      "WW.FCI  sensi multiplier[SludgeToHTL]",
+      "OHC.PY sensi multiplier[HEFABrownfield]"
+    ],
+    "base_inputs": [
+      "WW.FCI  sensi multiplier[SludgeToHTL]",
+      "OHC.PY sensi multiplier[HEFABrownfield]"
+    ]
+  },
+  "WW.FCI  sensi multiplier[SludgeToHTL]*CHC.initial indices of Commercial Maturity[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "WW.FCI  sensi multiplier[SludgeToHTL]",
+      "CHC.initial indices of Commercial Maturity[Thermochem]"
+    ],
+    "base_inputs": [
+      "WW.FCI  sensi multiplier[SludgeToHTL]",
+      "CHC.initial indices of Commercial Maturity[Thermochem]"
+    ]
+  },
+  "WW.FCI  sensi multiplier[SludgeToHTL]*CHC.Mature Industry Rate of Return as PCT[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "WW.FCI  sensi multiplier[SludgeToHTL]",
+      "CHC.Mature Industry Rate of Return as PCT[Thermochem]"
+    ],
+    "base_inputs": [
+      "WW.FCI  sensi multiplier[SludgeToHTL]",
+      "CHC.Mature Industry Rate of Return as PCT[Thermochem]"
+    ]
+  },
+  "WW.FCI  sensi multiplier[SludgeToHTL]*CHC.PY sensi multiplier[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "WW.FCI  sensi multiplier[SludgeToHTL]",
+      "CHC.PY sensi multiplier[Thermochem]"
+    ],
+    "base_inputs": [
+      "WW.FCI  sensi multiplier[SludgeToHTL]",
+      "CHC.PY sensi multiplier[Thermochem]"
+    ]
+  },
+  "WW.FCI  sensi multiplier[SludgeToHTL]*SE.Max Jet Investment Hit Rate": {
+    "derivation": [
+      "Multiply",
+      "WW.FCI  sensi multiplier[SludgeToHTL]",
+      "SE.Max Jet Investment Hit Rate"
+    ],
+    "base_inputs": [
+      "WW.FCI  sensi multiplier[SludgeToHTL]",
+      "SE.Max Jet Investment Hit Rate"
+    ]
+  },
+  "WW.FCI  sensi multiplier[SludgeToHTL]*UAEORO": {
+    "derivation": [
+      "Multiply",
+      "WW.FCI  sensi multiplier[SludgeToHTL]",
+      "UAEORO"
+    ],
+    "base_inputs": [
+      "WW.FCI  sensi multiplier[SludgeToHTL]",
+      "UAEORO"
+    ]
+  },
+  "AHC.Debt Interest Rate as pct[HEFA]*AHC.PY sensi multiplier[HEFA]": {
+    "derivation": [
+      "Multiply",
+      "AHC.Debt Interest Rate as pct[HEFA]",
+      "AHC.PY sensi multiplier[HEFA]"
+    ],
+    "base_inputs": [
+      "AHC.Debt Interest Rate as pct[HEFA]",
+      "AHC.PY sensi multiplier[HEFA]"
+    ]
+  },
+  "AHC.Mature Industry Rate of Return as PCT[HTL]*AHC.PY sensi multiplier[HTL]": {
+    "derivation": [
+      "Multiply",
+      "AHC.Mature Industry Rate of Return as PCT[HTL]",
+      "AHC.PY sensi multiplier[HTL]"
+    ],
+    "base_inputs": [
+      "AHC.Mature Industry Rate of Return as PCT[HTL]",
+      "AHC.PY sensi multiplier[HTL]"
+    ]
+  },
+  "AHC.Mature Industry Rate of Return as PCT[HTL]*AHC.ORNOOC sensi multiplier[HTL]": {
+    "derivation": [
+      "Multiply",
+      "AHC.Mature Industry Rate of Return as PCT[HTL]",
+      "AHC.ORNOOC sensi multiplier[HTL]"
+    ],
+    "base_inputs": [
+      "AHC.Mature Industry Rate of Return as PCT[HTL]",
+      "AHC.ORNOOC sensi multiplier[HTL]"
+    ]
+  },
+  "AHC.Mature Industry Rate of Return as PCT[HTL]*AHC.FCI  sensi multiplier[HTL]": {
+    "derivation": [
+      "Multiply",
+      "AHC.Mature Industry Rate of Return as PCT[HTL]",
+      "AHC.FCI  sensi multiplier[HTL]"
+    ],
+    "base_inputs": [
+      "AHC.Mature Industry Rate of Return as PCT[HTL]",
+      "AHC.FCI  sensi multiplier[HTL]"
+    ]
+  },
+  "AHC.Mature Industry Rate of Return as PCT[HEFA]*AHC.PY sensi multiplier[HEFA]": {
+    "derivation": [
+      "Multiply",
+      "AHC.Mature Industry Rate of Return as PCT[HEFA]",
+      "AHC.PY sensi multiplier[HEFA]"
+    ],
+    "base_inputs": [
+      "AHC.Mature Industry Rate of Return as PCT[HEFA]",
+      "AHC.PY sensi multiplier[HEFA]"
+    ]
+  },
+  "AHC.Mature Industry Rate of Return as PCT[HEFA]*AHC.FCI  sensi multiplier[HEFA]": {
+    "derivation": [
+      "Multiply",
+      "AHC.Mature Industry Rate of Return as PCT[HEFA]",
+      "AHC.FCI  sensi multiplier[HEFA]"
+    ],
+    "base_inputs": [
+      "AHC.Mature Industry Rate of Return as PCT[HEFA]",
+      "AHC.FCI  sensi multiplier[HEFA]"
+    ]
+  },
+  "AHC.PY sensi multiplier[HTL]*AHC.ORNOOC sensi multiplier[HTL]": {
+    "derivation": [
+      "Multiply",
+      "AHC.PY sensi multiplier[HTL]",
+      "AHC.ORNOOC sensi multiplier[HTL]"
+    ],
+    "base_inputs": [
+      "AHC.PY sensi multiplier[HTL]",
+      "AHC.ORNOOC sensi multiplier[HTL]"
+    ]
+  },
+  "AHC.PY sensi multiplier[HTL]*AHC.FCI  sensi multiplier[HTL]": {
+    "derivation": [
+      "Multiply",
+      "AHC.PY sensi multiplier[HTL]",
+      "AHC.FCI  sensi multiplier[HTL]"
+    ],
+    "base_inputs": [
+      "AHC.PY sensi multiplier[HTL]",
+      "AHC.FCI  sensi multiplier[HTL]"
+    ]
+  },
+  "AHC.PY sensi multiplier[HEFA]*AHC.FCI  sensi multiplier[HEFA]": {
+    "derivation": [
+      "Multiply",
+      "AHC.PY sensi multiplier[HEFA]",
+      "AHC.FCI  sensi multiplier[HEFA]"
+    ],
+    "base_inputs": [
+      "AHC.PY sensi multiplier[HEFA]",
+      "AHC.FCI  sensi multiplier[HEFA]"
+    ]
+  },
+  "AHC.PY sensi multiplier[HEFA]*OHC.progress ratios commercial[HEFA]": {
+    "derivation": [
+      "Multiply",
+      "AHC.PY sensi multiplier[HEFA]",
+      "OHC.progress ratios commercial[HEFA]"
+    ],
+    "base_inputs": [
+      "AHC.PY sensi multiplier[HEFA]",
+      "OHC.progress ratios commercial[HEFA]"
+    ]
+  },
+  "OHC.Policy Duration[Price,HEFA]*OHC.PY sensi multiplier[HEFA]": {
+    "derivation": [
+      "Multiply",
+      "OHC.Policy Duration[Price,HEFA]",
+      "OHC.PY sensi multiplier[HEFA]"
+    ],
+    "base_inputs": [
+      "OHC.Policy Duration[Price,HEFA]",
+      "OHC.PY sensi multiplier[HEFA]"
+    ]
+  },
+  "OHC.Policy Duration[Price,HEFA]*OHC.Retirement Frac[TransEster]": {
+    "derivation": [
+      "Multiply",
+      "OHC.Policy Duration[Price,HEFA]",
+      "OHC.Retirement Frac[TransEster]"
+    ],
+    "base_inputs": [
+      "OHC.Policy Duration[Price,HEFA]",
+      "OHC.Retirement Frac[TransEster]"
+    ]
+  },
+  "OHC.Policy Duration[Price,HEFABrownfield]*OHC.PY sensi multiplier[HEFABrownfield]": {
+    "derivation": [
+      "Multiply",
+      "OHC.Policy Duration[Price,HEFABrownfield]",
+      "OHC.PY sensi multiplier[HEFABrownfield]"
+    ],
+    "base_inputs": [
+      "OHC.Policy Duration[Price,HEFABrownfield]",
+      "OHC.PY sensi multiplier[HEFABrownfield]"
+    ]
+  },
+  "OHC.progress ratios commercial[HEFA]*OHC.progress ratios commercial[HEFABrownfield]": {
+    "derivation": [
+      "Multiply",
+      "OHC.progress ratios commercial[HEFA]",
+      "OHC.progress ratios commercial[HEFABrownfield]"
+    ],
+    "base_inputs": [
+      "OHC.progress ratios commercial[HEFA]",
+      "OHC.progress ratios commercial[HEFABrownfield]"
+    ]
+  },
+  "OHC.progress ratios commercial[HEFA]*OHC.PY sensi multiplier[HEFA]": {
+    "derivation": [
+      "Multiply",
+      "OHC.progress ratios commercial[HEFA]",
+      "OHC.PY sensi multiplier[HEFA]"
+    ],
+    "base_inputs": [
+      "OHC.progress ratios commercial[HEFA]",
+      "OHC.PY sensi multiplier[HEFA]"
+    ]
+  },
+  "OHC.progress ratios commercial[HEFA]*OHC.PY sensi multiplier[HEFABrownfield]": {
+    "derivation": [
+      "Multiply",
+      "OHC.progress ratios commercial[HEFA]",
+      "OHC.PY sensi multiplier[HEFABrownfield]"
+    ],
+    "base_inputs": [
+      "OHC.progress ratios commercial[HEFA]",
+      "OHC.PY sensi multiplier[HEFABrownfield]"
+    ]
+  },
+  "OHC.progress ratios commercial[HEFA]*OHC.Retirement Frac[TransEster]": {
+    "derivation": [
+      "Multiply",
+      "OHC.progress ratios commercial[HEFA]",
+      "OHC.Retirement Frac[TransEster]"
+    ],
+    "base_inputs": [
+      "OHC.progress ratios commercial[HEFA]",
+      "OHC.Retirement Frac[TransEster]"
+    ]
+  },
+  "OHC.progress ratios commercial[HEFA]*UAEORO": {
+    "derivation": [
+      "Multiply",
+      "OHC.progress ratios commercial[HEFA]",
+      "UAEORO"
+    ],
+    "base_inputs": [
+      "OHC.progress ratios commercial[HEFA]",
+      "UAEORO"
+    ]
+  },
+  "OHC.Mature Industry Rate of Return as PCT[HEFA]*OHC.PY sensi multiplier[HEFA]": {
+    "derivation": [
+      "Multiply",
+      "OHC.Mature Industry Rate of Return as PCT[HEFA]",
+      "OHC.PY sensi multiplier[HEFA]"
+    ],
+    "base_inputs": [
+      "OHC.Mature Industry Rate of Return as PCT[HEFA]",
+      "OHC.PY sensi multiplier[HEFA]"
+    ]
+  },
+  "OHC.Mature Industry Rate of Return as PCT[HEFA]*OHC.PY sensi multiplier[HEFABrownfield]": {
+    "derivation": [
+      "Multiply",
+      "OHC.Mature Industry Rate of Return as PCT[HEFA]",
+      "OHC.PY sensi multiplier[HEFABrownfield]"
+    ],
+    "base_inputs": [
+      "OHC.Mature Industry Rate of Return as PCT[HEFA]",
+      "OHC.PY sensi multiplier[HEFABrownfield]"
+    ]
+  },
+  "OHC.Mature Industry Rate of Return as PCT[HEFA]*OHC.ORNOOC sensi multiplier[HEFA]": {
+    "derivation": [
+      "Multiply",
+      "OHC.Mature Industry Rate of Return as PCT[HEFA]",
+      "OHC.ORNOOC sensi multiplier[HEFA]"
+    ],
+    "base_inputs": [
+      "OHC.Mature Industry Rate of Return as PCT[HEFA]",
+      "OHC.ORNOOC sensi multiplier[HEFA]"
+    ]
+  },
+  "OHC.Mature Industry Rate of Return as PCT[HEFA]*OHC.FCI  sensi multiplier[HEFA]": {
+    "derivation": [
+      "Multiply",
+      "OHC.Mature Industry Rate of Return as PCT[HEFA]",
+      "OHC.FCI  sensi multiplier[HEFA]"
+    ],
+    "base_inputs": [
+      "OHC.Mature Industry Rate of Return as PCT[HEFA]",
+      "OHC.FCI  sensi multiplier[HEFA]"
+    ]
+  },
+  "OHC.Mature Industry Rate of Return as PCT[HEFA]*CHC.PY sensi multiplier[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "OHC.Mature Industry Rate of Return as PCT[HEFA]",
+      "CHC.PY sensi multiplier[Thermochem]"
+    ],
+    "base_inputs": [
+      "OHC.Mature Industry Rate of Return as PCT[HEFA]",
+      "CHC.PY sensi multiplier[Thermochem]"
+    ]
+  },
+  "OHC.PY sensi multiplier[HEFA]*OHC.PY sensi multiplier[HEFABrownfield]": {
+    "derivation": [
+      "Multiply",
+      "OHC.PY sensi multiplier[HEFA]",
+      "OHC.PY sensi multiplier[HEFABrownfield]"
+    ],
+    "base_inputs": [
+      "OHC.PY sensi multiplier[HEFA]",
+      "OHC.PY sensi multiplier[HEFABrownfield]"
+    ]
+  },
+  "OHC.PY sensi multiplier[HEFA]*OHC.ORNOOC sensi multiplier[HEFABrownfield]": {
+    "derivation": [
+      "Multiply",
+      "OHC.PY sensi multiplier[HEFA]",
+      "OHC.ORNOOC sensi multiplier[HEFABrownfield]"
+    ],
+    "base_inputs": [
+      "OHC.PY sensi multiplier[HEFA]",
+      "OHC.ORNOOC sensi multiplier[HEFABrownfield]"
+    ]
+  },
+  "OHC.PY sensi multiplier[HEFA]*OHC.FCI  sensi multiplier[HEFA]": {
+    "derivation": [
+      "Multiply",
+      "OHC.PY sensi multiplier[HEFA]",
+      "OHC.FCI  sensi multiplier[HEFA]"
+    ],
+    "base_inputs": [
+      "OHC.PY sensi multiplier[HEFA]",
+      "OHC.FCI  sensi multiplier[HEFA]"
+    ]
+  },
+  "OHC.PY sensi multiplier[HEFA]*OHC.Retirement Frac[TransEster]": {
+    "derivation": [
+      "Multiply",
+      "OHC.PY sensi multiplier[HEFA]",
+      "OHC.Retirement Frac[TransEster]"
+    ],
+    "base_inputs": [
+      "OHC.PY sensi multiplier[HEFA]",
+      "OHC.Retirement Frac[TransEster]"
+    ]
+  },
+  "OHC.PY sensi multiplier[HEFA]*CHC.initial indices of Commercial Maturity[Brownfield]": {
+    "derivation": [
+      "Multiply",
+      "OHC.PY sensi multiplier[HEFA]",
+      "CHC.initial indices of Commercial Maturity[Brownfield]"
+    ],
+    "base_inputs": [
+      "OHC.PY sensi multiplier[HEFA]",
+      "CHC.initial indices of Commercial Maturity[Brownfield]"
+    ]
+  },
+  "OHC.PY sensi multiplier[HEFA]*CHC.initial indices of Commercial Maturity[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "OHC.PY sensi multiplier[HEFA]",
+      "CHC.initial indices of Commercial Maturity[Thermochem]"
+    ],
+    "base_inputs": [
+      "OHC.PY sensi multiplier[HEFA]",
+      "CHC.initial indices of Commercial Maturity[Thermochem]"
+    ]
+  },
+  "OHC.PY sensi multiplier[HEFA]*CHC.progress ratios commercial[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "OHC.PY sensi multiplier[HEFA]",
+      "CHC.progress ratios commercial[Thermochem]"
+    ],
+    "base_inputs": [
+      "OHC.PY sensi multiplier[HEFA]",
+      "CHC.progress ratios commercial[Thermochem]"
+    ]
+  },
+  "OHC.PY sensi multiplier[HEFA]*CHC.Mature Industry Rate of Return as PCT[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "OHC.PY sensi multiplier[HEFA]",
+      "CHC.Mature Industry Rate of Return as PCT[Thermochem]"
+    ],
+    "base_inputs": [
+      "OHC.PY sensi multiplier[HEFA]",
+      "CHC.Mature Industry Rate of Return as PCT[Thermochem]"
+    ]
+  },
+  "OHC.PY sensi multiplier[HEFA]*CHC.PY sensi multiplier[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "OHC.PY sensi multiplier[HEFA]",
+      "CHC.PY sensi multiplier[Thermochem]"
+    ],
+    "base_inputs": [
+      "OHC.PY sensi multiplier[HEFA]",
+      "CHC.PY sensi multiplier[Thermochem]"
+    ]
+  },
+  "OHC.PY sensi multiplier[HEFA]*CHC.FCI  sensi multiplier[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "OHC.PY sensi multiplier[HEFA]",
+      "CHC.FCI  sensi multiplier[Thermochem]"
+    ],
+    "base_inputs": [
+      "OHC.PY sensi multiplier[HEFA]",
+      "CHC.FCI  sensi multiplier[Thermochem]"
+    ]
+  },
+  "OHC.PY sensi multiplier[HEFA]*SE.PY sensi multiplier[Jet]": {
+    "derivation": [
+      "Multiply",
+      "OHC.PY sensi multiplier[HEFA]",
+      "SE.PY sensi multiplier[Jet]"
+    ],
+    "base_inputs": [
+      "OHC.PY sensi multiplier[HEFA]",
+      "SE.PY sensi multiplier[Jet]"
+    ]
+  },
+  "OHC.PY sensi multiplier[HEFA]*SE.Max Jet Investment Hit Rate": {
+    "derivation": [
+      "Multiply",
+      "OHC.PY sensi multiplier[HEFA]",
+      "SE.Max Jet Investment Hit Rate"
+    ],
+    "base_inputs": [
+      "OHC.PY sensi multiplier[HEFA]",
+      "SE.Max Jet Investment Hit Rate"
+    ]
+  },
+  "OHC.PY sensi multiplier[HEFA]*AFSC": {
+    "derivation": [
+      "Multiply",
+      "OHC.PY sensi multiplier[HEFA]",
+      "AFSC"
+    ],
+    "base_inputs": [
+      "OHC.PY sensi multiplier[HEFA]",
+      "AFSC"
+    ]
+  },
+  "OHC.PY sensi multiplier[HEFA]*UAEORO": {
+    "derivation": [
+      "Multiply",
+      "OHC.PY sensi multiplier[HEFA]",
+      "UAEORO"
+    ],
+    "base_inputs": [
+      "OHC.PY sensi multiplier[HEFA]",
+      "UAEORO"
+    ]
+  },
+  "OHC.PY sensi multiplier[HEFABrownfield]*OHC.ORNOOC sensi multiplier[HEFA]": {
+    "derivation": [
+      "Multiply",
+      "OHC.PY sensi multiplier[HEFABrownfield]",
+      "OHC.ORNOOC sensi multiplier[HEFA]"
+    ],
+    "base_inputs": [
+      "OHC.PY sensi multiplier[HEFABrownfield]",
+      "OHC.ORNOOC sensi multiplier[HEFA]"
+    ]
+  },
+  "OHC.PY sensi multiplier[HEFABrownfield]*OHC.Retirement Frac[TransEster]": {
+    "derivation": [
+      "Multiply",
+      "OHC.PY sensi multiplier[HEFABrownfield]",
+      "OHC.Retirement Frac[TransEster]"
+    ],
+    "base_inputs": [
+      "OHC.PY sensi multiplier[HEFABrownfield]",
+      "OHC.Retirement Frac[TransEster]"
+    ]
+  },
+  "OHC.PY sensi multiplier[HEFABrownfield]*CHC.initial indices of Commercial Maturity[Brownfield]": {
+    "derivation": [
+      "Multiply",
+      "OHC.PY sensi multiplier[HEFABrownfield]",
+      "CHC.initial indices of Commercial Maturity[Brownfield]"
+    ],
+    "base_inputs": [
+      "OHC.PY sensi multiplier[HEFABrownfield]",
+      "CHC.initial indices of Commercial Maturity[Brownfield]"
+    ]
+  },
+  "OHC.PY sensi multiplier[HEFABrownfield]*CHC.initial indices of Commercial Maturity[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "OHC.PY sensi multiplier[HEFABrownfield]",
+      "CHC.initial indices of Commercial Maturity[Thermochem]"
+    ],
+    "base_inputs": [
+      "OHC.PY sensi multiplier[HEFABrownfield]",
+      "CHC.initial indices of Commercial Maturity[Thermochem]"
+    ]
+  },
+  "OHC.PY sensi multiplier[HEFABrownfield]*CHC.progress ratios commercial[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "OHC.PY sensi multiplier[HEFABrownfield]",
+      "CHC.progress ratios commercial[Thermochem]"
+    ],
+    "base_inputs": [
+      "OHC.PY sensi multiplier[HEFABrownfield]",
+      "CHC.progress ratios commercial[Thermochem]"
+    ]
+  },
+  "OHC.PY sensi multiplier[HEFABrownfield]*CHC.Mature Industry Rate of Return as PCT[Brownfield]": {
+    "derivation": [
+      "Multiply",
+      "OHC.PY sensi multiplier[HEFABrownfield]",
+      "CHC.Mature Industry Rate of Return as PCT[Brownfield]"
+    ],
+    "base_inputs": [
+      "OHC.PY sensi multiplier[HEFABrownfield]",
+      "CHC.Mature Industry Rate of Return as PCT[Brownfield]"
+    ]
+  },
+  "OHC.PY sensi multiplier[HEFABrownfield]*CHC.Mature Industry Rate of Return as PCT[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "OHC.PY sensi multiplier[HEFABrownfield]",
+      "CHC.Mature Industry Rate of Return as PCT[Thermochem]"
+    ],
+    "base_inputs": [
+      "OHC.PY sensi multiplier[HEFABrownfield]",
+      "CHC.Mature Industry Rate of Return as PCT[Thermochem]"
+    ]
+  },
+  "OHC.PY sensi multiplier[HEFABrownfield]*CHC.PY sensi multiplier[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "OHC.PY sensi multiplier[HEFABrownfield]",
+      "CHC.PY sensi multiplier[Thermochem]"
+    ],
+    "base_inputs": [
+      "OHC.PY sensi multiplier[HEFABrownfield]",
+      "CHC.PY sensi multiplier[Thermochem]"
+    ]
+  },
+  "OHC.PY sensi multiplier[HEFABrownfield]*CHC.FCI  sensi multiplier[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "OHC.PY sensi multiplier[HEFABrownfield]",
+      "CHC.FCI  sensi multiplier[Thermochem]"
+    ],
+    "base_inputs": [
+      "OHC.PY sensi multiplier[HEFABrownfield]",
+      "CHC.FCI  sensi multiplier[Thermochem]"
+    ]
+  },
+  "OHC.PY sensi multiplier[HEFABrownfield]*SE.PY sensi multiplier[Jet]": {
+    "derivation": [
+      "Multiply",
+      "OHC.PY sensi multiplier[HEFABrownfield]",
+      "SE.PY sensi multiplier[Jet]"
+    ],
+    "base_inputs": [
+      "OHC.PY sensi multiplier[HEFABrownfield]",
+      "SE.PY sensi multiplier[Jet]"
+    ]
+  },
+  "OHC.PY sensi multiplier[HEFABrownfield]*SE.Max Jet Investment Hit Rate": {
+    "derivation": [
+      "Multiply",
+      "OHC.PY sensi multiplier[HEFABrownfield]",
+      "SE.Max Jet Investment Hit Rate"
+    ],
+    "base_inputs": [
+      "OHC.PY sensi multiplier[HEFABrownfield]",
+      "SE.Max Jet Investment Hit Rate"
+    ]
+  },
+  "OHC.PY sensi multiplier[HEFABrownfield]*AFSC": {
+    "derivation": [
+      "Multiply",
+      "OHC.PY sensi multiplier[HEFABrownfield]",
+      "AFSC"
+    ],
+    "base_inputs": [
+      "OHC.PY sensi multiplier[HEFABrownfield]",
+      "AFSC"
+    ]
+  },
+  "OHC.PY sensi multiplier[HEFABrownfield]*UAEORO": {
+    "derivation": [
+      "Multiply",
+      "OHC.PY sensi multiplier[HEFABrownfield]",
+      "UAEORO"
+    ],
+    "base_inputs": [
+      "OHC.PY sensi multiplier[HEFABrownfield]",
+      "UAEORO"
+    ]
+  },
+  "OHC.Retirement Frac[TransEster]*CHC.Mature Industry Rate of Return as PCT[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "OHC.Retirement Frac[TransEster]",
+      "CHC.Mature Industry Rate of Return as PCT[Thermochem]"
+    ],
+    "base_inputs": [
+      "OHC.Retirement Frac[TransEster]",
+      "CHC.Mature Industry Rate of Return as PCT[Thermochem]"
+    ]
+  },
+  "OHC.Retirement Frac[TransEster]*CHC.PY sensi multiplier[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "OHC.Retirement Frac[TransEster]",
+      "CHC.PY sensi multiplier[Thermochem]"
+    ],
+    "base_inputs": [
+      "OHC.Retirement Frac[TransEster]",
+      "CHC.PY sensi multiplier[Thermochem]"
+    ]
+  },
+  "OHC.Retirement Frac[TransEster]*SE.Max Jet Investment Hit Rate": {
+    "derivation": [
+      "Multiply",
+      "OHC.Retirement Frac[TransEster]",
+      "SE.Max Jet Investment Hit Rate"
+    ],
+    "base_inputs": [
+      "OHC.Retirement Frac[TransEster]",
+      "SE.Max Jet Investment Hit Rate"
+    ]
+  },
+  "OHC.Retirement Frac[TransEster]*UAEORO": {
+    "derivation": [
+      "Multiply",
+      "OHC.Retirement Frac[TransEster]",
+      "UAEORO"
+    ],
+    "base_inputs": [
+      "OHC.Retirement Frac[TransEster]",
+      "UAEORO"
+    ]
+  },
+  "CHC.initial indices of Commercial Maturity[Brownfield]*CHC.initial indices of Commercial Maturity[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "CHC.initial indices of Commercial Maturity[Brownfield]",
+      "CHC.initial indices of Commercial Maturity[Thermochem]"
+    ],
+    "base_inputs": [
+      "CHC.initial indices of Commercial Maturity[Brownfield]",
+      "CHC.initial indices of Commercial Maturity[Thermochem]"
+    ]
+  },
+  "CHC.initial indices of Commercial Maturity[Brownfield]*CHC.progress ratios commercial[Brownfield]": {
+    "derivation": [
+      "Multiply",
+      "CHC.initial indices of Commercial Maturity[Brownfield]",
+      "CHC.progress ratios commercial[Brownfield]"
+    ],
+    "base_inputs": [
+      "CHC.initial indices of Commercial Maturity[Brownfield]",
+      "CHC.progress ratios commercial[Brownfield]"
+    ]
+  },
+  "CHC.initial indices of Commercial Maturity[Brownfield]*CHC.Mature Industry Rate of Return as PCT[Brownfield]": {
+    "derivation": [
+      "Multiply",
+      "CHC.initial indices of Commercial Maturity[Brownfield]",
+      "CHC.Mature Industry Rate of Return as PCT[Brownfield]"
+    ],
+    "base_inputs": [
+      "CHC.initial indices of Commercial Maturity[Brownfield]",
+      "CHC.Mature Industry Rate of Return as PCT[Brownfield]"
+    ]
+  },
+  "CHC.initial indices of Commercial Maturity[Brownfield]*CHC.Mature Industry Rate of Return as PCT[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "CHC.initial indices of Commercial Maturity[Brownfield]",
+      "CHC.Mature Industry Rate of Return as PCT[Thermochem]"
+    ],
+    "base_inputs": [
+      "CHC.initial indices of Commercial Maturity[Brownfield]",
+      "CHC.Mature Industry Rate of Return as PCT[Thermochem]"
+    ]
+  },
+  "CHC.initial indices of Commercial Maturity[Brownfield]*CHC.PY sensi multiplier[Brownfield]": {
+    "derivation": [
+      "Multiply",
+      "CHC.initial indices of Commercial Maturity[Brownfield]",
+      "CHC.PY sensi multiplier[Brownfield]"
+    ],
+    "base_inputs": [
+      "CHC.initial indices of Commercial Maturity[Brownfield]",
+      "CHC.PY sensi multiplier[Brownfield]"
+    ]
+  },
+  "CHC.initial indices of Commercial Maturity[Brownfield]*CHC.PY sensi multiplier[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "CHC.initial indices of Commercial Maturity[Brownfield]",
+      "CHC.PY sensi multiplier[Thermochem]"
+    ],
+    "base_inputs": [
+      "CHC.initial indices of Commercial Maturity[Brownfield]",
+      "CHC.PY sensi multiplier[Thermochem]"
+    ]
+  },
+  "CHC.initial indices of Commercial Maturity[Brownfield]*CHC.FCI  sensi multiplier[Brownfield]": {
+    "derivation": [
+      "Multiply",
+      "CHC.initial indices of Commercial Maturity[Brownfield]",
+      "CHC.FCI  sensi multiplier[Brownfield]"
+    ],
+    "base_inputs": [
+      "CHC.initial indices of Commercial Maturity[Brownfield]",
+      "CHC.FCI  sensi multiplier[Brownfield]"
+    ]
+  },
+  "CHC.initial indices of Commercial Maturity[Brownfield]*CHC.FCI  sensi multiplier[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "CHC.initial indices of Commercial Maturity[Brownfield]",
+      "CHC.FCI  sensi multiplier[Thermochem]"
+    ],
+    "base_inputs": [
+      "CHC.initial indices of Commercial Maturity[Brownfield]",
+      "CHC.FCI  sensi multiplier[Thermochem]"
+    ]
+  },
+  "CHC.initial indices of Commercial Maturity[Brownfield]*SE.Max Jet Investment Hit Rate": {
+    "derivation": [
+      "Multiply",
+      "CHC.initial indices of Commercial Maturity[Brownfield]",
+      "SE.Max Jet Investment Hit Rate"
+    ],
+    "base_inputs": [
+      "CHC.initial indices of Commercial Maturity[Brownfield]",
+      "SE.Max Jet Investment Hit Rate"
+    ]
+  },
+  "CHC.initial indices of Commercial Maturity[Brownfield]*AFSC": {
+    "derivation": [
+      "Multiply",
+      "CHC.initial indices of Commercial Maturity[Brownfield]",
+      "AFSC"
+    ],
+    "base_inputs": [
+      "CHC.initial indices of Commercial Maturity[Brownfield]",
+      "AFSC"
+    ]
+  },
+  "CHC.initial indices of Commercial Maturity[Thermochem]*CHC.progress ratios commercial[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "CHC.initial indices of Commercial Maturity[Thermochem]",
+      "CHC.progress ratios commercial[Thermochem]"
+    ],
+    "base_inputs": [
+      "CHC.initial indices of Commercial Maturity[Thermochem]",
+      "CHC.progress ratios commercial[Thermochem]"
+    ]
+  },
+  "CHC.initial indices of Commercial Maturity[Thermochem]*CHC.Mature Industry Rate of Return as PCT[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "CHC.initial indices of Commercial Maturity[Thermochem]",
+      "CHC.Mature Industry Rate of Return as PCT[Thermochem]"
+    ],
+    "base_inputs": [
+      "CHC.initial indices of Commercial Maturity[Thermochem]",
+      "CHC.Mature Industry Rate of Return as PCT[Thermochem]"
+    ]
+  },
+  "CHC.initial indices of Commercial Maturity[Thermochem]*CHC.PY sensi multiplier[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "CHC.initial indices of Commercial Maturity[Thermochem]",
+      "CHC.PY sensi multiplier[Thermochem]"
+    ],
+    "base_inputs": [
+      "CHC.initial indices of Commercial Maturity[Thermochem]",
+      "CHC.PY sensi multiplier[Thermochem]"
+    ]
+  },
+  "CHC.initial indices of Commercial Maturity[Thermochem]*CHC.FCI  sensi multiplier[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "CHC.initial indices of Commercial Maturity[Thermochem]",
+      "CHC.FCI  sensi multiplier[Thermochem]"
+    ],
+    "base_inputs": [
+      "CHC.initial indices of Commercial Maturity[Thermochem]",
+      "CHC.FCI  sensi multiplier[Thermochem]"
+    ]
+  },
+  "CHC.initial indices of Commercial Maturity[Thermochem]*SE.Max Jet Investment Hit Rate": {
+    "derivation": [
+      "Multiply",
+      "CHC.initial indices of Commercial Maturity[Thermochem]",
+      "SE.Max Jet Investment Hit Rate"
+    ],
+    "base_inputs": [
+      "CHC.initial indices of Commercial Maturity[Thermochem]",
+      "SE.Max Jet Investment Hit Rate"
+    ]
+  },
+  "CHC.initial indices of Commercial Maturity[Thermochem]*AFSC": {
+    "derivation": [
+      "Multiply",
+      "CHC.initial indices of Commercial Maturity[Thermochem]",
+      "AFSC"
+    ],
+    "base_inputs": [
+      "CHC.initial indices of Commercial Maturity[Thermochem]",
+      "AFSC"
+    ]
+  },
+  "CHC.initial indices of Commercial Maturity[Thermochem]*UAEORO": {
+    "derivation": [
+      "Multiply",
+      "CHC.initial indices of Commercial Maturity[Thermochem]",
+      "UAEORO"
+    ],
+    "base_inputs": [
+      "CHC.initial indices of Commercial Maturity[Thermochem]",
+      "UAEORO"
+    ]
+  },
+  "CHC.initial indices of Commercial Maturity[Biochem]*CHC.Mature Industry Rate of Return as PCT[Biochem]": {
+    "derivation": [
+      "Multiply",
+      "CHC.initial indices of Commercial Maturity[Biochem]",
+      "CHC.Mature Industry Rate of Return as PCT[Biochem]"
+    ],
+    "base_inputs": [
+      "CHC.initial indices of Commercial Maturity[Biochem]",
+      "CHC.Mature Industry Rate of Return as PCT[Biochem]"
+    ]
+  },
+  "CHC.initial indices of Commercial Maturity[Biochem]*CHC.PY sensi multiplier[Biochem]": {
+    "derivation": [
+      "Multiply",
+      "CHC.initial indices of Commercial Maturity[Biochem]",
+      "CHC.PY sensi multiplier[Biochem]"
+    ],
+    "base_inputs": [
+      "CHC.initial indices of Commercial Maturity[Biochem]",
+      "CHC.PY sensi multiplier[Biochem]"
+    ]
+  },
+  "CHC.initial indices of Commercial Maturity[Biochem]*CHC.FCI  sensi multiplier[Biochem]": {
+    "derivation": [
+      "Multiply",
+      "CHC.initial indices of Commercial Maturity[Biochem]",
+      "CHC.FCI  sensi multiplier[Biochem]"
+    ],
+    "base_inputs": [
+      "CHC.initial indices of Commercial Maturity[Biochem]",
+      "CHC.FCI  sensi multiplier[Biochem]"
+    ]
+  },
+  "CHC.progress ratios commercial[Brownfield]*CHC.Mature Industry Rate of Return as PCT[Brownfield]": {
+    "derivation": [
+      "Multiply",
+      "CHC.progress ratios commercial[Brownfield]",
+      "CHC.Mature Industry Rate of Return as PCT[Brownfield]"
+    ],
+    "base_inputs": [
+      "CHC.progress ratios commercial[Brownfield]",
+      "CHC.Mature Industry Rate of Return as PCT[Brownfield]"
+    ]
+  },
+  "CHC.progress ratios commercial[Brownfield]*CHC.PY sensi multiplier[Brownfield]": {
+    "derivation": [
+      "Multiply",
+      "CHC.progress ratios commercial[Brownfield]",
+      "CHC.PY sensi multiplier[Brownfield]"
+    ],
+    "base_inputs": [
+      "CHC.progress ratios commercial[Brownfield]",
+      "CHC.PY sensi multiplier[Brownfield]"
+    ]
+  },
+  "CHC.progress ratios commercial[Brownfield]*CHC.FCI  sensi multiplier[Brownfield]": {
+    "derivation": [
+      "Multiply",
+      "CHC.progress ratios commercial[Brownfield]",
+      "CHC.FCI  sensi multiplier[Brownfield]"
+    ],
+    "base_inputs": [
+      "CHC.progress ratios commercial[Brownfield]",
+      "CHC.FCI  sensi multiplier[Brownfield]"
+    ]
+  },
+  "CHC.progress ratios commercial[Thermochem]*CHC.Debt Interest Rate as pct[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "CHC.progress ratios commercial[Thermochem]",
+      "CHC.Debt Interest Rate as pct[Thermochem]"
+    ],
+    "base_inputs": [
+      "CHC.progress ratios commercial[Thermochem]",
+      "CHC.Debt Interest Rate as pct[Thermochem]"
+    ]
+  },
+  "CHC.progress ratios commercial[Thermochem]*CHC.Mature Industry Rate of Return as PCT[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "CHC.progress ratios commercial[Thermochem]",
+      "CHC.Mature Industry Rate of Return as PCT[Thermochem]"
+    ],
+    "base_inputs": [
+      "CHC.progress ratios commercial[Thermochem]",
+      "CHC.Mature Industry Rate of Return as PCT[Thermochem]"
+    ]
+  },
+  "CHC.progress ratios commercial[Thermochem]*CHC.PY sensi multiplier[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "CHC.progress ratios commercial[Thermochem]",
+      "CHC.PY sensi multiplier[Thermochem]"
+    ],
+    "base_inputs": [
+      "CHC.progress ratios commercial[Thermochem]",
+      "CHC.PY sensi multiplier[Thermochem]"
+    ]
+  },
+  "CHC.progress ratios commercial[Thermochem]*CHC.ORNOOC sensi multiplier[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "CHC.progress ratios commercial[Thermochem]",
+      "CHC.ORNOOC sensi multiplier[Thermochem]"
+    ],
+    "base_inputs": [
+      "CHC.progress ratios commercial[Thermochem]",
+      "CHC.ORNOOC sensi multiplier[Thermochem]"
+    ]
+  },
+  "CHC.progress ratios commercial[Thermochem]*CHC.FCI  sensi multiplier[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "CHC.progress ratios commercial[Thermochem]",
+      "CHC.FCI  sensi multiplier[Thermochem]"
+    ],
+    "base_inputs": [
+      "CHC.progress ratios commercial[Thermochem]",
+      "CHC.FCI  sensi multiplier[Thermochem]"
+    ]
+  },
+  "CHC.progress ratios commercial[Thermochem]*SE.Max Jet Investment Hit Rate": {
+    "derivation": [
+      "Multiply",
+      "CHC.progress ratios commercial[Thermochem]",
+      "SE.Max Jet Investment Hit Rate"
+    ],
+    "base_inputs": [
+      "CHC.progress ratios commercial[Thermochem]",
+      "SE.Max Jet Investment Hit Rate"
+    ]
+  },
+  "CHC.progress ratios commercial[Thermochem]*AFSC": {
+    "derivation": [
+      "Multiply",
+      "CHC.progress ratios commercial[Thermochem]",
+      "AFSC"
+    ],
+    "base_inputs": [
+      "CHC.progress ratios commercial[Thermochem]",
+      "AFSC"
+    ]
+  },
+  "CHC.progress ratios commercial[Thermochem]*UAEORO": {
+    "derivation": [
+      "Multiply",
+      "CHC.progress ratios commercial[Thermochem]",
+      "UAEORO"
+    ],
+    "base_inputs": [
+      "CHC.progress ratios commercial[Thermochem]",
+      "UAEORO"
+    ]
+  },
+  "CHC.Mature Industry Rate of Return as PCT[Brownfield]*CHC.Mature Industry Rate of Return as PCT[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "CHC.Mature Industry Rate of Return as PCT[Brownfield]",
+      "CHC.Mature Industry Rate of Return as PCT[Thermochem]"
+    ],
+    "base_inputs": [
+      "CHC.Mature Industry Rate of Return as PCT[Brownfield]",
+      "CHC.Mature Industry Rate of Return as PCT[Thermochem]"
+    ]
+  },
+  "CHC.Mature Industry Rate of Return as PCT[Brownfield]*CHC.PY sensi multiplier[Brownfield]": {
+    "derivation": [
+      "Multiply",
+      "CHC.Mature Industry Rate of Return as PCT[Brownfield]",
+      "CHC.PY sensi multiplier[Brownfield]"
+    ],
+    "base_inputs": [
+      "CHC.Mature Industry Rate of Return as PCT[Brownfield]",
+      "CHC.PY sensi multiplier[Brownfield]"
+    ]
+  },
+  "CHC.Mature Industry Rate of Return as PCT[Brownfield]*CHC.PY sensi multiplier[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "CHC.Mature Industry Rate of Return as PCT[Brownfield]",
+      "CHC.PY sensi multiplier[Thermochem]"
+    ],
+    "base_inputs": [
+      "CHC.Mature Industry Rate of Return as PCT[Brownfield]",
+      "CHC.PY sensi multiplier[Thermochem]"
+    ]
+  },
+  "CHC.Mature Industry Rate of Return as PCT[Brownfield]*CHC.FCI  sensi multiplier[Brownfield]": {
+    "derivation": [
+      "Multiply",
+      "CHC.Mature Industry Rate of Return as PCT[Brownfield]",
+      "CHC.FCI  sensi multiplier[Brownfield]"
+    ],
+    "base_inputs": [
+      "CHC.Mature Industry Rate of Return as PCT[Brownfield]",
+      "CHC.FCI  sensi multiplier[Brownfield]"
+    ]
+  },
+  "CHC.Mature Industry Rate of Return as PCT[Brownfield]*SE.Max Jet Investment Hit Rate": {
+    "derivation": [
+      "Multiply",
+      "CHC.Mature Industry Rate of Return as PCT[Brownfield]",
+      "SE.Max Jet Investment Hit Rate"
+    ],
+    "base_inputs": [
+      "CHC.Mature Industry Rate of Return as PCT[Brownfield]",
+      "SE.Max Jet Investment Hit Rate"
+    ]
+  },
+  "CHC.Mature Industry Rate of Return as PCT[Brownfield]*AFSC": {
+    "derivation": [
+      "Multiply",
+      "CHC.Mature Industry Rate of Return as PCT[Brownfield]",
+      "AFSC"
+    ],
+    "base_inputs": [
+      "CHC.Mature Industry Rate of Return as PCT[Brownfield]",
+      "AFSC"
+    ]
+  },
+  "CHC.Mature Industry Rate of Return as PCT[Brownfield]*UAEORO": {
+    "derivation": [
+      "Multiply",
+      "CHC.Mature Industry Rate of Return as PCT[Brownfield]",
+      "UAEORO"
+    ],
+    "base_inputs": [
+      "CHC.Mature Industry Rate of Return as PCT[Brownfield]",
+      "UAEORO"
+    ]
+  },
+  "CHC.Mature Industry Rate of Return as PCT[Thermochem]*CHC.PY sensi multiplier[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "CHC.Mature Industry Rate of Return as PCT[Thermochem]",
+      "CHC.PY sensi multiplier[Thermochem]"
+    ],
+    "base_inputs": [
+      "CHC.Mature Industry Rate of Return as PCT[Thermochem]",
+      "CHC.PY sensi multiplier[Thermochem]"
+    ]
+  },
+  "CHC.Mature Industry Rate of Return as PCT[Thermochem]*CHC.FCI  sensi multiplier[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "CHC.Mature Industry Rate of Return as PCT[Thermochem]",
+      "CHC.FCI  sensi multiplier[Thermochem]"
+    ],
+    "base_inputs": [
+      "CHC.Mature Industry Rate of Return as PCT[Thermochem]",
+      "CHC.FCI  sensi multiplier[Thermochem]"
+    ]
+  },
+  "CHC.Mature Industry Rate of Return as PCT[Thermochem]*SE.Max Jet Investment Hit Rate": {
+    "derivation": [
+      "Multiply",
+      "CHC.Mature Industry Rate of Return as PCT[Thermochem]",
+      "SE.Max Jet Investment Hit Rate"
+    ],
+    "base_inputs": [
+      "CHC.Mature Industry Rate of Return as PCT[Thermochem]",
+      "SE.Max Jet Investment Hit Rate"
+    ]
+  },
+  "CHC.Mature Industry Rate of Return as PCT[Thermochem]*AFSC": {
+    "derivation": [
+      "Multiply",
+      "CHC.Mature Industry Rate of Return as PCT[Thermochem]",
+      "AFSC"
+    ],
+    "base_inputs": [
+      "CHC.Mature Industry Rate of Return as PCT[Thermochem]",
+      "AFSC"
+    ]
+  },
+  "CHC.Mature Industry Rate of Return as PCT[Thermochem]*UAEORO": {
+    "derivation": [
+      "Multiply",
+      "CHC.Mature Industry Rate of Return as PCT[Thermochem]",
+      "UAEORO"
+    ],
+    "base_inputs": [
+      "CHC.Mature Industry Rate of Return as PCT[Thermochem]",
+      "UAEORO"
+    ]
+  },
+  "CHC.Mature Industry Rate of Return as PCT[Biochem]*CHC.PY sensi multiplier[Biochem]": {
+    "derivation": [
+      "Multiply",
+      "CHC.Mature Industry Rate of Return as PCT[Biochem]",
+      "CHC.PY sensi multiplier[Biochem]"
+    ],
+    "base_inputs": [
+      "CHC.Mature Industry Rate of Return as PCT[Biochem]",
+      "CHC.PY sensi multiplier[Biochem]"
+    ]
+  },
+  "CHC.Mature Industry Rate of Return as PCT[Biochem]*CHC.FCI  sensi multiplier[Biochem]": {
+    "derivation": [
+      "Multiply",
+      "CHC.Mature Industry Rate of Return as PCT[Biochem]",
+      "CHC.FCI  sensi multiplier[Biochem]"
+    ],
+    "base_inputs": [
+      "CHC.Mature Industry Rate of Return as PCT[Biochem]",
+      "CHC.FCI  sensi multiplier[Biochem]"
+    ]
+  },
+  "CHC.PY sensi multiplier[Brownfield]*CHC.PY sensi multiplier[Thermochem]": {
+    "derivation": [
+      "Multiply",
+      "CHC.PY sensi multiplier[Brownfield]",
+      "CHC.PY sensi multiplier[Thermochem]"
+    ],
+    "base_inputs": [
+      "CHC.PY sensi multiplier[Brownfield]",
+      "CHC.PY sensi multiplier[Thermochem]"
+    ]
+  },
+  "CHC.PY sensi multiplier[Brownfield]*CHC.FCI  sensi multiplier[Brownfield]": {
+    "derivation": [
+      "Multiply",
+      "CHC.PY sensi multiplier[Brownfield]",
+      "CHC.FCI  sensi multiplier[Brownfield]"
+    ],
+    "base_inputs": [
+      "CHC.PY sensi multiplier[Brownfield]",
+      "CHC.FCI  sensi multiplier[Brownfield]"
+    ]
+  },
+  "CHC.PY sensi multiplier[Brownfield]*AFSC": {
+    "derivation": [
+      "Multiply",
+      "CHC.PY sensi multiplier[Brownfield]",
+      "AFSC"
+    ],
+    "base_inputs": [
+      "CHC.PY sensi multiplier[Brownfield]",
+      "AFSC"
+    ]
+  },
+  "CHC.PY sensi multiplier[Thermochem]*CHC.FCI  sensi multiplier[Brownfield]": {
+    "derivation": [
+      "Multiply",
+      "CHC.PY sensi multiplier[Thermochem]",
+      "CHC.FCI  sensi multiplier[Brownfield]"
+    ],
+    "base_inputs": [
+      "CHC.PY sensi multiplier[Thermochem]",
+      "CHC.FCI  sensi multiplier[Brownfield]"
+    ]
+  },
+  "CHC.PY sensi multiplier[Thermochem]*SE.PY sensi multiplier[Jet]": {
+    "derivation": [
+      "Multiply",
+      "CHC.PY sensi multiplier[Thermochem]",
+      "SE.PY sensi multiplier[Jet]"
+    ],
+    "base_inputs": [
+      "CHC.PY sensi multiplier[Thermochem]",
+      "SE.PY sensi multiplier[Jet]"
+    ]
+  },
+  "CHC.PY sensi multiplier[Thermochem]*SE.Max Jet Investment Hit Rate": {
+    "derivation": [
+      "Multiply",
+      "CHC.PY sensi multiplier[Thermochem]",
+      "SE.Max Jet Investment Hit Rate"
+    ],
+    "base_inputs": [
+      "CHC.PY sensi multiplier[Thermochem]",
+      "SE.Max Jet Investment Hit Rate"
+    ]
+  },
+  "CHC.PY sensi multiplier[Thermochem]*AFSC": {
+    "derivation": [
+      "Multiply",
+      "CHC.PY sensi multiplier[Thermochem]",
+      "AFSC"
+    ],
+    "base_inputs": [
+      "CHC.PY sensi multiplier[Thermochem]",
+      "AFSC"
+    ]
+  },
+  "CHC.PY sensi multiplier[Thermochem]*UAEORO": {
+    "derivation": [
+      "Multiply",
+      "CHC.PY sensi multiplier[Thermochem]",
+      "UAEORO"
+    ],
+    "base_inputs": [
+      "CHC.PY sensi multiplier[Thermochem]",
+      "UAEORO"
+    ]
+  },
+  "CHC.PY sensi multiplier[Biochem]*CHC.FCI  sensi multiplier[Biochem]": {
+    "derivation": [
+      "Multiply",
+      "CHC.PY sensi multiplier[Biochem]",
+      "CHC.FCI  sensi multiplier[Biochem]"
+    ],
+    "base_inputs": [
+      "CHC.PY sensi multiplier[Biochem]",
+      "CHC.FCI  sensi multiplier[Biochem]"
+    ]
+  },
+  "CHC.FCI  sensi multiplier[Brownfield]*AFSC": {
+    "derivation": [
+      "Multiply",
+      "CHC.FCI  sensi multiplier[Brownfield]",
+      "AFSC"
+    ],
+    "base_inputs": [
+      "CHC.FCI  sensi multiplier[Brownfield]",
+      "AFSC"
+    ]
+  },
+  "CHC.FCI  sensi multiplier[Thermochem]*SE.Max Jet Investment Hit Rate": {
+    "derivation": [
+      "Multiply",
+      "CHC.FCI  sensi multiplier[Thermochem]",
+      "SE.Max Jet Investment Hit Rate"
+    ],
+    "base_inputs": [
+      "CHC.FCI  sensi multiplier[Thermochem]",
+      "SE.Max Jet Investment Hit Rate"
+    ]
+  },
+  "CHC.FCI  sensi multiplier[Thermochem]*AFSC": {
+    "derivation": [
+      "Multiply",
+      "CHC.FCI  sensi multiplier[Thermochem]",
+      "AFSC"
+    ],
+    "base_inputs": [
+      "CHC.FCI  sensi multiplier[Thermochem]",
+      "AFSC"
+    ]
+  },
+  "CHC.FCI  sensi multiplier[Thermochem]*UAEORO": {
+    "derivation": [
+      "Multiply",
+      "CHC.FCI  sensi multiplier[Thermochem]",
+      "UAEORO"
+    ],
+    "base_inputs": [
+      "CHC.FCI  sensi multiplier[Thermochem]",
+      "UAEORO"
+    ]
+  },
+  "SE.initial indices of Commercial Maturity[Jet]*SE.Mature Industry Rate of Return as PCT[Jet]": {
+    "derivation": [
+      "Multiply",
+      "SE.initial indices of Commercial Maturity[Jet]",
+      "SE.Mature Industry Rate of Return as PCT[Jet]"
+    ],
+    "base_inputs": [
+      "SE.initial indices of Commercial Maturity[Jet]",
+      "SE.Mature Industry Rate of Return as PCT[Jet]"
+    ]
+  },
+  "SE.initial indices of Commercial Maturity[Jet]*SE.PY sensi multiplier[Jet]": {
+    "derivation": [
+      "Multiply",
+      "SE.initial indices of Commercial Maturity[Jet]",
+      "SE.PY sensi multiplier[Jet]"
+    ],
+    "base_inputs": [
+      "SE.initial indices of Commercial Maturity[Jet]",
+      "SE.PY sensi multiplier[Jet]"
+    ]
+  },
+  "SE.initial indices of Commercial Maturity[Jet]*SE.FCI  sensi multiplier[Jet]": {
+    "derivation": [
+      "Multiply",
+      "SE.initial indices of Commercial Maturity[Jet]",
+      "SE.FCI  sensi multiplier[Jet]"
+    ],
+    "base_inputs": [
+      "SE.initial indices of Commercial Maturity[Jet]",
+      "SE.FCI  sensi multiplier[Jet]"
+    ]
+  },
+  "SE.progress ratios commercial[Jet]*SE.Max Jet Investment Hit Rate": {
+    "derivation": [
+      "Multiply",
+      "SE.progress ratios commercial[Jet]",
+      "SE.Max Jet Investment Hit Rate"
+    ],
+    "base_inputs": [
+      "SE.progress ratios commercial[Jet]",
+      "SE.Max Jet Investment Hit Rate"
+    ]
+  },
+  "SE.Mature Industry Rate of Return as PCT[Jet]*SE.PY sensi multiplier[Jet]": {
+    "derivation": [
+      "Multiply",
+      "SE.Mature Industry Rate of Return as PCT[Jet]",
+      "SE.PY sensi multiplier[Jet]"
+    ],
+    "base_inputs": [
+      "SE.Mature Industry Rate of Return as PCT[Jet]",
+      "SE.PY sensi multiplier[Jet]"
+    ]
+  },
+  "SE.Mature Industry Rate of Return as PCT[Jet]*SE.FCI  sensi multiplier[Jet]": {
+    "derivation": [
+      "Multiply",
+      "SE.Mature Industry Rate of Return as PCT[Jet]",
+      "SE.FCI  sensi multiplier[Jet]"
+    ],
+    "base_inputs": [
+      "SE.Mature Industry Rate of Return as PCT[Jet]",
+      "SE.FCI  sensi multiplier[Jet]"
+    ]
+  },
+  "SE.Mature Industry Rate of Return as PCT[Jet]*SE.Max Jet Investment Hit Rate": {
+    "derivation": [
+      "Multiply",
+      "SE.Mature Industry Rate of Return as PCT[Jet]",
+      "SE.Max Jet Investment Hit Rate"
+    ],
+    "base_inputs": [
+      "SE.Mature Industry Rate of Return as PCT[Jet]",
+      "SE.Max Jet Investment Hit Rate"
+    ]
+  },
+  "SE.Mature Industry Rate of Return as PCT[Jet]*UAEORO": {
+    "derivation": [
+      "Multiply",
+      "SE.Mature Industry Rate of Return as PCT[Jet]",
+      "UAEORO"
+    ],
+    "base_inputs": [
+      "SE.Mature Industry Rate of Return as PCT[Jet]",
+      "UAEORO"
+    ]
+  },
+  "SE.PY sensi multiplier[Jet]*SE.ORNOOC sensi multiplier[Jet]": {
+    "derivation": [
+      "Multiply",
+      "SE.PY sensi multiplier[Jet]",
+      "SE.ORNOOC sensi multiplier[Jet]"
+    ],
+    "base_inputs": [
+      "SE.PY sensi multiplier[Jet]",
+      "SE.ORNOOC sensi multiplier[Jet]"
+    ]
+  },
+  "SE.PY sensi multiplier[Jet]*SE.FCI  sensi multiplier[Jet]": {
+    "derivation": [
+      "Multiply",
+      "SE.PY sensi multiplier[Jet]",
+      "SE.FCI  sensi multiplier[Jet]"
+    ],
+    "base_inputs": [
+      "SE.PY sensi multiplier[Jet]",
+      "SE.FCI  sensi multiplier[Jet]"
+    ]
+  },
+  "SE.PY sensi multiplier[Jet]*SE.Max Jet Investment Hit Rate": {
+    "derivation": [
+      "Multiply",
+      "SE.PY sensi multiplier[Jet]",
+      "SE.Max Jet Investment Hit Rate"
+    ],
+    "base_inputs": [
+      "SE.PY sensi multiplier[Jet]",
+      "SE.Max Jet Investment Hit Rate"
+    ]
+  },
+  "SE.PY sensi multiplier[Jet]*UAEORO": {
+    "derivation": [
+      "Multiply",
+      "SE.PY sensi multiplier[Jet]",
+      "UAEORO"
+    ],
+    "base_inputs": [
+      "SE.PY sensi multiplier[Jet]",
+      "UAEORO"
+    ]
+  },
+  "SE.ORNOOC sensi multiplier[Jet]*SE.Max Jet Investment Hit Rate": {
+    "derivation": [
+      "Multiply",
+      "SE.ORNOOC sensi multiplier[Jet]",
+      "SE.Max Jet Investment Hit Rate"
+    ],
+    "base_inputs": [
+      "SE.ORNOOC sensi multiplier[Jet]",
+      "SE.Max Jet Investment Hit Rate"
+    ]
+  },
+  "SE.ORNOOC sensi multiplier[Jet]*UAEORO": {
+    "derivation": [
+      "Multiply",
+      "SE.ORNOOC sensi multiplier[Jet]",
+      "UAEORO"
+    ],
+    "base_inputs": [
+      "SE.ORNOOC sensi multiplier[Jet]",
+      "UAEORO"
+    ]
+  },
+  "SE.FCI  sensi multiplier[Jet]*SE.Max Jet Investment Hit Rate": {
+    "derivation": [
+      "Multiply",
+      "SE.FCI  sensi multiplier[Jet]",
+      "SE.Max Jet Investment Hit Rate"
+    ],
+    "base_inputs": [
+      "SE.FCI  sensi multiplier[Jet]",
+      "SE.Max Jet Investment Hit Rate"
+    ]
+  },
+  "SE.FCI  sensi multiplier[Jet]*UAEORO": {
+    "derivation": [
+      "Multiply",
+      "SE.FCI  sensi multiplier[Jet]",
+      "UAEORO"
+    ],
+    "base_inputs": [
+      "SE.FCI  sensi multiplier[Jet]",
+      "UAEORO"
+    ]
+  },
+  "SE.Max Jet Investment Hit Rate*AFSC": {
+    "derivation": [
+      "Multiply",
+      "SE.Max Jet Investment Hit Rate",
+      "AFSC"
+    ],
+    "base_inputs": [
+      "SE.Max Jet Investment Hit Rate",
+      "AFSC"
+    ]
+  },
+  "SE.Max Jet Investment Hit Rate*UAEORO": {
+    "derivation": [
+      "Multiply",
+      "SE.Max Jet Investment Hit Rate",
+      "UAEORO"
+    ],
+    "base_inputs": [
+      "SE.Max Jet Investment Hit Rate",
+      "UAEORO"
+    ]
+  },
+  "AFSC*UAEORO": {
+    "derivation": [
+      "Multiply",
+      "AFSC",
+      "UAEORO"
+    ],
+    "base_inputs": [
+      "AFSC",
+      "UAEORO"
+    ]
+  },
+  "OHC.Retirement Frac[TransEster]_quadratic": {
+    "derivation": [
+      "Power",
+      "OHC.Retirement Frac[TransEster]",
+      2
+    ],
+    "base_inputs": [
+      "OHC.Retirement Frac[TransEster]"
+    ]
+  },
+  "OHC.PY sensi multiplier[HEFABrownfield]_quadratic": {
+    "derivation": [
+      "Power",
+      "OHC.PY sensi multiplier[HEFABrownfield]",
+      2
+    ],
+    "base_inputs": [
+      "OHC.PY sensi multiplier[HEFABrownfield]"
+    ]
+  },
+  "OHC.ORNOOC sensi multiplier[HEFA]_quadratic": {
+    "derivation": [
+      "Power",
+      "OHC.ORNOOC sensi multiplier[HEFA]",
+      2
+    ],
+    "base_inputs": [
+      "OHC.ORNOOC sensi multiplier[HEFA]"
+    ]
+  },
+  "CHC.PY sensi multiplier[Thermochem]_quadratic": {
+    "derivation": [
+      "Power",
+      "CHC.PY sensi multiplier[Thermochem]",
+      2
+    ],
+    "base_inputs": [
+      "CHC.PY sensi multiplier[Thermochem]"
+    ]
+  },
+  "WW.ORNOOC sensi multiplier[SludgeToHTL]_quadratic": {
+    "derivation": [
+      "Power",
+      "WW.ORNOOC sensi multiplier[SludgeToHTL]",
+      2
+    ],
+    "base_inputs": [
+      "WW.ORNOOC sensi multiplier[SludgeToHTL]"
+    ]
+  },
+  "AHC.PY sensi multiplier[HEFA]_quadratic": {
+    "derivation": [
+      "Power",
+      "AHC.PY sensi multiplier[HEFA]",
+      2
+    ],
+    "base_inputs": [
+      "AHC.PY sensi multiplier[HEFA]"
+    ]
+  },
+  "OHC.progress ratios commercial[HEFA]_quadratic": {
+    "derivation": [
+      "Power",
+      "OHC.progress ratios commercial[HEFA]",
+      2
+    ],
+    "base_inputs": [
+      "OHC.progress ratios commercial[HEFA]"
+    ]
+  },
+  "OHC.initial indices of Commercial Maturity[HEFA]_quadratic": {
+    "derivation": [
+      "Power",
+      "OHC.initial indices of Commercial Maturity[HEFA]",
+      2
+    ],
+    "base_inputs": [
+      "OHC.initial indices of Commercial Maturity[HEFA]"
+    ]
+  },
+  "WW.FCI  sensi multiplier[ManureToHTL]_quadratic": {
+    "derivation": [
+      "Power",
+      "WW.FCI  sensi multiplier[ManureToHTL]",
+      2
+    ],
+    "base_inputs": [
+      "WW.FCI  sensi multiplier[ManureToHTL]"
+    ]
+  },
+  "WW.Mature Industry Rate of Return as PCT[ManureToHTL]_quadratic": {
+    "derivation": [
+      "Power",
+      "WW.Mature Industry Rate of Return as PCT[ManureToHTL]",
+      2
+    ],
+    "base_inputs": [
+      "WW.Mature Industry Rate of Return as PCT[ManureToHTL]"
+    ]
+  },
+  "CHC.initial indices of Commercial Maturity[Thermochem]_quadratic": {
+    "derivation": [
+      "Power",
+      "CHC.initial indices of Commercial Maturity[Thermochem]",
+      2
+    ],
+    "base_inputs": [
+      "CHC.initial indices of Commercial Maturity[Thermochem]"
+    ]
+  },
+  "CHC.PY sensi multiplier[Biochem]_quadratic": {
+    "derivation": [
+      "Power",
+      "CHC.PY sensi multiplier[Biochem]",
+      2
+    ],
+    "base_inputs": [
+      "CHC.PY sensi multiplier[Biochem]"
+    ]
+  },
+  "AHC.PY sensi multiplier[HTL]_inverse": {
+    "derivation": [
+      "Divide",
+      1,
+      "AHC.PY sensi multiplier[HTL]"
+    ],
+    "base_inputs": [
+      "AHC.PY sensi multiplier[HTL]"
+    ]
+  },
+  "CHC.Mature Industry Rate of Return as PCT[Brownfield]_quadratic": {
+    "derivation": [
+      "Power",
+      "CHC.Mature Industry Rate of Return as PCT[Brownfield]",
+      2
+    ],
+    "base_inputs": [
+      "CHC.Mature Industry Rate of Return as PCT[Brownfield]"
+    ]
+  },
+  "CHC.initial indices of Commercial Maturity[Brownfield]_quadratic": {
+    "derivation": [
+      "Power",
+      "CHC.initial indices of Commercial Maturity[Brownfield]",
+      2
+    ],
+    "base_inputs": [
+      "CHC.initial indices of Commercial Maturity[Brownfield]"
+    ]
+  },
+  "WW.Policy Duration[Price,SludgeToHTL]_quadratic": {
+    "derivation": [
+      "Power",
+      "WW.Policy Duration[Price,SludgeToHTL]",
+      2
+    ],
+    "base_inputs": [
+      "WW.Policy Duration[Price,SludgeToHTL]"
+    ]
+  },
+  "SE.progress ratios commercial[Jet]_quadratic": {
+    "derivation": [
+      "Power",
+      "SE.progress ratios commercial[Jet]",
+      2
+    ],
+    "base_inputs": [
+      "SE.progress ratios commercial[Jet]"
+    ]
+  },
+  "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]_quadratic": {
+    "derivation": [
+      "Power",
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]",
+      2
+    ],
+    "base_inputs": [
+      "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]"
+    ]
+  },
+  "OHC.PY sensi multiplier[HEFA]_quadratic": {
+    "derivation": [
+      "Power",
+      "OHC.PY sensi multiplier[HEFA]",
+      2
+    ],
+    "base_inputs": [
+      "OHC.PY sensi multiplier[HEFA]"
+    ]
+  },
+  "SE.PY sensi multiplier[Jet]_quadratic": {
+    "derivation": [
+      "Power",
+      "SE.PY sensi multiplier[Jet]",
+      2
+    ],
+    "base_inputs": [
+      "SE.PY sensi multiplier[Jet]"
+    ]
+  },
+  "WW.progress ratios commercial[SludgeToHTL]_quadratic": {
+    "derivation": [
+      "Power",
+      "WW.progress ratios commercial[SludgeToHTL]",
+      2
+    ],
+    "base_inputs": [
+      "WW.progress ratios commercial[SludgeToHTL]"
+    ]
+  },
+  "OHC.Policy Duration[Price,TransEster]_quadratic": {
+    "derivation": [
+      "Power",
+      "OHC.Policy Duration[Price,TransEster]",
+      2
+    ],
+    "base_inputs": [
+      "OHC.Policy Duration[Price,TransEster]"
+    ]
+  },
+  "CHC.Mature Industry Rate of Return as PCT[Biochem]_quadratic": {
+    "derivation": [
+      "Power",
+      "CHC.Mature Industry Rate of Return as PCT[Biochem]",
+      2
+    ],
+    "base_inputs": [
+      "CHC.Mature Industry Rate of Return as PCT[Biochem]"
+    ]
+  },
+  "AHC.ORNOOC sensi multiplier[HTL]_quadratic": {
+    "derivation": [
+      "Power",
+      "AHC.ORNOOC sensi multiplier[HTL]",
+      2
+    ],
+    "base_inputs": [
+      "AHC.ORNOOC sensi multiplier[HTL]"
+    ]
+  },
+  "SE.Max Jet Investment Hit Rate_quadratic": {
+    "derivation": [
+      "Power",
+      "SE.Max Jet Investment Hit Rate",
+      2
+    ],
+    "base_inputs": [
+      "SE.Max Jet Investment Hit Rate"
+    ]
+  },
+  "CHC.progress ratios commercial[Thermochem]_quadratic": {
+    "derivation": [
+      "Power",
+      "CHC.progress ratios commercial[Thermochem]",
+      2
+    ],
+    "base_inputs": [
+      "CHC.progress ratios commercial[Thermochem]"
+    ]
+  },
+  "CHC.progress ratios commercial[Brownfield]_quadratic": {
+    "derivation": [
+      "Power",
+      "CHC.progress ratios commercial[Brownfield]",
+      2
+    ],
+    "base_inputs": [
+      "CHC.progress ratios commercial[Brownfield]"
+    ]
+  },
+  "CHC.Mature Industry Rate of Return as PCT[Thermochem]_quadratic": {
+    "derivation": [
+      "Power",
+      "CHC.Mature Industry Rate of Return as PCT[Thermochem]",
+      2
+    ],
+    "base_inputs": [
+      "CHC.Mature Industry Rate of Return as PCT[Thermochem]"
+    ]
+  },
+  "OHC.Policy Duration[Price,HEFA]_quadratic": {
+    "derivation": [
+      "Power",
+      "OHC.Policy Duration[Price,HEFA]",
+      2
+    ],
+    "base_inputs": [
+      "OHC.Policy Duration[Price,HEFA]"
+    ]
+  },
+  "WW.PY sensi multiplier[ManureToHTL]_quadratic": {
+    "derivation": [
+      "Power",
+      "WW.PY sensi multiplier[ManureToHTL]",
+      2
+    ],
+    "base_inputs": [
+      "WW.PY sensi multiplier[ManureToHTL]"
+    ]
+  },
+  "WW.PY sensi multiplier[SludgeToHTL]_quadratic": {
+    "derivation": [
+      "Power",
+      "WW.PY sensi multiplier[SludgeToHTL]",
+      2
+    ],
+    "base_inputs": [
+      "WW.PY sensi multiplier[SludgeToHTL]"
+    ]
+  },
+  "WW.FCI  sensi multiplier[SludgeToHTL]_quadratic": {
+    "derivation": [
+      "Power",
+      "WW.FCI  sensi multiplier[SludgeToHTL]",
+      2
+    ],
+    "base_inputs": [
+      "WW.FCI  sensi multiplier[SludgeToHTL]"
+    ]
+  },
+  "AHC.initial indices of Commercial Maturity[HEFA]_quadratic": {
+    "derivation": [
+      "Power",
+      "AHC.initial indices of Commercial Maturity[HEFA]",
+      2
+    ],
+    "base_inputs": [
+      "AHC.initial indices of Commercial Maturity[HEFA]"
+    ]
+  },
+  "OHC.ORNOOC sensi multiplier[HEFABrownfield]_quadratic": {
+    "derivation": [
+      "Power",
+      "OHC.ORNOOC sensi multiplier[HEFABrownfield]",
+      2
+    ],
+    "base_inputs": [
+      "OHC.ORNOOC sensi multiplier[HEFABrownfield]"
+    ]
+  },
+  "WW.ORNOOC sensi multiplier[ManureToHTL]_quadratic": {
+    "derivation": [
+      "Power",
+      "WW.ORNOOC sensi multiplier[ManureToHTL]",
+      2
+    ],
+    "base_inputs": [
+      "WW.ORNOOC sensi multiplier[ManureToHTL]"
+    ]
+  },
+  "SE.Policy Duration[Price,Jet]_quadratic": {
+    "derivation": [
+      "Power",
+      "SE.Policy Duration[Price,Jet]",
+      2
+    ],
+    "base_inputs": [
+      "SE.Policy Duration[Price,Jet]"
+    ]
+  },
+  "AHC.FCI  sensi multiplier[HEFA]_quadratic": {
+    "derivation": [
+      "Power",
+      "AHC.FCI  sensi multiplier[HEFA]",
+      2
+    ],
+    "base_inputs": [
+      "AHC.FCI  sensi multiplier[HEFA]"
+    ]
+  },
+  "AHC.Mature Industry Rate of Return as PCT[HEFA]_quadratic": {
+    "derivation": [
+      "Power",
+      "AHC.Mature Industry Rate of Return as PCT[HEFA]",
+      2
+    ],
+    "base_inputs": [
+      "AHC.Mature Industry Rate of Return as PCT[HEFA]"
+    ]
+  },
+  "CHC.initial indices of Commercial Maturity[Biochem]_quadratic": {
+    "derivation": [
+      "Power",
+      "CHC.initial indices of Commercial Maturity[Biochem]",
+      2
+    ],
+    "base_inputs": [
+      "CHC.initial indices of Commercial Maturity[Biochem]"
+    ]
+  },
+  "AHC.Mature Industry Rate of Return as PCT[HTL]_inverse": {
+    "derivation": [
+      "Divide",
+      1,
+      "AHC.Mature Industry Rate of Return as PCT[HTL]"
+    ],
+    "base_inputs": [
+      "AHC.Mature Industry Rate of Return as PCT[HTL]"
+    ]
+  }
+}

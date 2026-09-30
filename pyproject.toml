@@ -45,6 +45,7 @@ where = ["src"]
   "model/coefficient_matrix_raw_scale.csv",
   "model/coefficient_matrix_standardized.csv",
   "model/final_support_features.csv",
+  "model/output_metadata.json",
   "model/per_output_intercepts.csv",
   "model/x_standardization.csv",
   "model/y_standardization.csv",

@@ -1,0 +1,93 @@
+from __future__ import annotations
+
+import importlib.util
+import json
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+import pytest
+
+ROOT = Path(__file__).resolve().parents[1]
+VERSIONS = ROOT / "versions"
+
+pytest.importorskip("pyarrow")
+
+
+@pytest.fixture(scope="module")
+def utils():
+    path = VERSIONS / "bsm_model_utils.py"
+    spec = importlib.util.spec_from_file_location("bsm_model_utils", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+@pytest.fixture(scope="module")
+def registry(utils) -> dict:
+    return utils.load_registry(VERSIONS)
+
+
+def test_registry_entries_match_version_folders(registry: dict) -> None:
+    assert registry["active"] in registry["models"]
+    for version, entry in registry["models"].items():
+        folder = VERSIONS / version
+        assert (folder / entry["coef_file"]).is_file()
+        assert (folder / entry["feature_defs_file"]).is_file()
+
+
+def test_version_files_agree_with_registry_counts(utils, registry: dict) -> None:
+    entry = registry["models"][registry["active"]]
+    coefficients = utils.load_coefficients(VERSIONS)
+    features = utils.load_feature_definitions(VERSIONS)
+    base_inputs = [name for name, spec in features.items() if isinstance(spec["derivation"], str)]
+
+    assert coefficients.shape == (entry["n_outputs"], entry["n_features"] + 1)
+    assert len(features) == entry["n_features"]
+    assert len(base_inputs) == entry["n_inputs"]
+    assert "const" in coefficients.columns
+    assert [c for c in coefficients.columns if c != "const"] == list(features)
+
+
+def test_version_outputs_match_released_output_metadata(utils) -> None:
+    from bsm_public_rf import load_model
+
+    coefficients = utils.load_coefficients(VERSIONS)
+
+    assert coefficients.index.astype(str).tolist() == list(load_model().output_names)
+
+
+def test_run_model_aligns_intercept_by_name(utils, registry: dict) -> None:
+    features = utils.load_feature_definitions(VERSIONS)
+    coefficients = utils.load_coefficients(VERSIONS)
+    base_inputs = [name for name, spec in features.items() if isinstance(spec["derivation"], str)]
+    rng = np.random.default_rng(0)
+    inputs = pd.DataFrame(rng.uniform(0.5, 1.5, (2, len(base_inputs))), columns=base_inputs)
+
+    matrix = utils.build_feature_vector(features, inputs)
+    predictions = utils.run_model(coefficients, matrix, list(features))
+
+    named = pd.DataFrame(matrix[:, :-1], columns=list(features)).assign(const=1.0)
+    expected = named[coefficients.columns].to_numpy() @ coefficients.to_numpy().T
+    np.testing.assert_allclose(predictions, expected)
+
+
+def test_run_pipeline_and_unpack(utils, tmp_path: Path) -> None:
+    features = utils.load_feature_definitions(VERSIONS)
+    base_inputs = [name for name, spec in features.items() if isinstance(spec["derivation"], str)]
+    inputs_metadata = json.loads(
+        (VERSIONS / "BSM_RFM_v1" / "inputs_metadata.json").read_text(encoding="utf-8")
+    )
+    assert set(inputs_metadata) == set(base_inputs)
+
+    constraints = {name: inputs_metadata[name]["constraints"] for name in base_inputs}
+    midpoints = {name: (c["min"] + c["max"]) / 2 for name, c in constraints.items()}
+    path = tmp_path / "inputs.csv"
+    pd.DataFrame([midpoints]).to_csv(path, index=False)
+
+    predictions = utils.run_pipeline(path)
+    unpacked = utils.unpack_outputs(predictions, utils.load_output_metadata())
+
+    assert predictions.shape == (1, 23_495)
+    assert np.isfinite(predictions.to_numpy()).all()
+    assert len(unpacked) == 635

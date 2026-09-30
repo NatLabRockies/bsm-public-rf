@@ -1,0 +1,16 @@
+{
+  "active": "BSM_RFM_v1",
+  "models": {
+    "BSM_RFM_v1": {
+      "coef_file": "coefficients.parquet",
+      "feature_defs_file": "feature_definitions.json",
+      "bsm_version": "TBD",
+      "rfm_version": "v1",
+      "created": "2026-05-22",
+      "n_inputs": 62,
+      "n_features": 346,
+      "n_outputs": 23495,
+      "notes": "Initial steelelman reduced-form regression. Archived; the released model is model/."
+    }
+  }
+}

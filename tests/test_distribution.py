@@ -45,7 +45,7 @@ def test_model_checksum_manifest_covers_release_artifacts() -> None:
         digest, filename = line.split("  ", maxsplit=1)
         recorded[filename] = digest
 
-    expected = {path.name for path in model_dir.glob("*.csv")}
+    expected = {path.name for path in [*model_dir.glob("*.csv"), *model_dir.glob("*.json")]}
     assert set(recorded) == expected
     for filename, expected_digest in recorded.items():
         actual = hashlib.sha256((model_dir / filename).read_bytes()).hexdigest()

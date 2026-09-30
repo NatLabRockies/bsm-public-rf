@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import csv
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 import numpy as np
 import pandas as pd
@@ -218,6 +218,8 @@ def test_default_model_dir_falls_back_to_installed_distribution(
     installed_model.mkdir(parents=True)
 
     class Distribution:
+        files = None
+
         def locate_file(self, path: str) -> Path:
             return installed_root / path
 
@@ -234,3 +236,24 @@ def test_default_model_dir_falls_back_to_installed_distribution(
     )
 
     assert model_module.default_model_dir() == installed_model
+
+
+def test_default_model_dir_follows_installed_record_outside_site_packages(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    site_packages = tmp_path / "venv" / "Lib" / "site-packages"
+    installed_model = tmp_path / "venv" / "share" / "bsm-public-rf" / "model"
+    installed_model.mkdir(parents=True)
+    record_entry = PurePosixPath("../../share/bsm-public-rf/model/x_standardization.csv")
+
+    class Distribution:
+        files = [PurePosixPath("bsm_public_rf/model.py"), record_entry]
+
+        def locate_file(self, path: PurePosixPath | str) -> Path:
+            return site_packages / path
+
+    monkeypatch.delenv("BSM_PUBLIC_RF_MODEL_DIR", raising=False)
+    monkeypatch.setattr(model_module, "__file__", str(site_packages / "bsm_public_rf" / "model.py"))
+    monkeypatch.setattr(model_module.metadata, "distribution", lambda name: Distribution())
+
+    assert model_module.default_model_dir() == installed_model.resolve()

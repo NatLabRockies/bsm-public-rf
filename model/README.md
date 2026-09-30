@@ -21,7 +21,8 @@ Additional release files are:
 | --- | --- |
 | `coefficient_matrix_standardized.csv` | Coefficients on the standardized feature scale |
 | `final_support_features.csv` | Selection metadata for the 245 retained features |
-| `SHA256SUMS` | SHA-256 digest for every released CSV |
+| `output_metadata.json` | Output variable descriptions, units, dimensions, and region/product legends |
+| `SHA256SUMS` | SHA-256 digest for every released CSV and JSON file |
 
 ## Prediction contract
 

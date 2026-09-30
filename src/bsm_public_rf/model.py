@@ -50,6 +50,11 @@ def default_model_dir() -> Path:
         distribution = metadata.distribution("bsm-public-rf")
     except metadata.PackageNotFoundError:
         return checkout_model_dir
+    # Data files install under the environment prefix, not site-packages, so use
+    # the installed RECORD (e.g. ``../../share/bsm-public-rf/model/...``).
+    for file in distribution.files or ():
+        if file.parts[-3:] == ("bsm-public-rf", "model", "x_standardization.csv"):
+            return Path(distribution.locate_file(file)).resolve().parent
     return Path(distribution.locate_file("share/bsm-public-rf/model")).resolve()
 
 

@@ -1,0 +1,4 @@
+# Keep released model files byte-identical on every platform so SHA256SUMS verifies.
+model/** -text
+versions/** -text
+*.parquet binary

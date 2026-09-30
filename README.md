@@ -52,6 +52,22 @@ predictions.to_csv("predictions.csv", index=False)
 Omit `outputs` to predict all 23,495 outputs. Extra input columns are allowed;
 missing or invalid required inputs are rejected with a clear error.
 
+## Work with the outputs
+
+Output names follow `VARIABLE[pathway, region, product]_YEAR`. The bundled
+`model/output_metadata.json` gives each of the 17 variables a description and
+unit, and defines the region and product codes.
+
+```python
+from bsm_public_rf import output_catalog, unpack_outputs
+
+catalog = output_catalog(model.output_names)  # variable, dimensions, year, unit
+series = unpack_outputs(predictions)          # one row per sample and series, one column per year
+```
+
+See [`examples/quickstart.ipynb`](examples/quickstart.ipynb) for a walkthrough
+(`pixi run -e notebook notebook`).
+
 ## Predict from the command line
 
 ```bash
@@ -71,8 +87,12 @@ The versioned `model/` bundle contains:
 - 245 selected engineered features built from 65 required base inputs;
 - raw-scale and standardized coefficient matrices;
 - one intercept per output;
-- feature and output scaling metadata; and
-- feature transformations, input ranges, units, and descriptions.
+- feature and output scaling metadata;
+- feature transformations, input ranges, units, and descriptions; and
+- output descriptions, units, and region and product legends.
+
+Earlier model fits are archived in [`versions/`](versions/README.md). They are
+not part of the installed package.
 
 The loader validates file presence, schemas, row and column order, duplicate
 names, finite values, and transformation domains before prediction. Historical
@@ -80,7 +100,7 @@ input ranges are descriptive rather than enforced; values outside them are
 extrapolations.
 
 See [`model/README.md`](model/README.md) for the file contract and prediction
-equation. SHA-256 digests for every released CSV are recorded in
+equation. SHA-256 digests for every released data file are recorded in
 [`model/SHA256SUMS`](model/SHA256SUMS).
 
 ## Model status and scope
