@@ -5,32 +5,34 @@ which differs from the packaged ``model/`` bundle loaded by ``bsm_public_rf``.
 Output names are shared, so output metadata comes from ``model/output_metadata.json``.
 """
 
-from pathlib import Path
 import json
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
-
 
 # ---------------------------------------------------------------------------
 # Loaders
 # ---------------------------------------------------------------------------
 
+
 def load_registry(data_dir: Path) -> dict:
-    with open(Path(data_dir) / "model_registry.json") as f:
+    """Load the model-version registry from ``data_dir``."""
+    with (Path(data_dir) / "model_registry.json").open(encoding="utf-8") as f:
         return json.load(f)
 
 
-def load_feature_definitions(data_dir: Path, registry: dict = None) -> dict:
+def load_feature_definitions(data_dir: Path, registry: dict | None = None) -> dict:
+    """Load the active model's ordered MathJSON feature definitions."""
     if registry is None:
         registry = load_registry(data_dir)
     active_id = registry["active"]
     active = registry["models"][active_id]
-    with open(Path(data_dir) / active_id / active["feature_defs_file"]) as f:
+    with (Path(data_dir) / active_id / active["feature_defs_file"]).open(encoding="utf-8") as f:
         return json.load(f)
 
 
-def load_inputs(path) -> pd.DataFrame:
+def load_inputs(path: str | Path) -> pd.DataFrame:
     """Load raw inputs from a parquet or CSV file. Returns a DataFrame of shape (N, 62).
 
     Accepts parquet or CSV. Column names are preserved so that
@@ -46,7 +48,8 @@ def load_inputs(path) -> pd.DataFrame:
     return df
 
 
-def load_coefficients(data_dir: Path, registry: dict = None) -> pd.DataFrame:
+def load_coefficients(data_dir: Path, registry: dict | None = None) -> pd.DataFrame:
+    """Load the active model's coefficient matrix."""
     if registry is None:
         registry = load_registry(data_dir)
     active_id = registry["active"]
@@ -54,10 +57,11 @@ def load_coefficients(data_dir: Path, registry: dict = None) -> pd.DataFrame:
     return pd.read_parquet(Path(data_dir) / active_id / active["coef_file"])
 
 
-def load_output_metadata(metadata_dir: Path = None) -> dict:
+def load_output_metadata(metadata_dir: Path | None = None) -> dict:
+    """Load the shared output descriptions and dimension metadata."""
     if metadata_dir is None:
         metadata_dir = Path(__file__).parent.parent / "model"
-    with open(Path(metadata_dir) / "output_metadata.json") as f:
+    with (Path(metadata_dir) / "output_metadata.json").open(encoding="utf-8") as f:
         return json.load(f)
 
 
@@ -73,6 +77,7 @@ def _load_scale(data_dir: Path, filename: str) -> np.ndarray | None:
 # Feature engineering
 # ---------------------------------------------------------------------------
 
+
 def _eval_mathjson(expr, inputs: dict):
     """Recursively evaluate a MathJSON expression against numpy arrays."""
     if isinstance(expr, str):
@@ -81,16 +86,24 @@ def _eval_mathjson(expr, inputs: dict):
         return float(expr)
     head, *args = expr
     vals = [_eval_mathjson(a, inputs) for a in args]
-    if head == "Exp":      return np.exp(vals[0])
-    if head == "Ln":       return np.log(vals[0])
-    if head == "Divide":   return vals[0] / vals[1]
-    if head == "Multiply": return vals[0] * vals[1]
-    if head == "Power":    return vals[0] ** vals[1]
-    if head == "Add":      return vals[0] + vals[1]
+    if head == "Exp":
+        return np.exp(vals[0])
+    if head == "Ln":
+        return np.log(vals[0])
+    if head == "Divide":
+        return vals[0] / vals[1]
+    if head == "Multiply":
+        return vals[0] * vals[1]
+    if head == "Power":
+        return vals[0] ** vals[1]
+    if head == "Add":
+        return vals[0] + vals[1]
     raise ValueError(f"Unknown MathJSON head: {head!r}")
 
 
-def build_feature_vector(feature_definitions: dict, raw_inputs: pd.DataFrame | np.ndarray) -> np.ndarray:
+def build_feature_vector(
+    feature_definitions: dict, raw_inputs: pd.DataFrame | np.ndarray
+) -> np.ndarray:
     """Build the full feature matrix from raw base inputs.
 
     Parameters
@@ -105,8 +118,9 @@ def build_feature_vector(feature_definitions: dict, raw_inputs: pd.DataFrame | n
         All derived features plus a trailing column of 1.0 (intercept).
     """
     # Identity features (derivation is a plain string) are the base inputs
-    base_names = [name for name, entry in feature_definitions.items()
-                  if isinstance(entry["derivation"], str)]
+    base_names = [
+        name for name, entry in feature_definitions.items() if isinstance(entry["derivation"], str)
+    ]
 
     # Convert to named numpy arrays
     if isinstance(raw_inputs, np.ndarray):
@@ -126,7 +140,7 @@ def build_feature_vector(feature_definitions: dict, raw_inputs: pd.DataFrame | n
 
     # Evaluate all derivations into a contiguous array
     result = np.empty((n_rows, n_features + 1), dtype=np.float64)
-    for i, (name, entry) in enumerate(feature_definitions.items()):
+    for i, (_name, entry) in enumerate(feature_definitions.items()):
         result[:, i] = _eval_mathjson(entry["derivation"], input_arrays)
     result[:, -1] = 1.0  # intercept
     return result
@@ -136,8 +150,10 @@ def build_feature_vector(feature_definitions: dict, raw_inputs: pd.DataFrame | n
 # Model
 # ---------------------------------------------------------------------------
 
-def run_model(coefficients: pd.DataFrame, feature_matrix: np.ndarray,
-              feature_names: list[str] | None = None) -> np.ndarray:
+
+def run_model(
+    coefficients: pd.DataFrame, feature_matrix: np.ndarray, feature_names: list[str] | None = None
+) -> np.ndarray:
     """Compute predictions: (N, 347) @ (347, 23495) -> (N, 23495).
 
     Parameters
@@ -170,6 +186,7 @@ def run_model(coefficients: pd.DataFrame, feature_matrix: np.ndarray,
 # ---------------------------------------------------------------------------
 # Output unpacking
 # ---------------------------------------------------------------------------
+
 
 def _parse_output_column(col: str):
     """Split a flat output column name into (base_variable, dim_values, year).
@@ -254,13 +271,14 @@ def unpack_outputs(predictions: pd.DataFrame, output_metadata: dict) -> pd.DataF
 # Pipeline
 # ---------------------------------------------------------------------------
 
-def run_pipeline(input_data_path, data_dir: Path = None) -> pd.DataFrame:
+
+def run_pipeline(input_data_path: str | Path, data_dir: Path | None = None) -> pd.DataFrame:
     """Run the full BSM model pipeline from raw inputs to final predictions.
 
     Parameters
     ----------
     input_data_path : str or Path
-        Path to the input parquet file.
+        Path to the input Parquet or CSV file.
     data_dir : Path, optional
         Directory containing ``model_registry.json`` and the version folders.
         Defaults to the directory containing this script.
@@ -276,7 +294,7 @@ def run_pipeline(input_data_path, data_dir: Path = None) -> pd.DataFrame:
     data_dir = Path(data_dir)
 
     feature_defs = load_feature_definitions(data_dir)
-    raw_inputs   = load_inputs(input_data_path)
+    raw_inputs = load_inputs(input_data_path)
     coefficients = load_coefficients(data_dir)
 
     feature_matrix = build_feature_vector(feature_defs, raw_inputs)

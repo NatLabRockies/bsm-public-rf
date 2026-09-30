@@ -20,10 +20,10 @@ bsm-public-rf = {path = ".", editable = true}
 
 [tasks]
 test = "pytest -q"
-lint = "ruff check src tests examples"
-format-check = "ruff format --check src tests examples"
-format = "ruff check --fix src tests examples && ruff format src tests examples"
-gate = "pytest -q && ruff check src tests examples && ruff format --check src tests examples && git diff --check"
+lint = "ruff check src tests examples versions"
+format-check = "ruff format --check src tests examples versions"
+format = "ruff check --fix src tests examples versions && ruff format src tests examples versions"
+gate = "pytest -q && ruff check src tests examples versions && ruff format --check src tests examples versions && git diff --check"
 predict = "bsm-rf-predict"
 
 [feature.notebook.dependencies]
@@ -31,6 +31,7 @@ jupyterlab = ">=4"
 
 [feature.notebook.tasks]
 notebook = "jupyter lab examples/quickstart.ipynb"
+notebook-check = "jupyter nbconvert --to notebook --execute examples/quickstart.ipynb --output quickstart-executed.ipynb --output-dir build/notebooks --ExecutePreprocessor.timeout=300"
 
 [environments]
 notebook = ["notebook"]

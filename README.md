@@ -122,4 +122,9 @@ figures are intentionally not stored here. The BSM case study in
 - See [`CHANGELOG.md`](CHANGELOG.md) for release history.
 - Report defects through [GitHub Issues](https://github.com/NatLabRockies/bsm-public-rf/issues).
 
+## Contributors
+
+- [Colby Smith](https://github.com/ColbyNREL) contributed the output metadata,
+  quickstart notebook, and versioned-model prediction tools.
+
 Licensed under the [MIT License](LICENSE).
