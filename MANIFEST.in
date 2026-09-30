@@ -1,0 +1,8 @@
+include CHANGELOG.md
+include CITATION.cff
+include CONTRIBUTING.md
+include pixi.lock
+include pixi.toml
+recursive-include .github/workflows *.yml
+recursive-include examples *.csv *.ipynb *.py
+recursive-include versions *.json *.md *.parquet *.py
