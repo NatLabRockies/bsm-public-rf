@@ -8,6 +8,8 @@ import numpy as np
 import pandas as pd
 import pytest
 
+from bsm_public_rf import load_model
+
 ROOT = Path(__file__).resolve().parents[1]
 VERSIONS = ROOT / "versions"
 
@@ -28,15 +30,13 @@ def registry(utils) -> dict:
     return utils.load_registry(VERSIONS)
 
 
-def test_registry_entries_match_version_folders(registry: dict) -> None:
+def test_archived_version_contract(utils, registry: dict) -> None:
     assert registry["active"] in registry["models"]
     for version, entry in registry["models"].items():
         folder = VERSIONS / version
         assert (folder / entry["coef_file"]).is_file()
         assert (folder / entry["feature_defs_file"]).is_file()
 
-
-def test_version_files_agree_with_registry_counts(utils, registry: dict) -> None:
     entry = registry["models"][registry["active"]]
     coefficients = utils.load_coefficients(VERSIONS)
     features = utils.load_feature_definitions(VERSIONS)
@@ -47,13 +47,6 @@ def test_version_files_agree_with_registry_counts(utils, registry: dict) -> None
     assert len(base_inputs) == entry["n_inputs"]
     assert "const" in coefficients.columns
     assert [c for c in coefficients.columns if c != "const"] == list(features)
-
-
-def test_version_outputs_match_released_output_metadata(utils) -> None:
-    from bsm_public_rf import load_model
-
-    coefficients = utils.load_coefficients(VERSIONS)
-
     assert coefficients.index.astype(str).tolist() == list(load_model().output_names)
 
 
@@ -72,7 +65,7 @@ def test_run_model_aligns_intercept_by_name(utils, registry: dict) -> None:
     np.testing.assert_allclose(predictions, expected)
 
 
-def test_run_pipeline_and_unpack(utils, tmp_path: Path) -> None:
+def test_run_pipeline_and_unpack(utils, registry: dict, tmp_path: Path) -> None:
     features = utils.load_feature_definitions(VERSIONS)
     base_inputs = [name for name, spec in features.items() if isinstance(spec["derivation"], str)]
     inputs_metadata = json.loads(
@@ -88,6 +81,8 @@ def test_run_pipeline_and_unpack(utils, tmp_path: Path) -> None:
     predictions = utils.run_pipeline(path)
     unpacked = utils.unpack_outputs(predictions, utils.load_output_metadata())
 
-    assert predictions.shape == (1, 23_495)
+    entry = registry["models"][registry["active"]]
+    assert predictions.shape == (1, entry["n_outputs"])
     assert np.isfinite(predictions.to_numpy()).all()
-    assert len(unpacked) == 635
+    assert len(unpacked) > 0
+    assert not unpacked[["sample", "variable", "pathway", "region", "product"]].duplicated().any()

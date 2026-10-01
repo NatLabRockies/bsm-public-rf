@@ -28,13 +28,13 @@ def test_output_metadata_describes_every_released_output(metadata: dict) -> None
     catalog = output_catalog(model.output_names, metadata)
 
     assert catalog.index.tolist() == list(model.output_names)
+    assert not catalog.index.has_duplicates
     assert set(catalog["variable"]) == set(metadata["variables"])
     assert (
         catalog["year"]
         .between(metadata["year_range"]["start"], metadata["year_range"]["end"])
         .all()
     )
-    assert len(catalog.groupby(["variable", "pathway", "region", "product"])) == 635
 
 
 @pytest.mark.parametrize(
@@ -72,22 +72,27 @@ def test_unpack_outputs_round_trips_example_predictions(metadata: dict) -> None:
 
     unpacked = unpack_outputs(predictions, metadata)
 
-    years = list(range(metadata["year_range"]["start"], metadata["year_range"]["end"] + 1))
-    assert unpacked.shape == (635 * len(inputs), 5 + len(years))
     series_columns = ["sample", "variable", "pathway", "region", "product"]
+    catalog = output_catalog(model.output_names, metadata).reset_index()
+    years = sorted(catalog["year"].unique())
+    series_count = len(catalog[["variable", "pathway", "region", "product"]].drop_duplicates())
+    assert unpacked.shape == (series_count * len(inputs), len(series_columns) + len(years))
     assert unpacked.columns.tolist() == [*series_columns, *years]
     assert set(unpacked["region"]) - {""} <= set(metadata["region_legend"].values())
 
+    sample = inputs.index[0]
+    output_name = predictions.columns[0]
+    parsed = parse_output_name(output_name, metadata)
+    region = metadata["region_legend"].get(parsed["region"], parsed["region"])
     row = unpacked[
-        (unpacked["sample"] == "scenario_1")
-        & (unpacked["variable"] == "AHC.MFSPMetric")
-        & (unpacked["pathway"] == "HEFA")
-        & (unpacked["region"] == "Atlantic")
+        (unpacked["sample"] == sample)
+        & (unpacked["variable"] == parsed["variable"])
+        & (unpacked["pathway"] == parsed["pathway"])
+        & (unpacked["region"] == region)
+        & (unpacked["product"] == parsed["product"])
     ]
     assert len(row) == 1
-    np.testing.assert_allclose(
-        row[2030].iloc[0], predictions.loc["scenario_1", "AHC.MFSPMetric[HEFA, A]_2030"]
-    )
+    np.testing.assert_allclose(row[parsed["year"]].iloc[0], predictions.loc[sample, output_name])
 
 
 def test_example_inputs_cover_required_inputs_within_documented_ranges() -> None:

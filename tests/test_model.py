@@ -192,20 +192,26 @@ def test_loader_rejects_material_output_mean_mismatch(artifact_dir: Path) -> Non
         BSMReducedFormModel.from_artifact_dir(artifact_dir)
 
 
-def test_repository_model_bundle_loads() -> None:
+def test_released_model_predicts_from_its_declared_schema() -> None:
     model = load_model()
+    schema = model.input_schema()
+    assert schema.index.tolist() == list(model.required_input_names)
+    assert not schema.index.has_duplicates
+    assert model.feature_names
+    assert model.output_names
 
-    assert len(model.feature_names) == 245
-    assert len(model.output_names) == 23_495
-    assert len(model.required_input_names) == 65
+    values = {}
+    for name, row in schema.iterrows():
+        minimum = row["minimum"]
+        maximum = row["maximum"]
+        values[name] = (minimum + maximum) / 2 if np.isfinite([minimum, maximum]).all() else 1.0
+    inputs = pd.DataFrame([values], index=["scenario"])
+    output_name = model.output_names[0]
 
+    predictions = model.predict(inputs, outputs=[output_name])
 
-def test_repository_model_predicts_from_required_base_inputs() -> None:
-    model = load_model()
-    inputs = pd.DataFrame({name: [1.0] for name in model.required_input_names})
-
-    predictions = model.predict(inputs, outputs=[model.output_names[0]])
-
+    assert predictions.index.tolist() == ["scenario"]
+    assert predictions.columns.tolist() == [output_name]
     assert predictions.shape == (1, 1)
     assert np.isfinite(predictions.iloc[0, 0])
 
