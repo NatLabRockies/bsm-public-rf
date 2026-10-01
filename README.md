@@ -1,16 +1,17 @@
 # BSM Reduced-Form Model
 
-`bsm-public-rf` is the ready-to-use Biomass Scenario Model (BSM)
-reduced-form surrogate. The model bundle, Python loader, and command-line
-predictor are included; the original simulator runs are not required.
+`bsm-public-rf` provides the released Biomass Scenario Model (BSM)
+reduced-form model, a Python prediction API, and a command-line predictor. You
+do not need the original simulator runs to use it.
 
-## Choose the right repository
+## Start here
 
-| I want to... | Go to... |
-| --- | --- |
-| Predict BSM outputs with the released model | **This repository** |
-| Fit or adapt a reduced-form modeling workflow | [`rfm-pipeline`](https://github.com/NatLabRockies/rfm-pipeline) |
-| Inspect the complete BSM workflow case study | [`rfm-pipeline/examples/bsm-manuscript`](https://github.com/NatLabRockies/rfm-pipeline/tree/main/examples/bsm-manuscript) |
+| Goal                                 | Start with                                                      |
+| ------------------------------------ | --------------------------------------------------------------- |
+| Verify the model and see predictions | [`examples/predict.py`](examples/predict.py)                    |
+| Follow a notebook walkthrough        | [`examples/quickstart.ipynb`](examples/quickstart.ipynb)        |
+| Inspect the model files and equation | [`model/README.md`](model/README.md)                            |
+| Fit a new reduced-form model         | [`rfm-pipeline`](https://github.com/NatLabRockies/rfm-pipeline) |
 
 ## Install
 
@@ -22,13 +23,19 @@ cd bsm-public-rf
 python -m pip install .
 ```
 
-For a locked development environment, install
-[Pixi](https://pixi.sh) and run `pixi install --locked` instead.
+Run the included example:
+
+```bash
+python examples/predict.py
+```
+
+For a locked development environment, install [Pixi](https://pixi.sh), run
+`pixi install --locked`, and prefix Python commands with `pixi run`.
 
 ## Predict in Python
 
-The model expects a pandas DataFrame containing its 65 named base inputs. It
-constructs the selected transformations and interactions automatically.
+The model expects one row per scenario and one column per required BSM input.
+It constructs the selected transformations and interactions automatically.
 
 ```python
 import pandas as pd
@@ -36,12 +43,8 @@ import pandas as pd
 from bsm_public_rf import load_model
 
 model = load_model()
-
-# Discover the exact input and output names before preparing data.
-model.input_schema().reset_index().to_csv("bsm_input_schema.csv", index=False)
-model.output_schema().reset_index().to_csv("bsm_output_schema.csv", index=False)
-
 inputs = pd.read_csv("my_bsm_inputs.csv")
+
 predictions = model.predict(
     inputs,
     outputs=["AHC.MFSPMetric[HEFA, A]_2030"],
@@ -49,76 +52,68 @@ predictions = model.predict(
 predictions.to_csv("predictions.csv", index=False)
 ```
 
-Omit `outputs` to predict all 23,495 outputs. Extra input columns are allowed;
-missing or invalid required inputs are rejected with a clear error.
-
-## Work with the outputs
-
-Output names follow `VARIABLE[pathway, region, product]_YEAR`. The bundled
-`model/output_metadata.json` gives each of the 17 variables a description and
-unit, and defines the region and product codes.
+Use the model metadata to prepare inputs and choose outputs:
 
 ```python
-from bsm_public_rf import output_catalog, unpack_outputs
+from bsm_public_rf import output_catalog
 
-catalog = output_catalog(model.output_names)  # variable, dimensions, year, unit
-series = unpack_outputs(predictions)          # one row per sample and series, one column per year
+input_schema = model.input_schema()          # names, units, ranges, descriptions
+catalog = output_catalog(model.output_names) # dimensions, years, units, descriptions
 ```
 
-See [`examples/quickstart.ipynb`](examples/quickstart.ipynb) for a walkthrough
-(`pixi run -e notebook notebook`).
+The model requires the 65 columns listed by `input_schema`. Extra columns are
+allowed. Missing, non-finite, or transformation-invalid inputs raise an error.
+The documented ranges describe the model's training data; predictions outside
+them are extrapolations.
+
+Omit `outputs` to predict every released output. To select a complete time
+series from the catalog and reshape it into year columns:
+
+```python
+from bsm_public_rf import unpack_outputs
+
+names = catalog.query(
+    "variable == 'AHC.MFSPMetric' and pathway == 'HEFA' and region == 'A'"
+).index.tolist()
+predictions = model.predict(inputs, outputs=names)
+series = unpack_outputs(predictions)
+```
+
+Output names follow `VARIABLE[pathway, region, product]_YEAR`; dimensions that
+do not apply to a variable are omitted.
 
 ## Predict from the command line
 
+This command predicts one output for the bundled example inputs:
+
 ```bash
-bsm-rf-predict my_bsm_inputs.csv predictions.csv \
+bsm-rf-predict examples/example_inputs.csv predictions.csv \
   --output 'AHC.MFSPMetric[HEFA, A]_2030'
 ```
 
 Repeat `--output` to select more outputs, or omit it to predict all outputs.
-Run `bsm-rf-predict --help` for all options. In the Pixi environment, use
-`pixi run predict -- ...`.
+Prediction rows retain the input row order. Run `bsm-rf-predict --help` for all
+options. In the Pixi environment, use `pixi run predict -- ...`.
 
-## What is included
+## Model bundle
 
-The versioned `model/` bundle contains:
+The released bundle contains 23,495 outputs, 245 engineered features, and the
+metadata needed to construct those features from 65 base inputs. It includes
+raw-scale and standardized coefficients, intercepts, scaling parameters, input
+descriptions and ranges, and output descriptions and units.
 
-- 23,495 named outputs;
-- 245 selected engineered features built from 65 required base inputs;
-- raw-scale and standardized coefficient matrices;
-- one intercept per output;
-- feature and output scaling metadata;
-- feature transformations, input ranges, units, and descriptions; and
-- output descriptions, units, and region and product legends.
-
-Earlier model fits are archived in [`versions/`](versions/README.md). They are
-not part of the installed package.
-
-The loader validates file presence, schemas, row and column order, duplicate
-names, finite values, and transformation domains before prediction. Historical
-input ranges are descriptive rather than enforced; values outside them are
-extrapolations.
-
-See [`model/README.md`](model/README.md) for the file contract and prediction
-equation. SHA-256 digests for every released data file are recorded in
+`load_model()` validates file presence, schemas, ordering, duplicate names, and
+finite values before prediction. See [`model/README.md`](model/README.md) for
+the file contract and prediction equation. File digests are recorded in
 [`model/SHA256SUMS`](model/SHA256SUMS).
 
-## Model status and scope
+Earlier fits are retained in [`versions/`](versions/README.md) for comparison;
+they are not used by `load_model()` or included in the installed package.
 
-This release packages the existing validated coefficient export so it is
-usable independently of the research workflow. A future metadata-derived
-matrix may update the artifact, but it must preserve the same fail-closed
-alignment and provenance requirements.
+## Cite, contribute, and report issues
 
-Raw BSM simulator runs, workflow configurations, diagnostics, and publication
-figures are intentionally not stored here. The BSM case study in
-`rfm-pipeline` is their canonical home.
-
-## Develop, cite, and report issues
-
-- Validate a checkout with `pixi run gate`.
-- See [`CONTRIBUTING.md`](CONTRIBUTING.md) for repository boundaries.
 - Cite the software using [`CITATION.cff`](CITATION.cff).
+- See [`CONTRIBUTING.md`](CONTRIBUTING.md) for development instructions.
 - See [`CHANGELOG.md`](CHANGELOG.md) for release history.
 - Report defects through [GitHub Issues](https://github.com/NatLabRockies/bsm-public-rf/issues).
 

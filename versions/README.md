@@ -1,13 +1,14 @@
 # Archived model versions
 
-This directory keeps earlier BSM reduced-form model fits alongside the released
-bundle in [`model/`](../model/README.md). `load_model()` and the installed package
-always use `model/`; nothing here is shipped in the wheel.
+Most users should use the released bundle through `load_model()` and can ignore
+this directory. It retains earlier BSM reduced-form fits for comparison.
+`load_model()` and the installed package always use [`model/`](../model/README.md);
+nothing here is shipped in the wheel.
 
-| Version | Inputs | Features | Outputs | Format |
-| --- | --- | --- | --- | --- |
-| `model/` (released, default) | 65 | 245 | 23,495 | CSV, loaded by `bsm_public_rf` |
-| `BSM_RFM_v1` | 62 | 346 | 23,495 | Parquet + MathJSON, loaded by `bsm_model_utils.py` |
+| Version                      | Inputs | Features | Outputs | Format                                             |
+| ---------------------------- | ------ | -------- | ------- | -------------------------------------------------- |
+| `model/` (released, default) | 65     | 245      | 23,495  | CSV, loaded by `bsm_public_rf`                     |
+| `BSM_RFM_v1`                 | 62     | 346      | 23,495  | Parquet + MathJSON, loaded by `bsm_model_utils.py` |
 
 All versions predict the same 23,495 outputs in the same order, so
 `model/output_metadata.json` and `bsm_public_rf.unpack_outputs` apply to each.
@@ -50,5 +51,5 @@ are the base inputs. Other forms are `["Multiply", a, b]`, `["Power", x, 2]`, an
 ## Adding a version
 
 1. Create `versions/<VERSION_ID>/` with the coefficient and feature-definition files.
-2. Add an entry to `model_registry.json` with file names and input/feature/output counts.
-3. Run `pixi run gate`; `tests/test_versions.py` checks the registry against the files.
+1. Add an entry to `model_registry.json` with file names and input/feature/output counts.
+1. Run `pixi run gate`; `tests/test_versions.py` checks the registry against the files.
