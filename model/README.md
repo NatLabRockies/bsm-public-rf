@@ -68,7 +68,7 @@ the checkout or installed default.
 
 ## Provenance
 
-These files are byte-identical to the retained model output produced with
-`rfm-pipeline` commit `618357705949c9c3ab418c5eaa5a363cb9d864f5`.
+These model tables are byte-identical to the retained output promoted in
+`bsm-public-rf` commit `3b2830e903691847a0d127cc1bbf2a097b2c2f00`.
 Training data, workflow diagnostics, and reporting artifacts are not part of
 this prediction-focused distribution.

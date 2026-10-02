@@ -128,6 +128,16 @@ def test_predict_can_select_outputs_and_accept_precomputed_features(artifact_dir
     assert predictions.shape == (2, 1)
 
 
+def test_predict_rejects_empty_or_scalar_output_selection(artifact_dir: Path) -> None:
+    model = BSMReducedFormModel.from_artifact_dir(artifact_dir)
+    inputs = pd.DataFrame({"x": [1.0], "z": [2.0]})
+
+    with pytest.raises(ValueError, match="at least one"):
+        model.predict(inputs, outputs=[])
+    with pytest.raises(TypeError, match="iterable.*not a string"):
+        model.predict(inputs, outputs="out_a")
+
+
 def test_model_exposes_input_and_output_schemas(artifact_dir: Path) -> None:
     model = BSMReducedFormModel.from_artifact_dir(artifact_dir)
 
@@ -143,6 +153,7 @@ def test_model_exposes_input_and_output_schemas(artifact_dir: Path) -> None:
         ({"x": [-2.0], "z": [1.0]}, "log1p"),
         ({"x": [1.0], "z": [0.0]}, "inverse"),
         ({"x": [np.nan], "z": [1.0]}, "finite"),
+        ({"x": [1e308], "z": [1.0]}, "transformed features.*finite"),
     ],
 )
 def test_transform_rejects_invalid_inputs(
@@ -175,6 +186,15 @@ def test_loader_rejects_artifact_order_drift(artifact_dir: Path) -> None:
     standardization.to_csv(artifact_dir / "x_standardization.csv", index=False)
 
     with pytest.raises(ModelArtifactError, match="feature order"):
+        BSMReducedFormModel.from_artifact_dir(artifact_dir)
+
+
+def test_loader_rejects_interaction_without_second_input(artifact_dir: Path) -> None:
+    metadata = pd.read_csv(artifact_dir / "coefficient_column_metadata.csv")
+    metadata.loc[metadata["transformation"] == "interaction", "base_input_2"] = ""
+    metadata.to_csv(artifact_dir / "coefficient_column_metadata.csv", index=False)
+
+    with pytest.raises(ModelArtifactError, match="interaction.*base_input_2"):
         BSMReducedFormModel.from_artifact_dir(artifact_dir)
 
 

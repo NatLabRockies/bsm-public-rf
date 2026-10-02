@@ -112,6 +112,10 @@ class BSMReducedFormModel:
             },
             source=metadata_path,
         )
+        for column in ("feature_name", "transformation", "base_input_1"):
+            invalid = metadata[column].isna() | metadata[column].astype(str).str.strip().eq("")
+            if invalid.any():
+                raise ModelArtifactError(f"coefficient metadata contains an empty {column}")
         if metadata["feature_name"].duplicated().any():
             raise ModelArtifactError("coefficient metadata contains duplicate feature names")
         expected_positions = np.arange(len(metadata))
@@ -120,6 +124,12 @@ class BSMReducedFormModel:
         unsupported = sorted(set(metadata["transformation"]) - _SUPPORTED_TRANSFORMS)
         if unsupported:
             raise ModelArtifactError(f"unsupported feature transformations: {unsupported}")
+        interactions = metadata["transformation"].eq("interaction")
+        missing_second = metadata["base_input_2"].isna() | metadata["base_input_2"].astype(
+            str
+        ).str.strip().eq("")
+        if (interactions & missing_second).any():
+            raise ModelArtifactError("interaction features must declare base_input_2")
 
         coefficients = pd.read_csv(
             root / "coefficient_matrix_raw_scale.csv", index_col="output_name"
@@ -218,9 +228,11 @@ class BSMReducedFormModel:
         """Base BSM inputs needed to materialize the selected feature support."""
         names: list[str] = []
         for row in self.feature_metadata.itertuples(index=False):
-            for name in (str(row.base_input_1), str(row.base_input_2)):
-                if name and name != "nan" and name not in names:
-                    names.append(name)
+            for value in (row.base_input_1, row.base_input_2):
+                if pd.notna(value):
+                    name = str(value).strip()
+                    if name and name not in names:
+                        names.append(name)
         return tuple(names)
 
     def input_schema(self) -> pd.DataFrame:
@@ -294,27 +306,30 @@ class BSMReducedFormModel:
             raise ValueError("; ".join(invalid))
 
         transformed: dict[str, np.ndarray] = {}
-        for row in self.feature_metadata.itertuples(index=False):
-            first = raw[str(row.base_input_1)].to_numpy(dtype=float)
-            transform = str(row.transformation)
-            if transform == "identity":
-                values = first
-            elif transform == "quadratic":
-                values = np.square(first)
-            elif transform == "sqrt":
-                values = np.sqrt(first)
-            elif transform == "log1p":
-                values = np.log1p(first)
-            elif transform == "inverse":
-                values = np.reciprocal(first)
-            elif transform == "interaction":
-                second = raw[str(row.base_input_2)].to_numpy(dtype=float)
-                values = first * second
-            else:  # guarded during load; retained as a fail-closed boundary
-                raise ModelArtifactError(f"unsupported transformation: {transform}")
-            transformed[str(row.feature_name)] = values
+        with np.errstate(divide="ignore", invalid="ignore", over="ignore"):
+            for row in self.feature_metadata.itertuples(index=False):
+                first = raw[str(row.base_input_1)].to_numpy(dtype=float)
+                transform = str(row.transformation)
+                if transform == "identity":
+                    values = first
+                elif transform == "quadratic":
+                    values = np.square(first)
+                elif transform == "sqrt":
+                    values = np.sqrt(first)
+                elif transform == "log1p":
+                    values = np.log1p(first)
+                elif transform == "inverse":
+                    values = np.reciprocal(first)
+                elif transform == "interaction":
+                    second = raw[str(row.base_input_2)].to_numpy(dtype=float)
+                    values = first * second
+                else:  # guarded during load; retained as a fail-closed boundary
+                    raise ModelArtifactError(f"unsupported transformation: {transform}")
+                transformed[str(row.feature_name)] = values
 
-        return pd.DataFrame(transformed, index=inputs.index).loc[:, self.feature_names]
+        features = pd.DataFrame(transformed, index=inputs.index).loc[:, self.feature_names]
+        _require_finite(features, label="transformed features")
+        return features
 
     def predict(
         self, inputs: pd.DataFrame, *, outputs: Iterable[str] | None = None
@@ -339,7 +354,11 @@ class BSMReducedFormModel:
         if outputs is None:
             selected_outputs = list(self.output_names)
         else:
+            if isinstance(outputs, str):
+                raise TypeError("outputs must be an iterable of names, not a string")
             selected_outputs = list(outputs)
+            if not selected_outputs:
+                raise ValueError("outputs must contain at least one name")
             if len(selected_outputs) != len(set(selected_outputs)):
                 raise ValueError("outputs contains duplicate names")
             unknown = [name for name in selected_outputs if name not in self.coefficients.index]

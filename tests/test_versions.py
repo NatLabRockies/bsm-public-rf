@@ -50,6 +50,16 @@ def test_archived_version_contract(utils, registry: dict) -> None:
     assert coefficients.index.astype(str).tolist() == list(load_model().output_names)
 
 
+def test_archived_metadata_contains_no_placeholders(registry: dict) -> None:
+    inputs_metadata = json.loads(
+        (VERSIONS / registry["active"] / "inputs_metadata.json").read_text(encoding="utf-8")
+    )
+    public_metadata = json.dumps({"registry": registry, "inputs": inputs_metadata}).lower()
+
+    assert "tbd" not in public_metadata
+    assert "placeholder" not in public_metadata
+
+
 def test_run_model_aligns_intercept_by_name(utils, registry: dict) -> None:
     features = utils.load_feature_definitions(VERSIONS)
     coefficients = utils.load_coefficients(VERSIONS)
@@ -86,3 +96,30 @@ def test_run_pipeline_and_unpack(utils, registry: dict, tmp_path: Path) -> None:
     assert np.isfinite(predictions.to_numpy()).all()
     assert len(unpacked) > 0
     assert not unpacked[["sample", "variable", "pathway", "region", "product"]].duplicated().any()
+
+
+def test_archived_feature_builder_rejects_missing_dataframe_inputs(utils, registry: dict) -> None:
+    features = utils.load_feature_definitions(VERSIONS)
+    base_inputs = [name for name, spec in features.items() if isinstance(spec["derivation"], str)]
+    incomplete = pd.DataFrame({name: [1.0] for name in base_inputs[:-1]})
+
+    with pytest.raises(ValueError, match="missing required base columns"):
+        utils.build_feature_vector(features, incomplete)
+
+
+def test_archived_feature_builder_rejects_nonfinite_inputs(utils, registry: dict) -> None:
+    features = utils.load_feature_definitions(VERSIONS)
+    base_inputs = [name for name, spec in features.items() if isinstance(spec["derivation"], str)]
+    values = pd.DataFrame({name: [1.0] for name in base_inputs})
+    values.loc[0, base_inputs[0]] = np.nan
+
+    with pytest.raises(ValueError, match="finite"):
+        utils.build_feature_vector(features, values)
+
+
+def test_archived_input_loader_rejects_unknown_file_type(utils, tmp_path: Path) -> None:
+    path = tmp_path / "inputs.txt"
+    path.write_text("x\n1\n", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="CSV or Parquet"):
+        utils.load_inputs(path)

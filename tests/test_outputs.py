@@ -58,7 +58,14 @@ def test_parse_output_name(metadata: dict, name: str, expected: dict) -> None:
 
 
 @pytest.mark.parametrize(
-    "name", ["Unknown.Var_2030", "AHC.MFSPMetric[HEFA]_2030", "AHC.MFSPMetric[XX, A]_2030"]
+    "name",
+    [
+        "Unknown.Var_2030",
+        "AHC.MFSPMetric[HEFA]_2030",
+        "AHC.MFSPMetric[XX, A]_2030",
+        "AHC.MFSPMetric[HEFA, A_2030",
+        "AHC.MFSPMetric[HEFA, A]_2100",
+    ],
 )
 def test_parse_output_name_rejects_unknown_names(metadata: dict, name: str) -> None:
     with pytest.raises(ValueError):
@@ -93,6 +100,14 @@ def test_unpack_outputs_round_trips_example_predictions(metadata: dict) -> None:
     ]
     assert len(row) == 1
     np.testing.assert_allclose(row[parsed["year"]].iloc[0], predictions.loc[sample, output_name])
+
+
+def test_unpack_outputs_rejects_duplicate_output_columns(metadata: dict) -> None:
+    name = "AHC.MFSPMetric[HEFA, A]_2030"
+    predictions = pd.DataFrame([[1.0, 2.0]], columns=[name, name])
+
+    with pytest.raises(ValueError, match="duplicate column names"):
+        unpack_outputs(predictions, metadata)
 
 
 def test_example_inputs_cover_required_inputs_within_documented_ranges() -> None:

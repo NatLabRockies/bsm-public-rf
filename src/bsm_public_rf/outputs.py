@@ -27,8 +27,16 @@ def parse_output_name(name: str, output_metadata: dict[str, Any]) -> dict[str, A
     Names follow ``BASE_VARIABLE[dim1, dim2, ...]_YEAR``; the bracket is omitted
     for variables without dimensions. Dimensions a variable lacks are ``""``.
     """
-    base_and_dims, year = name.rsplit("_", 1)
+    if not isinstance(name, str):
+        raise TypeError("output name must be a string")
+    try:
+        base_and_dims, year_text = name.rsplit("_", 1)
+        year = int(year_text)
+    except (ValueError, TypeError) as exc:
+        raise ValueError(f"output {name!r} does not end with a numeric year") from exc
     if "[" in base_and_dims:
+        if not base_and_dims.endswith("]") or base_and_dims.count("[") != 1:
+            raise ValueError(f"output {name!r} has malformed dimension brackets")
         base, bracket = base_and_dims.rstrip("]").split("[", 1)
         values = [value.strip() for value in bracket.split(",")]
     else:
@@ -45,7 +53,10 @@ def parse_output_name(name: str, output_metadata: dict[str, Any]) -> dict[str, A
         if value not in spec[f"{dimension}_values"]:
             raise ValueError(f"output {name!r} has unknown {dimension} {value!r}")
         parsed[dimension] = value
-    parsed["year"] = int(year)
+    year_range = output_metadata.get("year_range", {})
+    if not year_range.get("start", year) <= year <= year_range.get("end", year):
+        raise ValueError(f"output {name!r} has a year outside the declared range")
+    parsed["year"] = year
     return parsed
 
 
@@ -80,8 +91,12 @@ def unpack_outputs(
     Use bracket indexing (``df["sample"]``) because ``sample`` and ``product``
     are also DataFrame method names.
     """
+    if not isinstance(predictions, pd.DataFrame):
+        raise TypeError("predictions must be a pandas DataFrame")
     if predictions.index.has_duplicates:
         raise ValueError("predictions index must not contain duplicate labels")
+    if predictions.columns.has_duplicates:
+        raise ValueError("predictions must not contain duplicate column names")
     metadata = load_output_metadata() if output_metadata is None else output_metadata
     keys = output_catalog(list(predictions.columns.astype(str)), metadata)
     keys = keys[["variable", *DIMENSIONS, "year"]]

@@ -39,10 +39,13 @@ def load_inputs(path: str | Path) -> pd.DataFrame:
     ``build_feature_vector`` can reorder them to match the metadata.
     """
     path = Path(path)
-    if path.suffix == ".csv":
+    suffix = path.suffix.lower()
+    if suffix == ".csv":
         df = pd.read_csv(path)
-    else:
+    elif suffix in {".parquet", ".pq"}:
         df = pd.read_parquet(path)
+    else:
+        raise ValueError("input data must be a CSV or Parquet file")
     if "value" in df.columns:
         df = df["value"].to_frame().T.reset_index(drop=True)
     return df
@@ -126,23 +129,37 @@ def build_feature_vector(
     if isinstance(raw_inputs, np.ndarray):
         if raw_inputs.ndim == 1:
             raw_inputs = raw_inputs.reshape(1, -1)
+        if raw_inputs.ndim != 2:
+            raise ValueError("raw_inputs must be a one- or two-dimensional array")
         if raw_inputs.shape[1] != len(base_names):
             raise ValueError(f"Expected {len(base_names)} columns, got {raw_inputs.shape[1]}")
-        input_arrays = {name: raw_inputs[:, i] for i, name in enumerate(base_names)}
+        values = np.asarray(raw_inputs, dtype=float)
+        input_arrays = {name: values[:, i] for i, name in enumerate(base_names)}
+    elif isinstance(raw_inputs, pd.DataFrame):
+        if raw_inputs.columns.has_duplicates:
+            raise ValueError("raw_inputs must not contain duplicate column names")
+        missing = [name for name in base_names if name not in raw_inputs.columns]
+        if missing:
+            raise ValueError(f"raw_inputs are missing required base columns: {missing}")
+        aligned = raw_inputs.loc[:, base_names].apply(pd.to_numeric, errors="raise")
+        input_arrays = {name: aligned[name].to_numpy(dtype=float) for name in base_names}
     else:
-        # DataFrame — reorder to canonical order if columns match
-        if set(raw_inputs.columns) == set(base_names):
-            raw_inputs = raw_inputs[base_names]
-        input_arrays = {col: raw_inputs[col].values for col in raw_inputs.columns}
+        raise TypeError("raw_inputs must be a pandas DataFrame or numpy array")
+
+    if input_arrays and not np.isfinite(np.column_stack(list(input_arrays.values()))).all():
+        raise ValueError("raw_inputs must contain only finite values")
 
     n_rows = next(iter(input_arrays.values())).shape[0] if input_arrays else 0
     n_features = len(feature_definitions)
 
     # Evaluate all derivations into a contiguous array
     result = np.empty((n_rows, n_features + 1), dtype=np.float64)
-    for i, (_name, entry) in enumerate(feature_definitions.items()):
-        result[:, i] = _eval_mathjson(entry["derivation"], input_arrays)
+    with np.errstate(divide="ignore", invalid="ignore", over="ignore"):
+        for i, (_name, entry) in enumerate(feature_definitions.items()):
+            result[:, i] = _eval_mathjson(entry["derivation"], input_arrays)
     result[:, -1] = 1.0  # intercept
+    if not np.isfinite(result).all():
+        raise ValueError("derived feature matrix must contain only finite values")
     return result
 
 

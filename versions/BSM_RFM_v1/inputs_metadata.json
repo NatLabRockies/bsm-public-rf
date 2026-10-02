@@ -7,9 +7,7 @@
       "min": 5,
       "max": 12,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "AHC.FCI  sensi multiplier[HEFA]": {
     "description": "Multiplier that is applied to fixed capital investment cost for conversion facility",
@@ -19,9 +17,7 @@
       "min": 0.75,
       "max": 1.25,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "AHC.FCI  sensi multiplier[HTL]": {
     "description": "Multiplier that is applied to fixed capital investment cost for conversion facility",
@@ -31,9 +27,7 @@
       "min": 0.75,
       "max": 1.25,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "AHC.Mature Industry Rate of Return as PCT[HEFA]": {
     "description": "Sets required rate of return on investment for conversion facility. Used in calculation of net present value of prospective investment",
@@ -43,9 +37,7 @@
       "min": 5,
       "max": 15,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "AHC.Mature Industry Rate of Return as PCT[HTL]": {
     "description": "Sets required rate of return on investment for conversion facility. Used in calculation of net present value of prospective investment",
@@ -55,9 +47,7 @@
       "min": 5,
       "max": 15,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "AHC.ORNOOC sensi multiplier[HTL]": {
     "description": "Multiplier applied to fixed operating cost, other (non-feedstock) operating costs, power sale credit, and other coproduct sale credit",
@@ -67,9 +57,7 @@
       "min": 0.75,
       "max": 1.25,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "AHC.PY sensi multiplier[HEFA]": {
     "description": "Multiplier applied to conversion process yield (i.e., gallons fuel per ton feedstock)",
@@ -79,9 +67,7 @@
       "min": 0.75,
       "max": 1.25,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "AHC.PY sensi multiplier[HTL]": {
     "description": "Multiplier applied to conversion process yield (i.e., gallons fuel per ton feedstock)",
@@ -91,9 +77,7 @@
       "min": 0.75,
       "max": 1.25,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "AHC.initial indices of Commercial Maturity[HEFA]": {
     "description": "Sets initial value for commercial maturity for conversion pathway on 0-1 scale",
@@ -103,9 +87,7 @@
       "min": 0.6,
       "max": 0.8,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "AHC.initial indices of Commercial Maturity[HTL]": {
     "description": "Sets initial value for commercial maturity for conversion pathway on 0-1 scale",
@@ -115,9 +97,7 @@
       "min": 0,
       "max": 0.2,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "CHC.Debt Interest Rate as pct[Thermochem]": {
     "description": "Interest rate of loan for FCI of conversion facility",
@@ -127,9 +107,7 @@
       "min": 5,
       "max": 12,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "CHC.FCI  sensi multiplier[Biochem]": {
     "description": "Multiplier that is applied to fixed capital investment cost for conversion facility",
@@ -139,9 +117,7 @@
       "min": 0.75,
       "max": 1.25,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "CHC.FCI  sensi multiplier[Brownfield]": {
     "description": "Multiplier that is applied to fixed capital investment cost for conversion facility",
@@ -151,9 +127,7 @@
       "min": 0.75,
       "max": 1.25,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "CHC.FCI  sensi multiplier[Thermochem]": {
     "description": "Multiplier that is applied to fixed capital investment cost for conversion facility",
@@ -163,9 +137,7 @@
       "min": 0.75,
       "max": 1.25,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "CHC.Mature Industry Rate of Return as PCT[Biochem]": {
     "description": "Sets required rate of return on investment for conversion facility. Used in calculation of net present value of prospective investment",
@@ -175,9 +147,7 @@
       "min": 5,
       "max": 15,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "CHC.Mature Industry Rate of Return as PCT[Brownfield]": {
     "description": "Sets required rate of return on investment for conversion facility. Used in calculation of net present value of prospective investment",
@@ -187,9 +157,7 @@
       "min": 5,
       "max": 15,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "CHC.Mature Industry Rate of Return as PCT[Thermochem]": {
     "description": "Sets required rate of return on investment for conversion facility. Used in calculation of net present value of prospective investment",
@@ -199,9 +167,7 @@
       "min": 5,
       "max": 15,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "CHC.ORNOOC sensi multiplier[Thermochem]": {
     "description": "Multiplier applied to fixed operating cost, other (non-feedstock) operating costs, power sale credit, and other coproduct sale credit",
@@ -211,9 +177,7 @@
       "min": 0.75,
       "max": 1.25,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "CHC.PY sensi multiplier[Biochem]": {
     "description": "Multiplier applied to conversion process yield (i.e., gallons fuel per ton feedstock)",
@@ -223,9 +187,7 @@
       "min": 0.75,
       "max": 1.25,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "CHC.PY sensi multiplier[Brownfield]": {
     "description": "Multiplier applied to conversion process yield (i.e., gallons fuel per ton feedstock)",
@@ -235,9 +197,7 @@
       "min": 0.75,
       "max": 1.25,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "CHC.PY sensi multiplier[Thermochem]": {
     "description": "Multiplier applied to conversion process yield (i.e., gallons fuel per ton feedstock)",
@@ -247,9 +207,7 @@
       "min": 0.75,
       "max": 1.25,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "CHC.initial indices of Commercial Maturity[Biochem]": {
     "description": "Sets initial value for commercial maturity for conversion pathway on 0-1 scale",
@@ -259,9 +217,7 @@
       "min": 0,
       "max": 0.2,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "CHC.initial indices of Commercial Maturity[Brownfield]": {
     "description": "Sets initial value for commercial maturity for conversion pathway on 0-1 scale",
@@ -271,9 +227,7 @@
       "min": 0,
       "max": 0.7,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "CHC.initial indices of Commercial Maturity[Thermochem]": {
     "description": "Sets initial value for commercial maturity for conversion pathway on 0-1 scale",
@@ -283,9 +237,7 @@
       "min": 0.1,
       "max": 0.7,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "CHC.progress ratios commercial[Brownfield]": {
     "description": "Sets rate at which each doubling of cumulative production impacts commercial maturity of conversion pathway",
@@ -295,9 +247,7 @@
       "min": 0.65,
       "max": 0.85,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "CHC.progress ratios commercial[Thermochem]": {
     "description": "Sets rate at which each doubling of cumulative production impacts commercial maturity of conversion pathway",
@@ -307,9 +257,7 @@
       "min": 0.65,
       "max": 0.85,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "OHC.FCI  sensi multiplier[HEFA]": {
     "description": "Multiplier that is applied to fixed capital investment cost for conversion facility",
@@ -319,9 +267,7 @@
       "min": 0.75,
       "max": 1.25,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "OHC.Mature Industry Rate of Return as PCT[HEFA]": {
     "description": "Sets required rate of return on investment for conversion facility. Used in calculation of net present value of prospective investment",
@@ -331,9 +277,7 @@
       "min": 5,
       "max": 15,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "OHC.ORNOOC sensi multiplier[HEFABrownfield]": {
     "description": "Multiplier applied to fixed operating cost, other (non-feedstock) operating costs, power sale credit, and other coproduct sale credit",
@@ -343,9 +287,7 @@
       "min": 0.75,
       "max": 1.25,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "OHC.ORNOOC sensi multiplier[HEFA]": {
     "description": "Multiplier applied to fixed operating cost, other (non-feedstock) operating costs, power sale credit, and other coproduct sale credit",
@@ -355,9 +297,7 @@
       "min": 0.75,
       "max": 1.25,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "OHC.PY sensi multiplier[HEFABrownfield]": {
     "description": "Multiplier applied to conversion process yield (i.e., gallons fuel per ton feedstock)",
@@ -367,9 +307,7 @@
       "min": 0.75,
       "max": 1.25,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "OHC.PY sensi multiplier[HEFA]": {
     "description": "Multiplier applied to conversion process yield (i.e., gallons fuel per ton feedstock)",
@@ -379,9 +317,7 @@
       "min": 0.75,
       "max": 1.25,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "OHC.Policy Duration[Price,HEFABrownfield]": {
     "description": "Sets duration of unit price related incentive beginning with initial simulation year (2015)",
@@ -391,9 +327,7 @@
       "min": 18,
       "max": 36,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "OHC.Policy Duration[Price,HEFA]": {
     "description": "Sets duration of unit price related incentive beginning with initial simulation year (2015)",
@@ -403,9 +337,7 @@
       "min": 18,
       "max": 36,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "OHC.Policy Duration[Price,TransEster]": {
     "description": "Sets duration of unit price related incentive beginning with initial simulation year (2015)",
@@ -415,21 +347,15 @@
       "min": 18,
       "max": 36,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "OHC.Retirement Frac[TransEster]": {
-    "description": "Placeholder description for OHC.Retirement Frac[TransEster]",
     "pathway": "Oilcrop Transesterification",
-    "units": "TBD",
     "constraints": {
       "min": 0,
       "max": 0.15,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "OHC.initial indices of Commercial Maturity[HEFA]": {
     "description": "Sets initial value for commercial maturity for conversion pathway on 0-1 scale",
@@ -439,9 +365,7 @@
       "min": 0.6,
       "max": 0.8,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "OHC.progress ratios commercial[HEFABrownfield]": {
     "description": "Sets rate at which each doubling of cumulative production impacts commercial maturity of conversion pathway",
@@ -451,9 +375,7 @@
       "min": 0.65,
       "max": 0.85,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "OHC.progress ratios commercial[HEFA]": {
     "description": "Sets rate at which each doubling of cumulative production impacts commercial maturity of conversion pathway",
@@ -463,9 +385,7 @@
       "min": 0.65,
       "max": 0.85,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "SE.FCI  sensi multiplier[Jet]": {
     "description": "Multiplier that is applied to fixed capital investment cost for conversion facility",
@@ -475,9 +395,7 @@
       "min": 0.75,
       "max": 1.25,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "SE.Mature Industry Rate of Return as PCT[Jet]": {
     "description": "Sets required rate of return on investment for conversion facility. Used in calculation of net present value of prospective investment",
@@ -487,9 +405,7 @@
       "min": 5,
       "max": 15,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "SE.Max Jet Investment Hit Rate": {
     "description": "Sets maximum potential rate of conversion of starch ethanol facilities to production of jet fuel",
@@ -499,9 +415,7 @@
       "min": 0.05,
       "max": 0.3,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "SE.ORNOOC sensi multiplier[Jet]": {
     "description": "Multiplier applied to fixed operating cost, other (non-feedstock) operating costs, power sale credit, and other coproduct sale credit",
@@ -511,9 +425,7 @@
       "min": 0.75,
       "max": 1.25,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "SE.PY sensi multiplier[Jet]": {
     "description": "Multiplier applied to conversion process yield (i.e., gallons fuel per ton feedstock)",
@@ -523,9 +435,7 @@
       "min": 0.75,
       "max": 1.25,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "SE.Policy Duration[Price,Jet]": {
     "description": "Sets duration of unit price related incentive beginning with initial simulation year (2015)",
@@ -535,9 +445,7 @@
       "min": 18,
       "max": 36,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "SE.initial indices of Commercial Maturity[Jet]": {
     "description": "Sets initial value for commercial maturity for conversion pathway on 0-1 scale",
@@ -547,9 +455,7 @@
       "min": 0.1,
       "max": 0.5,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "SE.progress ratios commercial[Jet]": {
     "description": "Sets rate at which each doubling of cumulative production impacts commercial maturity of conversion pathway",
@@ -559,9 +465,7 @@
       "min": 0.65,
       "max": 0.85,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "WW.FCI  sensi multiplier[ManureToHTL]": {
     "description": "Multiplier that is applied to fixed capital investment cost for conversion facility",
@@ -571,9 +475,7 @@
       "min": 0.75,
       "max": 1.25,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "WW.FCI  sensi multiplier[SludgeToHTL]": {
     "description": "Multiplier that is applied to fixed capital investment cost for conversion facility",
@@ -583,9 +485,7 @@
       "min": 0.75,
       "max": 1.25,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "WW.Mature Industry Rate of Return as PCT[ManureToHTL]": {
     "description": "Sets required rate of return on investment for conversion facility. Used in calculation of net present value of prospective investment",
@@ -595,9 +495,7 @@
       "min": 5,
       "max": 15,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "WW.Mature Industry Rate of Return as PCT[SludgeToHTL]": {
     "description": "Sets required rate of return on investment for conversion facility. Used in calculation of net present value of prospective investment",
@@ -607,9 +505,7 @@
       "min": 5,
       "max": 15,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "WW.ORNOOC sensi multiplier[ManureToHTL]": {
     "description": "Multiplier applied to fixed operating cost, other (non-feedstock) operating costs, power sale credit, and other coproduct sale credit",
@@ -619,9 +515,7 @@
       "min": 0.75,
       "max": 1.25,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "WW.ORNOOC sensi multiplier[SludgeToHTL]": {
     "description": "Multiplier applied to fixed operating cost, other (non-feedstock) operating costs, power sale credit, and other coproduct sale credit",
@@ -631,9 +525,7 @@
       "min": 0.75,
       "max": 1.25,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "WW.PY sensi multiplier[ManureToHTL]": {
     "description": "Multiplier applied to conversion process yield (i.e., gallons fuel per ton feedstock)",
@@ -643,9 +535,7 @@
       "min": 0.75,
       "max": 1.25,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "WW.PY sensi multiplier[SludgeToHTL]": {
     "description": "Multiplier applied to conversion process yield (i.e., gallons fuel per ton feedstock)",
@@ -655,9 +545,7 @@
       "min": 0.75,
       "max": 1.25,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "WW.Policy Duration[Price,SludgeToHTL]": {
     "description": "Sets duration of unit price related incentive beginning with initial simulation year (2015)",
@@ -667,9 +555,7 @@
       "min": 18,
       "max": 36,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "WW.initial indices of Commercial Maturity[ManureToHTL]": {
     "description": "Sets initial value for commercial maturity for conversion pathway on 0-1 scale",
@@ -679,9 +565,7 @@
       "min": 0,
       "max": 0.2,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "WW.initial indices of Commercial Maturity[SludgeToHTL]": {
     "description": "Sets initial value for commercial maturity for conversion pathway on 0-1 scale",
@@ -691,9 +575,7 @@
       "min": 0,
       "max": 0.2,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "WW.progress ratios commercial[ManureToHTL]": {
     "description": "Sets rate at which each doubling of cumulative production impacts commercial maturity of conversion pathway",
@@ -703,9 +585,7 @@
       "min": 0.65,
       "max": 0.85,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "WW.progress ratios commercial[SludgeToHTL]": {
     "description": "Sets rate at which each doubling of cumulative production impacts commercial maturity of conversion pathway",
@@ -715,9 +595,7 @@
       "min": 0.65,
       "max": 0.85,
       "additional": []
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "AFSC": {
     "description": "Binary switch. Agnostic  Herbaceous and Woody feedstocks usable by all processes. Target  Herbaceous to Biochem, Woody to Thermochem",
@@ -729,9 +607,7 @@
       "additional": [
         "Binary switch per docx (raw cell: 'Binary flags (0= off; 1 = on)*')"
       ]
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   },
   "UAEORO": {
     "description": "Switch to use AEO reference vs high projection for oil price",
@@ -743,8 +619,6 @@
       "additional": [
         "Binary switch per docx description (no explicit sample-value cell given; inferred 0/1 from 'Switch to use AEO reference vs high projection')"
       ]
-    },
-    "physical_notes": "TBD",
-    "source": "TBD"
+    }
   }
 }

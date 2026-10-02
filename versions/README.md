@@ -23,7 +23,7 @@ versions/
 └── BSM_RFM_v1/
     ├── coefficients.parquet   # 23,495 outputs x ("const" + 346 features)
     ├── feature_definitions.json  # MathJSON derivation for each feature
-    └── inputs_metadata.json   # descriptions, units, and ranges for the 62 inputs
+    └── inputs_metadata.json   # available descriptions, units, and ranges for the 62 inputs
 ```
 
 ## Usage
