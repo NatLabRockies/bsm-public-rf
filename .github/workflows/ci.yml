@@ -13,7 +13,7 @@ concurrency:
 jobs:
   test:
     name: Test suite
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
@@ -22,6 +22,7 @@ jobs:
         uses: prefix-dev/setup-pixi@v0.10.2
         with:
           cache: true
+          cache-key: pixi-default-
           locked: true
 
       - name: Run repository gate
@@ -29,7 +30,7 @@ jobs:
 
   notebook:
     name: Quickstart notebook
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
@@ -38,6 +39,8 @@ jobs:
         uses: prefix-dev/setup-pixi@v0.10.2
         with:
           cache: true
+          cache-key: pixi-notebook-
+          environments: notebook
           locked: true
 
       - name: Execute quickstart notebook
