@@ -161,6 +161,14 @@ def test_transform_rejects_missing_base_input(artifact_dir: Path) -> None:
         model.transform_inputs(pd.DataFrame({"x": [1.0]}))
 
 
+def test_transform_rejects_duplicate_input_columns(artifact_dir: Path) -> None:
+    model = BSMReducedFormModel.from_artifact_dir(artifact_dir)
+    inputs = pd.DataFrame([[1.0, 2.0, 3.0]], columns=["x", "x", "z"])
+
+    with pytest.raises(ValueError, match="duplicate column names"):
+        model.transform_inputs(inputs)
+
+
 def test_loader_rejects_artifact_order_drift(artifact_dir: Path) -> None:
     standardization = pd.read_csv(artifact_dir / "x_standardization.csv")
     standardization.loc[0, "feature_name"] = "wrong"
@@ -197,6 +205,7 @@ def test_released_model_predicts_from_its_declared_schema() -> None:
     schema = model.input_schema()
     assert schema.index.tolist() == list(model.required_input_names)
     assert not schema.index.has_duplicates
+    assert schema.loc["SE.initial indices of Commercial Maturity[Jet]", "unit"] == "unitless"
     assert model.feature_names
     assert model.output_names
 

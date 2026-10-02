@@ -31,4 +31,4 @@ rows, columns, values, or metadata without documenting provenance and testing
 all cross-file alignment contracts.
 
 Do not commit raw simulator data, credentials, local paths, generated caches,
-or case-study workflow outputs.
+or workflow outputs unrelated to the released model.

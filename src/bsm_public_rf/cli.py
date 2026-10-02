@@ -25,11 +25,19 @@ def main() -> None:
         default=None,
         help="Override the bundled model artifact directory",
     )
+    parser.add_argument(
+        "--index-column",
+        default=None,
+        help="Input column to preserve as prediction row labels",
+    )
     args = parser.parse_args()
 
     model = load_model(args.model_dir)
-    inputs = pd.read_csv(args.inputs)
-    model.predict(inputs, outputs=args.outputs).to_csv(args.predictions, index=False)
+    inputs = pd.read_csv(args.inputs, index_col=args.index_column)
+    model.predict(inputs, outputs=args.outputs).to_csv(
+        args.predictions,
+        index=args.index_column is not None,
+    )
 
 
 if __name__ == "__main__":

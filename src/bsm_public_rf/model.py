@@ -225,7 +225,7 @@ class BSMReducedFormModel:
 
     def input_schema(self) -> pd.DataFrame:
         """Return one metadata row for each base input used by the model."""
-        columns = [
+        primary_columns = [
             "base_input_1",
             "base_input_1_unit",
             "base_input_1_min",
@@ -233,9 +233,9 @@ class BSMReducedFormModel:
             "base_input_1_pathway",
             "base_input_1_description",
         ]
-        available = [name for name in columns if name in self.feature_metadata.columns]
-        schema = self.feature_metadata[available].drop_duplicates("base_input_1")
-        schema = schema.rename(
+        available = [name for name in primary_columns if name in self.feature_metadata.columns]
+        primary = self.feature_metadata[available].drop_duplicates("base_input_1")
+        primary = primary.rename(
             columns={
                 "base_input_1": "input_name",
                 "base_input_1_unit": "unit",
@@ -244,7 +244,24 @@ class BSMReducedFormModel:
                 "base_input_1_pathway": "pathway",
                 "base_input_1_description": "description",
             }
-        ).set_index("input_name")
+        )
+
+        secondary_columns = [
+            name
+            for name in ("base_input_2", "base_input_2_unit")
+            if name in self.feature_metadata.columns
+        ]
+        secondary = self.feature_metadata[secondary_columns].copy()
+        secondary = secondary.loc[secondary["base_input_2"].notna()]
+        secondary = secondary.loc[secondary["base_input_2"].astype(str).str.len() > 0]
+        secondary = secondary.rename(
+            columns={"base_input_2": "input_name", "base_input_2_unit": "unit"}
+        ).drop_duplicates("input_name")
+        for column in ("minimum", "maximum", "pathway", "description"):
+            secondary[column] = pd.NA
+
+        schema = pd.concat([primary, secondary], ignore_index=True)
+        schema = schema.drop_duplicates("input_name").set_index("input_name")
         return schema.reindex(self.required_input_names)
 
     def output_schema(self) -> pd.DataFrame:
@@ -255,6 +272,8 @@ class BSMReducedFormModel:
         """Materialize the released 245-feature support from base BSM inputs."""
         if not isinstance(inputs, pd.DataFrame):
             raise TypeError("inputs must be a pandas DataFrame")
+        if inputs.columns.has_duplicates:
+            raise ValueError("inputs must not contain duplicate column names")
         missing = [name for name in self.required_input_names if name not in inputs.columns]
         if missing:
             raise ValueError(f"inputs are missing required base columns: {missing}")
@@ -309,6 +328,8 @@ class BSMReducedFormModel:
         """Predict from a precomputed engineered-feature matrix."""
         if not isinstance(features, pd.DataFrame):
             raise TypeError("features must be a pandas DataFrame")
+        if features.columns.has_duplicates:
+            raise ValueError("features must not contain duplicate column names")
         missing = [name for name in self.feature_names if name not in features.columns]
         if missing:
             raise ValueError(f"features are missing required columns: {missing}")

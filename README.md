@@ -57,14 +57,15 @@ Use the model metadata to prepare inputs and choose outputs:
 ```python
 from bsm_public_rf import output_catalog
 
-input_schema = model.input_schema()          # names, units, ranges, descriptions
+input_schema = model.input_schema()          # names and available input metadata
 catalog = output_catalog(model.output_names) # dimensions, years, units, descriptions
 ```
 
 The model requires the 65 columns listed by `input_schema`. Extra columns are
 allowed. Missing, non-finite, or transformation-invalid inputs raise an error.
-The documented ranges describe the model's training data; predictions outside
-them are extrapolations.
+Where recorded, ranges describe the model's training data; predictions outside
+them are extrapolations. Missing optional metadata do not change whether an
+input is required.
 
 Omit `outputs` to predict every released output. To select a complete time
 series from the catalog and reshape it into year columns:
@@ -88,19 +89,21 @@ This command predicts one output for the bundled example inputs:
 
 ```bash
 bsm-rf-predict examples/example_inputs.csv predictions.csv \
+  --index-column scenario \
   --output 'AHC.MFSPMetric[HEFA, A]_2030'
 ```
 
 Repeat `--output` to select more outputs, or omit it to predict all outputs.
-Prediction rows retain the input row order. Run `bsm-rf-predict --help` for all
-options. In the Pixi environment, use `pixi run predict -- ...`.
+Prediction rows retain input order; `--index-column` also retains the named
+scenario labels. Run `bsm-rf-predict --help` for all options. In the Pixi
+environment, use `pixi run predict -- ...`.
 
 ## Model bundle
 
 The released bundle contains 23,495 outputs, 245 engineered features, and the
 metadata needed to construct those features from 65 base inputs. It includes
-raw-scale and standardized coefficients, intercepts, scaling parameters, input
-descriptions and ranges, and output descriptions and units.
+raw-scale and standardized coefficients, intercepts, scaling parameters,
+available input metadata, and output descriptions and units.
 
 `load_model()` validates file presence, schemas, ordering, duplicate names, and
 finite values before prediction. See [`model/README.md`](model/README.md) for

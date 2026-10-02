@@ -30,7 +30,10 @@ Initial public release candidate.
   environment prefix (`<prefix>/share/...`), not `site-packages/share/...`, so
   `default_model_dir()` follows the installed RECORD; and
 - `.gitattributes` keeps model files byte-identical on Windows so `SHA256SUMS`
-  verifies after checkout.
+  verifies after checkout;
+- `input_schema()` includes inputs that appear only as the second operand of an
+  interaction; and
+- the command-line predictor can preserve a named scenario column.
 
 ### Notes
 

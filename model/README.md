@@ -50,6 +50,8 @@ Square-root inputs must be nonnegative, log1p inputs must exceed `-1`,
 inverse inputs must be nonzero, and all values must be finite. Coefficient
 columns, feature metadata, and feature-standardization rows must have
 identical order; output rows, intercepts, and output metadata must also align.
+`input_schema()` reports every required base input and includes units, ranges,
+pathways, and descriptions where those fields are present in the bundle.
 
 ## Loading a different bundle
 
