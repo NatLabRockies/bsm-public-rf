@@ -35,5 +35,5 @@ Initial public release candidate.
 ### Notes
 
 - This release contains the existing legacy export. It is not evidence from a
-  newer analysis method or a future manuscript run.
+  later model fit.
 - Raw BSM simulator runs are not distributed and are not needed for inference.

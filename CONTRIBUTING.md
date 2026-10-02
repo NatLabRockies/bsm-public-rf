@@ -10,8 +10,9 @@ Appropriate changes include:
 - clearer input/output documentation and usage examples; and
 - reviewed updates to the released model bundle.
 
-Generic workflow changes and BSM case-study reproduction changes belong in
-[`rfm-pipeline`](https://github.com/NatLabRockies/rfm-pipeline).
+Generic workflow implementation changes belong in
+[`rfm-pipeline`](https://github.com/NatLabRockies/rfm-pipeline). Study-specific
+reproduction material is outside this distribution repository.
 
 ## Development
 
